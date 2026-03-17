@@ -14,6 +14,7 @@ export default function Signup() {
     email?: string;
     password?: string;
     confirmPassword?: string;
+    submit?: string;
   }>({});
   const [, navigate] = useLocation();
 
@@ -37,7 +38,7 @@ export default function Signup() {
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
@@ -46,34 +47,49 @@ export default function Signup() {
     }
     setErrors({});
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const res = await fetch(`${base}/api/auth/send-verification`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        sessionStorage.setItem("verificationCode", data.code);
+        sessionStorage.setItem("verificationEmail", email);
+        navigate("/email-verification");
+      } else {
+        const code = String(Math.floor(100 + Math.random() * 900));
+        sessionStorage.setItem("verificationCode", code);
+        sessionStorage.setItem("verificationEmail", email);
+        navigate("/email-verification");
+      }
+    } catch {
       const code = String(Math.floor(100 + Math.random() * 900));
       sessionStorage.setItem("verificationCode", code);
       sessionStorage.setItem("verificationEmail", email);
       navigate("/email-verification");
-    }, 1000);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
-          {/* Blue top border stripe */}
-          <div className="h-1.5 bg-blue-500 w-full" />
+      <div className="w-full max-w-[340px]">
+        <div className="bg-white rounded-lg shadow-xl overflow-hidden border border-gray-200">
+          {/* Blue top stripe */}
+          <div className="h-[5px] bg-[#4a7fbd] w-full" />
 
-          {/* Header section */}
+          {/* Header */}
           <div className="px-8 pt-7 pb-5 text-center border-b border-gray-200">
-            <h1 className="text-2xl font-semibold text-blue-600 leading-tight">
+            <h1 className="text-2xl font-semibold text-[#4a7fbd] leading-snug">
               Begin an Online<br />Application
             </h1>
             <p className="mt-2 text-sm text-gray-600">
               Already have an account?{" "}
-              <Link
-                href="/login"
-                className="text-blue-500 hover:text-blue-600 hover:underline"
-                data-testid="link-sign-in"
-              >
+              <Link href="/login" className="text-[#4a7fbd] hover:underline">
                 Sign in
               </Link>
             </p>
@@ -93,13 +109,10 @@ export default function Signup() {
                     setEmail(e.target.value);
                     if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
                   }}
-                  className="w-full px-4 py-3 bg-gray-100 border-0 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-sm text-sm"
-                  data-testid="input-email"
+                  className="w-full px-4 py-3 bg-gray-100 border-0 rounded text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
                 />
                 {errors.email && (
-                  <p className="mt-1 text-xs text-red-500" data-testid="error-email">
-                    {errors.email}
-                  </p>
+                  <p className="mt-1 text-xs text-red-500">{errors.email}</p>
                 )}
               </div>
 
@@ -110,15 +123,14 @@ export default function Signup() {
                   type="text"
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-100 border-0 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-sm text-sm"
-                  data-testid="input-promo-code"
+                  className="w-full px-4 py-3 bg-gray-100 border-0 rounded text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
                 />
               </div>
 
-              {/* Password */}
+              {/* Create Password */}
               <div className="mb-4">
                 <label className="block text-sm text-gray-700 mb-1">
-                  Password <span className="text-red-500">*</span>
+                  Create Password <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -128,22 +140,18 @@ export default function Signup() {
                       setPassword(e.target.value);
                       if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
                     }}
-                    className="w-full px-4 py-3 pr-12 bg-gray-100 border-0 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-sm text-sm"
-                    data-testid="input-password"
+                    className="w-full px-4 py-3 pr-12 bg-gray-100 border-0 rounded text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                    data-testid="button-toggle-password"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="mt-1 text-xs text-red-500" data-testid="error-password">
-                    {errors.password}
-                  </p>
+                  <p className="mt-1 text-xs text-red-500">{errors.password}</p>
                 )}
               </div>
 
@@ -161,36 +169,31 @@ export default function Signup() {
                       if (errors.confirmPassword)
                         setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
                     }}
-                    className="w-full px-4 py-3 pr-12 bg-gray-100 border-0 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-sm text-sm"
-                    data-testid="input-confirm-password"
+                    className="w-full px-4 py-3 pr-12 bg-gray-100 border-0 rounded text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                    data-testid="button-toggle-confirm-password"
                   >
-                    {showConfirmPassword ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
+                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
                 {errors.confirmPassword && (
-                  <p className="mt-1 text-xs text-red-500" data-testid="error-confirm-password">
-                    {errors.confirmPassword}
-                  </p>
+                  <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>
                 )}
               </div>
+
+              {errors.submit && (
+                <p className="mb-3 text-xs text-red-500 text-center">{errors.submit}</p>
+              )}
 
               {/* Submit Button */}
               <div className="flex justify-center">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-10 py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded transition-colors disabled:opacity-70 text-sm"
-                  data-testid="button-submit"
+                  className="px-10 py-2.5 bg-[#4a7fbd] hover:bg-[#3d6fad] text-white font-semibold rounded text-sm transition-colors disabled:opacity-70"
                 >
                   {loading ? "Submitting..." : "Submit"}
                 </button>

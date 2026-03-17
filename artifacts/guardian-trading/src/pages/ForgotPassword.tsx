@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { ArrowLeft } from "lucide-react";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -31,21 +30,30 @@ export default function ForgotPassword() {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
-          {/* Blue top border stripe */}
-          <div className="h-1.5 bg-blue-500 w-full" />
+      <div className="w-full max-w-[340px]">
+        <div className="bg-white rounded-lg shadow-xl overflow-hidden border border-gray-200">
+          {/* Blue top stripe */}
+          <div className="h-[5px] bg-[#4a7fbd] w-full" />
 
           {/* Header */}
-          <div className="flex items-center px-6 py-4 border-b border-gray-200">
+          <div className="flex items-center px-5 py-4 border-b border-gray-200">
             <Link
               href="/login"
-              className="text-blue-500 hover:text-blue-600 transition-colors mr-4 flex-shrink-0"
-              data-testid="link-back"
+              className="flex items-center justify-center w-8 h-8 rounded-full bg-[#4a7fbd] text-white flex-shrink-0 hover:bg-[#3d6fad] transition-colors"
+              aria-label="Go back"
             >
-              <ArrowLeft className="w-6 h-6" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
             </Link>
-            <h1 className="text-xl font-semibold text-blue-600 flex-1 text-center pr-10">
+            <h1 className="text-xl font-semibold text-[#4a7fbd] flex-1 text-center pr-8">
               Forgot Password
             </h1>
           </div>
@@ -75,8 +83,7 @@ export default function ForgotPassword() {
                 </p>
                 <Link
                   href="/login"
-                  className="mt-4 inline-block text-sm text-blue-500 hover:underline"
-                  data-testid="link-back-to-login"
+                  className="mt-4 inline-block text-sm text-[#4a7fbd] hover:underline"
                 >
                   Back to Login
                 </Link>
@@ -93,13 +100,10 @@ export default function ForgotPassword() {
                       setEmail(e.target.value);
                       if (emailError) setEmailError("");
                     }}
-                    className="w-full px-4 py-3 bg-gray-100 border-0 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-sm text-sm"
-                    data-testid="input-email"
+                    className="w-full px-4 py-3 bg-gray-100 border-0 rounded text-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
                   />
                   {emailError && (
-                    <p className="mt-1 text-xs text-red-500" data-testid="error-email">
-                      {emailError}
-                    </p>
+                    <p className="mt-1 text-xs text-red-500">{emailError}</p>
                   )}
                 </div>
 
@@ -108,8 +112,7 @@ export default function ForgotPassword() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="px-10 py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded transition-colors disabled:opacity-70 text-sm"
-                    data-testid="button-submit"
+                    className="px-10 py-2.5 bg-[#4a7fbd] hover:bg-[#3d6fad] text-white font-semibold rounded text-sm transition-colors disabled:opacity-70"
                   >
                     {loading ? "Sending..." : "Submit"}
                   </button>
