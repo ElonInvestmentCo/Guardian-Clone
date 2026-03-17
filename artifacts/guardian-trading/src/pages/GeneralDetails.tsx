@@ -99,7 +99,7 @@ export default function GeneralDetails() {
       return;
     }
     setErrors({});
-    navigate("/");
+    navigate("/personal-details");
   };
 
   return (
