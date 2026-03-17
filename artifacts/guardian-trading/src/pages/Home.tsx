@@ -178,30 +178,40 @@ export default function Home() {
       </section>
 
       {/* ── PRICING CARDS ── */}
-      <section id="pricing" className="bg-[#111] py-16 px-4 border-t border-b border-white/5">
-        <div className="max-w-[1200px] mx-auto">
-          <h3 className="text-xl font-display font-bold text-white mb-10 text-center">
+      <section id="pricing" className="bg-[#111] border-t border-b border-white/5">
+        <div className="max-w-[680px] mx-auto px-4 py-14">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-12 leading-snug">
             Control Your Costs With Customized Commissions
-          </h3>
-          <div className="grid sm:grid-cols-2 gap-6 max-w-[680px] mx-auto">
-            {/* Options */}
-            <div className="bg-[#1a1a1a] border border-white/8 p-8 text-center">
-              <p className="section-label mb-2">Options Contracts</p>
-              <p className="text-[11px] text-[#888] uppercase tracking-widest mb-3">AS LOW AS:</p>
-              <p className="text-6xl font-display font-bold text-white mb-1">$0.15</p>
-              <p className="text-sm text-[#aaa] uppercase tracking-wider mt-2">PER CONTRACT*</p>
+          </h2>
+
+          <div className="flex flex-col gap-0">
+            {/* Options Contracts block */}
+            <div className="bg-[#0d0d0d] px-8 py-10 text-center border border-white/5">
+              <p className="text-white font-bold text-lg mb-2">Options Contracts</p>
+              <p className="text-[11px] text-[#777] uppercase tracking-[0.2em] mb-5">AS LOW AS:</p>
+              <p className="text-[72px] sm:text-[88px] font-bold leading-none text-[#7ecef5] mb-5 break-all">
+                $0.15
+              </p>
+              <p className="text-[11px] text-[#777] uppercase tracking-[0.2em]">PER CONTRACT*</p>
             </div>
-            {/* Equities */}
-            <div className="bg-[#1a1a1a] border border-white/8 p-8 text-center">
-              <p className="section-label mb-2">Equities Commissions</p>
-              <p className="text-[11px] text-[#888] uppercase tracking-widest mb-3">AS LOW AS:</p>
-              <p className="text-6xl font-display font-bold text-white mb-1">$0.0005</p>
-              <p className="text-sm text-[#aaa] uppercase tracking-wider mt-2">PER SHARE</p>
+
+            {/* Equities Commissions block */}
+            <div className="bg-[#0d0d0d] px-8 py-10 text-center border border-white/5 border-t-0">
+              <p className="text-white font-bold text-lg mb-2">Equities Commissions</p>
+              <p className="text-[11px] text-[#777] uppercase tracking-[0.2em] mb-5">AS LOW AS:</p>
+              <p className="text-[72px] sm:text-[88px] font-bold leading-none text-[#7ecef5] mb-5 break-all">
+                $0.0005
+              </p>
+              <p className="text-[11px] text-[#777] uppercase tracking-[0.2em]">PER SHARE</p>
             </div>
           </div>
-          <p className="text-[11px] text-[#555] text-center mt-8 max-w-[600px] mx-auto leading-relaxed">
-            *Options commission does not include standard pass-through fees such as the Options Reporting Fee,
-            Options Clearing Corporation or exchange fees on index contracts, etc.*
+        </div>
+
+        {/* Disclaimer */}
+        <div className="bg-[#0e0e0e] border-t border-white/5 py-8 px-4">
+          <p className="text-[12px] text-[#888] text-center max-w-[520px] mx-auto leading-relaxed">
+            *Options commission does not include standard pass-through fees such as the Options Reporting Fee, Options
+            Clearing Corporation or exchange fees on index contracts, etc.*
           </p>
         </div>
       </section>

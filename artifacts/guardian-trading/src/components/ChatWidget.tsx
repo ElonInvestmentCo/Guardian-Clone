@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X, ArrowLeft, MoreHorizontal, Minus } from "lucide-react";
+import chatIcon from "@assets/DAFF4A91-FB9A-40ED-9CF7-E072FEA1BB59_1773727452638.png";
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
@@ -99,16 +100,18 @@ export default function ChatWidget() {
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label="Open chat"
-        className="fixed bottom-5 right-5 z-50 w-[60px] h-[60px] rounded-full shadow-xl transition-transform hover:scale-105 active:scale-95 focus:outline-none overflow-hidden"
-        style={{ background: "#76c9f5" }}
+        className="fixed bottom-5 right-5 z-50 w-[62px] h-[62px] rounded-full shadow-2xl transition-transform hover:scale-105 active:scale-95 focus:outline-none overflow-hidden bg-transparent"
       >
         {open ? (
-          <X className="w-6 h-6 text-gray-900 mx-auto" />
+          <div className="w-full h-full rounded-full bg-[#5aabdb] flex items-center justify-center">
+            <X className="w-6 h-6 text-white" />
+          </div>
         ) : (
           <img
-            src="/images/chat-icon.png"
+            src={chatIcon}
             alt="Chat"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover rounded-full"
+            style={{ imageRendering: "crisp-edges" }}
           />
         )}
       </button>
