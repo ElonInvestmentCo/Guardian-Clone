@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import eyeOpen from "@assets/eye_open_transparent.png";
-import eyeClosed from "@assets/eye_closed_transparent.png";
+
+const eyeOpen = "/eye-open-clean.png";
+const eyeClosed = "/eye-closed-clean.png";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -146,14 +147,14 @@ export default function Signup() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 overflow-hidden opacity-80 hover:opacity-100 transition-opacity"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9 opacity-80 hover:opacity-100 transition-opacity"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     <img
                       src={showPassword ? eyeClosed : eyeOpen}
                       alt=""
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110px] h-[83px] object-cover"
-                      style={{ filter: "contrast(50) brightness(0.1)" }}
+                      className="w-7 h-7 object-contain"
+                      style={{ filter: "brightness(0)" }}
                     />
                   </button>
                 </div>
@@ -181,14 +182,14 @@ export default function Signup() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 overflow-hidden opacity-80 hover:opacity-100 transition-opacity"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9 opacity-80 hover:opacity-100 transition-opacity"
                     aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                   >
                     <img
                       src={showConfirmPassword ? eyeClosed : eyeOpen}
                       alt=""
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110px] h-[83px] object-cover"
-                      style={{ filter: "contrast(50) brightness(0.1)" }}
+                      className="w-7 h-7 object-contain"
+                      style={{ filter: "brightness(0)" }}
                     />
                   </button>
                 </div>
