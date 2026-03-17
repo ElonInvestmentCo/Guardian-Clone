@@ -2,6 +2,16 @@ import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Link } from "wouter";
 import { X, Star, ArrowRight, Check } from "lucide-react";
+import ChatWidget from "@/components/ChatWidget";
+
+import heroPlatform from "@assets/IMG_7967_1773721659915.png";
+import shieldChart from "@assets/IMG_7968_1773721659915.png";
+import monitorPlatform from "@assets/IMG_7969_1773721659915.png";
+import stockBorrows from "@assets/IMG_7970_1773721659915.png";
+import dasLogo from "@assets/IMG_7971_1773721659915.png";
+import sterlingLogo from "@assets/IMG_7972_1773721659915.png";
+import benzingaBadge from "@assets/IMG_7973_1773721659915.png";
+import infraIcon from "@assets/IMG_7979_1773721659915.png";
 
 export default function Home() {
   const [newsBannerVisible, setNewsBannerVisible] = useState(true);
@@ -57,9 +67,9 @@ export default function Home() {
           minHeight: "520px",
         }}
       >
-        {/* Dot-pattern decoration on far right */}
+        {/* Dot-pattern decoration */}
         <div
-          className="absolute top-0 right-0 w-[40%] h-full dot-pattern opacity-40 pointer-events-none"
+          className="absolute top-0 right-0 w-[45%] h-full dot-pattern opacity-30 pointer-events-none"
           aria-hidden="true"
         />
 
@@ -74,18 +84,18 @@ export default function Home() {
               <a
                 href="/signup"
                 className="inline-block border border-white text-white text-sm px-6 py-2.5 hover:bg-white hover:text-black transition-colors font-medium"
-                data-testid="link-start-trading"
               >
                 Start Trading
               </a>
             </div>
 
-            {/* Right column — platform screenshot */}
-            <div className="flex-1 w-full max-w-[600px] relative">
+            {/* Right column — laptop + phone platform screenshot */}
+            <div className="flex-1 w-full max-w-[580px] relative">
               <img
-                src={`${import.meta.env.BASE_URL}images/hero-dashboard.png`}
-                alt="Guardian Trading Platform"
+                src={heroPlatform}
+                alt="Guardian Trading Platform — DAS Trader Pro on laptop and mobile"
                 className="w-full h-auto object-contain drop-shadow-2xl"
+                style={{ filter: "brightness(1.05) contrast(1.05)" }}
               />
             </div>
           </div>
@@ -96,26 +106,15 @@ export default function Home() {
       <section className="bg-[#151515] py-8 px-4">
         <div className="max-w-[760px] mx-auto">
           <div className="bg-[#c8e8f5] px-8 py-5 flex flex-col sm:flex-row items-center gap-6">
-            {/* Badge */}
+            {/* Benzinga badge image */}
             <div className="flex-shrink-0">
-              <div className="w-[90px] h-[90px] relative flex items-center justify-center">
-                {/* Benzinga badge recreation */}
-                <div className="w-full h-full bg-[#b8860b] rounded-full flex flex-col items-center justify-center border-4 border-[#d4a017] relative overflow-hidden">
-                  <p className="text-white text-[7px] font-bold uppercase tracking-wide">REVIEWED BY</p>
-                  <p className="text-white text-[11px] font-bold uppercase tracking-wider">BENZINGA</p>
-                  <div className="bg-[#1a1a1a] px-2 py-0.5 mt-0.5">
-                    <p className="text-[#d4a017] text-[10px] font-bold">2024</p>
-                  </div>
-                  {/* Stars ring */}
-                  <div className="absolute -bottom-1 flex gap-0.5">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-2 h-2 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <img
+                src={benzingaBadge}
+                alt="Reviewed by Benzinga 2024"
+                className="w-[86px] h-auto object-contain"
+                style={{ filter: "brightness(1.05) contrast(1.1) saturate(1.1)" }}
+              />
             </div>
-
             {/* Text */}
             <div>
               <div className="flex items-center gap-1 mb-1">
@@ -153,7 +152,7 @@ export default function Home() {
             Why Do Active Traders Use Guardian?
           </h2>
           <h3 className="text-xl text-primary font-bold mb-6">Pricing. Routing. Service.</h3>
-          <div className="flex flex-col lg:flex-row gap-12 items-start">
+          <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="flex-1">
               <p className="text-[#aaa] text-[15px] leading-relaxed mb-4">
                 Guardian Trading's mission is simple; to provide active traders with high-performance tools,
@@ -165,11 +164,13 @@ export default function Home() {
                 to help traders realize their full potential.
               </p>
             </div>
-            <div className="flex-shrink-0 w-full lg:w-[420px]">
+            {/* Shield + candlestick chart graphic */}
+            <div className="flex-shrink-0 w-full lg:w-[380px] flex items-center justify-center">
               <img
-                src={`${import.meta.env.BASE_URL}images/platform-preview.png`}
-                alt="Streamlined and Secure"
-                className="w-full h-auto rounded"
+                src={shieldChart}
+                alt="Streamlined and Secure — Guardian Trading"
+                className="w-full max-w-[340px] h-auto object-contain"
+                style={{ filter: "brightness(1.05) contrast(1.05) saturate(1.1)" }}
               />
             </div>
           </div>
@@ -230,11 +231,13 @@ export default function Home() {
                 ))}
               </ul>
             </div>
-            <div className="flex-shrink-0 w-full lg:w-[480px]">
+            {/* Monitor platform image */}
+            <div className="flex-shrink-0 w-full lg:w-[500px]">
               <img
-                src={`${import.meta.env.BASE_URL}images/hero-dashboard.png`}
-                alt="Sterling Trader Monitor"
-                className="w-full h-auto rounded opacity-90"
+                src={monitorPlatform}
+                alt="DAS Trader Pro on desktop monitor"
+                className="w-full h-auto object-contain drop-shadow-xl"
+                style={{ filter: "brightness(1.05) contrast(1.05) saturate(1.05)" }}
               />
             </div>
           </div>
@@ -245,13 +248,16 @@ export default function Home() {
       <section className="bg-[#111] py-20 px-4 border-t border-white/5">
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-12 items-center">
+            {/* Stock borrows screenshot — left */}
             <div className="flex-shrink-0 w-full lg:w-[460px] order-2 lg:order-1">
               <img
-                src={`${import.meta.env.BASE_URL}images/abstract-bg.png`}
-                alt="Locates and Stock Borrows"
-                className="w-full h-auto rounded opacity-80"
+                src={stockBorrows}
+                alt="Locates and Stock Borrows — Guardian Trading"
+                className="w-full h-auto object-contain rounded"
+                style={{ filter: "brightness(1.05) contrast(1.05) saturate(1.05)" }}
               />
             </div>
+            {/* Text — right */}
             <div className="flex-1 order-1 lg:order-2">
               <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-4">
                 Locates &amp; Stock Borrows
@@ -291,24 +297,30 @@ export default function Home() {
           </h2>
           <h3 className="text-xl text-primary font-bold mb-10">Our OMS Platforms</h3>
 
-          <div className="flex flex-col lg:flex-row gap-10 items-start mb-14">
-            <div className="flex-1">
-              {/* DAS Trader Pro */}
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-[#2a2a2a] border border-white/10 flex items-center justify-center text-xs font-bold text-primary">
-                  DAS
-                </div>
+          <div className="flex flex-col lg:flex-row gap-10 items-center mb-14">
+            <div className="flex-1 max-w-[480px]">
+              {/* DAS Trader Pro logo + name */}
+              <div className="flex items-center gap-3 mb-5">
+                <img
+                  src={dasLogo}
+                  alt="DAS Trader Pro"
+                  className="w-10 h-10 object-contain rounded"
+                  style={{ filter: "brightness(1.1) contrast(1.1) saturate(1.1)" }}
+                />
                 <p className="text-white font-bold text-sm uppercase tracking-wide">DAS TRADER PRO</p>
               </div>
-              {/* Sterling Trader Pro */}
+              {/* Sterling Trader Pro logo + name */}
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-[#2a2a2a] border border-white/10 flex items-center justify-center text-xs font-bold text-primary">
-                  STP
-                </div>
+                <img
+                  src={sterlingLogo}
+                  alt="Sterling Trader Pro"
+                  className="w-10 h-10 object-contain rounded"
+                  style={{ filter: "brightness(1.05) contrast(1.1) saturate(1.1)" }}
+                />
                 <p className="text-white font-bold text-sm uppercase tracking-wide">STERLING TRADER® PRO</p>
               </div>
 
-              <p className="text-[#aaa] text-[14px] leading-relaxed mb-6 max-w-[480px]">
+              <p className="text-[#aaa] text-[14px] leading-relaxed mb-6">
                 Enjoy real-time trading with advanced order types, multi-account management, and analytical
                 tools designed for the active trader. Try a paper trading account free for 14 Days with a
                 simulated portfolio and test the power of these features for yourself!
@@ -320,11 +332,13 @@ export default function Home() {
                 View Platforms
               </Link>
             </div>
-            <div className="flex-shrink-0 w-full lg:w-[460px]">
+            {/* Monitor platform image */}
+            <div className="flex-shrink-0 w-full lg:w-[500px]">
               <img
-                src={`${import.meta.env.BASE_URL}images/platform-preview.png`}
+                src={monitorPlatform}
                 alt="Trading Platform"
-                className="w-full h-auto rounded opacity-90"
+                className="w-full h-auto object-contain drop-shadow-xl"
+                style={{ filter: "brightness(1.05) contrast(1.05) saturate(1.05)" }}
               />
             </div>
           </div>
@@ -332,12 +346,15 @@ export default function Home() {
           {/* Infrastructure subsection */}
           <div className="border-t border-white/8 pt-12">
             <h3 className="text-xl text-primary font-bold mb-2">Our Infrastructure</h3>
-            <p className="section-label mb-6">SPEED. EFFICIENCY. ACCESS.</p>
+            <p className="section-label mb-8">SPEED. EFFICIENCY. ACCESS.</p>
             <div className="flex flex-col lg:flex-row gap-8 items-start">
               <div className="flex-shrink-0">
-                <div className="w-20 h-10 bg-[#2a2a2a] border border-white/10 flex items-center justify-center">
-                  <span className="text-primary text-xs font-bold">INFRA</span>
-                </div>
+                <img
+                  src={infraIcon}
+                  alt="Infrastructure — candlestick chart icon"
+                  className="w-[120px] h-auto object-contain"
+                  style={{ filter: "brightness(1.05) contrast(1.05) saturate(1.1)" }}
+                />
               </div>
               <div className="flex-1">
                 <p className="text-[#aaa] text-[14px] leading-relaxed mb-5 max-w-[600px]">
@@ -370,14 +387,12 @@ export default function Home() {
             <Link
               href="/#pricing"
               className="inline-block border border-white text-white text-sm px-7 py-3 hover:bg-white hover:text-black transition-colors font-medium"
-              data-testid="link-pricing-details"
             >
               Pricing Details
             </Link>
             <Link
               href="/signup"
               className="inline-block bg-[#4a7fbd] hover:bg-[#3d6fad] text-white text-sm px-7 py-3 transition-colors font-medium"
-              data-testid="link-open-account"
             >
               Open an Account
             </Link>
@@ -391,10 +406,13 @@ export default function Home() {
           <img
             src={`${import.meta.env.BASE_URL}images/guardian-logo.png`}
             alt="Guardian Trading"
-            className="h-10 w-auto object-contain opacity-70"
+            className="h-10 w-auto object-contain opacity-60"
           />
         </div>
       </section>
+
+      {/* ── CHAT WIDGET ── */}
+      <ChatWidget />
     </Layout>
   );
 }
