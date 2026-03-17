@@ -74,11 +74,11 @@ export default function Home() {
         />
 
         <div className="max-w-[1200px] mx-auto px-4 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center gap-10">
+          <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
             {/* Left column */}
             <div className="flex-1 max-w-[520px]">
-              <p className="section-label mb-5">TAKE ON THE MARKETS WITH GUARDIAN</p>
-              <h1 className="text-4xl lg:text-5xl font-display font-bold leading-tight text-white mb-8">
+              <p className="text-[11px] font-bold tracking-widest uppercase text-white/70 mb-4">TAKE ON THE MARKETS WITH GUARDIAN</p>
+              <h1 className="text-[2.6rem] lg:text-5xl font-display font-bold leading-tight text-white mb-8">
                 Optimized services, tools and support designed specifically for active traders.
               </h1>
               <a
@@ -89,8 +89,8 @@ export default function Home() {
               </a>
             </div>
 
-            {/* Right column — laptop + phone platform screenshot */}
-            <div className="flex-1 w-full max-w-[580px] relative">
+            {/* Right column — laptop + phone platform screenshot (full-bleed on mobile) */}
+            <div className="flex-1 w-full max-w-[580px] relative -mx-4 lg:mx-0">
               <img
                 src={heroPlatform}
                 alt="Guardian Trading Platform — DAS Trader Pro on laptop and mobile"
@@ -217,17 +217,17 @@ export default function Home() {
       </section>
 
       {/* ── MASTER YOUR ORDER FLOW ── */}
-      <section className="bg-[#111] py-20 px-4">
+      <section className="bg-[#0d0d0d] py-16 lg:py-20 px-4">
         <div className="max-w-[1200px] mx-auto">
-          <div className="flex flex-col lg:flex-row gap-12 items-center">
+          <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-center">
             <div className="flex-1 max-w-[480px]">
               <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-3">
                 Master Your Order Flow
               </h2>
-              <p className="text-white font-bold text-[13px] tracking-widest uppercase mb-6">
+              <p className="text-white font-bold text-[14px] tracking-[0.12em] uppercase mb-7">
                 SPEED AND TIMING ARE EVERYTHING IN TRADE.
               </p>
-              <ul className="space-y-4">
+              <ul className="space-y-[18px]">
                 {[
                   "Execute orders quickly",
                   "In-house stock borrow desk for locates and overnight borrows",
@@ -236,9 +236,9 @@ export default function Home() {
                   "Access to Liquidity",
                   "Connect your trading via an API",
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-[#ccc] text-[14px]">
+                  <li key={item} className="flex items-start gap-3 text-[#ccc] text-[14px] leading-snug">
                     <Play
-                      className="w-3 h-3 text-primary flex-shrink-0 mt-[3px]"
+                      className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-[2px]"
                       style={{ fill: "currentColor", strokeWidth: 0 }}
                     />
                     {item}
@@ -246,8 +246,8 @@ export default function Home() {
                 ))}
               </ul>
             </div>
-            {/* Monitor platform image */}
-            <div className="flex-shrink-0 w-full lg:w-[500px]">
+            {/* Monitor platform image — full-bleed on mobile */}
+            <div className="flex-shrink-0 w-full -mx-4 lg:mx-0 lg:w-[500px]">
               <img
                 src={monitorPlatform}
                 alt="DAS Trader Pro on desktop monitor"
@@ -260,36 +260,27 @@ export default function Home() {
       </section>
 
       {/* ── LOCATES & STOCK BORROWS ── */}
-      <section className="bg-[#111] py-20 px-4 border-t border-white/5">
+      <section className="bg-[#111] py-16 lg:py-20 px-4">
         <div className="max-w-[1200px] mx-auto">
-          <div className="flex flex-col lg:flex-row gap-12 items-center">
-            {/* Stock borrows screenshot — left */}
-            <div className="flex-shrink-0 w-full lg:w-[460px] order-2 lg:order-1">
-              <img
-                src={stockBorrows}
-                alt="Locates and Stock Borrows — Guardian Trading"
-                className="w-full h-auto object-contain rounded"
-                style={{ filter: "brightness(1.05) contrast(1.05) saturate(1.05)" }}
-              />
-            </div>
-            {/* Text — right */}
+          <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-center">
+            {/* Text — top on mobile, right on desktop */}
             <div className="flex-1 order-1 lg:order-2">
               <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-4">
                 Locates &amp; Stock Borrows
               </h2>
-              <p className="text-[#aaa] text-[15px] leading-relaxed mb-6">
+              <p className="text-[#aaa] text-[15px] leading-relaxed mb-7">
                 With a speedy and efficient locate product, traders can obtain locates, if required,
                 for short sales seamlessly.
               </p>
-              <ul className="space-y-4 mb-8">
+              <ul className="space-y-[18px] mb-8">
                 {[
                   "Easily place compliant short trades",
                   "Reduce costs with a robust easy-to-borrow securities list",
                   "Leverage our in-house borrows & locates team",
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-[#ccc] text-[14px]">
+                  <li key={item} className="flex items-start gap-3 text-[#ccc] text-[14px] leading-snug">
                     <Play
-                      className="w-3 h-3 text-primary flex-shrink-0 mt-[3px]"
+                      className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-[2px]"
                       style={{ fill: "currentColor", strokeWidth: 0 }}
                     />
                     {item}
@@ -302,6 +293,15 @@ export default function Home() {
               >
                 Stock Locates and Borrows
               </a>
+            </div>
+            {/* Stock borrows screenshot — bottom on mobile, left on desktop */}
+            <div className="flex-shrink-0 w-full -mx-4 lg:mx-0 lg:w-[460px] order-2 lg:order-1">
+              <img
+                src={stockBorrows}
+                alt="Locates and Stock Borrows — Guardian Trading"
+                className="w-full h-auto object-contain rounded"
+                style={{ filter: "brightness(1.05) contrast(1.05) saturate(1.05)" }}
+              />
             </div>
           </div>
         </div>
