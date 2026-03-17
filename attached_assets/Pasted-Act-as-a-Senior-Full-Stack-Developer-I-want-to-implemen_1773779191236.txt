@@ -1,0 +1,134 @@
+Act as a Senior Full-Stack Developer.
+
+I want to implement an **Ad Click & Conversion Tracking System** for my website similar to how Twitter/X uses `adsct` tracking links.
+
+Build a lightweight system that records when users click ads and when they complete important actions (signups, purchases, etc.).
+
+Requirements:
+
+1. CLICK TRACKING ENDPOINT
+   Create a backend endpoint:
+
+/adsct
+
+This endpoint should:
+
+* Accept tracking parameters from the URL
+* Log the event to a database
+* Capture:
+
+  * event_id
+  * campaign_id
+  * ad_id
+  * referrer
+  * user_agent
+  * IP address
+  * timestamp
+  * destination_url
+
+After logging the event, **redirect the user to the destination URL**.
+
+Example tracking URL format:
+
+https://mywebsite.com/adsct?campaign_id=summer_sale&ad_id=twitter_ad_01&destination=https://mywebsite.com/signup
+
+2. DATABASE STRUCTURE
+
+Create a table:
+
+ad_events
+
+Columns:
+
+* id (UUID)
+* campaign_id
+* ad_id
+* event_type (click or conversion)
+* user_agent
+* ip_address
+* referrer
+* destination_url
+* timestamp
+
+3. CLIENT TRACKING SCRIPT
+
+Create a JavaScript tracking script that can be embedded on any page.
+
+Example usage:
+
+<script src="/tracking.js"></script>
+
+The script should:
+
+* send conversion events to `/track`
+* include:
+
+  * page_url
+  * event_type
+  * campaign_id
+  * ad_id
+
+Example conversion trigger:
+
+trackEvent({
+event_type: "conversion",
+campaign_id: "summer_sale",
+ad_id: "twitter_ad_01"
+})
+
+4. CONVERSION ENDPOINT
+
+Create endpoint:
+
+/track
+
+This should:
+
+* receive conversion events
+* store them in the database
+* associate them with the original click if possible (using cookies or session IDs)
+
+5. COOKIE / SESSION MATCHING
+
+When a user clicks an ad:
+
+* store campaign_id and ad_id in a cookie
+* expire after 30 days
+
+When conversion happens:
+
+* attach the stored campaign_id and ad_id to the event.
+
+6. SECURITY
+
+Ensure:
+
+* URL validation before redirect
+* prevent open redirect attacks
+* rate limit the endpoint
+* sanitize all inputs.
+
+7. OPTIONAL DASHBOARD
+
+Create a simple analytics endpoint that returns:
+
+* total clicks per campaign
+* total conversions
+* conversion rate
+
+8. TECH STACK
+
+Prefer:
+
+* Node.js + Express OR Next.js API routes
+* PostgreSQL
+* lightweight frontend JS
+
+Provide:
+
+* complete backend code
+* database schema
+* frontend tracking script
+* example usage.
+
+The final system should behave like a simplified **ad attribution and conversion tracking platform** similar to Twitter Ads or Facebook Pixel.
