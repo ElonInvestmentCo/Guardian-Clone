@@ -1,0 +1,17 @@
+packages:
+  "framer-motion": "For smooth page transitions, scroll reveals, and the full-screen mobile menu animations."
+  "react-helmet-async": "For managing SEO meta tags across different pages."
+
+images:
+  - path: "artifacts/guardian-trading/public/images/hero-dashboard.png"
+    description: "A dark-themed professional trading platform dashboard mockup with financial charts, candlesticks in green and red, and order books. Modern, sleek, deep navy background with glowing purple and blue accents."
+    aspect_ratio: "16:9"
+  - path: "artifacts/guardian-trading/public/images/platform-preview.png"
+    description: "Direct Market Access (DMA) trading software interface showing complex level 2 data, level 1 quotes, and execution panels. Dark mode with vibrant neon accents."
+    aspect_ratio: "16:9"
+  - path: "artifacts/guardian-trading/public/images/abstract-bg.png"
+    description: "Abstract deep navy and purple glowing gradient mesh background, suitable for a dark modern finance website."
+    aspect_ratio: "16:9"
+
+notes:
+  - "The UI heavily relies on a dark mode financial trading aesthetic. No real backend API is hooked up, so contact forms and buttons simulate action or navigate."

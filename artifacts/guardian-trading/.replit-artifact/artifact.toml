@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Guardian Trading"
+version = "1.0.0"
+id = "artifacts/guardian-trading"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+localPort = 18330
+name = "web"
+paths = ["/"]
+
+[services.development]
+run = "pnpm --filter @workspace/guardian-trading run dev"
+
+[services.env]
+PORT = "18330"
+BASE_PATH = "/"
+
+[services.production]
+build = ["pnpm", "--filter", "@workspace/guardian-trading", "run", "build"]
+publicDir = "artifacts/guardian-trading/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
