@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function Signup() {
@@ -15,6 +15,7 @@ export default function Signup() {
     password?: string;
     confirmPassword?: string;
   }>({});
+  const [, navigate] = useLocation();
 
   const validate = () => {
     const newErrors: typeof errors = {};
@@ -47,7 +48,10 @@ export default function Signup() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      alert("Account application submitted!");
+      const code = String(Math.floor(100 + Math.random() * 900));
+      sessionStorage.setItem("verificationCode", code);
+      sessionStorage.setItem("verificationEmail", email);
+      navigate("/email-verification");
     }, 1000);
   };
 
@@ -111,10 +115,10 @@ export default function Signup() {
                 />
               </div>
 
-              {/* Create Password */}
+              {/* Password */}
               <div className="mb-4">
                 <label className="block text-sm text-gray-700 mb-1">
-                  Create Password <span className="text-red-500">*</span>
+                  Password <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -125,13 +129,13 @@ export default function Signup() {
                       if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
                     }}
                     className="w-full px-4 py-3 pr-12 bg-gray-100 border-0 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-sm text-sm"
-                    data-testid="input-create-password"
+                    data-testid="input-password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                    data-testid="button-toggle-create-password"
+                    data-testid="button-toggle-password"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>

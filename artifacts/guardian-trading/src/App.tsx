@@ -9,6 +9,8 @@ import Contact from "@/pages/Contact";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import ForgotPassword from "@/pages/ForgotPassword";
+import EmailVerification from "@/pages/EmailVerification";
+import GeneralDetails from "@/pages/GeneralDetails";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -23,6 +25,8 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
       <Route path="/forgot-password" component={ForgotPassword} />
+      <Route path="/email-verification" component={EmailVerification} />
+      <Route path="/general-details" component={GeneralDetails} />
       <Route component={NotFound} />
     </Switch>
   );
