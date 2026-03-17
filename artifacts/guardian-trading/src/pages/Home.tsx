@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Link } from "wouter";
-import { X, Star, ArrowRight, Check } from "lucide-react";
+import { X, Star, ArrowRight, Play } from "lucide-react";
 import ChatWidget from "@/components/ChatWidget";
 
 import heroPlatform from "@assets/IMG_7967_1773721659915.png";
@@ -217,15 +217,17 @@ export default function Home() {
       </section>
 
       {/* ── MASTER YOUR ORDER FLOW ── */}
-      <section className="bg-[#151515] py-20 px-4">
+      <section className="bg-[#111] py-20 px-4">
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="flex-1 max-w-[480px]">
-              <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-2">
+              <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-3">
                 Master Your Order Flow
               </h2>
-              <p className="section-label mb-6 mt-1">SPEED AND TIMING ARE EVERYTHING IN TRADE.</p>
-              <ul className="space-y-3">
+              <p className="text-white font-bold text-[13px] tracking-widest uppercase mb-6">
+                SPEED AND TIMING ARE EVERYTHING IN TRADE.
+              </p>
+              <ul className="space-y-4">
                 {[
                   "Execute orders quickly",
                   "In-house stock borrow desk for locates and overnight borrows",
@@ -235,7 +237,10 @@ export default function Home() {
                   "Connect your trading via an API",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-[#ccc] text-[14px]">
-                    <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                    <Play
+                      className="w-3 h-3 text-primary flex-shrink-0 mt-[3px]"
+                      style={{ fill: "currentColor", strokeWidth: 0 }}
+                    />
                     {item}
                   </li>
                 ))}
@@ -276,14 +281,17 @@ export default function Home() {
                 With a speedy and efficient locate product, traders can obtain locates, if required,
                 for short sales seamlessly.
               </p>
-              <ul className="space-y-3 mb-8">
+              <ul className="space-y-4 mb-8">
                 {[
                   "Easily place compliant short trades",
                   "Reduce costs with a robust easy-to-borrow securities list",
                   "Leverage our in-house borrows & locates team",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-[#ccc] text-[14px]">
-                    <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                    <Play
+                      className="w-3 h-3 text-primary flex-shrink-0 mt-[3px]"
+                      style={{ fill: "currentColor", strokeWidth: 0 }}
+                    />
                     {item}
                   </li>
                 ))}
