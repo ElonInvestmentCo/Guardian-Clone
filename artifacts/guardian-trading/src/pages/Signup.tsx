@@ -153,7 +153,7 @@ export default function Signup() {
                     <img
                       src={showPassword ? eyeClosed : eyeOpen}
                       alt=""
-                      className="w-8 h-8 object-contain"
+                      className="w-[35px] h-[35px] object-contain"
                       style={{ filter: "brightness(0)" }}
                     />
                   </button>
@@ -188,7 +188,7 @@ export default function Signup() {
                     <img
                       src={showConfirmPassword ? eyeClosed : eyeOpen}
                       alt=""
-                      className="w-8 h-8 object-contain"
+                      className="w-[35px] h-[35px] object-contain"
                       style={{ filter: "brightness(0)" }}
                     />
                   </button>
