@@ -95,14 +95,14 @@ export default function Login() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 overflow-hidden opacity-75 hover:opacity-100 transition-opacity"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 overflow-hidden opacity-80 hover:opacity-100 transition-opacity"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     <img
                       src={showPassword ? eyeClosed : eyeOpen}
                       alt=""
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90px] h-[68px] object-cover"
-                      style={{ filter: "contrast(30) brightness(0.15)" }}
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110px] h-[83px] object-cover"
+                      style={{ filter: "contrast(50) brightness(0.1)" }}
                     />
                   </button>
                 </div>

@@ -141,19 +141,19 @@ export default function Signup() {
                       setPassword(e.target.value);
                       if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
                     }}
-                    className="w-full px-4 py-3 pr-12 bg-gray-100 border-0 rounded text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
+                    className="w-full px-4 py-3.5 pr-14 bg-gray-100 border-0 rounded text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 overflow-hidden opacity-75 hover:opacity-100 transition-opacity"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 overflow-hidden opacity-80 hover:opacity-100 transition-opacity"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     <img
                       src={showPassword ? eyeClosed : eyeOpen}
                       alt=""
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90px] h-[68px] object-cover"
-                      style={{ filter: "contrast(30) brightness(0.15)" }}
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110px] h-[83px] object-cover"
+                      style={{ filter: "contrast(50) brightness(0.1)" }}
                     />
                   </button>
                 </div>
@@ -176,19 +176,19 @@ export default function Signup() {
                       if (errors.confirmPassword)
                         setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
                     }}
-                    className="w-full px-4 py-3 pr-12 bg-gray-100 border-0 rounded text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
+                    className="w-full px-4 py-3.5 pr-14 bg-gray-100 border-0 rounded text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 overflow-hidden opacity-75 hover:opacity-100 transition-opacity"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 overflow-hidden opacity-80 hover:opacity-100 transition-opacity"
                     aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                   >
                     <img
                       src={showConfirmPassword ? eyeClosed : eyeOpen}
                       alt=""
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90px] h-[68px] object-cover"
-                      style={{ filter: "contrast(30) brightness(0.15)" }}
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110px] h-[83px] object-cover"
+                      style={{ filter: "contrast(50) brightness(0.1)" }}
                     />
                   </button>
                 </div>
