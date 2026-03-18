@@ -40,11 +40,21 @@ export default function AnalyticsLayout({ children }: { children: React.ReactNod
       .then((d) => {
         const ps = d as Project[];
         setProjects(ps);
-        if (!selectedId && ps.length > 0) {
-          setSelectedId(ps[0]!.id);
-          localStorage.setItem("gt_project_id", ps[0]!.id);
+        const currentParams = new URLSearchParams(window.location.search);
+        const urlProjectId = currentParams.get("project_id");
+        if (urlProjectId) {
+          // URL already has project_id, sync state
+          setSelectedId(urlProjectId);
+          localStorage.setItem("gt_project_id", urlProjectId);
+        } else if (ps.length > 0) {
+          // Auto-select first project and navigate with it
+          const firstId = selectedId || ps[0]!.id;
+          setSelectedId(firstId);
+          localStorage.setItem("gt_project_id", firstId);
+          navigate(`${basePath}?project_id=${firstId}`);
         }
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function selectProject(id: string) {

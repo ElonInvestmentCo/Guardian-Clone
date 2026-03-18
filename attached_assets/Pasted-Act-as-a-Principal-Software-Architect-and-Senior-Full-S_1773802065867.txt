@@ -1,0 +1,231 @@
+Act as a Principal Software Architect and Senior Full-Stack Engineer.
+
+You are working inside an existing analytics SaaS platform that already includes:
+
+• tracking script (/api/tracking.js)
+• event ingestion API (/api/events)
+• PostgreSQL analytics database
+• analytics dashboard (/analytics)
+• heatmaps
+• session replay
+• campaigns tracking
+• AI insights
+
+Your task is to **automatically extend the existing system with advanced analytics capabilities without breaking current functionality**.
+
+Before writing code:
+
+1. Analyze the current project structure.
+2. Identify existing APIs, database tables, and dashboard components.
+3. Extend the system instead of rewriting it.
+
+---
+
+PHASE 1 — REAL-TIME ANALYTICS
+
+Implement real-time analytics using WebSockets.
+
+Create:
+
+/api/realtime
+
+Requirements:
+
+• broadcast visitor events live
+• show live visitor count
+• update dashboard charts in real time
+
+Dashboard widgets must update instantly when:
+
+• a visitor loads a page
+• a click occurs
+• a conversion happens
+
+---
+
+PHASE 2 — GEOLOCATION ANALYTICS
+
+Enhance event ingestion to detect visitor location using IP.
+
+Capture:
+
+country
+region
+city
+
+Add these columns to analytics_events.
+
+Create dashboard views showing:
+
+• visitors by country
+• traffic world map
+• regional conversion rates
+
+---
+
+PHASE 3 — CONVERSION FUNNELS
+
+Create funnel tracking.
+
+Database table:
+
+analytics_funnels
+
+Columns:
+
+id
+project_id
+name
+steps
+
+Example funnel:
+
+Landing Page
+Signup Page
+Checkout Page
+Purchase Complete
+
+Add dashboard page:
+
+/analytics/funnels
+
+Display:
+
+• funnel drop-off rates
+• step conversion percentages
+• visual funnel charts
+
+---
+
+PHASE 4 — EMAIL REPORTING SYSTEM
+
+Create automated analytics reports.
+
+Add cron job:
+
+daily_analytics_reports
+
+Reports should include:
+
+• daily visitors
+• pageviews
+• conversion rate
+• top traffic sources
+• top campaigns
+
+Send reports via email to project owners.
+
+---
+
+PHASE 5 — AD PLATFORM INTEGRATIONS
+
+Create integrations for advertising attribution.
+
+Add connectors for:
+
+Meta Ads
+Google Ads
+TikTok Ads
+
+Capture:
+
+ad_id
+campaign_id
+click_id
+source platform
+
+Automatically match conversions with ad campaigns.
+
+---
+
+PHASE 6 — ADVANCED BOT DETECTION
+
+Improve bot filtering.
+
+Detect bots using:
+
+• known bot user agents
+• headless browsers
+• abnormal request patterns
+• datacenter IP ranges
+
+Flag events:
+
+is_bot = true
+
+Exclude them from analytics.
+
+---
+
+PHASE 7 — AI ANALYTICS ASSISTANT
+
+Extend the AI insights engine.
+
+Create:
+
+/analytics/assistant
+
+Capabilities:
+
+• answer analytics questions
+• explain traffic trends
+• recommend growth actions
+• detect anomalies
+• suggest conversion improvements
+
+Example queries:
+
+"Why did traffic spike yesterday?"
+
+"Which campaign converts best?"
+
+"Which page has the highest bounce rate?"
+
+---
+
+PHASE 8 — PERFORMANCE OPTIMIZATION
+
+Improve tracking performance.
+
+Ensure:
+
+tracking.js size < 10KB
+API response < 100ms
+events processed via queue
+
+Use:
+
+Redis + BullMQ for event processing.
+
+---
+
+PHASE 9 — DATA WAREHOUSE PREPARATION
+
+Prepare system for large scale analytics.
+
+Add data export pipelines for:
+
+Snowflake
+BigQuery
+Databricks
+
+Implement nightly batch exports.
+
+---
+
+PHASE 10 — FINAL TASK
+
+After implementation:
+
+1. Update database migrations.
+2. Update API routes.
+3. Extend dashboard UI.
+4. Verify that existing analytics features still work.
+5. Seed demo data for testing.
+
+Then provide a summary of:
+
+• new endpoints created
+• database changes
+• dashboard pages added
+• performance improvements

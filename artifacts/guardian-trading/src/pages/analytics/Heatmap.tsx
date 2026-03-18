@@ -8,17 +8,36 @@ interface HeatPage { page_url: string; clicks: number; }
 
 const API = "/api";
 
+function heatColor(t: number): [number, number, number, number] {
+  // t in [0,1]: blue → cyan → green → yellow → red
+  if (t < 0.25) {
+    const s = t / 0.25;
+    return [0, Math.round(s * 255), 255, Math.round(t * 600)];
+  } else if (t < 0.5) {
+    const s = (t - 0.25) / 0.25;
+    return [0, 255, Math.round((1 - s) * 255), Math.round(t * 600)];
+  } else if (t < 0.75) {
+    const s = (t - 0.5) / 0.25;
+    return [Math.round(s * 255), 255, 0, Math.round(t * 600)];
+  } else {
+    const s = (t - 0.75) / 0.25;
+    return [255, Math.round((1 - s) * 255), 0, Math.round(t * 600)];
+  }
+}
+
 function drawHeatmap(canvas: HTMLCanvasElement, points: HeatPoint[]) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const radius = 40;
+  const radius = 28;
   const offscreen = document.createElement("canvas");
   offscreen.width = canvas.width;
   offscreen.height = canvas.height;
   const offCtx = offscreen.getContext("2d")!;
+  offCtx.globalCompositeOperation = "source-over";
 
+  // Draw each point as a radial gradient into the offscreen alpha channel
   for (const p of points) {
     const vw = p.viewport_width || 1280;
     const vh = p.viewport_height || 800;
@@ -26,26 +45,28 @@ function drawHeatmap(canvas: HTMLCanvasElement, points: HeatPoint[]) {
     const y = (p.click_y / vh) * canvas.height;
 
     const grad = offCtx.createRadialGradient(x, y, 0, x, y, radius);
-    grad.addColorStop(0, "rgba(255,255,255,0.15)");
+    grad.addColorStop(0, "rgba(255,255,255,0.12)");
+    grad.addColorStop(0.5, "rgba(255,255,255,0.05)");
     grad.addColorStop(1, "rgba(255,255,255,0)");
     offCtx.fillStyle = grad;
-    offCtx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+    offCtx.beginPath();
+    offCtx.arc(x, y, radius, 0, Math.PI * 2);
+    offCtx.fill();
   }
 
+  // Colorize based on accumulated alpha
   const imgData = offCtx.getImageData(0, 0, canvas.width, canvas.height);
   const data = imgData.data;
 
   for (let i = 0; i < data.length; i += 4) {
-    const alpha = data[i]! / 255;
-    if (alpha > 0) {
-      const r = Math.round(255 * Math.min(1, alpha * 2));
-      const g = Math.round(255 * Math.max(0, 1 - alpha * 2));
-      const b = 0;
-      data[i] = r;
-      data[i + 1] = g;
-      data[i + 2] = b;
-      data[i + 3] = Math.round(alpha * 200);
-    }
+    const raw = data[i]!;
+    if (raw === 0) continue;
+    const t = Math.min(1, raw / 180);
+    const [r, g, b, a] = heatColor(t);
+    data[i] = r;
+    data[i + 1] = g;
+    data[i + 2] = b;
+    data[i + 3] = Math.min(220, a);
   }
 
   offCtx.putImageData(imgData, 0, 0);
