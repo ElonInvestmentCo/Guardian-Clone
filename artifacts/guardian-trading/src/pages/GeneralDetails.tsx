@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, Phone, ChevronDown } from "lucide-react";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
+import { useAuth } from "@/context/AuthContext";
 
 const REGISTRATION_TYPES = ["Individual Account", "Limited Liability Company"];
 const PRODUCTS = ["Stocks", "Stocks And Options"];
@@ -32,9 +33,21 @@ function CustomSelect({
   id?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
 
   return (
-    <div className="relative" id={id}>
+    <div className="relative" id={id} ref={ref}>
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -52,7 +65,7 @@ function CustomSelect({
       </button>
 
       {open && (
-        <div className="absolute left-0 right-0 top-full z-20 bg-white border border-gray-300 border-t-0 shadow-md">
+        <div className="absolute left-0 right-0 top-full z-50 bg-white border border-gray-300 border-t-0 shadow-md">
           {options.map((opt) => (
             <button
               key={opt}
@@ -73,12 +86,17 @@ function CustomSelect({
 }
 
 export default function GeneralDetails() {
-  const [registrationType, setRegistrationType] = useState("Individual Account");
+  const [registrationType, setRegistrationType] = useState("");
   const [product, setProduct] = useState("");
   const [howHeard, setHowHeard] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [errors, setErrors] = useState<{ product?: string; howHeard?: string }>({});
+  const [errors, setErrors] = useState<{
+    registrationType?: string;
+    product?: string;
+    howHeard?: string;
+  }>({});
   const [, navigate] = useLocation();
+  const { logout } = useAuth();
 
   const navLinks = [
     { name: "About", href: "/about" },
@@ -89,9 +107,15 @@ export default function GeneralDetails() {
     { name: "Contact Us", href: "/contact" },
   ];
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: typeof errors = {};
+    if (!registrationType) newErrors.registrationType = "Please select a registration type";
     if (!product) newErrors.product = "Please select a product";
     if (!howHeard) newErrors.howHeard = "Please select an option";
     if (Object.keys(newErrors).length > 0) {
@@ -129,6 +153,7 @@ export default function GeneralDetails() {
 
           <div className="flex items-center gap-3">
             <button
+              onClick={handleLogout}
               className="border border-[#4a7fbd] text-white text-sm px-4 py-1.5 hover:bg-[#4a7fbd]/20 transition-colors"
               data-testid="button-logout"
             >
@@ -163,7 +188,7 @@ export default function GeneralDetails() {
       {/* Main content */}
       <main className="flex-1 px-4 py-5">
         <div className="max-w-sm mx-auto">
-          <div className="bg-white border border-gray-200 shadow-sm overflow-hidden">
+          <div className="bg-white border border-gray-200 shadow-sm overflow-visible">
             {/* Blue top stripe */}
             <div className="h-1 bg-[#4a7fbd] w-full" />
 
@@ -178,11 +203,18 @@ export default function GeneralDetails() {
                   </label>
                   <CustomSelect
                     value={registrationType}
-                    onChange={setRegistrationType}
+                    onChange={(v) => {
+                      setRegistrationType(v);
+                      if (errors.registrationType)
+                        setErrors((p) => ({ ...p, registrationType: undefined }));
+                    }}
                     options={REGISTRATION_TYPES}
                     placeholder="Please Select"
                     id="registration-type"
                   />
+                  {errors.registrationType && (
+                    <p className="mt-1 text-xs text-red-500">{errors.registrationType}</p>
+                  )}
                 </div>
 
                 {/* Product */}

@@ -1,16 +1,21 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
+import { useAuth } from "@/context/AuthContext";
 
 export default function EmailVerification() {
   const [inputCode, setInputCode] = useState("");
   const [error, setError] = useState("");
   const [storedCode, setStoredCode] = useState("");
+  const [storedEmail, setStoredEmail] = useState("");
   const [, navigate] = useLocation();
+  const { login } = useAuth();
 
   useEffect(() => {
     const code = sessionStorage.getItem("verificationCode") || "";
+    const email = sessionStorage.getItem("verificationEmail") || "";
     setStoredCode(code);
+    setStoredEmail(email);
   }, []);
 
   const handleBack = () => {
@@ -25,6 +30,8 @@ export default function EmailVerification() {
     }
     if (inputCode.trim() === storedCode) {
       sessionStorage.removeItem("verificationCode");
+      sessionStorage.removeItem("verificationEmail");
+      login(storedEmail);
       navigate("/general-details");
     } else {
       setError("Invalid verification code. Please try again.");
