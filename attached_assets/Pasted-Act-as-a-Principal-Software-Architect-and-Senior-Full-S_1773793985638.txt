@@ -1,0 +1,435 @@
+Act as a Principal Software Architect and Senior Full-Stack Engineer specializing in analytics platforms, ad attribution systems, and high-performance event tracking.
+
+Your task is to design and implement a **production-ready ad tracking and analytics system** for my website.
+
+The system should combine functionality similar to:
+
+• Twitter/X ads click tracking (adsct)
+• Meta Facebook Pixel event tracking
+• Google Analytics style analytics
+• Privacy-safe attribution systems
+
+The tracking system must be **fast, asynchronous, privacy-aware, and scalable**.
+
+---
+
+SYSTEM GOALS
+
+The platform must track:
+
+• Page views
+• Ad clicks
+• Campaign attribution
+• Conversions
+• Custom events
+• Traffic sources
+
+It must support:
+
+• React / Next.js websites
+• server-side tracking
+• analytics dashboards
+• bot filtering
+• attribution modeling
+
+---
+
+PART 1 — AD CLICK TRACKING (X ADSCT STYLE)
+
+Create a backend endpoint:
+
+/adsct
+
+Purpose:
+Track ad clicks then redirect the user.
+
+Example tracking URL:
+
+https://mywebsite.com/adsct?campaign_id=summer_sale&ad_id=twitter_ad_01&destination=https://mywebsite.com/signup
+
+Behavior:
+
+1. Accept query parameters
+2. Log the click event
+3. Store attribution cookies
+4. Redirect user to destination URL
+
+Captured fields:
+
+event_id
+campaign_id
+ad_id
+event_type = "click"
+destination_url
+referrer
+user_agent
+ip_address
+screen_width
+screen_height
+timestamp
+
+Security requirements:
+
+• validate redirect URLs
+• prevent open redirect attacks
+• sanitize inputs
+• rate limit requests
+
+---
+
+PART 2 — PAGEVIEW TRACKING (FACEBOOK PIXEL STYLE)
+
+Create endpoint:
+
+/pixel/trigger
+
+Purpose:
+Record page view events.
+
+Example request:
+
+/pixel/trigger?event=PageView&dl=current_page_url&rl=referrer_url&sw=screen_width&sh=screen_height
+
+Store:
+
+event_type = PageView
+page_url
+referrer
+screen_width
+screen_height
+user_agent
+timestamp
+campaign_id (from cookie)
+ad_id (from cookie)
+
+The endpoint should return:
+
+• empty response OR
+• 1x1 tracking pixel
+
+The request must be **asynchronous and non-blocking**.
+
+---
+
+PART 3 — FACEBOOK PIXEL IMPLEMENTATION
+
+Implement the official Facebook Pixel script.
+
+Pixel ID:
+
+YOUR_PIXEL_ID_HERE
+
+Add this script inside the `<head>` of the website:
+
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;
+n.push=n;
+n.loaded=true;
+n.version='2.0';
+n.queue=[];
+t=b.createElement(e);
+t.async=true;
+t.src=v;
+s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}
+(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+
+fbq('init', 'YOUR_PIXEL_ID_HERE');
+fbq('track', 'PageView');
+</script>
+
+<noscript>
+<img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID_HERE&ev=PageView&noscript=1"/>
+</noscript>
+
+---
+
+PART 4 — REACT / NEXT.JS ROUTE TRACKING
+
+Trigger PageView events on route changes.
+
+Example implementation:
+
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+
+export default function useFacebookPixel() {
+
+const router = useRouter();
+
+useEffect(() => {
+
+const handleRouteChange = () => {
+if (window.fbq) {
+window.fbq('track','PageView');
+}
+};
+
+router.events.on("routeChangeComplete", handleRouteChange);
+
+return () => {
+router.events.off("routeChangeComplete", handleRouteChange);
+};
+
+}, []);
+
+}
+
+---
+
+PART 5 — CLIENT TRACKING SCRIPT
+
+Create lightweight script:
+
+/tracking.js
+
+Usage:
+
+<script async src="/tracking.js"></script>
+
+Capabilities:
+
+Automatically track:
+
+PageView events
+
+Expose function:
+
+trackEvent()
+
+Example:
+
+trackEvent({
+event_type: "conversion",
+event_name: "signup_complete"
+})
+
+The script must automatically collect:
+
+page_url
+referrer
+screen size
+timezone
+language
+browser user agent
+timestamp
+
+Send events using:
+
+navigator.sendBeacon()
+
+OR
+
+fetch() with keepalive.
+
+---
+
+PART 6 — CONVERSION TRACKING
+
+Create endpoint:
+
+/track
+
+Used for:
+
+• purchases
+• account creation
+• signups
+• subscriptions
+
+Example:
+
+trackEvent({
+event_type: "conversion",
+event_name: "signup_complete"
+})
+
+Store:
+
+event_id
+event_type
+event_name
+campaign_id
+ad_id
+page_url
+timestamp
+
+---
+
+PART 7 — ATTRIBUTION COOKIES
+
+When a user clicks an ad via /adsct:
+
+Store cookies:
+
+campaign_id
+ad_id
+click_id
+timestamp
+
+Expiration:
+
+30 days
+
+Attach this data to:
+
+PageView events
+Conversion events.
+
+---
+
+PART 8 — DATABASE DESIGN
+
+Use PostgreSQL.
+
+Create table:
+
+tracking_events
+
+Columns:
+
+id UUID
+event_type
+event_name
+campaign_id
+ad_id
+click_id
+visitor_id
+session_id
+page_url
+destination_url
+referrer
+user_agent
+ip_address
+screen_width
+screen_height
+timestamp
+is_bot
+
+Indexes:
+
+campaign_id
+timestamp
+visitor_id
+event_type
+
+---
+
+PART 9 — VISITOR IDENTIFICATION
+
+Generate anonymous visitor ID using:
+
+user_agent
+screen size
+timezone
+language
+
+Hash these values to create:
+
+visitor_id
+
+---
+
+PART 10 — BOT DETECTION
+
+Detect bots using:
+
+• known bot user agents
+• abnormal request rates
+• suspicious IP patterns
+
+Flag:
+
+is_bot = true
+
+Exclude bot traffic from analytics.
+
+---
+
+PART 11 — EVENT QUEUE
+
+Implement event processing queue using:
+
+Redis + BullMQ
+
+Workflow:
+
+tracking.js → ingestion API → queue → database
+
+Benefits:
+
+• high throughput
+• reliability
+• async processing
+
+---
+
+PART 12 — ANALYTICS API
+
+Create endpoints:
+
+/analytics/overview
+/analytics/campaigns
+/analytics/events
+
+Return:
+
+total visitors
+pageviews
+conversions
+conversion rate
+campaign performance
+
+---
+
+PART 13 — DASHBOARD
+
+Create React dashboard displaying:
+
+Real-time visitors
+Top pages
+Campaign performance
+Conversion funnel
+Traffic sources
+
+Use:
+
+Chart.js or Recharts.
+
+---
+
+PART 14 — PERFORMANCE TARGETS
+
+Tracking script size:
+
+< 10 KB
+
+API response time:
+
+< 100 ms
+
+Tracking must:
+
+• load asynchronously
+• never block page rendering
+
+---
+
+PART 15 — OUTPUT REQUIREMENTS
+
+Provide:
+
+• full backend implementation
+• database schema
+• tracking.js script
+• Facebook Pixel integration
+• Next.js route tracking example
+• analytics endpoints
+• dashboard example
+
+The final system should function like a **modern analytics and ad attribution platform**.
