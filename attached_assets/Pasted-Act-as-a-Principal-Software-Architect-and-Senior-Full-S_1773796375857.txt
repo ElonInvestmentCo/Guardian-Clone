@@ -1,0 +1,347 @@
+Act as a Principal Software Architect and Senior Full-Stack Engineer specializing in analytics platforms, ad attribution infrastructure, and high-performance event tracking systems.
+
+Your task is to design and implement a **complete SaaS analytics and advertising attribution platform** similar to Google Analytics, Mixpanel, Amplitude, and Hotjar.
+
+The system must allow **any website to install a small script and send analytics data to the platform**, where it will be processed and visualized in dashboards.
+
+The platform must support:
+
+• multi-tenant SaaS architecture
+• event tracking
+• campaign attribution
+• session tracking
+• real-time analytics
+• heatmaps
+• session replay
+• AI-powered insights
+• marketing attribution
+• privacy-safe visitor identification
+
+The system must be **fast, scalable, and optimized for millions of events**.
+
+---
+
+SYSTEM ARCHITECTURE
+
+Design the system with these components:
+
+1. CLIENT TRACKING SCRIPT
+2. EVENT INGESTION API
+3. EVENT QUEUE PIPELINE
+4. ANALYTICS DATABASE
+5. SESSION RECORDING ENGINE
+6. HEATMAP GENERATION ENGINE
+7. AI INSIGHTS ENGINE
+8. ANALYTICS DASHBOARD
+9. PROJECT MANAGEMENT SYSTEM
+
+---
+
+PART 1 — MULTI-TENANT PROJECT SYSTEM
+
+Create a multi-tenant architecture where each user can create multiple projects (websites).
+
+Database tables:
+
+users
+projects
+api_keys
+events
+visitors
+sessions
+
+projects table:
+
+id (UUID)
+name
+domain
+owner_id
+created_at
+
+api_keys table:
+
+id
+project_id
+public_key
+secret_key
+
+Each project should receive a **public API key** used by the tracking script.
+
+---
+
+PART 2 — EMBEDDABLE TRACKING SCRIPT
+
+Create a lightweight JavaScript file:
+
+https://yourdomain.com/tracking.js
+
+Usage:
+
+<script async src="https://yourdomain.com/tracking.js" data-key="PUBLIC_API_KEY"></script>
+
+Tracking.js must:
+
+• load asynchronously
+• be under 10KB
+• never block page rendering
+
+Automatically track:
+
+PageView
+Clicks
+Scroll depth
+Form submissions
+Custom events
+
+Expose global API:
+
+analytics.track()
+
+Example:
+
+analytics.track("signup_completed")
+
+Automatically collect:
+
+page_url
+referrer
+screen size
+browser user agent
+timezone
+language
+timestamp
+
+Send events to:
+
+POST /api/events
+
+---
+
+PART 3 — EVENT INGESTION API
+
+Create endpoint:
+
+POST /api/events
+
+Payload example:
+
+{
+api_key: "PUBLIC_API_KEY",
+event_type: "PageView",
+event_name: "page_load",
+page_url: "/pricing",
+referrer: "google.com",
+timestamp: 1712345678
+}
+
+Server must:
+
+• validate API key
+• identify project
+• generate event_id
+• send event to queue
+
+---
+
+PART 4 — EVENT PROCESSING PIPELINE
+
+Use Redis with BullMQ.
+
+Pipeline:
+
+tracking.js → ingestion API → queue → worker → database
+
+Workers process events asynchronously.
+
+---
+
+PART 5 — VISITOR IDENTIFICATION
+
+Create privacy-safe visitor ID using hashed fingerprint:
+
+user_agent
+screen resolution
+timezone
+language
+
+Generate:
+
+visitor_id
+
+Store in cookie.
+
+---
+
+PART 6 — SESSION TRACKING
+
+Track sessions.
+
+sessions table:
+
+session_id
+visitor_id
+project_id
+start_time
+last_activity
+
+Session expires after:
+
+30 minutes inactivity.
+
+---
+
+PART 7 — HEATMAP ENGINE
+
+Capture click coordinates.
+
+Track:
+
+click_x
+click_y
+page_url
+
+Aggregate into:
+
+heatmap layers.
+
+Render heatmap visualization in dashboard.
+
+---
+
+PART 8 — SESSION REPLAY
+
+Record user interaction events:
+
+mouse movement
+scroll events
+clicks
+navigation
+
+Store compressed session logs.
+
+Allow dashboard to **replay sessions like a video**.
+
+---
+
+PART 9 — CAMPAIGN ATTRIBUTION
+
+Support marketing attribution parameters:
+
+utm_source
+utm_medium
+utm_campaign
+utm_content
+utm_term
+
+Track campaign performance.
+
+Calculate:
+
+clicks
+visits
+conversions
+conversion rate.
+
+---
+
+PART 10 — BOT DETECTION
+
+Detect bots using:
+
+known bot user agents
+abnormal request frequency
+suspicious IP patterns
+
+Flag:
+
+is_bot = true
+
+Exclude from analytics.
+
+---
+
+PART 11 — AI INSIGHTS ENGINE
+
+Create AI module that analyzes analytics data and generates insights.
+
+Examples:
+
+• traffic spikes detection
+• unusual bounce rates
+• top performing campaigns
+• conversion optimization suggestions
+
+Generate automated reports.
+
+---
+
+PART 12 — ANALYTICS DASHBOARD
+
+Build dashboard using React.
+
+Dashboard features:
+
+Real-time visitors
+Traffic overview
+Top pages
+Campaign analytics
+Conversion funnels
+Heatmaps
+Session replay
+
+Charts:
+
+Visitors over time
+Traffic sources
+Device types
+Geographic traffic.
+
+Use:
+
+Chart.js or Recharts.
+
+---
+
+PART 13 — PERFORMANCE REQUIREMENTS
+
+Tracking script size:
+
+< 10 KB
+
+API response time:
+
+< 100 ms
+
+System must handle:
+
+millions of events per day.
+
+---
+
+PART 14 — SECURITY
+
+Implement:
+
+CORS protection
+API key validation
+rate limiting
+domain verification
+input sanitization
+
+---
+
+PART 15 — OUTPUT REQUIREMENTS
+
+Provide:
+
+• full backend implementation
+• database schema
+• tracking.js script
+• event ingestion API
+• queue workers
+• heatmap system
+• session replay system
+• analytics dashboard
+• API documentation
+
+The final product should function as a **complete SaaS analytics and marketing intelligence platform** capable of powering analytics for many websites.

@@ -48,6 +48,46 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 - `pnpm run build` — runs `typecheck` first, then recursively runs `build` in all packages that define it
 - `pnpm run typecheck` — runs `tsc --build --emitDeclarationOnly` using project references
 
+## Analytics Platform
+
+A full SaaS analytics platform is built into this project, accessible at `/analytics`.
+
+### Features
+- **Multi-tenant projects** — create projects per website, each gets a unique public API key
+- **Embeddable tracking script** — `GET /api/tracking.js` (< 10KB, async, non-blocking)
+- **Event ingestion** — `POST /api/events` with bot detection, visitor fingerprinting, session tracking
+- **Analytics dashboard** — at `/analytics` with real-time visitors, KPI cards, time-series charts
+- **Campaign attribution** — UTM parameter tracking with conversion rates
+- **Click heatmaps** — canvas-rendered heatmap overlay per page URL
+- **Session replay** — event timeline for individual user sessions
+- **AI insights** — automated analysis with actionable recommendations
+
+### Embed Code
+```html
+<script async src="https://your-domain/api/tracking.js" data-key="YOUR_PUBLIC_KEY"></script>
+```
+
+### Custom Events
+```js
+analytics.track("signup_completed");
+analytics.identify("user_123");
+analytics.page();
+```
+
+### Database Tables
+- `analytics_projects` — tracked websites
+- `analytics_api_keys` — public keys per project
+- `analytics_visitors` — fingerprinted visitors (privacy-safe)
+- `analytics_sessions` — session data with UTM attribution
+- `analytics_events` — all tracked events with device/browser/OS
+- `analytics_heatmap_events` — click coordinates per page
+- `analytics_session_recordings` — session replay event logs
+
+### Admin
+Default owner email for demo: `demo@guardiantrading.com`
+
+---
+
 ## Packages
 
 ### `artifacts/api-server` (`@workspace/api-server`)

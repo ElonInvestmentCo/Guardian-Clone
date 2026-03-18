@@ -15,6 +15,12 @@ import PersonalDetails from "@/pages/PersonalDetails";
 import ProfessionalDetails from "@/pages/ProfessionalDetails";
 import IdInformation from "@/pages/IdInformation";
 import NotFound from "@/pages/not-found";
+import Dashboard from "@/pages/analytics/Dashboard";
+import Projects from "@/pages/analytics/Projects";
+import Campaigns from "@/pages/analytics/Campaigns";
+import Heatmap from "@/pages/analytics/Heatmap";
+import Sessions from "@/pages/analytics/Sessions";
+import Insights from "@/pages/analytics/Insights";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +39,12 @@ function Router() {
       <Route path="/personal-details" component={PersonalDetails} />
       <Route path="/professional-details" component={ProfessionalDetails} />
       <Route path="/id-information" component={IdInformation} />
+      <Route path="/analytics" component={Dashboard} />
+      <Route path="/analytics/projects" component={Projects} />
+      <Route path="/analytics/campaigns" component={Campaigns} />
+      <Route path="/analytics/heatmaps" component={Heatmap} />
+      <Route path="/analytics/sessions" component={Sessions} />
+      <Route path="/analytics/insights" component={Insights} />
       <Route component={NotFound} />
     </Switch>
   );
