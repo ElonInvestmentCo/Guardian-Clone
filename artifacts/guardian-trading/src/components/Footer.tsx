@@ -118,7 +118,9 @@ export function Footer() {
         </p>
         <p className="text-[11px] text-white leading-relaxed mb-3 uppercase">
           ©{new Date().getFullYear()} VELOCITY CLEARING, LLC IS REGISTERED WITH THE SEC AND A MEMBER OF{" "}
-          <span className="text-[#4a7fbd]">FINRA AND SIPC</span>
+          <span className="text-[#4a7fbd]">FINRA</span>
+          <span className="text-white"> AND </span>
+          <span className="text-[#4a7fbd]">SIPC</span>
           . MARKET VOLATILITY AND VOLUME MAY DELAY SYSTEMS ACCESS AND TRADE EXECUTION. CHECK THE BACKGROUND OF VELOCITY CLEARING ON{" "}
           <a href="https://brokercheck.finra.org" target="_blank" rel="noopener noreferrer" className="underline text-[#4a7fbd]">FINRA'S BROKER CHECK</a>
           {" "}AND SEE THE VELOCITY CLEARING, LLC{" "}
