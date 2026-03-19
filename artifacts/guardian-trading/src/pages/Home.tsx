@@ -324,10 +324,10 @@ export default function Home() {
           </h2>
 
           {/* Card 1 — Our OMS Platforms */}
-          <div className="bg-[#141414] border border-white/8 mb-4">
+          <div className="bg-[#141414] mb-4">
             <div className="flex flex-col lg:flex-row">
               {/* Left pane */}
-              <div className="flex-1 p-8 lg:p-10 border-b lg:border-b-0 lg:border-r border-white/8">
+              <div className="flex-1 p-8 lg:p-10">
                 <h3 className="text-white text-xl font-bold mb-8">Our OMS Platforms</h3>
                 <div className="flex flex-col gap-5">
                   <div className="flex flex-col items-start gap-2">
@@ -371,10 +371,10 @@ export default function Home() {
           </div>
 
           {/* Card 2 — Our Infrastructure */}
-          <div className="bg-[#141414] border border-white/8">
+          <div className="bg-[#141414]">
             <div className="flex flex-col lg:flex-row">
               {/* Left pane */}
-              <div className="flex-1 p-8 lg:p-10 border-b lg:border-b-0 lg:border-r border-white/8">
+              <div className="flex-1 p-8 lg:p-10">
                 <h3 className="text-white text-xl font-bold mb-3">Our Infrastructure</h3>
                 <p className="text-[11px] font-bold tracking-[0.15em] text-white/60 uppercase mb-6">
                   SPEED. EFFICIENCY. ACCESS.
@@ -432,17 +432,6 @@ export default function Home() {
               Open An Account
             </Link>
           </div>
-        </div>
-      </section>
-
-      {/* ── FOOTER LOGO BAND ── */}
-      <section className="bg-[#0e0e0e] py-8 px-4 border-t border-white/5">
-        <div className="max-w-[1200px] mx-auto flex justify-center">
-          <img
-            src={`${import.meta.env.BASE_URL}images/guardian-logo.png`}
-            alt="Guardian Trading"
-            className="h-10 w-auto object-contain opacity-60"
-          />
         </div>
       </section>
 
