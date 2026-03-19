@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { X, ArrowLeft, MoreHorizontal, Minus } from "lucide-react";
-import chatIcon from "@assets/DAFF4A91-FB9A-40ED-9CF7-E072FEA1BB59_1773727452638.png";
+import { ArrowLeft, MoreHorizontal, Minus, X } from "lucide-react";
+import chatIcon from "@assets/DAFF4A91-FB9A-40ED-9CF7A-E072FEA1BB59_1773727452638.png";
+import chatVideo from "@assets/7wZ4vcXS9HmFwr7xEB_1773947227987.mp4";
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
@@ -41,13 +42,13 @@ export default function ChatWidget() {
         <div className="flex justify-center py-5 px-4">
           <div className="flex items-center gap-3 bg-[#2a2a2a] rounded-full px-5 py-3 shadow-lg">
             <div className="relative flex-shrink-0">
-              <div className="w-11 h-11 rounded-full bg-[#4a7fbd] flex items-center justify-center text-white font-bold text-lg">
-                R
+              <div className="w-11 h-11 rounded-full bg-[#c0622a] flex items-center justify-center text-white font-bold text-lg">
+                M
               </div>
               <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-400 border-2 border-[#2a2a2a]" />
             </div>
             <div>
-              <p className="text-white font-semibold text-sm leading-tight">Robert Cleary</p>
+              <p className="text-white font-semibold text-sm leading-tight">Michel Watteyne</p>
               <p className="text-gray-400 text-xs">Product Expert</p>
             </div>
           </div>
@@ -55,20 +56,23 @@ export default function ChatWidget() {
 
         {/* Chat body */}
         <div className="px-4 pb-4 flex flex-col gap-3">
-          {/* Message bubble */}
           <div className="flex items-start gap-2">
             {/* Avatar */}
-            <div className="w-8 h-8 rounded-full bg-[#4a7fbd] flex items-center justify-center text-white font-bold text-sm flex-shrink-0 mt-1">
-              R
+            <div className="w-8 h-8 rounded-full bg-[#c0622a] flex items-center justify-center text-white font-bold text-sm flex-shrink-0 mt-1">
+              M
             </div>
             {/* Bubble */}
             <div className="flex-1 rounded-2xl rounded-tl-sm overflow-hidden" style={{ background: "#2a2a2a" }}>
-              {/* Trading screenshot */}
-              <img
-                src="/images/chat-preview.jpeg"
-                alt="Trading platform"
-                className="w-full h-[170px] object-cover object-center"
-              />
+              {/* Video player */}
+              <video
+                className="w-full h-[170px] object-cover"
+                autoPlay
+                loop
+                muted
+                playsInline
+              >
+                <source src={chatVideo} type="video/mp4" />
+              </video>
               <div className="px-4 py-3">
                 <p className="text-white text-sm leading-relaxed">
                   Have a question? Contact customer support, sales &amp; new accounts.
@@ -107,12 +111,11 @@ export default function ChatWidget() {
             <X className="w-6 h-6 text-white" />
           </div>
         ) : (
-          <img
-            src={chatIcon}
-            alt="Chat"
-            className="w-full h-full object-cover rounded-full"
-            style={{ imageRendering: "crisp-edges" }}
-          />
+          <div className="w-full h-full rounded-full bg-[#5aabdb] flex items-center justify-center">
+            <svg viewBox="0 0 24 24" className="w-7 h-7 text-white" fill="currentColor">
+              <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+            </svg>
+          </div>
         )}
       </button>
     </>

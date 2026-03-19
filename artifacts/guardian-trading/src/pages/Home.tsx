@@ -15,6 +15,8 @@ import benzingaBadge from "@assets/reviewed-by-benzinga-2024-200x166-1-320x266_1
 import benzingaBanner from "@assets/img-benzinga-short-selling-review-1-846x218-1_1773945573204.jpg";
 import infraIcon from "@assets/ico-our-infrastructure-132x72_1773945573204.png";
 import patternBg from "@assets/pattern_1773945573206.png";
+import zigzagBg from "@assets/image_1773946606711.png";
+import dotsBg from "@assets/image_1773946618513.png";
 import proToolsImg from "@assets/Professional-Tools-at-Guardian-Trading-20-e1763056229555-1024x_1773945573206.png";
 import videoPoster from "@assets/videoframe_7461_1773945573207.png";
 import loadingGif from "@assets/Loading_1773945573206.gif";
@@ -116,12 +118,19 @@ export default function Home() {
               </a>
             </div>
 
-            {/* Right column — platform screenshot */}
+            {/* Right column — platform screenshot with dots chart background */}
             <div className="flex-1 w-full max-w-[580px] relative -mx-4 lg:mx-0">
+              {/* Dots / bar-chart decorative background */}
+              <img
+                src={dotsBg}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none select-none opacity-30"
+              />
               <img
                 src={heroPlatform}
                 alt="Guardian Trading Platform — DAS Trader Pro on desktop monitor"
-                className="w-full h-auto object-contain drop-shadow-2xl"
+                className="relative z-10 w-full h-auto object-contain drop-shadow-2xl"
                 style={{ filter: "brightness(1.05) contrast(1.05)" }}
               />
             </div>
@@ -352,8 +361,15 @@ export default function Home() {
       </section>
 
       {/* ── TRADING TECHNOLOGY — OMS PLATFORMS ── */}
-      <section className="bg-[#151515] py-20 px-4 border-t border-white/5">
-        <div className="max-w-[1200px] mx-auto">
+      <section className="relative bg-[#151515] py-20 px-4 border-t border-white/5 overflow-hidden">
+        {/* Zig-zag line chart decorative background */}
+        <img
+          src={zigzagBg}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none select-none opacity-20"
+        />
+        <div className="relative z-10 max-w-[1200px] mx-auto">
           <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-2">
             Trading Technology
           </h2>
