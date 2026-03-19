@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Link } from "wouter";
-import { X, Star, ArrowRight, Play } from "lucide-react";
+import { X, Star, Play } from "lucide-react";
 import ChatWidget from "@/components/ChatWidget";
 
 import heroPlatform from "@assets/IMG_7967_1773721659915.png";
@@ -13,6 +13,7 @@ import sterlingLogo from "@assets/sterling-icon-50x50_1773948931249.png";
 import benzingaBadge from "@assets/IMG_7973_1773721659915.png";
 import infraIcon from "@assets/ico-our-infrastructure-132x72_1773948931248.png";
 import bgVector from "@assets/img-background-vector-1_1773948931248.png";
+import arrowIcon from "@assets/IMG_8065_1773952578861.PNG";
 
 export default function Home() {
   const [newsBannerVisible, setNewsBannerVisible] = useState(true);
@@ -328,7 +329,7 @@ export default function Home() {
             <div className="flex flex-col lg:flex-row">
               {/* Left pane */}
               <div className="flex-1 p-8 lg:p-10">
-                <h3 className="text-white text-xl font-bold mb-8">Our OMS Platforms</h3>
+                <h3 className="text-white text-2xl font-bold mb-8">Our OMS Platforms</h3>
                 <div className="flex flex-col gap-5">
                   <div className="flex flex-col items-start gap-2">
                     <img
@@ -336,7 +337,7 @@ export default function Home() {
                       alt="DAS Trader Pro"
                       className="w-[50px] h-[50px] object-contain"
                     />
-                    <p className="text-white text-[11px] font-bold uppercase tracking-wider mt-1">DAS TRADER PRO</p>
+                    <p className="text-white text-[13px] font-bold uppercase tracking-wider mt-1">DAS TRADER PRO</p>
                   </div>
                   <div className="flex flex-col items-start gap-2">
                     <img
@@ -344,13 +345,13 @@ export default function Home() {
                       alt="Sterling Trader Pro"
                       className="w-[50px] h-[50px] object-contain"
                     />
-                    <p className="text-white text-[11px] font-bold uppercase tracking-wider mt-1">STERLING TRADER® PRO</p>
+                    <p className="text-white text-[13px] font-bold uppercase tracking-wider mt-1">STERLING TRADER® PRO</p>
                   </div>
                 </div>
               </div>
               {/* Right pane */}
               <div className="flex-1 p-8 lg:p-10 flex flex-col justify-center">
-                <p className="text-[#aaa] text-[14px] leading-relaxed mb-8">
+                <p className="text-white text-[15px] leading-relaxed mb-8">
                   Enjoy real-time trading with advanced order types, multi-account management, and analytical
                   tools designed for the active trader. Try a paper trading account free for 14 Days with a
                   simulated portfolio and test the power of these features for yourself!
@@ -358,12 +359,10 @@ export default function Home() {
                 <div>
                   <Link
                     href="/platforms"
-                    className="inline-flex items-center gap-2 text-white text-[13px] font-medium hover:text-primary transition-colors"
+                    className="inline-flex items-center gap-2 text-white text-[14px] font-medium hover:opacity-80 transition-opacity"
                   >
                     View Platforms
-                    <span className="inline-flex items-center justify-center w-6 h-6 bg-primary rounded-sm">
-                      <ArrowRight className="w-3.5 h-3.5 text-white" />
-                    </span>
+                    <img src={arrowIcon} alt="" className="w-6 h-6 object-contain" />
                   </Link>
                 </div>
               </div>
@@ -375,8 +374,8 @@ export default function Home() {
             <div className="flex flex-col lg:flex-row">
               {/* Left pane */}
               <div className="flex-1 p-8 lg:p-10">
-                <h3 className="text-white text-xl font-bold mb-3">Our Infrastructure</h3>
-                <p className="text-[11px] font-bold tracking-[0.15em] text-white/60 uppercase mb-6">
+                <h3 className="text-white text-2xl font-bold mb-3">Our Infrastructure</h3>
+                <p className="text-[13px] font-bold tracking-[0.15em] text-white uppercase mb-6">
                   SPEED. EFFICIENCY. ACCESS.
                 </p>
                 <img
@@ -387,7 +386,7 @@ export default function Home() {
               </div>
               {/* Right pane */}
               <div className="flex-1 p-8 lg:p-10 flex flex-col justify-center">
-                <p className="text-[#aaa] text-[14px] leading-relaxed mb-8">
+                <p className="text-white text-[15px] leading-relaxed mb-8">
                   Our proprietary stock locate system, high-tech clearing, low-latency execution platforms,
                   and competitive securities lending services work together to provide everything traders
                   need under one roof.
@@ -395,12 +394,10 @@ export default function Home() {
                 <div>
                   <Link
                     href="/platforms"
-                    className="inline-flex items-center gap-2 text-white text-[13px] font-medium hover:text-primary transition-colors"
+                    className="inline-flex items-center gap-2 text-white text-[14px] font-medium hover:opacity-80 transition-opacity"
                   >
                     Trading Infrastructure
-                    <span className="inline-flex items-center justify-center w-6 h-6 bg-primary rounded-sm">
-                      <ArrowRight className="w-3.5 h-3.5 text-white" />
-                    </span>
+                    <img src={arrowIcon} alt="" className="w-6 h-6 object-contain" />
                   </Link>
                 </div>
               </div>
