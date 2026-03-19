@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Link } from "wouter";
-import { X, Star, Play } from "lucide-react";
+import { X, Star, ArrowRight, Play } from "lucide-react";
 import ChatWidget from "@/components/ChatWidget";
 
 import heroPlatform from "@assets/IMG_7967_1773721659915.png";
