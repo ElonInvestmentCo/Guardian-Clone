@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
-import guardianLogo from "@assets/IMG_7934_1773719077190.png";
+import desktopLogo from "@assets/img-guardian-reversed-291x63-1_1773945573205.png";
+import mobileLogo from "@assets/mobile-logo-1-35x41_1773945573206.png";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,13 +25,19 @@ export function Navbar() {
     <>
       <nav className="fixed top-0 w-full z-50 bg-[#151515] border-b border-white/5">
         <div className="max-w-[1200px] mx-auto px-4 flex items-center justify-between h-[56px]">
-          {/* Logo */}
+          {/* Logo — desktop uses full wordmark, mobile uses shield icon */}
           <Link href="/" className="flex items-center flex-shrink-0">
             <img
-              src={guardianLogo}
+              src={desktopLogo}
               alt="Guardian Trading"
-              className="h-9 w-auto object-contain"
-              data-testid="img-logo"
+              className="hidden sm:block h-8 w-auto object-contain"
+              data-testid="img-logo-desktop"
+            />
+            <img
+              src={mobileLogo}
+              alt="Guardian Trading"
+              className="block sm:hidden h-9 w-auto object-contain"
+              data-testid="img-logo-mobile"
             />
           </Link>
 
