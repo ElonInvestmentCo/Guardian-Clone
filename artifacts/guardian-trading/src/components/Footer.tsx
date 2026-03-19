@@ -108,7 +108,7 @@ export function Footer() {
       {/* Legal disclaimer */}
       <div className="max-w-[1100px] mx-auto px-6 py-8 text-center">
         <p className="text-[14px] font-medium text-white mb-2">
-          Guardian Trading – A Division of Velocity Clearing, LLC ("Velocity"), Member{" "}
+          Guardian Trading ~ A Division of Velocity Clearing, LLC ("Velocity"). Member{" "}
           <a href="https://www.finra.org" target="_blank" rel="noopener noreferrer" className="underline">FINRA</a>
           /{" "}
           <a href="https://www.sipc.org" target="_blank" rel="noopener noreferrer" className="underline">SIPC</a>.
