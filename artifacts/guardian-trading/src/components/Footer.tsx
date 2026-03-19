@@ -118,7 +118,7 @@ export function Footer() {
         </p>
         <p className="text-[11px] text-white leading-relaxed mb-3 uppercase">
           ©{new Date().getFullYear()} VELOCITY CLEARING, LLC IS REGISTERED WITH THE SEC AND A MEMBER OF{" "}
-          <span className="text-white">FINRA AND SIPC</span>
+          <span className="text-[#4a7fbd]">FINRA AND SIPC</span>
           . MARKET VOLATILITY AND VOLUME MAY DELAY SYSTEMS ACCESS AND TRADE EXECUTION. CHECK THE BACKGROUND OF VELOCITY CLEARING ON{" "}
           <a href="https://brokercheck.finra.org" target="_blank" rel="noopener noreferrer" className="underline text-[#4a7fbd]">FINRA'S BROKER CHECK</a>
           {" "}AND SEE THE VELOCITY CLEARING, LLC{" "}
@@ -126,10 +126,10 @@ export function Footer() {
         </p>
         <p className="text-[11px] text-white leading-relaxed mb-3 uppercase">
           OPTIONS INVOLVE RISK AND ARE NOT SUITABLE FOR ALL INVESTORS. FOR MORE INFORMATION READ THE{" "}
-          <a href="#" className="underline">CHARACTERISTICS AND RISKS OF STANDARDIZED OPTIONS</a>
+          <a href="#" className="underline text-[#4a7fbd]">CHARACTERISTICS AND RISKS OF STANDARDIZED OPTIONS</a>
           , ALSO KNOWN AS THE OPTIONS DISCLOSURE DOCUMENT (ODD). ALTERNATIVELY, PLEASE CONTACT{" "}
-          <a href="mailto:info@guardiantrading.com" className="underline">INFO@GUARDIANTRADING</a>
-          {" "}.COM TO RECEIVE A COPY OF THE ODD.
+          <a href="mailto:info@guardiantrading.com" className="underline text-[#4a7fbd]">INFO@GUARDIANTRADING.COM</a>
+          {" "}TO RECEIVE A COPY OF THE ODD.
         </p>
         <p className="text-[11px] text-white leading-relaxed uppercase">
           THE RISK OF LOSS IN TRADING FUTURES AND OPTIONS ON FUTURES CAN BE SUBSTANTIAL. EACH INVESTOR MUST CAREFULLY CONSIDER WHETHER THIS TYPE OF INVESTMENT IS APPROPRIATE FOR THEM. PAST PERFORMANCE IS NOT NECESSARILY INDICATIVE OF FUTURE RESULTS. GUARDIAN TRADING, A DIVISION OF VELOCITY CLEARING, IS A NATIONAL FUTURES ASSOCIATION ("NFA") INTRODUCING BROKER. ALL FUTURES TRANSACTIONS ARE INTRODUCED TO STONEX FINANCIAL INC.
