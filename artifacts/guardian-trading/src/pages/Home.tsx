@@ -293,13 +293,14 @@ export default function Home() {
       </section>
 
       {/* ── TRADING TECHNOLOGY ── */}
-      <section className="relative bg-[#0d0d0d] py-16 px-4 border-t border-white/5 overflow-hidden">
+      <section className="relative bg-[#222222] py-16 px-4 overflow-hidden">
         {/* Background vector chart lines */}
         <img
           src={bgVector}
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none select-none"
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+          style={{ opacity: 0.55, filter: "brightness(1.4) contrast(1.3) saturate(1.2)" }}
         />
 
         <div className="relative z-10 max-w-[1100px] mx-auto">
