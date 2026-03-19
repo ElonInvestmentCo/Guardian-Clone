@@ -107,16 +107,16 @@ export function Footer() {
 
       {/* Legal disclaimer */}
       <div className="max-w-[1100px] mx-auto px-6 py-8 text-center">
-        <p className="text-[12px] text-white mb-2">
+        <p className="text-[14px] font-medium text-white mb-2">
           Guardian Trading – A Division of Velocity Clearing, LLC ("Velocity"), Member{" "}
           <a href="https://www.finra.org" target="_blank" rel="noopener noreferrer" className="underline">FINRA</a>
           /{" "}
           <a href="https://www.sipc.org" target="_blank" rel="noopener noreferrer" className="underline">SIPC</a>.
         </p>
-        <p className="text-[12px] text-white font-semibold mb-3">
+        <p className="text-[14px] font-semibold text-white mb-3">
           All securities and transactions are handled through Velocity.
         </p>
-        <p className="text-[11px] text-white leading-relaxed mb-3 uppercase">
+        <p className="text-[13px] font-medium text-white leading-relaxed mb-3 uppercase">
           ©{new Date().getFullYear()} VELOCITY CLEARING, LLC IS REGISTERED WITH THE SEC AND A MEMBER OF{" "}
           <span className="text-[#4a7fbd]">FINRA</span>
           <span className="text-white"> AND </span>
@@ -126,14 +126,14 @@ export function Footer() {
           {" "}AND SEE THE VELOCITY CLEARING, LLC{" "}
           <a href="#" className="underline text-[#4a7fbd]">RELATIONSHIP SUMMARY</a>.
         </p>
-        <p className="text-[11px] text-white leading-relaxed mb-3 uppercase">
+        <p className="text-[13px] font-medium text-white leading-relaxed mb-3 uppercase">
           OPTIONS INVOLVE RISK AND ARE NOT SUITABLE FOR ALL INVESTORS. FOR MORE INFORMATION READ THE{" "}
           <a href="#" className="underline text-[#4a7fbd]">CHARACTERISTICS AND RISKS OF STANDARDIZED OPTIONS</a>
           , ALSO KNOWN AS THE OPTIONS DISCLOSURE DOCUMENT (ODD). ALTERNATIVELY, PLEASE CONTACT{" "}
           <a href="mailto:info@guardiantrading.com" className="underline text-[#4a7fbd]">INFO@GUARDIANTRADING.COM</a>
           {" "}TO RECEIVE A COPY OF THE ODD.
         </p>
-        <p className="text-[11px] text-white leading-relaxed uppercase">
+        <p className="text-[13px] font-medium text-white leading-relaxed uppercase">
           THE RISK OF LOSS IN TRADING FUTURES AND OPTIONS ON FUTURES CAN BE SUBSTANTIAL. EACH INVESTOR MUST CAREFULLY CONSIDER WHETHER THIS TYPE OF INVESTMENT IS APPROPRIATE FOR THEM. PAST PERFORMANCE IS NOT NECESSARILY INDICATIVE OF FUTURE RESULTS. GUARDIAN TRADING, A DIVISION OF VELOCITY CLEARING, IS A NATIONAL FUTURES ASSOCIATION ("NFA") INTRODUCING BROKER. ALL FUTURES TRANSACTIONS ARE INTRODUCED TO STONEX FINANCIAL INC.
         </p>
       </div>
