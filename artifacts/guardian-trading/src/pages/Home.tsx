@@ -11,12 +11,11 @@ import stockBorrows from "@assets/IMG_7970_1773721659915.png";
 import dasLogo from "@assets/DAS-icon-50x50_1773948931248.png";
 import sterlingLogo from "@assets/sterling-icon-50x50_1773948931249.png";
 import benzingaBadge from "@assets/IMG_7973_1773721659915.png";
-import infraIcon from "@assets/ico-our-infrastructure-132x72_1773948931248.png";
 import bgVector from "@assets/img-background-vector-1_1773948931248.png";
 import arrowIcon from "@assets/IMG_8065_1773952578861.PNG";
 import benzingaBannerImg from "@assets/img-benzinga-short-selling-review-1-846x218-1_1773952971025.jpg";
 import omsPlatformsImg from "@assets/Guardian_Trading_-_Google_Chrome_3_19_2026_9_40_04_PM_1773953383663.png";
-import infrastructureImg from "@assets/Guardian_Trading_-_Google_Chrome_3_19_2026_9_40_04_PM_1773952959755.png";
+import infrastructureImg from "@assets/Guardian_Trading_-_Google_Chrome_3_19_2026_9_40_04_PM_1773953634657.png";
 
 export default function Home() {
   const [newsBannerVisible, setNewsBannerVisible] = useState(true);
@@ -314,36 +313,13 @@ export default function Home() {
           </div>
 
           {/* Card 2 — Our Infrastructure */}
-          <div className="bg-[#141414] flex flex-col lg:flex-row">
-            {/* Left pane */}
-            <div className="flex-1 p-8 lg:p-10">
-              <h3 className="text-white text-2xl font-bold mb-3">Our Infrastructure</h3>
-              <p className="text-white text-[13px] font-bold tracking-[0.15em] uppercase mb-6">
-                SPEED. EFFICIENCY. ACCESS.
-              </p>
-              <img
-                src={infraIcon}
-                alt="Infrastructure icon"
-                className="w-[132px] h-auto object-contain"
-              />
-            </div>
-            {/* Right pane */}
-            <div className="flex-1 p-8 lg:p-10 flex flex-col justify-center">
-              <p className="text-white text-[15px] leading-relaxed mb-8">
-                Our proprietary stock locate system, high-tech clearing, low-latency execution platforms,
-                and competitive securities lending services work together to provide everything traders
-                need under one roof.
-              </p>
-              <div>
-                <Link
-                  href="/platforms"
-                  className="inline-flex items-center gap-2 text-white text-[14px] font-bold hover:opacity-80 transition-opacity"
-                >
-                  Trading Infrastructure
-                  <img src={arrowIcon} alt="" className="w-6 h-6 object-contain" />
-                </Link>
-              </div>
-            </div>
+          <div>
+            <img
+              src={infrastructureImg}
+              alt="Our Infrastructure — Speed. Efficiency. Access."
+              className="block w-full h-auto"
+              style={{ filter: "brightness(1.1) contrast(1.08) saturate(1.05)" }}
+            />
           </div>
         </div>
       </section>
