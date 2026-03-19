@@ -131,25 +131,25 @@ export default function Home() {
           <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-3">
             Why Do Active Traders Use Guardian?
           </h2>
-          <h3 className="text-xl text-primary font-bold mb-6">Pricing. Routing. Service.</h3>
+          <h3 className="text-xl text-white font-bold mb-6">Pricing. Routing. Service.</h3>
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="flex-1">
-              <p className="text-[#aaa] text-[15px] leading-relaxed mb-4">
+              <p className="text-white text-[15px] leading-relaxed mb-4">
                 Guardian Trading's mission is simple; to provide active traders with high-performance tools,
                 comprehensive services, competitive pricing, and proactive client support to maximize their
                 trading performance and profitability.
               </p>
-              <p className="text-[#aaa] text-[15px] leading-relaxed">
+              <p className="text-white text-[15px] leading-relaxed">
                 With services prioritizing speed, control, and cost efficiency, we provide the resources
                 to help traders realize their full potential.
               </p>
             </div>
             {/* Shield + candlestick chart graphic */}
-            <div className="flex-shrink-0 w-full lg:w-[380px] flex items-center justify-center">
+            <div className="flex-shrink-0 w-full lg:w-[520px] flex items-center justify-center">
               <img
                 src={shieldChart}
                 alt="Streamlined and Secure — Guardian Trading"
-                className="w-full max-w-[340px] h-auto object-contain"
+                className="w-full h-auto object-contain"
                 style={{ filter: "brightness(1.05) contrast(1.05) saturate(1.1)" }}
               />
             </div>
@@ -158,38 +158,43 @@ export default function Home() {
       </section>
 
       {/* ── PRICING CARDS ── */}
-      <section id="pricing" className="bg-[#111] border-t border-b border-white/5">
-        <div className="max-w-[680px] mx-auto px-4 py-14">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-12 leading-snug">
-            Control Your Costs With Customized Commissions
-          </h2>
-
-          <div className="flex flex-col gap-0">
-            {/* Options Contracts block */}
-            <div className="bg-[#0d0d0d] px-8 py-10 text-center border border-white/5">
-              <p className="text-white font-bold text-lg mb-2">Options Contracts</p>
-              <p className="text-[11px] text-[#777] uppercase tracking-[0.2em] mb-5">AS LOW AS:</p>
-              <p className="text-[72px] sm:text-[88px] font-bold leading-none text-[#7ecef5] mb-5 break-all">
-                $0.15
-              </p>
-              <p className="text-[11px] text-[#777] uppercase tracking-[0.2em]">PER CONTRACT*</p>
+      <section id="pricing" className="bg-[#111] py-10 px-4">
+        <div className="max-w-[1100px] mx-auto">
+          {/* Single dark card — heading left, pricing right */}
+          <div className="bg-[#1a1a1a] flex flex-col lg:flex-row">
+            {/* Left: heading */}
+            <div className="flex-shrink-0 lg:w-[280px] px-10 py-10 flex items-center">
+              <h2 className="text-2xl font-bold text-white leading-snug">
+                Control Your Costs With Customized Commissions
+              </h2>
             </div>
 
-            {/* Equities Commissions block */}
-            <div className="bg-[#0d0d0d] px-8 py-10 text-center border border-white/5 border-t-0">
-              <p className="text-white font-bold text-lg mb-2">Equities Commissions</p>
-              <p className="text-[11px] text-[#777] uppercase tracking-[0.2em] mb-5">AS LOW AS:</p>
-              <p className="text-[72px] sm:text-[88px] font-bold leading-none text-[#7ecef5] mb-5 break-all">
-                $0.0005
-              </p>
-              <p className="text-[11px] text-[#777] uppercase tracking-[0.2em]">PER SHARE</p>
+            {/* Right: two pricing blocks side by side */}
+            <div className="flex flex-col sm:flex-row flex-1">
+              {/* Options Contracts */}
+              <div className="flex-1 px-10 py-10">
+                <p className="text-white font-bold text-[17px] mb-1">Options Contracts</p>
+                <p className="text-[11px] text-[#888] uppercase tracking-[0.18em] mb-4">AS LOW AS:</p>
+                <p className="font-bold leading-none text-white mb-4" style={{ fontSize: "clamp(52px,7vw,80px)" }}>
+                  <sup className="text-[40%] align-super">$</sup>0.15
+                </p>
+                <p className="text-[11px] text-[#888] uppercase tracking-[0.18em]">PER CONTRACT*</p>
+              </div>
+
+              {/* Equities Commissions */}
+              <div className="flex-1 px-10 py-10">
+                <p className="text-white font-bold text-[17px] mb-1">Equities Commissions</p>
+                <p className="text-[11px] text-[#888] uppercase tracking-[0.18em] mb-4">AS LOW AS:</p>
+                <p className="font-bold leading-none text-white mb-4" style={{ fontSize: "clamp(52px,7vw,80px)" }}>
+                  <sup className="text-[40%] align-super">$</sup>0.0005
+                </p>
+                <p className="text-[11px] text-[#888] uppercase tracking-[0.18em]">PER SHARE</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Disclaimer */}
-        <div className="bg-[#0e0e0e] border-t border-white/5 py-8 px-4">
-          <p className="text-[12px] text-[#888] text-center max-w-[520px] mx-auto leading-relaxed">
+          {/* Disclaimer */}
+          <p className="text-[12px] text-[#888] mt-5 leading-relaxed">
             *Options commission does not include standard pass-through fees such as the Options Reporting Fee, Options
             Clearing Corporation or exchange fees on index contracts, etc.*
           </p>
