@@ -247,7 +247,7 @@ analyticsRouter.get("/analytics/sessions", async (req: Request, res: Response) =
   const r = await query(
     `SELECT s.session_id, s.visitor_id, s.start_time, s.duration_seconds,
             s.page_count, s.is_bounce, s.entry_page, s.exit_page,
-            s.device_type, s.browser, s.utm_campaign, s.utm_source
+            s.device_type, s.browser, s.utm_campaign, s.utm_source, s.country
      FROM analytics_sessions s
      WHERE s.project_id=$1 AND s.start_time > NOW() - INTERVAL '${period}'
      ORDER BY s.start_time DESC LIMIT 100`,
@@ -298,11 +298,29 @@ analyticsRouter.get("/analytics/realtime", async (req: Request, res: Response) =
   });
 });
 
+analyticsRouter.get("/analytics/geo", async (req: Request, res: Response) => {
+  const projectId = sanitize(req.query["project_id"]);
+  const period = getRange(sanitize(req.query["period"]) ?? "30d");
+  if (!projectId) { res.status(400).json({ error: "project_id required" }); return; }
+
+  const countries = await query(
+    `SELECT country, COUNT(*) AS sessions, COUNT(DISTINCT visitor_id) AS visitors
+     FROM analytics_sessions
+     WHERE project_id=$1 AND country IS NOT NULL AND start_time > NOW() - INTERVAL '${period}'
+     GROUP BY country ORDER BY visitors DESC LIMIT 20`,
+    [projectId]
+  );
+
+  res.json({
+    countries: countries.rows,
+  });
+});
+
 analyticsRouter.get("/analytics/ai-insights", async (req: Request, res: Response) => {
   const projectId = sanitize(req.query["project_id"]);
   if (!projectId) { res.status(400).json({ error: "project_id required" }); return; }
 
-  const [overview, pages, sources, bounceData] = await Promise.all([
+  const [overview, pages, sources, bounceData, geoData] = await Promise.all([
     query(
       `SELECT COUNT(DISTINCT visitor_id) AS visitors, COUNT(*) FILTER(WHERE event_type='pageview') AS pageviews
        FROM analytics_events WHERE project_id=$1 AND is_bot=false AND timestamp > NOW() - INTERVAL '7 days'`,
@@ -325,6 +343,11 @@ analyticsRouter.get("/analytics/ai-insights", async (req: Request, res: Response
        FROM analytics_sessions WHERE project_id=$1 AND start_time > NOW() - INTERVAL '7 days'`,
       [projectId]
     ),
+    query(
+      `SELECT COUNT(DISTINCT country) AS country_count FROM analytics_sessions
+       WHERE project_id=$1 AND country IS NOT NULL AND start_time > NOW() - INTERVAL '7 days'`,
+      [projectId]
+    ),
   ]);
 
   const bounceRate = Number(bounceData.rows[0]?.bounce_rate ?? 0);
@@ -333,6 +356,7 @@ analyticsRouter.get("/analytics/ai-insights", async (req: Request, res: Response
   const pagesPerSession = visitors > 0 ? (pageviews / visitors).toFixed(1) : "0";
   const topPage = pages.rows[0]?.page_url ?? "(none)";
   const topSource = sources.rows[0]?.source ?? "direct";
+  const countryCount = Number(geoData.rows[0]?.country_count ?? 0);
 
   const insights = [];
 
@@ -346,6 +370,10 @@ analyticsRouter.get("/analytics/ai-insights", async (req: Request, res: Response
     insights.push({ type: "info", title: "Top Traffic Source", description: `Most of your traffic comes from "${topSource}". Consider diversifying or doubling down on this channel.` });
     insights.push({ type: "info", title: "Most Visited Page", description: `"${topPage}" is your top page with ${pages.rows[0]?.views ?? 0} views. Ensure it has a clear call-to-action.` });
     insights.push({ type: "info", title: "Engagement Depth", description: `Visitors view an average of ${pagesPerSession} pages per session. ${parseFloat(pagesPerSession) < 2 ? "Consider internal linking to increase discovery." : "Great content depth!"}` });
+  }
+
+  if (countryCount > 1) {
+    insights.push({ type: "info", title: "Global Reach", description: `Your site is visited from ${countryCount} countries. Consider localizing content for your top markets to improve conversion.` });
   }
 
   if (insights.length === 0) {

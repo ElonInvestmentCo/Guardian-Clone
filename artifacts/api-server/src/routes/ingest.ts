@@ -1,7 +1,9 @@
 import { Router, type Request, type Response } from "express";
 import rateLimit from "express-rate-limit";
 import { query } from "../lib/db.js";
+import { broadcast } from "../lib/realtime.js";
 import { randomUUID } from "crypto";
+import geoip from "geoip-lite";
 
 const ingestRouter = Router();
 
@@ -73,6 +75,28 @@ function safeFloat(v: unknown): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+function getClientIp(req: Request): string {
+  const forwarded = req.headers["x-forwarded-for"];
+  if (typeof forwarded === "string") return forwarded.split(",")[0]!.trim();
+  return req.socket.remoteAddress ?? "unknown";
+}
+
+function lookupGeo(ip: string): { country: string | null; city: string | null; region: string | null } {
+  const isPrivate = /^(127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|::1$|localhost)/.test(ip);
+  if (isPrivate) return { country: null, city: null, region: null };
+  try {
+    const geo = geoip.lookup(ip);
+    if (!geo) return { country: null, city: null, region: null };
+    return {
+      country: geo.country || null,
+      city: geo.city || null,
+      region: geo.region || null,
+    };
+  } catch {
+    return { country: null, city: null, region: null };
+  }
+}
+
 async function resolveApiKey(publicKey: string): Promise<string | null> {
   const result = await query(
     `SELECT project_id FROM analytics_api_keys WHERE public_key = $1 LIMIT 1`,
@@ -84,15 +108,20 @@ async function resolveApiKey(publicKey: string): Promise<string | null> {
 
 async function upsertVisitor(
   projectId: string,
-  visitorId: string
+  visitorId: string,
+  country: string | null,
+  city: string | null
 ): Promise<void> {
   await query(
-    `INSERT INTO analytics_visitors (id, project_id, visitor_id, first_seen, last_seen, total_sessions)
-     VALUES ($1, $2, $3, NOW(), NOW(), 1)
+    `INSERT INTO analytics_visitors (id, project_id, visitor_id, first_seen, last_seen, total_sessions, country, city)
+     VALUES ($1, $2, $3, NOW(), NOW(), 1, $4, $5)
      ON CONFLICT (project_id, visitor_id) DO UPDATE
-       SET last_seen = NOW(), total_sessions = analytics_visitors.total_sessions + 1
+       SET last_seen = NOW(),
+           total_sessions = analytics_visitors.total_sessions + 1,
+           country = COALESCE(analytics_visitors.country, $4),
+           city = COALESCE(analytics_visitors.city, $5)
      WHERE analytics_visitors.last_seen < NOW() - INTERVAL '30 minutes'`,
-    [randomUUID(), projectId, visitorId]
+    [randomUUID(), projectId, visitorId, country, city]
   );
 }
 
@@ -102,15 +131,16 @@ async function upsertSession(
   visitorId: string,
   eventData: Record<string, unknown>,
   ua: string | null,
-  isNewSession: boolean
+  isNewSession: boolean,
+  country: string | null
 ): Promise<void> {
   if (isNewSession) {
     await query(
       `INSERT INTO analytics_sessions
          (id, session_id, visitor_id, project_id, start_time, last_activity,
           utm_source, utm_medium, utm_campaign, utm_content, utm_term,
-          entry_page, device_type, browser, os, screen_width, screen_height)
-       VALUES ($1,$2,$3,$4,NOW(),NOW(),$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+          entry_page, device_type, browser, os, screen_width, screen_height, country)
+       VALUES ($1,$2,$3,$4,NOW(),NOW(),$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
        ON CONFLICT DO NOTHING`,
       [
         randomUUID(), sessionId, visitorId, projectId,
@@ -125,6 +155,7 @@ async function upsertSession(
         parseOS(ua),
         safeInt(eventData["screen_width"]),
         safeInt(eventData["screen_height"]),
+        country,
       ]
     );
   } else {
@@ -157,6 +188,9 @@ ingestRouter.post("/events", ingestLimiter, async (req: Request, res: Response) 
     return;
   }
 
+  const ip = getClientIp(req);
+  const geo = lookupGeo(ip);
+
   const ua = req.headers["user-agent"] ?? null;
   const botFlag = isBot(ua);
 
@@ -170,8 +204,8 @@ ingestRouter.post("/events", ingestLimiter, async (req: Request, res: Response) 
 
   if (!botFlag) {
     await Promise.all([
-      upsertVisitor(projectId, visitorId),
-      upsertSession(projectId, sessionId, visitorId, body, ua, isNewSession),
+      upsertVisitor(projectId, visitorId, geo.country, geo.city),
+      upsertSession(projectId, sessionId, visitorId, body, ua, isNewSession, geo.country),
     ]).catch((e) => console.error("[ingest] session/visitor upsert error:", e));
   }
 
@@ -212,6 +246,22 @@ ingestRouter.post("/events", ingestLimiter, async (req: Request, res: Response) 
         safeInt(body["screen_height"]),
       ]
     ).catch(() => {});
+  }
+
+  if (!botFlag) {
+    broadcast(projectId, {
+      type: "new_event",
+      projectId,
+      data: {
+        eventType,
+        pageUrl,
+        visitorId,
+        country: geo.country,
+        device: parseDeviceType(ua),
+        browser: parseBrowser(ua),
+        timestamp: Date.now(),
+      },
+    });
   }
 
   res.status(202).json({ ok: true });
