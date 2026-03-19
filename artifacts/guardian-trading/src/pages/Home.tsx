@@ -15,7 +15,7 @@ import infraIcon from "@assets/ico-our-infrastructure-132x72_1773948931248.png";
 import bgVector from "@assets/img-background-vector-1_1773948931248.png";
 import arrowIcon from "@assets/IMG_8065_1773952578861.PNG";
 import benzingaBannerImg from "@assets/img-benzinga-short-selling-review-1-846x218-1_1773952971025.jpg";
-import omsPlatformsImg from "@assets/Guardian_Trading_-_Google_Chrome_3_19_2026_9_40_04_PM_1773952898387.png";
+import omsPlatformsImg from "@assets/Guardian_Trading_-_Google_Chrome_3_19_2026_9_40_04_PM_1773953383663.png";
 import infrastructureImg from "@assets/Guardian_Trading_-_Google_Chrome_3_19_2026_9_40_04_PM_1773952959755.png";
 
 export default function Home() {
