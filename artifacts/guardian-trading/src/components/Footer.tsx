@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773945573205.png";
+import guardianLogo from "@assets/IMG_7934_1773719077190.png";
 
 export function Footer() {
   return (
@@ -11,7 +11,7 @@ export function Footer() {
               <img
                 src={guardianLogo}
                 alt="Guardian Trading"
-                className="h-8 w-auto object-contain"
+                className="h-9 w-auto object-contain"
               />
             </Link>
             <p className="text-[#888] text-sm max-w-sm mb-6 leading-relaxed">
