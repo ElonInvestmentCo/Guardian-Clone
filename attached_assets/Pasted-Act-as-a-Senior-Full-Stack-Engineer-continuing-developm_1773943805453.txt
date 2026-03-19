@@ -1,0 +1,148 @@
+Act as a Senior Full-Stack Engineer continuing development on an existing project.
+
+You are taking over development from another AI agent whose session ended due to quota limits. The project is already running and mostly complete, so DO NOT rebuild the system from scratch.
+
+First step: analyze the entire codebase and understand the existing architecture before making changes.
+
+Current platform status:
+
+This is a SaaS analytics platform similar to Google Analytics / Mixpanel / Amplitude with:
+
+• tracking script
+• event ingestion API
+• PostgreSQL analytics database
+• analytics dashboard
+• heatmaps
+• session replay
+• campaign attribution
+• AI insights
+
+The system is already operational.
+
+---
+
+CURRENT DATABASE STATE
+
+Seeded data currently includes:
+
+• 3,524 analytics events
+• 628 sessions
+• 628 visitors
+• 1,455 heatmap clicks
+• historical data across 31 days
+
+All analytics endpoints are working.
+
+---
+
+FEATURES THAT ARE ALREADY IMPLEMENTED
+
+Tracking Script
+/api/tracking.js
+
+Event API
+POST /api/events
+
+Database Tables
+
+analytics_projects
+analytics_api_keys
+analytics_visitors
+analytics_sessions
+analytics_events
+analytics_heatmap_events
+analytics_session_recordings
+
+Dashboard Pages
+
+/analytics
+/analytics/projects
+/analytics/campaigns
+/analytics/heatmaps
+/analytics/sessions
+/analytics/insights
+
+---
+
+RECENT FIXES COMPLETED
+
+• Fixed project auto-selection not updating URL
+• Fixed dashboard not reading project_id from query string
+• Added historical seeded analytics data across 30 days
+• Improved heatmap rendering with smaller radius and gradient effect
+• Confirmed all analytics endpoints returning valid data
+
+---
+
+CURRENT TASK
+
+Continue development from this state.
+
+Tasks remaining:
+
+1. Improve heatmap renderer further to look like professional analytics tools.
+
+Enhancements:
+
+• use radial gradient layers
+• smoother color interpolation
+• adjustable intensity based on event density
+• improve canvas rendering performance
+
+2. Implement real-time analytics updates using WebSockets.
+
+Create:
+
+/api/realtime
+
+Requirements:
+
+• broadcast new visitor events
+• update dashboard widgets live
+• update realtime visitor count
+
+3. Add geolocation analytics.
+
+Capture:
+
+country
+region
+city
+
+Display:
+
+• visitors by country
+• world traffic map
+
+4. Optimize tracking.js.
+
+Requirements:
+
+• keep file size under 10KB
+• ensure async loading
+• use sendBeacon where possible
+
+5. Improve analytics dashboard UI.
+
+Enhancements:
+
+• smoother charts
+• animated charts
+• improved heatmap visualization
+• more professional styling
+
+---
+
+IMPORTANT RULES
+
+Do not delete or rewrite working systems.
+
+Extend the current codebase carefully.
+
+Keep all existing APIs compatible.
+
+Preserve the current database schema.
+
+---
+
+After analyzing the codebase, produce a development plan and begin implementing improvements.
