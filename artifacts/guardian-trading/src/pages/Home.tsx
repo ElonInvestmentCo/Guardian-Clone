@@ -314,13 +314,36 @@ export default function Home() {
           </div>
 
           {/* Card 2 — Our Infrastructure */}
-          <div>
-            <img
-              src={infrastructureImg}
-              alt="Our Infrastructure — Speed. Efficiency. Access."
-              className="block w-full h-auto"
-              style={{ filter: "brightness(1.1) contrast(1.08) saturate(1.05)" }}
-            />
+          <div className="bg-[#141414] flex flex-col lg:flex-row">
+            {/* Left pane */}
+            <div className="flex-1 p-8 lg:p-10">
+              <h3 className="text-white text-2xl font-bold mb-3">Our Infrastructure</h3>
+              <p className="text-white text-[13px] font-bold tracking-[0.15em] uppercase mb-6">
+                SPEED. EFFICIENCY. ACCESS.
+              </p>
+              <img
+                src={infraIcon}
+                alt="Infrastructure icon"
+                className="w-[132px] h-auto object-contain"
+              />
+            </div>
+            {/* Right pane */}
+            <div className="flex-1 p-8 lg:p-10 flex flex-col justify-center">
+              <p className="text-white text-[15px] leading-relaxed mb-8">
+                Our proprietary stock locate system, high-tech clearing, low-latency execution platforms,
+                and competitive securities lending services work together to provide everything traders
+                need under one roof.
+              </p>
+              <div>
+                <Link
+                  href="/platforms"
+                  className="inline-flex items-center gap-2 text-white text-[14px] font-bold hover:opacity-80 transition-opacity"
+                >
+                  Trading Infrastructure
+                  <img src={arrowIcon} alt="" className="w-6 h-6 object-contain" />
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
