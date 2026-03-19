@@ -158,10 +158,10 @@ export default function Home() {
       </section>
 
       {/* ── PRICING CARDS ── */}
-      <section id="pricing" className="bg-[#111] py-10 px-4">
+      <section id="pricing" className="bg-[#151515] py-10 px-4">
         <div className="max-w-[1100px] mx-auto">
           {/* Single dark card — heading left, pricing right */}
-          <div className="bg-[#1a1a1a] flex flex-col lg:flex-row">
+          <div className="bg-[#1e1e1e] flex flex-col lg:flex-row">
             {/* Left: heading */}
             <div className="flex-shrink-0 lg:w-[280px] px-10 py-10 flex items-center">
               <h2 className="text-2xl font-bold text-white leading-snug">
@@ -174,27 +174,27 @@ export default function Home() {
               {/* Options Contracts */}
               <div className="flex-1 px-10 py-10">
                 <p className="text-white font-bold text-[17px] mb-1">Options Contracts</p>
-                <p className="text-[11px] text-[#888] uppercase tracking-[0.18em] mb-4">AS LOW AS:</p>
+                <p className="text-[11px] text-[#aaa] uppercase tracking-[0.18em] mb-4">AS LOW AS:</p>
                 <p className="font-bold leading-none text-white mb-4" style={{ fontSize: "clamp(52px,7vw,80px)" }}>
                   <sup className="text-[40%] align-super">$</sup>0.15
                 </p>
-                <p className="text-[11px] text-[#888] uppercase tracking-[0.18em]">PER CONTRACT*</p>
+                <p className="text-[11px] text-[#aaa] uppercase tracking-[0.18em]">PER CONTRACT*</p>
               </div>
 
               {/* Equities Commissions */}
               <div className="flex-1 px-10 py-10">
                 <p className="text-white font-bold text-[17px] mb-1">Equities Commissions</p>
-                <p className="text-[11px] text-[#888] uppercase tracking-[0.18em] mb-4">AS LOW AS:</p>
+                <p className="text-[11px] text-[#aaa] uppercase tracking-[0.18em] mb-4">AS LOW AS:</p>
                 <p className="font-bold leading-none text-white mb-4" style={{ fontSize: "clamp(52px,7vw,80px)" }}>
                   <sup className="text-[40%] align-super">$</sup>0.0005
                 </p>
-                <p className="text-[11px] text-[#888] uppercase tracking-[0.18em]">PER SHARE</p>
+                <p className="text-[11px] text-[#aaa] uppercase tracking-[0.18em]">PER SHARE</p>
               </div>
             </div>
           </div>
 
           {/* Disclaimer */}
-          <p className="text-[12px] text-[#888] mt-5 leading-relaxed">
+          <p className="text-[12px] text-[#aaa] mt-5 leading-relaxed">
             *Options commission does not include standard pass-through fees such as the Options Reporting Fee, Options
             Clearing Corporation or exchange fees on index contracts, etc.*
           </p>
