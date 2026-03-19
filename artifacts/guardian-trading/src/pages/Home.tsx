@@ -8,10 +8,11 @@ import heroPlatform from "@assets/IMG_7967_1773721659915.png";
 import shieldChart from "@assets/IMG_7968_1773721659915.png";
 import monitorPlatform from "@assets/IMG_7969_1773721659915.png";
 import stockBorrows from "@assets/IMG_7970_1773721659915.png";
-import dasLogo from "@assets/IMG_7971_1773721659915.png";
-import sterlingLogo from "@assets/IMG_7972_1773721659915.png";
+import dasLogo from "@assets/DAS-icon-50x50_1773948931248.png";
+import sterlingLogo from "@assets/sterling-icon-50x50_1773948931249.png";
 import benzingaBadge from "@assets/IMG_7973_1773721659915.png";
-import infraIcon from "@assets/IMG_7979_1773721659915.png";
+import infraIcon from "@assets/ico-our-infrastructure-132x72_1773948931248.png";
+import bgVector from "@assets/img-background-vector-1_1773948931248.png";
 
 export default function Home() {
   const [newsBannerVisible, setNewsBannerVisible] = useState(true);
@@ -307,85 +308,101 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── TRADING TECHNOLOGY — OMS PLATFORMS ── */}
-      <section className="bg-[#151515] py-20 px-4 border-t border-white/5">
-        <div className="max-w-[1200px] mx-auto">
-          <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-2">
+      {/* ── TRADING TECHNOLOGY ── */}
+      <section className="relative bg-[#0d0d0d] py-16 px-4 border-t border-white/5 overflow-hidden">
+        {/* Background vector chart lines */}
+        <img
+          src={bgVector}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none select-none"
+        />
+
+        <div className="relative z-10 max-w-[1100px] mx-auto">
+          <h2 className="text-3xl lg:text-[2rem] font-display font-bold text-white text-center mb-10">
             Trading Technology
           </h2>
-          <h3 className="text-xl text-primary font-bold mb-10">Our OMS Platforms</h3>
 
-          <div className="flex flex-col lg:flex-row gap-10 items-center mb-14">
-            <div className="flex-1 max-w-[480px]">
-              {/* DAS Trader Pro logo + name */}
-              <div className="flex items-center gap-3 mb-5">
-                <img
-                  src={dasLogo}
-                  alt="DAS Trader Pro"
-                  className="w-10 h-10 object-contain rounded"
-                  style={{ filter: "brightness(1.1) contrast(1.1) saturate(1.1)" }}
-                />
-                <p className="text-white font-bold text-sm uppercase tracking-wide">DAS TRADER PRO</p>
+          {/* Card 1 — Our OMS Platforms */}
+          <div className="bg-[#141414] border border-white/8 mb-4">
+            <div className="flex flex-col lg:flex-row">
+              {/* Left pane */}
+              <div className="flex-1 p-8 lg:p-10 border-b lg:border-b-0 lg:border-r border-white/8">
+                <h3 className="text-white text-xl font-bold mb-8">Our OMS Platforms</h3>
+                <div className="flex flex-col gap-5">
+                  <div className="flex flex-col items-start gap-2">
+                    <img
+                      src={dasLogo}
+                      alt="DAS Trader Pro"
+                      className="w-[50px] h-[50px] object-contain"
+                    />
+                    <p className="text-white text-[11px] font-bold uppercase tracking-wider mt-1">DAS TRADER PRO</p>
+                  </div>
+                  <div className="flex flex-col items-start gap-2">
+                    <img
+                      src={sterlingLogo}
+                      alt="Sterling Trader Pro"
+                      className="w-[50px] h-[50px] object-contain"
+                    />
+                    <p className="text-white text-[11px] font-bold uppercase tracking-wider mt-1">STERLING TRADER® PRO</p>
+                  </div>
+                </div>
               </div>
-              {/* Sterling Trader Pro logo + name */}
-              <div className="flex items-center gap-3 mb-6">
-                <img
-                  src={sterlingLogo}
-                  alt="Sterling Trader Pro"
-                  className="w-10 h-10 object-contain rounded"
-                  style={{ filter: "brightness(1.05) contrast(1.1) saturate(1.1)" }}
-                />
-                <p className="text-white font-bold text-sm uppercase tracking-wide">STERLING TRADER® PRO</p>
+              {/* Right pane */}
+              <div className="flex-1 p-8 lg:p-10 flex flex-col justify-center">
+                <p className="text-[#aaa] text-[14px] leading-relaxed mb-8">
+                  Enjoy real-time trading with advanced order types, multi-account management, and analytical
+                  tools designed for the active trader. Try a paper trading account free for 14 Days with a
+                  simulated portfolio and test the power of these features for yourself!
+                </p>
+                <div>
+                  <Link
+                    href="/platforms"
+                    className="inline-flex items-center gap-2 text-white text-[13px] font-medium hover:text-primary transition-colors"
+                  >
+                    View Platforms
+                    <span className="inline-flex items-center justify-center w-6 h-6 bg-primary rounded-sm">
+                      <ArrowRight className="w-3.5 h-3.5 text-white" />
+                    </span>
+                  </Link>
+                </div>
               </div>
-
-              <p className="text-[#aaa] text-[14px] leading-relaxed mb-6">
-                Enjoy real-time trading with advanced order types, multi-account management, and analytical
-                tools designed for the active trader. Try a paper trading account free for 14 Days with a
-                simulated portfolio and test the power of these features for yourself!
-              </p>
-              <Link
-                href="/platforms"
-                className="inline-block border border-white text-white text-sm px-5 py-2 hover:bg-white hover:text-black transition-colors"
-              >
-                View Platforms
-              </Link>
-            </div>
-            {/* Monitor platform image */}
-            <div className="flex-shrink-0 w-full lg:w-[500px]">
-              <img
-                src={monitorPlatform}
-                alt="Trading Platform"
-                className="w-full h-auto object-contain drop-shadow-xl"
-                style={{ filter: "brightness(1.05) contrast(1.05) saturate(1.05)" }}
-              />
             </div>
           </div>
 
-          {/* Infrastructure subsection */}
-          <div className="border-t border-white/8 pt-12">
-            <h3 className="text-xl text-primary font-bold mb-2">Our Infrastructure</h3>
-            <p className="section-label mb-8">SPEED. EFFICIENCY. ACCESS.</p>
-            <div className="flex flex-col lg:flex-row gap-8 items-start">
-              <div className="flex-shrink-0">
+          {/* Card 2 — Our Infrastructure */}
+          <div className="bg-[#141414] border border-white/8">
+            <div className="flex flex-col lg:flex-row">
+              {/* Left pane */}
+              <div className="flex-1 p-8 lg:p-10 border-b lg:border-b-0 lg:border-r border-white/8">
+                <h3 className="text-white text-xl font-bold mb-3">Our Infrastructure</h3>
+                <p className="text-[11px] font-bold tracking-[0.15em] text-white/60 uppercase mb-6">
+                  SPEED. EFFICIENCY. ACCESS.
+                </p>
                 <img
                   src={infraIcon}
                   alt="Infrastructure — candlestick chart icon"
-                  className="w-[120px] h-auto object-contain"
-                  style={{ filter: "brightness(1.05) contrast(1.05) saturate(1.1)" }}
+                  className="w-[132px] h-auto object-contain"
                 />
               </div>
-              <div className="flex-1">
-                <p className="text-[#aaa] text-[14px] leading-relaxed mb-5 max-w-[600px]">
+              {/* Right pane */}
+              <div className="flex-1 p-8 lg:p-10 flex flex-col justify-center">
+                <p className="text-[#aaa] text-[14px] leading-relaxed mb-8">
                   Our proprietary stock locate system, high-tech clearing, low-latency execution platforms,
                   and competitive securities lending services work together to provide everything traders
                   need under one roof.
                 </p>
-                <Link
-                  href="/platforms"
-                  className="inline-block border border-primary text-primary text-sm px-5 py-2 hover:bg-primary hover:text-black transition-colors"
-                >
-                  Trading Infrastructure
-                </Link>
+                <div>
+                  <Link
+                    href="/platforms"
+                    className="inline-flex items-center gap-2 text-white text-[13px] font-medium hover:text-primary transition-colors"
+                  >
+                    Trading Infrastructure
+                    <span className="inline-flex items-center justify-center w-6 h-6 bg-primary rounded-sm">
+                      <ArrowRight className="w-3.5 h-3.5 text-white" />
+                    </span>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -393,9 +410,9 @@ export default function Home() {
       </section>
 
       {/* ── EXPERIENCE THE GUARDIAN DIFFERENCE (CTA) ── */}
-      <section className="bg-[#111] py-20 px-4 border-t border-white/5 text-center">
+      <section className="bg-[#0d0d0d] py-20 px-4 border-t border-white/5 text-center">
         <div className="max-w-[700px] mx-auto">
-          <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-3">
+          <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-4">
             Experience the Guardian Difference
           </h2>
           <p className="text-[#aaa] text-[15px] mb-10">
@@ -404,15 +421,15 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/#pricing"
-              className="inline-block border border-white text-white text-sm px-7 py-3 hover:bg-white hover:text-black transition-colors font-medium"
+              className="inline-block border border-[#4a7fbd] text-white text-sm px-8 py-3 hover:bg-[#4a7fbd]/20 transition-colors font-medium"
             >
               Pricing Details
             </Link>
             <Link
               href="/signup"
-              className="inline-block bg-[#4a7fbd] hover:bg-[#3d6fad] text-white text-sm px-7 py-3 transition-colors font-medium"
+              className="inline-block bg-[#4a7fbd] hover:bg-[#3d6fad] text-white text-sm px-8 py-3 transition-colors font-medium"
             >
-              Open an Account
+              Open An Account
             </Link>
           </div>
         </div>

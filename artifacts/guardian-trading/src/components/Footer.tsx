@@ -1,63 +1,129 @@
 import { Link } from "wouter";
-import guardianLogo from "@assets/IMG_7934_1773719077190.png";
+import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";
+import benzingaBadge from "@assets/reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249.png";
 
 export function Footer() {
   return (
-    <footer className="bg-[#0e0e0e] border-t border-white/5 pt-16 pb-10">
-      <div className="max-w-[1200px] mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-14">
-          <div className="col-span-1 md:col-span-2">
-            <Link href="/" className="inline-flex items-center mb-5">
+    <footer className="bg-[#0d0d0d] border-t border-white/5">
+      {/* Main footer content */}
+      <div className="max-w-[1100px] mx-auto px-6 pt-14 pb-10">
+        <div className="flex flex-col lg:flex-row gap-12">
+          {/* Left — logo + benzinga badge */}
+          <div className="flex flex-col gap-6 lg:w-[220px] flex-shrink-0">
+            <Link href="/">
               <img
-                src={guardianLogo}
+                src={guardianReversedLogo}
                 alt="Guardian Trading"
-                className="h-9 w-auto object-contain"
+                className="h-[36px] w-auto object-contain"
               />
             </Link>
-            <p className="text-[#888] text-sm max-w-sm mb-6 leading-relaxed">
-              Optimised services, tools and support designed specifically for active traders.
-              Master your order flow with our professional DMA platform.
-            </p>
+            <img
+              src={benzingaBadge}
+              alt="Reviewed by Benzinga 2024"
+              className="w-[80px] h-auto object-contain"
+            />
           </div>
 
-          <div>
-            <h4 className="text-white text-sm font-bold uppercase tracking-wider mb-5">Quick Links</h4>
-            <ul className="flex flex-col gap-3">
-              <li>
-                <Link href="/about" className="text-[#888] hover:text-primary text-sm transition-colors">About Us</Link>
-              </li>
-              <li>
-                <Link href="/platforms" className="text-[#888] hover:text-primary text-sm transition-colors">Trading Platforms</Link>
-              </li>
-              <li>
-                <Link href="/#pricing" className="text-[#888] hover:text-primary text-sm transition-colors">Pricing & Commissions</Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-[#888] hover:text-primary text-sm transition-colors">Contact Support</Link>
-              </li>
-            </ul>
-          </div>
+          {/* Right — three columns */}
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-10">
+            {/* COMPANY */}
+            <div>
+              <h4 className="text-[#aaa] text-[11px] font-bold uppercase tracking-widest mb-5">COMPANY</h4>
+              <ul className="flex flex-col gap-3">
+                <li>
+                  <Link href="/about" className="text-[#888] hover:text-white text-[13px] transition-colors">
+                    About
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/#services" className="text-[#888] hover:text-white text-[13px] transition-colors">
+                    Services
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/platforms" className="text-[#888] hover:text-white text-[13px] transition-colors">
+                    Platforms
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/#pricing" className="text-[#888] hover:text-white text-[13px] transition-colors">
+                    Pricing
+                  </Link>
+                </li>
+                <li>
+                  <a href="#" className="text-[#888] hover:text-white text-[13px] transition-colors">
+                    Insights
+                  </a>
+                </li>
+              </ul>
+            </div>
 
-          <div>
-            <h4 className="text-white text-sm font-bold uppercase tracking-wider mb-5">Legal</h4>
-            <ul className="flex flex-col gap-3">
-              <li><a href="#" className="text-[#888] hover:text-white text-sm transition-colors">Terms of Service</a></li>
-              <li><a href="#" className="text-[#888] hover:text-white text-sm transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="text-[#888] hover:text-white text-sm transition-colors">Risk Disclosure</a></li>
-              <li><a href="#" className="text-[#888] hover:text-white text-sm transition-colors">Margin Disclosure</a></li>
-            </ul>
+            {/* LEGAL */}
+            <div>
+              <h4 className="text-[#aaa] text-[11px] font-bold uppercase tracking-widest mb-5">LEGAL</h4>
+              <ul className="flex flex-col gap-3">
+                <li>
+                  <a href="#" className="text-[#888] hover:text-white text-[13px] transition-colors">
+                    Disclosures
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-[#888] hover:text-white text-[13px] transition-colors">
+                    Privacy Policy
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* CONTACT */}
+            <div>
+              <h4 className="text-[#aaa] text-[11px] font-bold uppercase tracking-widest mb-5">CONTACT</h4>
+              <ul className="flex flex-col gap-3">
+                <li>
+                  <a href="tel:8886020092" className="text-[#888] hover:text-white text-[13px] transition-colors">
+                    888-602-0092
+                  </a>
+                </li>
+                <li>
+                  <a href="mailto:info@guardiantrading.com" className="text-[#888] hover:text-white text-[13px] transition-colors">
+                    info@guardiantrading.com
+                  </a>
+                </li>
+                <li>
+                  <p className="text-[#888] text-[13px] leading-snug">
+                    1301 Route 36, Suite 109 Hazlet, NJ 07730
+                  </p>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <p className="text-xs text-[#555]">
-            © {new Date().getFullYear()} Guardian Trading. All rights reserved.
-          </p>
-          <p className="text-xs text-[#444] max-w-2xl md:text-right leading-relaxed">
-            Trading in financial markets carries a high level of risk and may not be suitable for all investors.
-            Before deciding to trade, you should carefully consider your investment objectives, level of experience, and risk appetite.
-          </p>
-        </div>
+      {/* Divider */}
+      <div className="border-t border-white/8" />
+
+      {/* Legal disclaimer */}
+      <div className="max-w-[1100px] mx-auto px-6 py-8 text-center">
+        <p className="text-[12px] text-[#666] mb-2">
+          Guardian Trading – A Division of Velocity Clearing, LLC ("Velocity"), Member{" "}
+          <a href="https://www.finra.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#888]">FINRA</a>
+          /{" "}
+          <a href="https://www.sipc.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#888]">SIPC</a>.
+        </p>
+        <p className="text-[12px] text-[#555] font-semibold mb-2">
+          All securities and transactions are handled through Velocity.
+        </p>
+        <p className="text-[11px] text-[#444] leading-relaxed max-w-[820px] mx-auto">
+          ©{new Date().getFullYear()} VELOCITY CLEARING, LLC. ALL RIGHTS RESERVED. VELOCITY CLEARING, LLC IS REGISTERED WITH THE SEC AND A MEMBER OF{" "}
+          <a href="https://www.finra.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#666]">FINRA</a>
+          {" "}AND{" "}
+          <a href="https://www.sipc.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#666]">SIPC</a>
+          . MARKET VOLATILITY AND VOLUME MAY DELAY SYSTEMS ACCESS AND TRADE EXECUTION. CHECK THE BACKGROUND OF VELOCITY CLEARING ON{" "}
+          <a href="https://brokercheck.finra.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#666]">FINRA'S BROKER CHECK</a>
+          {" "}AND SEE OUR FULL{" "}
+          <a href="#" className="underline hover:text-[#666]">DISCLOSURES</a>.
+        </p>
       </div>
     </footer>
   );
