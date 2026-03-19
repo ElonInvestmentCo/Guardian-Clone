@@ -63,11 +63,14 @@ export default function ChatWidget() {
             </div>
             {/* Bubble */}
             <div className="flex-1 rounded-2xl rounded-tl-sm overflow-hidden" style={{ background: "#2a2a2a" }}>
-              {/* Trading screenshot */}
-              <img
-                src="/images/chat-preview.jpeg"
-                alt="Trading platform"
+              {/* Video preview */}
+              <video
+                src={`${import.meta.env.BASE_URL}chat-preview.mp4`}
                 className="w-full h-[170px] object-cover object-center"
+                autoPlay
+                loop
+                muted
+                playsInline
               />
               <div className="px-4 py-3">
                 <p className="text-white text-sm leading-relaxed">
