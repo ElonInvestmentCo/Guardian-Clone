@@ -109,16 +109,18 @@ export default function Home() {
 
       {/* ── BENZINGA AWARD BANNER ── */}
       <section className="bg-[#151515] py-8 px-4">
-        <div className="max-w-[760px] mx-auto">
+        <div className="max-w-[1100px] mx-auto">
           <a
             href="https://guardian.vaccountopening.com/register/Benzinga"
             target="_blank"
             rel="noopener noreferrer"
+            className="block"
           >
             <img
               src={benzingaBannerImg}
               alt="Reviewed by Benzinga 2024 — Preferred Broker for Short Selling"
-              className="w-full h-auto object-contain"
+              className="block w-full h-auto"
+              style={{ imageRendering: "auto", filter: "brightness(1.05) contrast(1.05)" }}
             />
           </a>
         </div>
@@ -306,7 +308,8 @@ export default function Home() {
             <img
               src={omsPlatformsImg}
               alt="Our OMS Platforms — DAS Trader Pro and Sterling Trader Pro"
-              className="w-full h-auto object-contain"
+              className="block w-full h-auto"
+              style={{ filter: "brightness(1.1) contrast(1.08) saturate(1.05)" }}
             />
           </div>
 
@@ -315,7 +318,8 @@ export default function Home() {
             <img
               src={infrastructureImg}
               alt="Our Infrastructure — Speed. Efficiency. Access."
-              className="w-full h-auto object-contain"
+              className="block w-full h-auto"
+              style={{ filter: "brightness(1.1) contrast(1.08) saturate(1.05)" }}
             />
           </div>
         </div>
