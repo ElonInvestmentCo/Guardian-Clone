@@ -131,7 +131,7 @@ export default function Home() {
           <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-3">
             Why Do Active Traders Use Guardian?
           </h2>
-          <h3 className="text-xl text-white font-bold mb-6">Pricing. Routing. Service.</h3>
+          <h3 className="text-2xl text-white font-bold mb-5">Pricing. Routing. Service.</h3>
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="flex-1">
               <p className="text-white text-[15px] leading-relaxed mb-4">
