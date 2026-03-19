@@ -14,6 +14,9 @@ import benzingaBadge from "@assets/IMG_7973_1773721659915.png";
 import infraIcon from "@assets/ico-our-infrastructure-132x72_1773948931248.png";
 import bgVector from "@assets/img-background-vector-1_1773948931248.png";
 import arrowIcon from "@assets/IMG_8065_1773952578861.PNG";
+import benzingaBannerImg from "@assets/img-benzinga-short-selling-review-1-846x218-1_1773952971025.jpg";
+import omsPlatformsImg from "@assets/Guardian_Trading_-_Google_Chrome_3_19_2026_9_40_04_PM_1773952898387.png";
+import infrastructureImg from "@assets/Guardian_Trading_-_Google_Chrome_3_19_2026_9_40_04_PM_1773952959755.png";
 
 export default function Home() {
   const [newsBannerVisible, setNewsBannerVisible] = useState(true);
@@ -107,43 +110,17 @@ export default function Home() {
       {/* ── BENZINGA AWARD BANNER ── */}
       <section className="bg-[#151515] py-8 px-4">
         <div className="max-w-[760px] mx-auto">
-          <div className="bg-[#c8e8f5] px-8 py-5 flex flex-col sm:flex-row items-center gap-6">
-            {/* Benzinga badge image */}
-            <div className="flex-shrink-0">
-              <img
-                src={benzingaBadge}
-                alt="Reviewed by Benzinga 2024"
-                className="w-[86px] h-auto object-contain"
-                style={{ filter: "brightness(1.05) contrast(1.1) saturate(1.1)" }}
-              />
-            </div>
-            {/* Text */}
-            <div>
-              <div className="flex items-center gap-1 mb-1">
-                <span className="text-[13px] text-gray-700 font-medium">Rating:</span>
-                <div className="flex gap-0.5 ml-1">
-                  {[...Array(4)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                  <Star className="w-4 h-4 fill-yellow-400/50 text-yellow-400" />
-                </div>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 leading-tight mb-0.5">
-                Preferred Broker for Short Selling
-              </h3>
-              <p className="text-[13px] text-gray-600 mb-3">
-                Selected: Best for Day Trading and Scalpers
-              </p>
-              <a
-                href="https://guardian.vaccountopening.com/register/Benzinga"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 border border-gray-800 text-gray-800 text-[12px] px-4 py-1.5 hover:bg-gray-800 hover:text-white transition-colors"
-              >
-                Read More <ArrowRight className="w-3 h-3" />
-              </a>
-            </div>
-          </div>
+          <a
+            href="https://guardian.vaccountopening.com/register/Benzinga"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src={benzingaBannerImg}
+              alt="Reviewed by Benzinga 2024 — Preferred Broker for Short Selling"
+              className="w-full h-auto object-contain"
+            />
+          </a>
         </div>
       </section>
 
@@ -325,83 +302,21 @@ export default function Home() {
           </h2>
 
           {/* Card 1 — Our OMS Platforms */}
-          <div className="bg-[#141414] mb-4">
-            <div className="flex flex-col lg:flex-row">
-              {/* Left pane */}
-              <div className="flex-1 p-8 lg:p-10">
-                <h3 className="text-white text-2xl font-bold mb-8">Our OMS Platforms</h3>
-                <div className="flex flex-col gap-5">
-                  <div className="flex flex-col items-start gap-2">
-                    <img
-                      src={dasLogo}
-                      alt="DAS Trader Pro"
-                      className="w-[50px] h-[50px] object-contain"
-                    />
-                    <p className="text-white text-[13px] font-bold uppercase tracking-wider mt-1">DAS TRADER PRO</p>
-                  </div>
-                  <div className="flex flex-col items-start gap-2">
-                    <img
-                      src={sterlingLogo}
-                      alt="Sterling Trader Pro"
-                      className="w-[50px] h-[50px] object-contain"
-                    />
-                    <p className="text-white text-[13px] font-bold uppercase tracking-wider mt-1">STERLING TRADER® PRO</p>
-                  </div>
-                </div>
-              </div>
-              {/* Right pane */}
-              <div className="flex-1 p-8 lg:p-10 flex flex-col justify-center">
-                <p className="text-white text-[15px] leading-relaxed mb-8">
-                  Enjoy real-time trading with advanced order types, multi-account management, and analytical
-                  tools designed for the active trader. Try a paper trading account free for 14 Days with a
-                  simulated portfolio and test the power of these features for yourself!
-                </p>
-                <div>
-                  <Link
-                    href="/platforms"
-                    className="inline-flex items-center gap-2 text-white text-[14px] font-medium hover:opacity-80 transition-opacity"
-                  >
-                    View Platforms
-                    <img src={arrowIcon} alt="" className="w-6 h-6 object-contain" />
-                  </Link>
-                </div>
-              </div>
-            </div>
+          <div className="mb-4">
+            <img
+              src={omsPlatformsImg}
+              alt="Our OMS Platforms — DAS Trader Pro and Sterling Trader Pro"
+              className="w-full h-auto object-contain"
+            />
           </div>
 
           {/* Card 2 — Our Infrastructure */}
-          <div className="bg-[#141414]">
-            <div className="flex flex-col lg:flex-row">
-              {/* Left pane */}
-              <div className="flex-1 p-8 lg:p-10">
-                <h3 className="text-white text-2xl font-bold mb-3">Our Infrastructure</h3>
-                <p className="text-[13px] font-bold tracking-[0.15em] text-white uppercase mb-6">
-                  SPEED. EFFICIENCY. ACCESS.
-                </p>
-                <img
-                  src={infraIcon}
-                  alt="Infrastructure — candlestick chart icon"
-                  className="w-[132px] h-auto object-contain"
-                />
-              </div>
-              {/* Right pane */}
-              <div className="flex-1 p-8 lg:p-10 flex flex-col justify-center">
-                <p className="text-white text-[15px] leading-relaxed mb-8">
-                  Our proprietary stock locate system, high-tech clearing, low-latency execution platforms,
-                  and competitive securities lending services work together to provide everything traders
-                  need under one roof.
-                </p>
-                <div>
-                  <Link
-                    href="/platforms"
-                    className="inline-flex items-center gap-2 text-white text-[14px] font-medium hover:opacity-80 transition-opacity"
-                  >
-                    Trading Infrastructure
-                    <img src={arrowIcon} alt="" className="w-6 h-6 object-contain" />
-                  </Link>
-                </div>
-              </div>
-            </div>
+          <div>
+            <img
+              src={infrastructureImg}
+              alt="Our Infrastructure — Speed. Efficiency. Access."
+              className="w-full h-auto object-contain"
+            />
           </div>
         </div>
       </section>
