@@ -126,7 +126,7 @@ export default function Home() {
       </section>
 
       {/* ── WHY DO ACTIVE TRADERS USE GUARDIAN? ── */}
-      <section id="services" className="bg-[#151515] py-20 px-4">
+      <section id="services" className="bg-[#222222] py-20 px-4">
         <div className="max-w-[1200px] mx-auto">
           <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-3">
             Why Do Active Traders Use Guardian?
@@ -158,10 +158,10 @@ export default function Home() {
       </section>
 
       {/* ── PRICING CARDS ── */}
-      <section id="pricing" className="bg-[#151515] py-10 px-4">
+      <section id="pricing" className="bg-[#222222] py-10 px-4">
         <div className="max-w-[1100px] mx-auto">
           {/* Single dark card — heading left, pricing right */}
-          <div className="bg-[#1e1e1e] flex flex-col lg:flex-row">
+          <div className="bg-[#0d0d0d] flex flex-col lg:flex-row">
             {/* Left: heading */}
             <div className="flex-shrink-0 lg:w-[280px] px-10 py-10 flex items-center">
               <h2 className="text-2xl font-bold text-white leading-snug">
