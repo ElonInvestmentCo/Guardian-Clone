@@ -101,23 +101,22 @@ const selectStyle: React.CSSProperties = {
 
 export default function RiskTolerance() {
   const [, navigate] = useLocation();
-  const [riskChecks, setRiskChecks] = useState<Set<string>>(new Set());
+  const [selectedRisk, setSelectedRisk] = useState<string>("");
   const [hasEducation, setHasEducation] = useState<string>("");
   const [priorities, setPriorities] = useState<Record<string, string>>({
     income: "", growth: "", speculation: "", trading: "", capital: "",
   });
-
-  const toggleRisk = (key: string) =>
-    setRiskChecks((prev) => {
-      const next = new Set(prev);
-      next.has(key) ? next.delete(key) : next.add(key);
-      return next;
-    });
+  const [riskError, setRiskError] = useState<string>("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedRisk) {
+      setRiskError("Please select a risk tolerance option before proceeding.");
+      return;
+    }
+    setRiskError("");
     await saveSignupStep("riskTolerance", {
-      riskTolerances: Array.from(riskChecks),
+      riskTolerance: selectedRisk,
       hasFinancialEducation: hasEducation,
       strategyPriorities: priorities,
     });
@@ -221,20 +220,33 @@ export default function RiskTolerance() {
 
                 <div className="flex flex-col gap-3">
                   {RISK_OPTIONS.map(({ key, label, desc }) => (
-                    <div key={key} className="flex items-start gap-4">
-                      <label className="flex items-center gap-2 cursor-pointer flex-shrink-0" style={{ minWidth: "200px" }}>
-                        <input
-                          type="checkbox"
-                          checked={riskChecks.has(key)}
-                          onChange={() => toggleRisk(key)}
-                          style={{ width: "14px", height: "14px", accentColor: "#3a7bd5", flexShrink: 0 }}
-                        />
-                        <span style={{ fontSize: "13px", color: "#444", fontWeight: 500 }}>{label}</span>
-                      </label>
-                      <p style={{ fontSize: "12px", color: "#666", lineHeight: "1.5" }}>{desc}</p>
-                    </div>
+                    <label
+                      key={key}
+                      className="flex items-start gap-4 cursor-pointer"
+                      style={{
+                        padding: "10px 12px",
+                        borderRadius: "3px",
+                        border: `1px solid ${selectedRisk === key ? "#3a7bd5" : "#dde3e9"}`,
+                        background: selectedRisk === key ? "#eef4fc" : "white",
+                        transition: "background 0.15s, border-color 0.15s",
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="riskTolerance"
+                        value={key}
+                        checked={selectedRisk === key}
+                        onChange={() => { setSelectedRisk(key); setRiskError(""); }}
+                        style={{ width: "14px", height: "14px", accentColor: "#3a7bd5", flexShrink: 0, marginTop: "2px" }}
+                      />
+                      <div>
+                        <p style={{ fontSize: "13px", color: "#333", fontWeight: 600, marginBottom: "2px" }}>{label}</p>
+                        <p style={{ fontSize: "12px", color: "#666", lineHeight: "1.5" }}>{desc}</p>
+                      </div>
+                    </label>
                   ))}
                 </div>
+                {riskError && <p className="mt-2 text-xs" style={{ color: "#e53e3e" }}>{riskError}</p>}
               </div>
 
               {/* Education question */}
