@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { X, ArrowLeft, Minus, Home, MessageSquare, Send } from "lucide-react";
+import { X, ArrowLeft, Minus, Home, MessageSquare } from "lucide-react";
 import { useLocation } from "wouter";
 import chatIcon from "@assets/DAFF4A91-FB9A-40ED-9CF7-E072FEA1BB59_1773727452638.png";
 import needHelpImg from "@assets/8362510f188d6ddbeb52744b9d477783_1773966680140.png";
 import heroPattern from "@assets/pattern_1773965291387.png";
+import letsChatBtn from "@assets/IMG_8080_1773969229592.PNG";
 
 type Screen = "home" | "chat";
 
@@ -127,15 +128,18 @@ export default function ChatWidget() {
                 </div>
               </div>
 
-              {/* Let's chat button */}
+              {/* Let's chat button image */}
               <div className="px-4 pb-4">
                 <button
                   onClick={() => setScreen("chat")}
-                  className="w-full py-3 rounded-full font-bold text-[14px] flex items-center justify-center gap-2 transition-opacity hover:opacity-90 active:opacity-80"
-                  style={{ background: "#5aabdb", color: "#fff" }}
+                  className="w-full block transition-opacity hover:opacity-90 active:opacity-80 focus:outline-none"
+                  aria-label="Let's chat"
                 >
-                  Let's chat
-                  <Send className="w-4 h-4" />
+                  <img
+                    src={letsChatBtn}
+                    alt="Let's chat"
+                    className="w-full h-auto block"
+                  />
                 </button>
               </div>
             </div>
