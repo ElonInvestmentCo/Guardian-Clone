@@ -13,10 +13,7 @@ import sterlingLogo from "@assets/sterling-icon-50x50_1773948931249.png";
 import benzingaBadge from "@assets/IMG_7973_1773721659915.png";
 import bgVector from "@assets/img-background-vector-1_1773948931248.png";
 import heroPattern from "@assets/pattern_1773965291387.png";
-import arrowIcon from "@assets/IMG_8065_1773952578861.PNG";
 import benzingaBannerImg from "@assets/img-benzinga-short-selling-review-1-846x218-1_1773952971025.jpg";
-import omsPlatformsImg from "@assets/Guardian_Trading_-_Google_Chrome_3_19_2026_9_40_04_PM_1773953383663.png";
-import infrastructureImg from "@assets/Guardian_Trading_-_Google_Chrome_3_19_2026_9_40_04_PM_1773953634657.png";
 
 export default function Home() {
   const [newsBannerVisible, setNewsBannerVisible] = useState(true);
@@ -314,23 +311,86 @@ export default function Home() {
           </h2>
 
           {/* Card 1 — Our OMS Platforms */}
-          <div className="mb-4">
-            <img
-              src={omsPlatformsImg}
-              alt="Our OMS Platforms — DAS Trader Pro and Sterling Trader Pro"
-              className="block w-full h-auto"
-              style={{ filter: "brightness(1.1) contrast(1.08) saturate(1.05)" }}
-            />
+          <div className="mb-[6px] bg-[#111] flex flex-col lg:flex-row">
+            {/* Left */}
+            <div className="lg:w-[42%] px-8 lg:px-10 py-8 lg:py-10 flex flex-col justify-center">
+              <h3 className="text-[22px] lg:text-[26px] font-bold text-white mb-7 leading-tight">
+                Our OMS Platforms
+              </h3>
+              <div className="flex items-start gap-10">
+                {/* DAS Trader Pro */}
+                <div className="flex flex-col items-start">
+                  <img
+                    src={dasLogo}
+                    alt="DAS Trader Pro"
+                    className="w-[46px] h-[46px] object-contain mb-3"
+                  />
+                  <span className="text-white text-[11px] font-bold tracking-[0.12em] uppercase leading-tight">
+                    DAS TRADER PRO
+                  </span>
+                </div>
+                {/* Sterling Trader Pro */}
+                <div className="flex flex-col items-start">
+                  <div className="relative mb-3">
+                    <img
+                      src={sterlingLogo}
+                      alt="Sterling Trader Pro"
+                      className="w-[46px] h-[46px] object-contain"
+                    />
+                    <span
+                      className="absolute -top-1 -right-2 text-white font-bold leading-none"
+                      style={{ fontSize: "9px" }}
+                    >
+                      TM
+                    </span>
+                  </div>
+                  <span className="text-white text-[11px] font-bold tracking-[0.12em] uppercase leading-tight">
+                    STERLING TRADER® PRO
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="hidden lg:block w-px bg-white/10 my-8" />
+
+            {/* Right */}
+            <div className="flex-1 border-t border-white/10 lg:border-t-0 px-8 lg:px-10 py-8 lg:py-10 flex flex-col justify-center">
+              <p className="text-white text-[14px] lg:text-[15px] leading-relaxed mb-7">
+                Enjoy real-time trading with advanced order types, multi-account management, and analytical
+                tools designed for the active trader. Try a paper trading account free for 14 Days with a
+                simulated portfolio and test the power of these features for yourself!
+              </p>
+              <TechCTA label="View Platforms" href="/platforms" />
+            </div>
           </div>
 
           {/* Card 2 — Our Infrastructure */}
-          <div>
-            <img
-              src={infrastructureImg}
-              alt="Our Infrastructure — Speed. Efficiency. Access."
-              className="block w-full h-auto"
-              style={{ filter: "brightness(1.1) contrast(1.08) saturate(1.05)" }}
-            />
+          <div className="bg-[#111] flex flex-col lg:flex-row">
+            {/* Left */}
+            <div className="lg:w-[42%] px-8 lg:px-10 py-8 lg:py-10 flex flex-col justify-center">
+              <h3 className="text-[22px] lg:text-[26px] font-bold text-white mb-2 leading-tight">
+                Our Infrastructure
+              </h3>
+              <p className="text-white text-[11px] font-bold tracking-[0.18em] uppercase mb-6">
+                SPEED. EFFICIENCY. ACCESS.
+              </p>
+              {/* Candlestick chart icon */}
+              <CandlestickIcon />
+            </div>
+
+            {/* Divider */}
+            <div className="hidden lg:block w-px bg-white/10 my-8" />
+
+            {/* Right */}
+            <div className="flex-1 border-t border-white/10 lg:border-t-0 px-8 lg:px-10 py-8 lg:py-10 flex flex-col justify-center">
+              <p className="text-white text-[14px] lg:text-[15px] leading-relaxed mb-7">
+                Our proprietary stock locate system, high-tech clearing, low-latency execution platforms, and
+                competitive securities lending services work together to provide everything traders need under
+                one roof.
+              </p>
+              <TechCTA label="Trading Infrastructure" href="/platforms" />
+            </div>
           </div>
         </div>
       </section>
@@ -366,5 +426,71 @@ export default function Home() {
       {/* ── CHAT WIDGET ── */}
       <ChatWidget />
     </Layout>
+  );
+}
+
+/* ── CTA row used in Trading Technology cards ── */
+function TechCTA({ label, href }: { label: string; href: string }) {
+  return (
+    <a
+      href={href}
+      className="group inline-flex items-center gap-3 w-fit"
+      style={{ textDecoration: "none" }}
+    >
+      <span className="text-white font-bold text-[15px] tracking-wide group-hover:text-[#1ab8d4] transition-colors">
+        {label}
+      </span>
+      <span
+        className="flex-shrink-0 flex items-center justify-center transition-colors group-hover:bg-[#1e6fc4]"
+        style={{
+          width: "30px",
+          height: "30px",
+          background: "#1e5fa0",
+        }}
+      >
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="white">
+          <polygon points="2,1 10,5.5 2,10" />
+        </svg>
+      </span>
+    </a>
+  );
+}
+
+/* ── Candlestick chart icon for Infrastructure card ── */
+function CandlestickIcon() {
+  const color = "#1ab8d4";
+  return (
+    <svg
+      width="120"
+      height="52"
+      viewBox="0 0 120 52"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      {/* Candle 1 */}
+      <line x1="10" y1="7" x2="10" y2="44" stroke={color} strokeWidth="1.4" />
+      <rect x="6" y="15" width="8" height="18" fill={color} />
+
+      {/* Candle 2 */}
+      <line x1="30" y1="3" x2="30" y2="46" stroke={color} strokeWidth="1.4" />
+      <rect x="26" y="10" width="8" height="24" fill={color} />
+
+      {/* Candle 3 */}
+      <line x1="50" y1="10" x2="50" y2="40" stroke={color} strokeWidth="1.4" />
+      <rect x="46" y="17" width="8" height="14" fill={color} />
+
+      {/* Candle 4 */}
+      <line x1="70" y1="5" x2="70" y2="43" stroke={color} strokeWidth="1.4" />
+      <rect x="66" y="12" width="8" height="20" fill={color} />
+
+      {/* Horizontal dashed price-level lines */}
+      <line x1="80" y1="13" x2="112" y2="13" stroke={color} strokeWidth="1" strokeDasharray="4 3" opacity="0.65" />
+      <line x1="80" y1="25" x2="112" y2="25" stroke={color} strokeWidth="1" strokeDasharray="4 3" opacity="0.65" />
+      <line x1="80" y1="38" x2="112" y2="38" stroke={color} strokeWidth="1" strokeDasharray="4 3" opacity="0.65" />
+
+      {/* Small square marker */}
+      <rect x="108" y="9" width="9" height="9" stroke={color} strokeWidth="1" opacity="0.8" />
+    </svg>
   );
 }
