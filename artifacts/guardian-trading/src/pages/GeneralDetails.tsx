@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
+import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";
 
 const REGISTRATION_TYPES = ["Individual Account", "Limited Liability Company"];
 const PRODUCTS = ["Stocks", "Stocks And Options"];
@@ -263,6 +264,107 @@ export default function GeneralDetails() {
           </div>
         </div>
       </main>
+
+      {/* ── Dark Footer ── */}
+      <footer style={{ background: "#111" }}>
+        {/* Top section */}
+        <div className="px-10 pt-12 pb-10" style={{ borderBottom: "1px solid #2a2a2a" }}>
+          <div className="flex flex-col lg:flex-row gap-10">
+
+            {/* Logo */}
+            <div className="flex-shrink-0 lg:w-[200px]">
+              <Link href="/">
+                <img
+                  src={guardianReversedLogo}
+                  alt="Guardian Trading"
+                  style={{ height: "36px", width: "auto", objectFit: "contain" }}
+                />
+              </Link>
+            </div>
+
+            {/* Columns */}
+            <div className="flex flex-1 flex-wrap gap-12">
+
+              {/* Company */}
+              <div>
+                <h4 className="text-[11px] font-bold uppercase tracking-widest mb-4" style={{ color: "#aaa" }}>
+                  Company
+                </h4>
+                <ul className="flex flex-col gap-2.5">
+                  {["About", "Services", "Platforms", "Pricing", "Insights"].map((item) => (
+                    <li key={item}>
+                      <Link href={`/${item.toLowerCase()}`} className="text-[13px] hover:text-white transition-colors" style={{ color: "#bbb" }}>
+                        {item}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Legal */}
+              <div>
+                <h4 className="text-[11px] font-bold uppercase tracking-widest mb-4" style={{ color: "#aaa" }}>
+                  Legal
+                </h4>
+                <ul className="flex flex-col gap-2.5">
+                  {["Disclosures", "Privacy Policy"].map((item) => (
+                    <li key={item}>
+                      <a href="#" className="text-[13px] hover:text-white transition-colors" style={{ color: "#bbb" }}>
+                        {item}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Contact */}
+              <div>
+                <h4 className="text-[11px] font-bold uppercase tracking-widest mb-4" style={{ color: "#aaa" }}>
+                  Contact
+                </h4>
+                <div className="flex flex-col gap-2.5">
+                  <a href="tel:8886020092" className="text-[13px] hover:text-white transition-colors" style={{ color: "#bbb" }}>
+                    888-602-0092
+                  </a>
+                  <a href="mailto:info@guardiantrading.com" className="text-[13px] hover:text-white transition-colors" style={{ color: "#bbb" }}>
+                    info@guardiantrading.com
+                  </a>
+                  <p className="text-[13px]" style={{ color: "#bbb" }}>
+                    1301 Route 36 Suite 109 Hazlet, NJ 07730
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom legal section */}
+        <div className="px-10 py-8 text-center">
+          <p className="text-[13px] mb-1" style={{ color: "#aaa" }}>
+            Guardian Trading – A Division of Velocity Clearing, LLC ("Velocity"). Member FINRA/ SIPC.
+          </p>
+          <p className="text-[13px] mb-6" style={{ color: "#aaa" }}>
+            All securities and transactions are handled through Velocity.
+          </p>
+
+          <p className="text-[11px] uppercase leading-relaxed mb-5" style={{ color: "#666", maxWidth: "900px", margin: "0 auto 20px" }}>
+            @2023 VELOCITY CLEARING, LLC IS REGISTERED WITH THE SEC AND A MEMBER OF{" "}
+            <a href="https://www.finra.org" target="_blank" rel="noreferrer" style={{ color: "#5baad4" }}>FINRA</a>{" "}
+            AND{" "}
+            <a href="https://www.sipc.org" target="_blank" rel="noreferrer" style={{ color: "#5baad4" }}>SIPC</a>.
+            {" "}MARKET VOLATILITY AND VOLUME MAY DELAY SYSTEMS ACCESS AND TRADE EXECUTION. CHECK THE BACKGROUND OF VELOCITY CLEARING ON{" "}
+            <a href="https://brokercheck.finra.org" target="_blank" rel="noreferrer" style={{ color: "#5baad4" }}>FINRA'S BROKER CHECK</a>.
+          </p>
+
+          <p className="text-[11px] uppercase leading-relaxed" style={{ color: "#666", maxWidth: "900px", margin: "0 auto" }}>
+            OPTIONS INVOLVE RISK AND ARE NOT SUITABLE FOR ALL INVESTORS. FOR MORE INFORMATION READ THE{" "}
+            <a href="#" style={{ color: "#5baad4" }}>CHARACTERISTICS AND RISKS OF STANDARDIZED OPTIONS</a>,
+            {" "}ALSO KNOWN AS THE OPTIONS DISCLOSURE DOCUMENT (ODD). ALTERNATIVELY, PLEASE CONTACT{" "}
+            <a href="mailto:info@guardiantrading.com" style={{ color: "#5baad4" }}>INFO@GUARDIANTRADING.COM</a>
+            {" "}TO RECEIVE A COPY OF THE ODD.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
