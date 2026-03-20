@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
+import { saveSignupStep } from "@/lib/saveStep";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";
 
@@ -77,8 +78,14 @@ export default function FinancialSituation() {
   const [liquidity, setLiquidity] = useState("");
   const [timeHorizon, setTimeHorizon] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    await saveSignupStep("financialSituation", {
+      annualExpense,
+      specialExpense,
+      liquidityNeeds: liquidity,
+      investmentTimeHorizon: timeHorizon,
+    });
     navigate("/investment-experience");
   };
 

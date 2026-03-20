@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
+import { saveSignupStep } from "@/lib/saveStep";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";
 
@@ -110,8 +111,9 @@ export default function IncomeDetails() {
   const [liquidNetWorth, setLiquidNetWorth] = useState("$25,000 and under");
   const [taxRate, setTaxRate] = useState("0 - 15");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    await saveSignupStep("income", { annualIncome, netWorth, liquidNetWorth, taxRate });
     navigate("/risk-tolerance");
   };
 

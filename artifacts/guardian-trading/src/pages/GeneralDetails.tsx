@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";
+import { saveSignupStep } from "@/lib/saveStep";
 
 const REGISTRATION_TYPES = ["Individual Account", "Limited Liability Company"];
 const PRODUCTS = ["Stocks", "Stocks And Options"];
@@ -30,7 +31,7 @@ export default function GeneralDetails() {
   }>({});
   const [, navigate] = useLocation();
 
-  const handleNext = (e: React.FormEvent) => {
+  const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: typeof errors = {};
     if (!registrationType) newErrors.registrationType = "Please select a registration type";
@@ -41,6 +42,7 @@ export default function GeneralDetails() {
       return;
     }
     setErrors({});
+    await saveSignupStep("general", { registrationType, product, howHeard });
     navigate("/personal-details");
   };
 

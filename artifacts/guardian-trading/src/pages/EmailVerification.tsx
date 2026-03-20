@@ -35,6 +35,7 @@ export default function EmailVerification() {
       } catch {
       }
     }
+    sessionStorage.setItem("signupEmail", email);
     sessionStorage.removeItem("verificationCode");
     sessionStorage.removeItem("verificationEmail");
     sessionStorage.removeItem("verificationPassword");

@@ -98,6 +98,19 @@ Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` 
 - App setup: `src/app.ts` — mounts CORS, JSON/urlencoded parsing, routes at `/api`
 - Routes: `src/routes/index.ts` mounts sub-routers; `src/routes/health.ts` exposes `GET /health` (full path: `/api/health`)
 - Depends on: `@workspace/db`, `@workspace/api-zod`
+
+#### Auth Routes (`src/routes/auth.ts`)
+- `POST /api/auth/send-verification` — sends email verification code
+- `POST /api/auth/verify-code` — verifies the code
+- `POST /api/auth/register` — registers a user (in-memory)
+- `POST /api/auth/login` — validates email/password, returns success
+
+#### Signup Data Storage (`src/routes/signup.ts`, `src/lib/userDataStore.ts`)
+- `POST /api/signup/save-step` — saves a named form step for a user; body: `{ email, step, data }`
+- Data is stored in `data/users.json` (file permissions: `600`, directory: `700`)
+- Sensitive fields are AES-256-GCM encrypted before storage: `taxId`, `idNumber`, `dateOfBirth`, `password`, `passwordHash`, `foreignIdType`
+- Encryption key is read from env var `USER_DATA_KEY` (falls back to dev key with a warning)
+- Steps saved: `general`, `personal`, `professional`, `idInformation`, `income`, `riskTolerance`, `financialSituation`
 - `pnpm --filter @workspace/api-server run dev` — run the dev server
 - `pnpm --filter @workspace/api-server run build` — production esbuild bundle (`dist/index.cjs`)
 - Build bundles an allowlist of deps (express, cors, pg, drizzle-orm, zod, etc.) and externalizes the rest

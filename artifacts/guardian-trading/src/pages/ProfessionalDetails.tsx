@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { Briefcase, User, UserCircle, Landmark, GraduationCap } from "lucide-react";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";
+import { saveSignupStep } from "@/lib/saveStep";
 
 const COUNTRIES = ["United States", "Canada", "United Kingdom", "Australia", "Other"];
 const US_STATES = [
@@ -101,8 +102,9 @@ export default function ProfessionalDetails() {
   });
   const set = (k: keyof typeof form) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    await saveSignupStep("professional", { employmentStatus: employment, ...form });
     navigate("/id-information");
   };
 
