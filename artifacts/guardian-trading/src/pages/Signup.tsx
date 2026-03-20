@@ -55,30 +55,17 @@ export default function Signup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      if (res.ok) {
-        const data = await res.json();
-        sessionStorage.setItem("verificationEmail", email);
-        sessionStorage.setItem("verificationPassword", password);
-        if (data.code) sessionStorage.setItem("verificationCode", data.code);
-      } else {
-        const err = await res.json().catch(() => ({}));
-        if (res.status === 400) {
-          setErrors({ submit: err.error || "Invalid email address." });
-          setLoading(false);
-          return;
-        }
-        sessionStorage.setItem("verificationEmail", email);
-        sessionStorage.setItem("verificationPassword", password);
-        sessionStorage.setItem("verificationCode", String(Math.floor(100 + Math.random() * 900)));
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setErrors({ submit: (data as { error?: string }).error || "Failed to send verification email. Please try again." });
+        return;
       }
+      sessionStorage.setItem("verificationEmail", email);
+      sessionStorage.setItem("verificationPassword", password);
       setSent(true);
       setTimeout(() => navigate("/email-verification"), 600);
     } catch {
-      sessionStorage.setItem("verificationEmail", email);
-      sessionStorage.setItem("verificationPassword", password);
-      sessionStorage.setItem("verificationCode", String(Math.floor(100 + Math.random() * 900)));
-      setSent(true);
-      setTimeout(() => navigate("/email-verification"), 600);
+      setErrors({ submit: "Unable to connect. Please check your connection and try again." });
     } finally {
       setLoading(false);
     }

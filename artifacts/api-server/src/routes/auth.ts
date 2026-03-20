@@ -1,9 +1,24 @@
 import { Router } from "express";
+import { sendVerificationEmail } from "../lib/mailer.js";
 
 const authRouter = Router();
 
-const verificationCodes = new Map<string, { code: string; expires: number }>();
-const registeredUsers = new Map<string, { passwordHash: string }>();
+interface VerificationRecord {
+  code: string;
+  expires: number;
+  attempts: number;
+  createdAt: number;
+}
+
+interface UserRecord {
+  passwordHash: string;
+  createdAt: number;
+}
+
+const verificationCodes = new Map<string, VerificationRecord>();
+const registeredUsers = new Map<string, UserRecord>();
+
+const MAX_VERIFY_ATTEMPTS = 5;
 
 function simpleHash(str: string): string {
   let hash = 0;
@@ -13,13 +28,27 @@ function simpleHash(str: string): string {
   return hash.toString(16);
 }
 
+function generateCode(): string {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
+
+function logAttempt(action: string, email: string, detail?: string) {
+  const ts = new Date().toISOString();
+  console.log(`[Auth][${ts}] ${action} — email=${email}${detail ? ` ${detail}` : ""}`);
+}
+
 authRouter.post("/auth/register", (req, res) => {
   const { email, password } = req.body as { email?: string; password?: string };
   if (!email || !password) {
     res.status(400).json({ error: "Email and password are required" });
     return;
   }
-  registeredUsers.set(email.toLowerCase(), { passwordHash: simpleHash(password) });
+  const key = email.toLowerCase();
+  registeredUsers.set(key, {
+    passwordHash: simpleHash(password),
+    createdAt: Date.now(),
+  });
+  logAttempt("REGISTER", email, "success");
   res.json({ success: true });
 });
 
@@ -34,16 +63,16 @@ authRouter.post("/auth/login", (req, res) => {
   const user = registeredUsers.get(email.toLowerCase());
 
   if (!user || user.passwordHash !== simpleHash(password)) {
-    console.log(`[Auth] Failed login attempt for ${email}`);
+    logAttempt("LOGIN", email, "failed — invalid credentials");
     res.status(401).json({ error: "Invalid email or password" });
     return;
   }
 
-  console.log(`[Auth] Successful login for ${email}`);
+  logAttempt("LOGIN", email, "success");
   res.json({ success: true, email });
 });
 
-authRouter.post("/auth/send-verification", (req, res) => {
+authRouter.post("/auth/send-verification", async (req, res) => {
   const { email } = req.body as { email?: string };
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -51,14 +80,28 @@ authRouter.post("/auth/send-verification", (req, res) => {
     return;
   }
 
-  const code = String(Math.floor(100 + Math.random() * 900));
-  const expires = Date.now() + 10 * 60 * 1000;
+  const key = email.toLowerCase();
+  const code = generateCode();
+  const now = Date.now();
 
-  verificationCodes.set(email.toLowerCase(), { code, expires });
+  verificationCodes.set(key, {
+    code,
+    expires: now + 10 * 60 * 1000,
+    attempts: 0,
+    createdAt: now,
+  });
 
-  console.log(`[Auth] Verification code for ${email}: ${code}`);
+  logAttempt("SEND_VERIFICATION", email, `code=${code} expires_in=10min`);
 
-  res.json({ success: true, code });
+  const mailResult = await sendVerificationEmail(email, code);
+
+  if (!mailResult.success) {
+    logAttempt("SEND_VERIFICATION", email, `email delivery failed: ${mailResult.error ?? "unknown"}`);
+    res.status(500).json({ error: "Failed to send verification email. Please try again." });
+    return;
+  }
+
+  res.json({ success: true });
 });
 
 authRouter.post("/auth/verify-code", (req, res) => {
@@ -69,25 +112,39 @@ authRouter.post("/auth/verify-code", (req, res) => {
     return;
   }
 
-  const record = verificationCodes.get(email.toLowerCase());
+  const key = email.toLowerCase();
+  const record = verificationCodes.get(key);
 
   if (!record) {
-    res.status(400).json({ error: "No verification code found for this email" });
+    logAttempt("VERIFY_CODE", email, "failed — no code on record");
+    res.status(400).json({ error: "No verification code found for this email. Please request a new one." });
     return;
   }
 
   if (Date.now() > record.expires) {
-    verificationCodes.delete(email.toLowerCase());
-    res.status(400).json({ error: "Verification code has expired" });
+    verificationCodes.delete(key);
+    logAttempt("VERIFY_CODE", email, "failed — code expired");
+    res.status(400).json({ error: "Verification code has expired. Please request a new one." });
+    return;
+  }
+
+  record.attempts += 1;
+
+  if (record.attempts > MAX_VERIFY_ATTEMPTS) {
+    verificationCodes.delete(key);
+    logAttempt("VERIFY_CODE", email, `failed — too many attempts (${record.attempts})`);
+    res.status(400).json({ error: "Too many failed attempts. Please request a new verification code." });
     return;
   }
 
   if (record.code !== code.trim()) {
-    res.status(400).json({ error: "Invalid verification code" });
+    logAttempt("VERIFY_CODE", email, `failed — wrong code (attempt ${record.attempts}/${MAX_VERIFY_ATTEMPTS})`);
+    res.status(400).json({ error: "Invalid verification code. Please try again." });
     return;
   }
 
-  verificationCodes.delete(email.toLowerCase());
+  verificationCodes.delete(key);
+  logAttempt("VERIFY_CODE", email, "success");
   res.json({ success: true });
 });
 

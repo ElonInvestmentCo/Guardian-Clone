@@ -10,17 +10,14 @@ export default function EmailVerification() {
   const [verifying, setVerifying] = useState(false);
   const [resending, setResending] = useState(false);
   const [email, setEmail] = useState("");
-  const [storedCode, setStoredCode] = useState("");
   const [storedPassword, setStoredPassword] = useState("");
   const [countdown, setCountdown] = useState(COUNTDOWN_START);
   const [, navigate] = useLocation();
 
   useEffect(() => {
     const storedEmail = sessionStorage.getItem("verificationEmail") || "";
-    const code = sessionStorage.getItem("verificationCode") || "";
     const pw = sessionStorage.getItem("verificationPassword") || "";
     setEmail(storedEmail);
-    setStoredCode(code);
     setStoredPassword(pw);
     if (!storedEmail) {
       navigate("/signup");
@@ -52,24 +49,16 @@ export default function EmailVerification() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.code) {
-          sessionStorage.setItem("verificationCode", data.code);
-          setStoredCode(data.code);
-        }
-      } else {
-        const newCode = String(Math.floor(100 + Math.random() * 900));
-        sessionStorage.setItem("verificationCode", newCode);
-        setStoredCode(newCode);
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({})) as { error?: string };
+        setError(data.error || "Failed to resend code. Please try again.");
+        return;
       }
+      setCountdown(COUNTDOWN_START);
     } catch {
-      const newCode = String(Math.floor(100 + Math.random() * 900));
-      sessionStorage.setItem("verificationCode", newCode);
-      setStoredCode(newCode);
+      setError("Unable to connect. Please check your connection and try again.");
     } finally {
       setResending(false);
-      setCountdown(COUNTDOWN_START);
     }
   };
 
@@ -83,10 +72,10 @@ export default function EmailVerification() {
           body: JSON.stringify({ email, password: storedPassword }),
         });
       } catch {
+        // Non-fatal — proceed anyway
       }
     }
     sessionStorage.setItem("signupEmail", email);
-    sessionStorage.removeItem("verificationCode");
     sessionStorage.removeItem("verificationEmail");
     sessionStorage.removeItem("verificationPassword");
     navigate("/general-details");
@@ -120,24 +109,9 @@ export default function EmailVerification() {
         return;
       }
 
-      const data = await res.json().catch(() => ({}));
-
-      if (res.status === 400 && data.error?.toLowerCase().includes("expired")) {
-        setError("Your code has expired. Please go back and request a new one.");
-      } else if (res.status === 400) {
-        if (storedCode && trimmed === storedCode) {
-          await registerAndContinue();
-          return;
-        }
-        setError("Invalid verification code. Please try again.");
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
+      const data = await res.json().catch(() => ({})) as { error?: string };
+      setError(data.error || "Something went wrong. Please try again.");
     } catch {
-      if (storedCode && inputCode.trim() === storedCode) {
-        await registerAndContinue();
-        return;
-      }
       setError("Unable to verify. Please check your connection and try again.");
     } finally {
       setVerifying(false);
@@ -187,7 +161,7 @@ export default function EmailVerification() {
           {/* Body */}
           <div className="px-8 pt-10 pb-8">
 
-            {/* Guardian Trading logo — large and centered */}
+            {/* Guardian Trading logo */}
             <div className="flex justify-center mb-10">
               <img
                 src={guardianLogo}
@@ -225,7 +199,7 @@ export default function EmailVerification() {
             </div>
 
             <form onSubmit={handleSubmit} noValidate>
-              {/* Input with blue bottom border */}
+              {/* Code input */}
               <div className="mb-6">
                 <input
                   type="text"
