@@ -352,11 +352,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Divider */}
-            <div className="hidden lg:block w-px bg-white/10 my-8" />
-
             {/* Right */}
-            <div className="flex-1 border-t border-white/10 lg:border-t-0 px-8 lg:px-10 py-8 lg:py-10 flex flex-col justify-center">
+            <div className="flex-1 px-8 lg:px-10 py-8 lg:py-10 flex flex-col justify-center">
               <p className="text-white text-[14px] lg:text-[15px] leading-relaxed mb-7">
                 Enjoy real-time trading with advanced order types, multi-account management, and analytical
                 tools designed for the active trader. Try a paper trading account free for 14 Days with a
@@ -385,11 +382,8 @@ export default function Home() {
               />
             </div>
 
-            {/* Divider */}
-            <div className="hidden lg:block w-px bg-white/10 my-8" />
-
             {/* Right */}
-            <div className="flex-1 border-t border-white/10 lg:border-t-0 px-8 lg:px-10 py-8 lg:py-10 flex flex-col justify-center">
+            <div className="flex-1 px-8 lg:px-10 py-8 lg:py-10 flex flex-col justify-center">
               <p className="text-white text-[14px] lg:text-[15px] leading-relaxed mb-7">
                 Our proprietary stock locate system, high-tech clearing, low-latency execution platforms, and
                 competitive securities lending services work together to provide everything traders need under
