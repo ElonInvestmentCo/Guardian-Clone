@@ -304,7 +304,7 @@ export default function Home() {
         />
 
         <div className="relative z-10 max-w-[1100px] mx-auto">
-          <h2 className="font-display font-bold text-white text-center mb-10" style={{ fontSize: "16px" }}>
+          <h2 className="text-4xl lg:text-5xl font-display font-bold text-white text-center mb-10">
             Trading Technology
           </h2>
 
