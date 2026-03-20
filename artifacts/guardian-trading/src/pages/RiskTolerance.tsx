@@ -315,7 +315,7 @@ export default function RiskTolerance() {
                             const takenByOther = usedPriorities.includes(o) && priorities[key] !== o;
                             return (
                               <option key={o} value={o} disabled={takenByOther} style={{ color: takenByOther ? "#bbb" : "#555" }}>
-                                {o}{takenByOther ? " (taken)" : ""}
+                                {o}
                               </option>
                             );
                           })}
