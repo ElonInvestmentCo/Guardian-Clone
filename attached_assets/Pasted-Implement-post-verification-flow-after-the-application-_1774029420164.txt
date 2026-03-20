@@ -1,0 +1,79 @@
+Implement post-verification flow after the application status moves from **Pending** to **Approved/Verified**.
+
+Requirements:
+
+1. **Status Update Handling**
+
+   * When a user’s application is cleared from pending:
+
+     * Update their status to **Verified** in the system.
+     * Persist this status in the user’s stored data.
+
+2. **User Notification (UI)**
+
+   * Display a clear success message:
+
+     * “Your account has been successfully verified”
+   * Show a visible **Verified badge/status indicator** in the UI.
+
+3. **Email Notification**
+
+   * Automatically send an email via Resend:
+
+     * Subject: “Account Verified Successfully”
+     * Body: Inform the user their account is approved and ready.
+   * Ensure email is triggered instantly upon verification.
+
+4. **Dashboard Creation**
+
+   * Build the user **Dashboard page** and redirect the user to it after verification.
+   * Replicate the attached dashboard screenshot **pixel-perfectly**:
+
+     * Layout
+     * Typography
+     * Colors
+     * Spacing
+     * Charts / cards / widgets
+     * Navigation sidebar/header
+
+5. **Dashboard Features**
+
+   * Display key user/account information
+   * Include sections like:
+
+     * Account overview
+     * Trading stats (if applicable)
+     * Recent activity
+   * Ensure smooth loading and transitions
+
+6. **Redirection Flow**
+
+   * After verification:
+
+     * Automatically redirect user → Dashboard
+     * Prevent access to onboarding pages once verified
+
+7. **Design & Build Requirements**
+
+   * Replicate this section using **pixel-perfect accuracy**:
+
+     * Layout
+     * Typography
+     * Colors
+     * Spacing
+     * Alignment
+     * Icons and UI elements
+
+8. **UX & Performance**
+
+   * Maintain responsive behavior across desktop, tablet, and mobile
+   * Preserve interactivity, animations, and hover states
+   * Optimize for fast loading without losing quality
+
+9. **Final Validation**
+
+   * Ensure verified users always see correct status
+   * Confirm email delivery works reliably
+   * Test full flow: Pending → Verified → Dashboard redirect
+
+The verified state, notification, and dashboard experience must feel seamless, professional, and production-ready.

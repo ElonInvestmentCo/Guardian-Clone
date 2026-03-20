@@ -199,6 +199,29 @@ export function addDocumentRef(
   console.log(`[UserDataStore] Document ref saved: ${role} → ${filePath} (${email})`);
 }
 
+/**
+ * Update a user's top-level status field (e.g. "pending" → "verified").
+ */
+export function setUserStatus(email: string, status: string): void {
+  const now = new Date().toISOString();
+
+  const master = readMaster();
+  if (!master[email]) master[email] = { email, createdAt: now };
+  master[email]["status"] = status;
+  master[email]["updatedAt"] = now;
+  if (status === "verified") master[email]["verifiedAt"] = now;
+  writeMaster(master);
+
+  const profile = readProfile(email);
+  if (!profile["email"]) { profile["email"] = email; profile["createdAt"] = now; }
+  profile["status"] = status;
+  profile["updatedAt"] = now;
+  if (status === "verified") profile["verifiedAt"] = now;
+  writeProfile(email, profile);
+
+  console.log(`[UserDataStore] Status set to "${status}" for ${email}`);
+}
+
 export function getUserData(email: string): Record<string, unknown> | null {
   const master = readMaster();
   return master[email] ?? null;

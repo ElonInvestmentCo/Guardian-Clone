@@ -2,7 +2,7 @@
   "Emailmy488@gmail.com": {
     "email": "Emailmy488@gmail.com",
     "createdAt": "2026-03-20T16:30:58.865Z",
-    "updatedAt": "2026-03-20T17:42:19.988Z",
+    "updatedAt": "2026-03-20T17:59:44.953Z",
     "general": {
       "registrationType": "Individual Account",
       "product": "Stocks",
@@ -111,10 +111,42 @@
       ],
       "otherDescription": "",
       "bankName": "EDEDRDS",
-      "abaSwift": "ERSDRESDER",
-      "accountNumber": "SEERSDRESD",
+      "abaSwift": "enc:31341469a4cb4282fa74ed787136adc8:77cd0bb771fc2beba8bae16d306a3c0e:58c395ba7f796b0226bd",
+      "accountNumber": "enc:555706fadbdebc8b653a5f034864ba8d:d40c7815742793716cc28dbebd6861f8:3ce3f5ef2d9f3a29917b",
       "accountName": "SDERSDERS",
       "accountType": "Checking"
+    },
+    "disclosures": {
+      "wantsMargin": "no",
+      "initialDeposit": "",
+      "q1": "",
+      "q2": "",
+      "q3": "",
+      "q4": "",
+      "q5": "",
+      "q6": "",
+      "q7": "",
+      "q8": "",
+      "q9": "",
+      "q10": "",
+      "taxWithholding": "not_subject",
+      "partnershipCheck": false
+    },
+    "signatures": {
+      "consents": {
+        "Account Terms & Conditions": false,
+        "Day Trading Risk Disclosure": false,
+        "Penny Stocks Disclosure": false,
+        "Electronic Access & Trading Agreement": false,
+        "Margin Disclosure Statement": false,
+        "Stock Locate Agreement": false,
+        "Margin Agreement": false,
+        "Liquidation Notice": false
+      },
+      "tradingPlan": "",
+      "electronicDelivery": false,
+      "signatureName": "",
+      "hasSigned": true
     }
   },
   "test@guardiantrading.com": {

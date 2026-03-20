@@ -25,6 +25,44 @@ export async function saveSignupStep(
   }
 }
 
+/**
+ * Trigger account verification for the current session user.
+ * Updates status to "verified" and fires the confirmation email.
+ */
+export async function verifyAccount(): Promise<{ success: boolean; error?: string }> {
+  const email = sessionStorage.getItem("signupEmail");
+  if (!email) return { success: false, error: "No session email found" };
+  try {
+    const res = await fetch(`${BASE}/api/signup/verify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const body = await res.json().catch(() => ({})) as Record<string, unknown>;
+    return res.ok ? { success: true } : { success: false, error: (body["error"] as string) ?? "Verification failed" };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+/**
+ * Poll the current user's application status from the server.
+ */
+export async function checkApplicationStatus(): Promise<{ status: string; verifiedAt?: string | null }> {
+  const email = sessionStorage.getItem("signupEmail");
+  if (!email) return { status: "pending" };
+  try {
+    const res = await fetch(`${BASE}/api/signup/status?email=${encodeURIComponent(email)}`);
+    const body = await res.json().catch(() => ({})) as Record<string, unknown>;
+    return {
+      status: (body["status"] as string) ?? "pending",
+      verifiedAt: body["verifiedAt"] as string | null | undefined,
+    };
+  } catch {
+    return { status: "pending" };
+  }
+}
+
 export type UploadResult =
   | { success: true; path: string; fileName: string }
   | { success: false; error: string };

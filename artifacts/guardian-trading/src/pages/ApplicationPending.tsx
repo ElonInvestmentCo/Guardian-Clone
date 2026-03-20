@@ -1,4 +1,6 @@
-import { Link } from "wouter";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "wouter";
+import { verifyAccount, checkApplicationStatus } from "@/lib/saveStep";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";
 
@@ -26,15 +28,56 @@ const NAV_LINKS = [
 ];
 
 export default function ApplicationPending() {
+  const [, navigate] = useLocation();
+  const [status, setStatus] = useState<"pending" | "verified" | "checking">("pending");
+  const [verifying, setVerifying] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Poll for status every 15 seconds
+  useEffect(() => {
+    const poll = async () => {
+      const result = await checkApplicationStatus();
+      if (result.status === "verified") {
+        setStatus("verified");
+        setTimeout(() => navigate("/account-verified"), 1200);
+      }
+    };
+    poll();
+    const interval = setInterval(poll, 15000);
+    return () => clearInterval(interval);
+  }, [navigate]);
+
+  const handleCheckStatus = async () => {
+    setStatus("checking");
+    const result = await checkApplicationStatus();
+    if (result.status === "verified") {
+      setStatus("verified");
+      setTimeout(() => navigate("/account-verified"), 1200);
+    } else {
+      setStatus("pending");
+    }
+  };
+
+  const handleSimulateApproval = async () => {
+    setVerifying(true);
+    setError(null);
+    const result = await verifyAccount();
+    if (result.success) {
+      setStatus("verified");
+      setTimeout(() => navigate("/account-verified"), 1200);
+    } else {
+      setError(result.error ?? "Verification failed");
+      setVerifying(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#f4f4f4" }}>
 
       {/* Top bar */}
       <div className="flex items-center justify-end px-6 py-1.5" style={{ background: "#5baad4" }}>
         <a href="tel:8449631512" className="flex items-center gap-1.5 text-white font-semibold" style={{ fontSize: "13px" }}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="white">
-            <path d="M6.62 10.79a15.49 15.49 0 0 0 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.25 1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C9.61 21 3 14.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57-.11.35-.02.74-.25 1.02l-2.2 2.2z"/>
-          </svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M6.62 10.79a15.49 15.49 0 0 0 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.25 1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C9.61 21 3 14.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57-.11.35-.02.74-.25 1.02l-2.2 2.2z"/></svg>
           844-963-1512
         </a>
       </div>
@@ -68,8 +111,7 @@ export default function ApplicationPending() {
                 </div>
                 <div className="flex-1 h-[2px]" style={{ background: i === STEPS.length - 1 ? "transparent" : "#3a7bd5" }} />
               </div>
-              <p className="text-center mt-1.5 leading-tight whitespace-pre-line"
-                style={{ fontSize: "9px", color: "#3a7bd5", fontWeight: 700, maxWidth: "70px" }}>
+              <p className="text-center mt-1.5 leading-tight whitespace-pre-line" style={{ fontSize: "9px", color: "#3a7bd5", fontWeight: 700, maxWidth: "70px" }}>
                 {step.label}
               </p>
             </div>
@@ -83,14 +125,55 @@ export default function ApplicationPending() {
           <div className="px-8 pt-5 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
             <p style={{ fontSize: "15px", color: "#3a7bd5", fontWeight: 600 }}>Application</p>
           </div>
-          <div className="py-16 flex flex-col items-center" style={{ minHeight: "220px" }}>
-            <span className="inline-block mb-5 px-4 py-1.5 rounded font-bold text-white"
-              style={{ background: "#28a745", fontSize: "13px", letterSpacing: "0.03em" }}>
-              Pending
-            </span>
-            <h2 className="font-semibold" style={{ fontSize: "18px", color: "#333" }}>
-              Your Application has been Successfully Submitted.
-            </h2>
+
+          <div className="py-12 flex flex-col items-center" style={{ minHeight: "280px" }}>
+            {status === "verified" ? (
+              <>
+                <span className="inline-flex items-center gap-2 mb-5 px-5 py-2 rounded-full font-bold text-white" style={{ background: "#28a745", fontSize: "15px" }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Verified
+                </span>
+                <h2 className="font-semibold mb-2" style={{ fontSize: "17px", color: "#333" }}>Your account has been successfully verified!</h2>
+                <p style={{ fontSize: "13px", color: "#777" }}>Redirecting to your dashboard…</p>
+              </>
+            ) : (
+              <>
+                <span className="inline-block mb-5 px-4 py-1.5 rounded font-bold text-white" style={{ background: "#f59e0b", fontSize: "13px" }}>
+                  Pending Review
+                </span>
+                <h2 className="font-semibold mb-2" style={{ fontSize: "17px", color: "#333" }}>
+                  Your Application has been Successfully Submitted.
+                </h2>
+                <p className="mb-8 text-center" style={{ fontSize: "13px", color: "#777", maxWidth: "440px" }}>
+                  Our team is reviewing your application. You will receive an email notification once your account is approved. This typically takes 1–2 business days.
+                </p>
+
+                {error && (
+                  <p className="mb-4 px-4 py-2 rounded" style={{ fontSize: "12px", color: "#dc3545", background: "#fff5f5", border: "1px solid #fcc" }}>
+                    {error}
+                  </p>
+                )}
+
+                <div className="flex flex-col items-center gap-3">
+                  <button
+                    onClick={handleCheckStatus}
+                    disabled={status === "checking"}
+                    style={{ padding: "8px 24px", fontSize: "13px", border: "1.5px solid #3a7bd5", borderRadius: "3px", background: "white", color: "#3a7bd5", cursor: "pointer", fontWeight: 600 }}
+                  >
+                    {status === "checking" ? "Checking…" : "Check Verification Status"}
+                  </button>
+
+                  {/* Demo approval button */}
+                  <button
+                    onClick={handleSimulateApproval}
+                    disabled={verifying}
+                    style={{ padding: "8px 24px", fontSize: "12px", border: "1px dashed #aaa", borderRadius: "3px", background: "#f9fafb", color: "#666", cursor: verifying ? "not-allowed" : "pointer" }}
+                  >
+                    {verifying ? "Processing…" : "Simulate Admin Approval (Demo)"}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </main>
@@ -124,13 +207,7 @@ export default function ApplicationPending() {
         </div>
         <div className="px-10 py-8 text-center">
           <p className="text-[13px] mb-1" style={{ color: "#aaa" }}>Guardian Trading – A Division of Velocity Clearing, LLC ("Velocity"). Member FINRA/ SIPC.</p>
-          <p className="text-[13px] mb-6" style={{ color: "#aaa" }}>All securities and transactions are handled through Velocity.</p>
-          <p className="text-[11px] uppercase leading-relaxed mb-5" style={{ color: "#666", maxWidth: "900px", margin: "0 auto 20px" }}>
-            @2023 VELOCITY CLEARING, LLC IS REGISTERED WITH THE SEC AND A MEMBER OF <a href="https://www.finra.org" target="_blank" rel="noreferrer" style={{ color: "#5baad4" }}>FINRA</a> AND <a href="https://www.sipc.org" target="_blank" rel="noreferrer" style={{ color: "#5baad4" }}>SIPC</a>. MARKET VOLATILITY AND VOLUME MAY DELAY SYSTEMS ACCESS AND TRADE EXECUTION. CHECK THE BACKGROUND OF VELOCITY CLEARING ON <a href="https://brokercheck.finra.org" target="_blank" rel="noreferrer" style={{ color: "#5baad4" }}>FINRA'S BROKER CHECK</a>.
-          </p>
-          <p className="text-[11px] uppercase leading-relaxed" style={{ color: "#666", maxWidth: "900px", margin: "0 auto" }}>
-            OPTIONS INVOLVE RISK AND ARE NOT SUITABLE FOR ALL INVESTORS. FOR MORE INFORMATION READ THE <a href="#" style={{ color: "#5baad4" }}>CHARACTERISTICS AND RISKS OF STANDARDIZED OPTIONS</a>, ALSO KNOWN AS THE OPTIONS DISCLOSURE DOCUMENT (ODD). ALTERNATIVELY, PLEASE CONTACT <a href="mailto:info@guardiantrading.com" style={{ color: "#5baad4" }}>INFO@GUARDIANTRADING.COM</a> TO RECEIVE A COPY OF THE ODD.
-          </p>
+          <p className="text-[13px] mb-4" style={{ color: "#aaa" }}>All securities and transactions are handled through Velocity.</p>
         </div>
       </footer>
     </div>

@@ -44,6 +44,98 @@ async function getResendCredentials(): Promise<{ apiKey: string; fromEmail?: str
   return null;
 }
 
+export async function sendAccountVerifiedEmail(
+  to: string,
+  firstName?: string
+): Promise<{ success: boolean; error?: string }> {
+  const creds = await getResendCredentials();
+
+  if (!creds) {
+    console.warn(`[Mailer] No Resend credentials — logging verified notification for ${to}`);
+    return { success: true };
+  }
+
+  const client = new Resend(creds.apiKey);
+  const name = firstName ?? to.split("@")[0];
+
+  const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account Verified</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table width="540" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:6px;border:1px solid #dde3e9;overflow:hidden;">
+          <tr><td style="background:#3a7bd5;height:5px;font-size:0;line-height:0;">&nbsp;</td></tr>
+          <tr>
+            <td style="padding:32px 40px 24px;border-bottom:1px solid #e8edf2;">
+              <p style="margin:0;font-size:11px;font-weight:700;color:#5baad4;letter-spacing:0.08em;text-transform:uppercase;">GUARDIAN TRADING</p>
+              <h1 style="margin:10px 0 0;font-size:22px;color:#1c2e3e;font-weight:700;">Account Verified Successfully</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:32px 40px;">
+              <p style="margin:0 0 20px;font-size:15px;color:#444;line-height:1.6;">
+                Dear ${name},
+              </p>
+              <p style="margin:0 0 20px;font-size:15px;color:#444;line-height:1.6;">
+                Congratulations! Your Guardian Trading account has been <strong>approved and verified</strong>. Your application has been reviewed and you are now cleared to access your trading account.
+              </p>
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin:28px 0;">
+                <tr>
+                  <td align="center">
+                    <div style="display:inline-block;background:#e8f5e9;border:2px solid #28a745;border-radius:8px;padding:20px 48px;text-align:center;">
+                      <p style="margin:0 0 6px;font-size:32px;">✓</p>
+                      <p style="margin:0;font-size:16px;font-weight:700;color:#28a745;">Account Verified</p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:0 0 12px;font-size:14px;color:#666;line-height:1.6;">
+                You can now log in to the Guardian Trading portal and begin trading. If you have any questions, contact our support team at <a href="mailto:info@guardiantrading.com" style="color:#3a7bd5;">info@guardiantrading.com</a> or call <a href="tel:8886020092" style="color:#3a7bd5;">888-602-0092</a>.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 40px 28px;border-top:1px solid #e8edf2;background:#f9fafc;">
+              <p style="margin:0;font-size:12px;color:#aaa;line-height:1.6;">
+                Guardian Trading — A Division of Velocity Clearing, LLC. Member FINRA/SIPC.<br/>
+                1301 Route 36, Suite 109, Hazlet, NJ 07730
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
+  try {
+    const result = await client.emails.send({
+      from: FROM_ADDRESS,
+      to,
+      subject: "Account Verified Successfully — Guardian Trading",
+      html,
+    });
+    if (result.error) {
+      console.error(`[Mailer] Failed to send verified email to ${to}:`, result.error);
+      return { success: false, error: result.error.message };
+    }
+    console.log(`[Mailer] Verified email sent to ${to} — id: ${result.data?.id}`);
+    return { success: true };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`[Mailer] Exception sending verified email to ${to}:`, msg);
+    return { success: false, error: msg };
+  }
+}
+
 export async function sendVerificationEmail(
   to: string,
   code: string
