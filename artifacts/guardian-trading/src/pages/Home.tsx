@@ -14,6 +14,7 @@ import benzingaBadge from "@assets/IMG_7973_1773721659915.png";
 import bgVector from "@assets/img-background-vector-1_1773948931248.png";
 import heroPattern from "@assets/pattern_1773965291387.png";
 import benzingaBannerImg from "@assets/img-benzinga-short-selling-review-1-846x218-1_1773952971025.jpg";
+import infraIcon from "@assets/ico-our-infrastructure-132x72_1773948931248.png";
 
 export default function Home() {
   const [newsBannerVisible, setNewsBannerVisible] = useState(true);
@@ -375,8 +376,13 @@ export default function Home() {
               <p className="text-white text-[11px] font-bold tracking-[0.18em] uppercase mb-6">
                 SPEED. EFFICIENCY. ACCESS.
               </p>
-              {/* Candlestick chart icon */}
-              <CandlestickIcon />
+              <img
+                src={infraIcon}
+                alt="Infrastructure icon"
+                width={132}
+                height={72}
+                className="w-[132px] h-auto"
+              />
             </div>
 
             {/* Divider */}
@@ -453,44 +459,5 @@ function TechCTA({ label, href }: { label: string; href: string }) {
         </svg>
       </span>
     </a>
-  );
-}
-
-/* ── Candlestick chart icon for Infrastructure card ── */
-function CandlestickIcon() {
-  const color = "#1ab8d4";
-  return (
-    <svg
-      width="120"
-      height="52"
-      viewBox="0 0 120 52"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      {/* Candle 1 */}
-      <line x1="10" y1="7" x2="10" y2="44" stroke={color} strokeWidth="1.4" />
-      <rect x="6" y="15" width="8" height="18" fill={color} />
-
-      {/* Candle 2 */}
-      <line x1="30" y1="3" x2="30" y2="46" stroke={color} strokeWidth="1.4" />
-      <rect x="26" y="10" width="8" height="24" fill={color} />
-
-      {/* Candle 3 */}
-      <line x1="50" y1="10" x2="50" y2="40" stroke={color} strokeWidth="1.4" />
-      <rect x="46" y="17" width="8" height="14" fill={color} />
-
-      {/* Candle 4 */}
-      <line x1="70" y1="5" x2="70" y2="43" stroke={color} strokeWidth="1.4" />
-      <rect x="66" y="12" width="8" height="20" fill={color} />
-
-      {/* Horizontal dashed price-level lines */}
-      <line x1="80" y1="13" x2="112" y2="13" stroke={color} strokeWidth="1" strokeDasharray="4 3" opacity="0.65" />
-      <line x1="80" y1="25" x2="112" y2="25" stroke={color} strokeWidth="1" strokeDasharray="4 3" opacity="0.65" />
-      <line x1="80" y1="38" x2="112" y2="38" stroke={color} strokeWidth="1" strokeDasharray="4 3" opacity="0.65" />
-
-      {/* Small square marker */}
-      <rect x="108" y="9" width="9" height="9" stroke={color} strokeWidth="1" opacity="0.8" />
-    </svg>
   );
 }
