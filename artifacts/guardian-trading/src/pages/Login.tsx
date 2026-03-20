@@ -118,7 +118,7 @@ export default function Login() {
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     <img
-                      src={showPassword ? eyeClosed : eyeOpen}
+                      src={showPassword ? eyeOpen : eyeClosed}
                       alt=""
                       className="w-[35px] h-[35px] object-contain"
                       style={{ filter: "brightness(0)" }}

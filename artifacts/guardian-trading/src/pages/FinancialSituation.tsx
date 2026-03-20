@@ -77,16 +77,32 @@ export default function FinancialSituation() {
   const [specialExpense, setSpecialExpense] = useState("");
   const [liquidity, setLiquidity] = useState("");
   const [timeHorizon, setTimeHorizon] = useState("");
+  const [errors, setErrors] = useState<{
+    annualExpense?: string;
+    specialExpense?: string;
+    liquidity?: string;
+    timeHorizon?: string;
+  }>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const newErrors: typeof errors = {};
+    if (!annualExpense) newErrors.annualExpense = "Please select an option";
+    if (!specialExpense) newErrors.specialExpense = "Please select an option";
+    if (!liquidity) newErrors.liquidity = "Please select an option";
+    if (!timeHorizon) newErrors.timeHorizon = "Please select an option";
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
     await saveSignupStep("financialSituation", {
       annualExpense,
       specialExpense,
       liquidityNeeds: liquidity,
       investmentTimeHorizon: timeHorizon,
     });
-    navigate("/investment-experience");
+    navigate("/risk-tolerance");
   };
 
   return (
@@ -197,13 +213,14 @@ export default function FinancialSituation() {
                           name="annualExpense"
                           value={opt}
                           checked={annualExpense === opt}
-                          onChange={() => setAnnualExpense(opt)}
+                          onChange={() => { setAnnualExpense(opt); setErrors((p) => ({ ...p, annualExpense: undefined })); }}
                           style={{ marginRight: "8px", accentColor: "#3a7bd5", width: "14px", height: "14px", flexShrink: 0 }}
                         />
                         {opt}
                       </label>
                     ))}
                   </div>
+                  {errors.annualExpense && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.annualExpense}</p>}
                 </div>
 
                 {/* Special Expenses */}
@@ -225,13 +242,14 @@ export default function FinancialSituation() {
                           name="specialExpense"
                           value={opt}
                           checked={specialExpense === opt}
-                          onChange={() => setSpecialExpense(opt)}
+                          onChange={() => { setSpecialExpense(opt); setErrors((p) => ({ ...p, specialExpense: undefined })); }}
                           style={{ marginRight: "8px", accentColor: "#3a7bd5", width: "14px", height: "14px", flexShrink: 0 }}
                         />
                         {opt}
                       </label>
                     ))}
                   </div>
+                  {errors.specialExpense && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.specialExpense}</p>}
                 </div>
 
                 {/* Liquidity Needs */}
@@ -253,13 +271,14 @@ export default function FinancialSituation() {
                           name="liquidity"
                           value={opt}
                           checked={liquidity === opt}
-                          onChange={() => setLiquidity(opt)}
+                          onChange={() => { setLiquidity(opt); setErrors((p) => ({ ...p, liquidity: undefined })); }}
                           style={{ marginRight: "8px", accentColor: "#3a7bd5", width: "14px", height: "14px", flexShrink: 0 }}
                         />
                         {opt}
                       </label>
                     ))}
                   </div>
+                  {errors.liquidity && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.liquidity}</p>}
                 </div>
               </div>
 
@@ -282,13 +301,14 @@ export default function FinancialSituation() {
                         name="timeHorizon"
                         value={opt}
                         checked={timeHorizon === opt}
-                        onChange={() => setTimeHorizon(opt)}
+                        onChange={() => { setTimeHorizon(opt); setErrors((p) => ({ ...p, timeHorizon: undefined })); }}
                         style={{ marginRight: "8px", accentColor: "#3a7bd5", width: "14px", height: "14px", flexShrink: 0 }}
                       />
                       {opt}
                     </label>
                   ))}
                 </div>
+                {errors.timeHorizon && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.timeHorizon}</p>}
               </div>
 
               {/* Buttons */}

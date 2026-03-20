@@ -196,13 +196,6 @@ export default function EmailVerification() {
               />
             </div>
 
-            {/* Verification code display */}
-            {storedCode && (
-              <div className="text-center mb-4">
-                <span style={{ color: "#888", fontSize: "14px" }}>{storedCode}</span>
-              </div>
-            )}
-
             {/* Countdown timer / Resend */}
             <div className="text-center mb-5">
               {countdown > 0 ? (
