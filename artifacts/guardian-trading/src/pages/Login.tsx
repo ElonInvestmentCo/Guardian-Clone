@@ -1,8 +1,6 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation } from "wouter";
+import { useState } from "react";
+import { Link } from "wouter";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
-import { useAuth } from "@/context/AuthContext";
-
 const eyeOpen = "/eye-open-clean.png";
 const eyeClosed = "/eye-closed-clean.png";
 
@@ -10,16 +8,8 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; submit?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [loading, setLoading] = useState(false);
-  const { login, isAuthenticated } = useAuth();
-  const [, navigate] = useLocation();
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/general-details");
-    }
-  }, [isAuthenticated, navigate]);
 
   const validate = () => {
     const newErrors: { email?: string; password?: string } = {};
@@ -36,7 +26,7 @@ export default function Login() {
     return newErrors;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
@@ -45,16 +35,9 @@ export default function Login() {
     }
     setErrors({});
     setLoading(true);
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      login(email);
-      navigate("/general-details");
-    } catch {
-      setErrors({ submit: "Login failed. Please try again." });
-    } finally {
+    setTimeout(() => {
       setLoading(false);
-    }
+    }, 1000);
   };
 
   return (
@@ -127,10 +110,6 @@ export default function Login() {
                   <p className="mt-1 text-xs text-red-500">{errors.password}</p>
                 )}
               </div>
-
-              {errors.submit && (
-                <p className="mb-3 text-xs text-red-500 text-center">{errors.submit}</p>
-              )}
 
               {/* Login Button */}
               <button

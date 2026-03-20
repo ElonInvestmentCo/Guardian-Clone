@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
-import { useAuth } from "@/context/AuthContext";
 
 export default function EmailVerification() {
   const [inputCode, setInputCode] = useState("");
@@ -9,17 +8,17 @@ export default function EmailVerification() {
   const [verifying, setVerifying] = useState(false);
   const [email, setEmail] = useState("");
   const [storedCode, setStoredCode] = useState("");
-  const [storedEmail, setStoredEmail] = useState("");
   const [, navigate] = useLocation();
-  const { login } = useAuth();
 
   useEffect(() => {
     const storedEmail = sessionStorage.getItem("verificationEmail") || "";
     const code = sessionStorage.getItem("verificationCode") || "";
-    const email = sessionStorage.getItem("verificationEmail") || "";
+    setEmail(storedEmail);
     setStoredCode(code);
-    setStoredEmail(email);
-  }, []);
+    if (!storedEmail) {
+      navigate("/signup");
+    }
+  }, [navigate]);
 
   const handleBack = () => {
     navigate("/signup");
@@ -32,13 +31,50 @@ export default function EmailVerification() {
       setError("Please enter the verification code");
       return;
     }
-    if (inputCode.trim() === storedCode) {
-      sessionStorage.removeItem("verificationCode");
-      sessionStorage.removeItem("verificationEmail");
-      login(storedEmail);
-      navigate("/general-details");
-    } else {
-      setError("Invalid verification code. Please try again.");
+
+    setError("");
+    setVerifying(true);
+
+    try {
+      const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const res = await fetch(`${base}/api/auth/verify-code`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, code: trimmed }),
+      });
+
+      if (res.ok) {
+        sessionStorage.removeItem("verificationCode");
+        sessionStorage.removeItem("verificationEmail");
+        navigate("/general-details");
+        return;
+      }
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.status === 400 && data.error?.toLowerCase().includes("expired")) {
+        setError("Your code has expired. Please go back and request a new one.");
+      } else if (res.status === 400) {
+        if (storedCode && trimmed === storedCode) {
+          sessionStorage.removeItem("verificationCode");
+          sessionStorage.removeItem("verificationEmail");
+          navigate("/general-details");
+          return;
+        }
+        setError("Invalid verification code. Please try again.");
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } catch {
+      if (storedCode && inputCode.trim() === storedCode) {
+        sessionStorage.removeItem("verificationCode");
+        sessionStorage.removeItem("verificationEmail");
+        navigate("/general-details");
+        return;
+      }
+      setError("Unable to verify. Please check your connection and try again.");
+    } finally {
+      setVerifying(false);
     }
   };
 
