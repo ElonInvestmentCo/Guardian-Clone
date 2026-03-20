@@ -72,10 +72,13 @@ export default function Home() {
           minHeight: "520px",
         }}
       >
-        {/* Dot-pattern decoration */}
-        <div
-          className="absolute top-0 right-0 w-[45%] h-full dot-pattern opacity-30 pointer-events-none"
+        {/* Dotted bar-chart pattern — right-side section background */}
+        <img
+          src={heroPattern}
+          alt=""
           aria-hidden="true"
+          className="absolute top-0 right-0 h-full w-[48%] object-cover object-left pointer-events-none select-none"
+          style={{ opacity: 0.55, filter: "brightness(1.15) saturate(1.1)" }}
         />
 
         <div className="max-w-[1200px] mx-auto px-4 relative z-10">
@@ -94,16 +97,8 @@ export default function Home() {
               </a>
             </div>
 
-            {/* Right column — laptop + phone platform screenshot (full-bleed on mobile) */}
+            {/* Right column — laptop + phone platform screenshot */}
             <div className="flex-1 w-full max-w-[580px] relative -mx-4 lg:mx-0">
-              {/* Dotted pattern behind platform image */}
-              <img
-                src={heroPattern}
-                alt=""
-                aria-hidden="true"
-                className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
-                style={{ opacity: 0.6, filter: "brightness(1.2) saturate(1.1)" }}
-              />
               <img
                 src={heroPlatform}
                 alt="Guardian Trading Platform — DAS Trader Pro on laptop and mobile"
