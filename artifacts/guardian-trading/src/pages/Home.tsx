@@ -166,7 +166,7 @@ export default function Home() {
           <div className="bg-[#0d0d0d] flex flex-col lg:flex-row">
             {/* Left: heading */}
             <div className="flex-shrink-0 lg:w-[280px] px-10 py-10 flex items-center">
-              <h2 className="text-2xl font-bold text-white leading-snug">
+              <h2 className="text-2xl font-bold text-[#aaa] leading-snug">
                 Control Your Costs With Customized Commissions
               </h2>
             </div>
@@ -175,9 +175,9 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row flex-1">
               {/* Options Contracts */}
               <div className="flex-1 px-10 py-10">
-                <p className="text-white font-bold text-[17px] mb-1">Options Contracts</p>
+                <p className="text-[#aaa] font-bold text-[17px] mb-1">Options Contracts</p>
                 <p className="text-[11px] text-[#aaa] uppercase tracking-[0.18em] mb-4">AS LOW AS:</p>
-                <p className="font-bold leading-none text-white mb-4" style={{ fontSize: "clamp(52px,7vw,80px)" }}>
+                <p className="font-bold leading-none text-[#aaa] mb-4" style={{ fontSize: "clamp(52px,7vw,80px)" }}>
                   <sup className="text-[40%] align-super">$</sup>0.15
                 </p>
                 <p className="text-[11px] text-[#aaa] uppercase tracking-[0.18em]">PER CONTRACT*</p>
@@ -185,9 +185,9 @@ export default function Home() {
 
               {/* Equities Commissions */}
               <div className="flex-1 px-10 py-10">
-                <p className="text-white font-bold text-[17px] mb-1">Equities Commissions</p>
+                <p className="text-[#aaa] font-bold text-[17px] mb-1">Equities Commissions</p>
                 <p className="text-[11px] text-[#aaa] uppercase tracking-[0.18em] mb-4">AS LOW AS:</p>
-                <p className="font-bold leading-none text-white mb-4" style={{ fontSize: "clamp(52px,7vw,80px)" }}>
+                <p className="font-bold leading-none text-[#aaa] mb-4" style={{ fontSize: "clamp(52px,7vw,80px)" }}>
                   <sup className="text-[40%] align-super">$</sup>0.0005
                 </p>
                 <p className="text-[11px] text-[#aaa] uppercase tracking-[0.18em]">PER SHARE</p>
