@@ -2,11 +2,39 @@
   "Emailmy488@gmail.com": {
     "email": "Emailmy488@gmail.com",
     "createdAt": "2026-03-20T16:30:58.865Z",
-    "updatedAt": "2026-03-20T16:30:58.865Z",
+    "updatedAt": "2026-03-20T16:41:15.826Z",
     "general": {
       "registrationType": "Individual Account",
       "product": "Stocks",
       "howHeard": "Google"
+    },
+    "personal": {
+      "firstName": "Willow",
+      "lastName": "Wealth",
+      "address": "15911 Frontier Rd",
+      "aptSuite": "",
+      "country": "United States",
+      "city": "",
+      "state": "Texas",
+      "zipCode": "77355",
+      "mailingDifferent": true,
+      "phoneNumber": "5126866045",
+      "numDependents": "1",
+      "altPhoneNumber": "",
+      "maritalStatus": "Single",
+      "trustedContact": "No"
+    },
+    "professional": {
+      "employmentStatus": "employed",
+      "employerName": "CFISD",
+      "positionTitle": "TEACHER",
+      "employerAddress": "15911 Frontier Rd",
+      "aptSuiteNo": "",
+      "country": "United States",
+      "city": "",
+      "state": "Texas",
+      "yearsWithEmployer": "20",
+      "phoneNumber": "5126866045"
     }
   }
 }
