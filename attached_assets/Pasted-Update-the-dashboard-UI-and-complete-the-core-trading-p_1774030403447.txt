@@ -1,0 +1,74 @@
+Update the dashboard UI and complete the core trading pages as follows:
+
+1. **Branding Update**
+
+   * Replace the text **“Guardian Trading”** with the website **logo icon** across the dashboard.
+   * Ensure the logo is clearly visible, properly aligned, and responsive.
+   * Maintain consistent placement (header/sidebar) on all dashboard pages.
+
+2. **UI/UX Consistency**
+
+   * Redesign the dashboard to **match the main website UI**:
+
+     * Same colors, typography, spacing, and visual style
+     * Consistent buttons, cards, inputs, and layouts
+   * Ensure a clean, modern, and professional trading interface.
+
+3. **Build Core Pages (Fully Complete)**
+   Create the following pages with full functionality and no missing parts:
+
+   * **Positions**
+
+     * Display open positions
+     * Include symbol, quantity, price, P&L, status
+
+   * **Orders**
+
+     * Show active, pending, and completed orders
+     * Include order type, status, timestamps
+
+   * **Portfolio**
+
+     * Show total balance, assets, allocation
+     * Include charts/visual breakdown
+
+   * **Statements**
+
+     * Display transaction history
+     * Allow filtering and export (PDF/CSV)
+
+   * **Settings**
+
+     * User profile management
+     * Security settings (password, 2FA)
+     * Notification preferences
+
+4. **Design Requirements**
+
+   * Replicate all sections using **pixel-perfect accuracy**:
+
+     * Layout
+     * Typography
+     * Colors
+     * Spacing
+     * Alignment
+     * Icons and UI elements
+
+5. **Functionality**
+
+   * Ensure all pages are fully interactive and functional
+   * Maintain smooth navigation between pages
+   * Load real user data where applicable
+
+6. **Responsiveness & Performance**
+
+   * Fully responsive across desktop, tablet, and mobile
+   * Optimize for fast loading without reducing quality
+
+7. **Final Validation**
+
+   * Ensure all pages are complete with no placeholders
+   * Confirm UI matches main website design exactly
+   * Test navigation, data display, and interactions
+
+All dashboard pages must be fully built, consistent with the main website, and production-ready.

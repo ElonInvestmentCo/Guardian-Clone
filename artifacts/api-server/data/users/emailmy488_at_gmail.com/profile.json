@@ -12,7 +12,7 @@
     "accountName": "SDERSDERS",
     "accountType": "Checking"
   },
-  "updatedAt": "2026-03-20T17:59:44.953Z",
+  "updatedAt": "2026-03-20T18:06:09.033Z",
   "disclosures": {
     "wantsMargin": "no",
     "initialDeposit": "",
@@ -44,5 +44,7 @@
     "electronicDelivery": false,
     "signatureName": "",
     "hasSigned": true
-  }
+  },
+  "status": "verified",
+  "verifiedAt": "2026-03-20T18:06:09.033Z"
 }
