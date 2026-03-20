@@ -12,7 +12,7 @@
     "accountName": "SDERSDERS",
     "accountType": "Checking"
   },
-  "updatedAt": "2026-03-20T18:06:09.033Z",
+  "updatedAt": "2026-03-20T21:08:13.229Z",
   "disclosures": {
     "wantsMargin": "no",
     "initialDeposit": "",
@@ -46,5 +46,10 @@
     "hasSigned": true
   },
   "status": "verified",
-  "verifiedAt": "2026-03-20T18:06:09.033Z"
+  "verifiedAt": "2026-03-20T18:06:09.033Z",
+  "general": {
+    "registrationType": "Individual Account",
+    "product": "Stocks",
+    "howHeard": "Benzinga"
+  }
 }
