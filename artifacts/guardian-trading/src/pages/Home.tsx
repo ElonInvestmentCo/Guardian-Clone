@@ -77,7 +77,7 @@ export default function Home() {
           src={heroPattern}
           alt=""
           aria-hidden="true"
-          className="absolute top-0 right-0 h-full w-[48%] object-cover object-left pointer-events-none select-none"
+          className="absolute bottom-0 right-0 h-[88%] w-auto pointer-events-none select-none"
           style={{ opacity: 0.55, filter: "brightness(1.15) saturate(1.1)" }}
         />
 
