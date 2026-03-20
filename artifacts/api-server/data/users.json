@@ -2,7 +2,7 @@
   "Emailmy488@gmail.com": {
     "email": "Emailmy488@gmail.com",
     "createdAt": "2026-03-20T16:30:58.865Z",
-    "updatedAt": "2026-03-20T16:54:02.525Z",
+    "updatedAt": "2026-03-20T17:04:39.335Z",
     "general": {
       "registrationType": "Individual Account",
       "product": "Stocks",
@@ -56,16 +56,14 @@
       "taxRate": "0 - 15"
     },
     "riskTolerance": {
-      "riskTolerances": [
-        "conservative"
-      ],
-      "hasFinancialEducation": "Yes",
+      "riskTolerance": "moderate",
+      "hasFinancialEducation": "",
       "strategyPriorities": {
         "income": "1",
-        "growth": "2",
+        "growth": "3",
         "speculation": "2",
-        "trading": "1",
-        "capital": "4"
+        "trading": "4",
+        "capital": "5"
       }
     },
     "financialSituation": {

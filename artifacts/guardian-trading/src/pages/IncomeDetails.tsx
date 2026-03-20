@@ -82,20 +82,25 @@ function SelectList({
             <div
               key={opt}
               onClick={() => onSelect(opt)}
-              className="cursor-pointer transition-colors"
+              className="cursor-pointer"
               style={{
                 padding: "7px 12px",
                 fontSize: "13px",
-                color: isSel ? "#fff" : "#444",
-                background: isSel
-                  ? "#3a7bd5"
-                  : isEven
-                  ? "#ffffff"
-                  : "#edf1f5",
+                color: "#444",
+                background: isSel ? "#cfe1f5" : isEven ? "#ffffff" : "#edf1f5",
                 userSelect: "none",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                transition: "background 0.15s ease",
               }}
             >
-              {opt}
+              <span>{opt}</span>
+              {isSel && (
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3a7bd5" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginLeft: "8px" }}>
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              )}
             </div>
           );
         })}
