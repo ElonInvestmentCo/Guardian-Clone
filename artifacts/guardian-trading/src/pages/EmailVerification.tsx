@@ -7,11 +7,14 @@ export default function EmailVerification() {
   const [error, setError] = useState("");
   const [verifying, setVerifying] = useState(false);
   const [email, setEmail] = useState("");
+  const [storedCode, setStoredCode] = useState("");
   const [, navigate] = useLocation();
 
   useEffect(() => {
     const storedEmail = sessionStorage.getItem("verificationEmail") || "";
+    const code = sessionStorage.getItem("verificationCode") || "";
     setEmail(storedEmail);
+    setStoredCode(code);
     if (!storedEmail) {
       navigate("/signup");
     }
@@ -52,8 +55,7 @@ export default function EmailVerification() {
       if (res.status === 400 && data.error?.toLowerCase().includes("expired")) {
         setError("Your code has expired. Please go back and request a new one.");
       } else if (res.status === 400) {
-        const localCode = sessionStorage.getItem("verificationCode") || "";
-        if (localCode && trimmed === localCode) {
+        if (storedCode && trimmed === storedCode) {
           sessionStorage.removeItem("verificationCode");
           sessionStorage.removeItem("verificationEmail");
           navigate("/general-details");
@@ -64,8 +66,7 @@ export default function EmailVerification() {
         setError("Something went wrong. Please try again.");
       }
     } catch {
-      const localCode = sessionStorage.getItem("verificationCode") || "";
-      if (localCode && inputCode.trim() === localCode) {
+      if (storedCode && inputCode.trim() === storedCode) {
         sessionStorage.removeItem("verificationCode");
         sessionStorage.removeItem("verificationEmail");
         navigate("/general-details");
@@ -77,10 +78,6 @@ export default function EmailVerification() {
     }
   };
 
-  const maskedEmail = email
-    ? email.replace(/^(.{2}).*(@.*)$/, (_, a, b) => `${a}${"*".repeat(Math.max(0, email.indexOf("@") - 2))}${b}`)
-    : "";
-
   return (
     <div
       className="min-h-screen flex items-center justify-center p-6"
@@ -91,61 +88,57 @@ export default function EmailVerification() {
           className="bg-white overflow-hidden"
           style={{
             borderRadius: "4px",
-            boxShadow: "0 2px 18px rgba(0,0,0,0.18)",
-            border: "1px solid #ddd",
+            boxShadow: "0 2px 20px rgba(0,0,0,0.15)",
+            border: "1px solid #d0d0d0",
           }}
         >
           {/* Blue top stripe */}
-          <div style={{ height: "4px", background: "#3a7bd5" }} />
+          <div style={{ height: "5px", background: "#3a7bd5" }} />
 
-          {/* Header */}
+          {/* Header row */}
           <div
-            className="flex items-center px-5 py-4"
+            className="flex items-center px-4 py-3"
             style={{ borderBottom: "1px solid #e5e5e5" }}
           >
             <button
               onClick={handleBack}
-              className="flex items-center justify-center w-8 h-8 rounded-full text-white flex-shrink-0 transition-opacity hover:opacity-80"
-              style={{ background: "#3a7bd5" }}
+              className="flex items-center justify-center rounded-full text-white flex-shrink-0 transition-opacity hover:opacity-80"
+              style={{ width: "30px", height: "30px", background: "#3a7bd5" }}
               aria-label="Go back"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M15 19l-7-7 7-7" />
               </svg>
             </button>
             <h1
-              className="flex-1 text-center font-semibold pr-8"
-              style={{ color: "#3a7bd5", fontSize: "18px" }}
+              className="flex-1 text-center font-semibold"
+              style={{ color: "#3a7bd5", fontSize: "17px", paddingRight: "30px" }}
             >
               Email Authentication
             </h1>
           </div>
 
           {/* Body */}
-          <div className="px-8 py-8">
-            {/* Logo */}
-            <div className="flex justify-center mb-6">
+          <div className="px-8 pt-10 pb-8">
+
+            {/* Guardian Trading logo — large and centered */}
+            <div className="flex justify-center mb-10">
               <img
                 src={guardianLogo}
                 alt="Guardian Trading"
-                className="h-12 w-auto object-contain"
+                style={{ height: "90px", width: "auto", objectFit: "contain" }}
               />
             </div>
 
-            {/* Confirmation message */}
-            <div className="text-center mb-6">
-              <p className="text-sm mb-1" style={{ color: "#555" }}>
-                A verification code was sent to
-              </p>
-              <p className="text-sm font-semibold" style={{ color: "#3a7bd5" }}>
-                {maskedEmail || email}
-              </p>
-              <p className="text-xs mt-2" style={{ color: "#999" }}>
-                Enter the code below to continue.
-              </p>
-            </div>
+            {/* Verification code display */}
+            {storedCode && (
+              <div className="text-center mb-4">
+                <span style={{ color: "#888", fontSize: "14px" }}>{storedCode}</span>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} noValidate>
+              {/* Input with blue bottom border */}
               <div className="mb-6">
                 <input
                   type="text"
@@ -157,16 +150,15 @@ export default function EmailVerification() {
                   }}
                   placeholder="Verification Code"
                   maxLength={6}
-                  className="w-full text-sm focus:outline-none text-center tracking-widest"
+                  className="w-full text-sm focus:outline-none"
                   style={{
                     background: "#f2f2f2",
-                    border: "none",
+                    border: "1px solid #ccc",
                     borderBottom: "2px solid #3a7bd5",
-                    borderRadius: "3px 3px 0 0",
-                    padding: "12px 12px",
+                    borderRadius: "2px",
+                    padding: "10px 12px",
                     color: "#333",
-                    fontSize: "16px",
-                    letterSpacing: "0.2em",
+                    fontSize: "14px",
                   }}
                 />
                 {error && (
@@ -174,11 +166,12 @@ export default function EmailVerification() {
                 )}
               </div>
 
+              {/* Submit */}
               <div className="flex justify-center">
                 <button
                   type="submit"
                   disabled={verifying}
-                  className="text-white text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-60 flex items-center gap-2"
+                  className="text-white text-sm font-semibold flex items-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-60"
                   style={{
                     background: "#3a7bd5",
                     borderRadius: "4px",
