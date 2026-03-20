@@ -2,7 +2,7 @@
   "Emailmy488@gmail.com": {
     "email": "Emailmy488@gmail.com",
     "createdAt": "2026-03-20T16:30:58.865Z",
-    "updatedAt": "2026-03-20T16:47:39.084Z",
+    "updatedAt": "2026-03-20T16:48:49.894Z",
     "general": {
       "registrationType": "Individual Account",
       "product": "Stocks",
@@ -70,7 +70,7 @@
     },
     "financialSituation": {
       "annualExpense": "$50,001 - $100,000",
-      "specialExpense": "$250,001 - $500,000",
+      "specialExpense": "$50,001 - $100,000",
       "liquidityNeeds": "Important",
       "investmentTimeHorizon": "3 - 5"
     }
