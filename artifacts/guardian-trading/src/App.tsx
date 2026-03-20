@@ -1,7 +1,8 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { Switch, Route, Router as WouterRouter, Redirect } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
 import Platforms from "@/pages/Platforms";
@@ -26,6 +27,18 @@ import Insights from "@/pages/analytics/Insights";
 
 const queryClient = new QueryClient();
 
+function GuestRoute({ component: Component }: { component: React.ComponentType }) {
+  const { isAuthenticated } = useAuth();
+  if (isAuthenticated) return <Redirect to="/general-details" />;
+  return <Component />;
+}
+
+function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <Redirect to="/login" />;
+  return <Component />;
+}
+
 function Router() {
   return (
     <Switch>
@@ -33,16 +46,26 @@ function Router() {
       <Route path="/about" component={About} />
       <Route path="/platforms" component={Platforms} />
       <Route path="/contact" component={Contact} />
-      <Route path="/login" component={Login} />
-      <Route path="/signup" component={Signup} />
+      <Route path="/login">
+        {() => <GuestRoute component={Login} />}
+      </Route>
+      <Route path="/signup">
+        {() => <GuestRoute component={Signup} />}
+      </Route>
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/email-verification" component={EmailVerification} />
-      <Route path="/general-details" component={GeneralDetails} />
-      <Route path="/personal-details" component={PersonalDetails} />
-      <Route path="/professional-details" component={ProfessionalDetails} />
-      <Route path="/id-information" component={IdInformation} />
-      <Route path="/income-details" component={IncomeDetails} />
-      <Route path="/risk-tolerance" component={RiskTolerance} />
+      <Route path="/general-details">
+        {() => <ProtectedRoute component={GeneralDetails} />}
+      </Route>
+      <Route path="/personal-details">
+        {() => <ProtectedRoute component={PersonalDetails} />}
+      </Route>
+      <Route path="/professional-details">
+        {() => <ProtectedRoute component={ProfessionalDetails} />}
+      </Route>
+      <Route path="/id-information">
+        {() => <ProtectedRoute component={IdInformation} />}
+      </Route>
       <Route path="/analytics" component={Dashboard} />
       <Route path="/analytics/projects" component={Projects} />
       <Route path="/analytics/campaigns" component={Campaigns} />
@@ -57,12 +80,14 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <Router />
-        </WouterRouter>
-        <Toaster />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+            <Router />
+          </WouterRouter>
+          <Toaster />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

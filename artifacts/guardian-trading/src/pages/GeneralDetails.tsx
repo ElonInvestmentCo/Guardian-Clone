@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
-import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";
+import { Menu, Phone, ChevronDown } from "lucide-react";
+import guardianLogo from "@assets/IMG_7934_1773719077190.png";
+import { useAuth } from "@/context/AuthContext";
 
 const REGISTRATION_TYPES = ["Individual Account", "Limited Liability Company"];
 const PRODUCTS = ["Stocks", "Stocks And Options"];
@@ -10,25 +11,98 @@ const HOW_HEARD = [
   "EliteTrader", "Instagram", "YouTube", "Word of Mouth", "Other",
 ];
 
-const NAV_LINKS = [
-  { name: "HOME", href: "/" },
-  { name: "ABOUT US", href: "/about" },
-  { name: "SERVICES", href: "/#services", hasDropdown: true },
-  { name: "PLATFORMS", href: "/platforms" },
-  { name: "PRICING", href: "/#pricing" },
-  { name: "CONTACT US", href: "/contact" },
-];
+function CustomSelect({
+  value,
+  onChange,
+  options,
+  placeholder = "Please Select",
+  id,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  options: string[];
+  placeholder?: string;
+  id?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
+
+  return (
+    <div className="relative" id={id} ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-3 py-2.5 bg-white border border-gray-300 text-sm text-gray-700 focus:outline-none focus:border-[#4a7fbd]"
+        style={{ borderBottomColor: open ? "#4a7fbd" : undefined }}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        <span className={value ? "text-gray-800" : "text-gray-400"}>
+          {value || placeholder}
+        </span>
+        <ChevronDown
+          className={`w-4 h-4 text-gray-500 transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div className="absolute left-0 right-0 top-full z-50 bg-white border border-gray-300 border-t-0 shadow-md">
+          {options.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => {
+                onChange(opt);
+                setOpen(false);
+              }}
+              className="w-full text-left px-3 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function GeneralDetails() {
   const [registrationType, setRegistrationType] = useState("");
   const [product, setProduct] = useState("");
   const [howHeard, setHowHeard] = useState("");
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [errors, setErrors] = useState<{
     registrationType?: string;
     product?: string;
     howHeard?: string;
   }>({});
   const [, navigate] = useLocation();
+  const { logout } = useAuth();
+
+  const navLinks = [
+    { name: "About", href: "/about" },
+    { name: "Services", href: "/#services" },
+    { name: "Platforms", href: "/platforms" },
+    { name: "Pricing", href: "/#pricing" },
+    { name: "Insights", href: "/#insights" },
+    { name: "Contact Us", href: "/contact" },
+  ];
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,9 +150,28 @@ export default function GeneralDetails() {
             />
           </Link>
 
-          {/* Nav links */}
-          <div className="hidden md:flex items-center gap-6">
-            {NAV_LINKS.map((link) => (
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleLogout}
+              className="border border-[#4a7fbd] text-white text-sm px-4 py-1.5 hover:bg-[#4a7fbd]/20 transition-colors"
+              data-testid="button-logout"
+            >
+              Logout
+            </button>
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="text-white p-1"
+              data-testid="button-mobile-menu"
+              aria-label="Toggle menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {mobileOpen && (
+          <div className="bg-[#151515] border-t border-white/5 px-4 pb-4">
+            {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
@@ -105,26 +198,12 @@ export default function GeneralDetails() {
         </div>
       </nav>
 
-      {/* ── Main content ── */}
-      <main className="flex-1 px-6 py-6">
-        <div
-          className="bg-white"
-          style={{
-            borderRadius: "2px",
-            boxShadow: "0 1px 6px rgba(0,0,0,0.10)",
-            border: "1px solid #dde3e9",
-            borderLeft: "4px solid #3a7bd5",
-          }}
-        >
-          {/* Card header */}
-          <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
-            <h1
-              className="font-semibold"
-              style={{ color: "#3a7bd5", fontSize: "20px" }}
-            >
-              General Details
-            </h1>
-          </div>
+      {/* Main content */}
+      <main className="flex-1 px-4 py-5">
+        <div className="max-w-sm mx-auto">
+          <div className="bg-white border border-gray-200 shadow-sm overflow-visible">
+            {/* Blue top stripe */}
+            <div className="h-1 bg-[#4a7fbd] w-full" />
 
           {/* Form */}
           <div className="px-8 py-6">
@@ -138,36 +217,19 @@ export default function GeneralDetails() {
                   <label className="block text-[13px] mb-1.5" style={{ color: "#555" }}>
                     Registration Type <span style={{ color: "#e53e3e" }}>*</span>
                   </label>
-                  <div className="relative">
-                    <select
-                      value={registrationType}
-                      onChange={(e) => {
-                        setRegistrationType(e.target.value);
-                        if (errors.registrationType)
-                          setErrors((p) => ({ ...p, registrationType: undefined }));
-                      }}
-                      className="w-full appearance-none text-[13px] focus:outline-none"
-                      style={{
-                        background: "#e8edf2",
-                        border: "1px solid #ccd3da",
-                        borderRadius: "3px",
-                        padding: "9px 32px 9px 10px",
-                        color: registrationType ? "#333" : "#888",
-                      }}
-                    >
-                      <option value="" disabled>Please Select</option>
-                      {REGISTRATION_TYPES.map((o) => (
-                        <option key={o} value={o}>{o}</option>
-                      ))}
-                    </select>
-                    <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M6 9l6 6 6-6" />
-                      </svg>
-                    </div>
-                  </div>
+                  <CustomSelect
+                    value={registrationType}
+                    onChange={(v) => {
+                      setRegistrationType(v);
+                      if (errors.registrationType)
+                        setErrors((p) => ({ ...p, registrationType: undefined }));
+                    }}
+                    options={REGISTRATION_TYPES}
+                    placeholder="Please Select"
+                    id="registration-type"
+                  />
                   {errors.registrationType && (
-                    <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.registrationType}</p>
+                    <p className="mt-1 text-xs text-red-500">{errors.registrationType}</p>
                   )}
                 </div>
 

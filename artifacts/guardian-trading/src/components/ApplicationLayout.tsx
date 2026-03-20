@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Menu, Phone } from "lucide-react";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
+import { useAuth } from "@/context/AuthContext";
 
 const NAV_LINKS = [
   { name: "About", href: "/about" },
@@ -14,6 +15,13 @@ const NAV_LINKS = [
 
 export function ApplicationLayout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { logout } = useAuth();
+  const [, navigate] = useLocation();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -35,7 +43,10 @@ export function ApplicationLayout({ children }: { children: React.ReactNode }) {
             <img src={guardianLogo} alt="Guardian Trading" className="h-8 w-auto object-contain" />
           </Link>
           <div className="flex items-center gap-3">
-            <button className="border border-[#4a7fbd] text-white text-sm px-4 py-1.5 hover:bg-[#4a7fbd]/20 transition-colors">
+            <button
+              onClick={handleLogout}
+              className="border border-[#4a7fbd] text-white text-sm px-4 py-1.5 hover:bg-[#4a7fbd]/20 transition-colors"
+            >
               Logout
             </button>
             <button
