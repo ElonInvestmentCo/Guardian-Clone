@@ -115,12 +115,18 @@ export default function ChatWidget() {
                   Guardian<br />Trading<br />LiveChat
                 </h2>
               </div>
+
+              {/* Fade-out overlay – blends hero bottom into card bg */}
+              <div
+                className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none"
+                style={{ background: "linear-gradient(to bottom, transparent 0%, #1c1c1e 100%)" }}
+              />
             </div>
 
             {/* ── Conversation card – overlaps gradient ── */}
             <div
-              className="mx-4 relative z-10 rounded-2xl overflow-hidden shadow-xl"
-              style={{ background: "#1c1c1e", marginTop: "-28px" }}
+              className="mx-4 relative z-10 rounded-2xl overflow-hidden"
+              style={{ background: "#1c1c1e", marginTop: "-28px", boxShadow: "none" }}
             >
               {/* Agent row */}
               <div className="flex items-start gap-3 px-4 pt-4 pb-3">
