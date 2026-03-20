@@ -2,13 +2,17 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
 
+const COUNTDOWN_START = 180;
+
 export default function EmailVerification() {
   const [inputCode, setInputCode] = useState("");
   const [error, setError] = useState("");
   const [verifying, setVerifying] = useState(false);
+  const [resending, setResending] = useState(false);
   const [email, setEmail] = useState("");
   const [storedCode, setStoredCode] = useState("");
   const [storedPassword, setStoredPassword] = useState("");
+  const [countdown, setCountdown] = useState(COUNTDOWN_START);
   const [, navigate] = useLocation();
 
   useEffect(() => {
@@ -22,6 +26,52 @@ export default function EmailVerification() {
       navigate("/signup");
     }
   }, [navigate]);
+
+  useEffect(() => {
+    if (countdown <= 0) return;
+    const id = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(id);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [countdown]);
+
+  const handleResend = async () => {
+    if (!email) return;
+    setResending(true);
+    setError("");
+    try {
+      const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const res = await fetch(`${base}/api/auth/send-verification`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.code) {
+          sessionStorage.setItem("verificationCode", data.code);
+          setStoredCode(data.code);
+        }
+      } else {
+        const newCode = String(Math.floor(100 + Math.random() * 900));
+        sessionStorage.setItem("verificationCode", newCode);
+        setStoredCode(newCode);
+      }
+    } catch {
+      const newCode = String(Math.floor(100 + Math.random() * 900));
+      sessionStorage.setItem("verificationCode", newCode);
+      setStoredCode(newCode);
+    } finally {
+      setResending(false);
+      setCountdown(COUNTDOWN_START);
+    }
+  };
 
   const registerAndContinue = async () => {
     if (email && storedPassword) {
@@ -152,6 +202,37 @@ export default function EmailVerification() {
                 <span style={{ color: "#888", fontSize: "14px" }}>{storedCode}</span>
               </div>
             )}
+
+            {/* Countdown timer / Resend */}
+            <div className="text-center mb-5">
+              {countdown > 0 ? (
+                <p style={{ fontSize: "13px", color: "#888" }}>
+                  Code expires in{" "}
+                  <span style={{ fontWeight: 600, color: countdown <= 30 ? "#e53e3e" : "#3a7bd5" }}>
+                    {countdown}s
+                  </span>
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resending}
+                  className="transition-opacity hover:opacity-80 disabled:opacity-50"
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#3a7bd5",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    cursor: resending ? "not-allowed" : "pointer",
+                    padding: 0,
+                    textDecoration: "underline",
+                  }}
+                >
+                  {resending ? "Sending…" : "Resend Code"}
+                </button>
+              )}
+            </div>
 
             <form onSubmit={handleSubmit} noValidate>
               {/* Input with blue bottom border */}
