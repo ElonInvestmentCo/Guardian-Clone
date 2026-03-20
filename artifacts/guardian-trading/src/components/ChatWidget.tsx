@@ -116,17 +116,17 @@ export default function ChatWidget() {
                 </h2>
               </div>
 
-              {/* Fade-out overlay – blends hero bottom into card bg */}
+              {/* Fade-out overlay – blends hero bottom into widget bg */}
               <div
-                className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none"
-                style={{ background: "linear-gradient(to bottom, transparent 0%, #1c1c1e 100%)" }}
+                className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
+                style={{ background: "linear-gradient(to bottom, transparent 0%, #0e0e0e 100%)" }}
               />
             </div>
 
-            {/* ── Conversation card – overlaps gradient ── */}
+            {/* ── Conversation card – no bg, no border, fully blended ── */}
             <div
-              className="mx-4 relative z-10 rounded-2xl overflow-hidden"
-              style={{ background: "#1c1c1e", marginTop: "-28px", boxShadow: "none" }}
+              className="mx-4 relative z-10"
+              style={{ background: "transparent", marginTop: "-20px", boxShadow: "none", border: "none" }}
             >
               {/* Agent row */}
               <div className="flex items-start gap-3 px-4 pt-4 pb-3">
@@ -138,7 +138,7 @@ export default function ChatWidget() {
                   >
                     R
                   </div>
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#3dd68c] border-2 border-[#1c1c1e]" />
+                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#3dd68c] border-2 border-[#0e0e0e]" />
                 </div>
 
                 {/* Name + message */}
