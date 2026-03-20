@@ -97,7 +97,7 @@ function SelectList({
             >
               <span>{opt}</span>
               {isSel && (
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3a7bd5" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginLeft: "8px" }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginLeft: "8px" }}>
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               )}
