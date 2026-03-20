@@ -230,8 +230,8 @@ export default function Signup() {
                         src={showPassword ? "/eye-open-clean.png" : "/eye-closed-clean.png"}
                         alt=""
                         style={{
-                          width: "30px",
-                          height: "30px",
+                          width: "35px",
+                          height: "35px",
                           objectFit: "contain",
                           filter: "brightness(0) opacity(0.65)",
                           transform: eyeActive === "pw" ? "scale(0.82)" : "scale(1)",
@@ -284,8 +284,8 @@ export default function Signup() {
                         src={showConfirmPassword ? "/eye-open-clean.png" : "/eye-closed-clean.png"}
                         alt=""
                         style={{
-                          width: "30px",
-                          height: "30px",
+                          width: "35px",
+                          height: "35px",
                           objectFit: "contain",
                           filter: "brightness(0) opacity(0.65)",
                           transform: eyeActive === "cpw" ? "scale(0.82)" : "scale(1)",
