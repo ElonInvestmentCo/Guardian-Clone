@@ -199,12 +199,9 @@ export default function EmailVerification() {
             {/* Countdown timer / Resend */}
             <div className="text-center mb-5">
               {countdown > 0 ? (
-                <p style={{ fontSize: "13px", color: "#888" }}>
-                  Code expires in{" "}
-                  <span style={{ fontWeight: 600, color: countdown <= 30 ? "#e53e3e" : "#3a7bd5" }}>
-                    {countdown}s
-                  </span>
-                </p>
+                <span style={{ fontWeight: 600, fontSize: "13px", color: countdown <= 30 ? "#e53e3e" : "#3a7bd5" }}>
+                  {countdown}s
+                </span>
               ) : (
                 <button
                   type="button"
