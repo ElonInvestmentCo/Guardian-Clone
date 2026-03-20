@@ -148,29 +148,27 @@ export default function ChatWidget() {
             <div className="flex-1" style={{ minHeight: "160px" }} />
 
             {/* Bottom nav */}
-            <div className="mx-4 mb-3 bg-[#1e1e1e] rounded-2xl flex">
+            <div className="mx-3 mb-2 flex rounded-full overflow-hidden" style={{ background: "#252525" }}>
               {/* Home — active */}
-              <button
-                className="flex-1 flex flex-col items-center gap-1 py-3 text-white"
-              >
-                <Home className="w-5 h-5" />
-                <span className="text-[11px] font-semibold">Home</span>
+              <button className="flex-1 flex flex-col items-center justify-center gap-[5px] py-4 text-white">
+                <Home className="w-[22px] h-[22px]" style={{ fill: "white", strokeWidth: 1.5 }} />
+                <span className="text-[12px] font-bold tracking-wide">Home</span>
               </button>
               {/* Chat */}
               <button
                 onClick={() => setScreen("chat")}
-                className="flex-1 flex flex-col items-center gap-1 py-3 text-gray-500 hover:text-gray-300 transition-colors"
+                className="flex-1 flex flex-col items-center justify-center gap-[5px] py-4 text-[#666] hover:text-[#999] transition-colors"
               >
-                <MessageSquare className="w-5 h-5" />
-                <span className="text-[11px] font-semibold">Chat</span>
+                <MessageSquare className="w-[22px] h-[22px]" style={{ strokeWidth: 1.5 }} />
+                <span className="text-[12px] font-bold tracking-wide">Chat</span>
               </button>
             </div>
 
-            {/* Powered by */}
-            <div className="flex items-center justify-center gap-1.5 py-2.5">
-              <span className="text-gray-500 text-[11px]">Powered by</span>
-              <span className="text-[#ff5c35] text-[11px]">●</span>
-              <span className="text-gray-400 text-[11px] font-semibold">LiveChat</span>
+            {/* Powered by LiveChat */}
+            <div className="flex items-center justify-center gap-1.5 py-3">
+              <span className="text-[#666] text-[11px]">Powered by</span>
+              <span className="text-[#ff5c35] text-[13px] leading-none">●</span>
+              <span className="text-white text-[11px] font-bold">LiveChat</span>
             </div>
           </div>
         )}
