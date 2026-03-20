@@ -18,7 +18,7 @@ const STEPS = [
   { n: 11, label: "SIGNATURES" },
 ];
 
-const CURRENT_STEP = 5;
+const CURRENT_STEP = 6;
 
 const NAV_LINKS = [
   { name: "HOME", href: "/" },
@@ -29,80 +29,98 @@ const NAV_LINKS = [
   { name: "CONTACT US", href: "/contact" },
 ];
 
-const ANNUAL_EXPENSE_OPTIONS = [
-  "$50,000 and under",
-  "$50,001 - $100,000",
-  "$100,001 - $250,000",
-  "$250,001 - $500,000",
-  "over $500,000",
+const RISK_OPTIONS = [
+  {
+    key: "conservative",
+    label: "Conservative",
+    desc: "I want to preserve my initial principal in this account, with minimal risk, even if that means this account does not generate significant income or returns and may not keep pace with inflation.",
+  },
+  {
+    key: "moderately-conservative",
+    label: "Moderately Conservative",
+    desc: "I am willing to accept low risk to my initial principal, including low volatility, to seek a modest level of portfolio returns.",
+  },
+  {
+    key: "moderate",
+    label: "Moderate",
+    desc: "I am willing to accept some risk to my initial principal and tolerate some volatility to seek higher returns, and I understand I could lose a portion of the money invested.",
+  },
+  {
+    key: "moderately-aggressive",
+    label: "Moderately Aggressive",
+    desc: "I am willing to accept high risk to my initial principal, including high volatility, to seek high returns over time and understand I could lose a substantial amount of the money invested.",
+  },
+  {
+    key: "significant",
+    label: "Significant Risk",
+    desc: "I am willing to accept maximum risk to my initial principal to aggressively seek maximum returns, and I understand I could lose most, or all, of the money invested.",
+  },
 ];
 
-const SPECIAL_EXPENSE_OPTIONS = [
-  "$50,000 and under",
-  "$50,001 - $100,000",
-  "$100,001 - $250,000",
-  "$250,001 - $500,000",
-  "over $500,000",
+const STRATEGIES = [
+  {
+    key: "income",
+    label: "Income",
+    desc: "Focus on investments that generate income",
+  },
+  {
+    key: "growth",
+    label: "Growth of Account",
+    desc: "Focus on Investments that are looking to grow in value",
+  },
+  {
+    key: "speculation",
+    label: "Speculation",
+    desc: "Focus on assets with a chance of significant value increased. Ability to sustain high losses to achieve this objective",
+  },
+  {
+    key: "trading",
+    label: "Trading",
+    desc: "Looking to employ strategies on short term opportunities. This strategy tends to yield high turnover, and high risk",
+  },
+  {
+    key: "capital",
+    label: "Capital Preservation",
+    desc: "Primary goal is to preserve capital and prevent loss in a portfolio",
+  },
 ];
 
-const LIQUIDITY_OPTIONS = [
-  "Very important",
-  "Important",
-  "Some what Important",
-  "Does not matter",
-];
+const PRIORITY_OPTIONS = ["1", "2", "3", "4", "5"];
 
-const TIME_HORIZON_OPTIONS = [
-  "Under 1 year",
-  "1 - 2",
-  "3 - 5",
-  "6 - 10",
-  "11 - 20",
-  "Over 20",
-];
-
-const radioRowStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  padding: "7px 10px",
-  fontSize: "13px",
+const selectStyle: React.CSSProperties = {
+  background: "#e8edf2",
+  border: "1px solid #ccd3da",
+  borderRadius: "3px",
+  padding: "7px 28px 7px 10px",
   color: "#555",
+  fontSize: "13px",
+  appearance: "none" as const,
   cursor: "pointer",
-  borderRadius: "2px",
+  width: "160px",
 };
 
-export default function FinancialSituation() {
+export default function RiskTolerance() {
   const [, navigate] = useLocation();
-  const [annualExpense, setAnnualExpense] = useState("");
-  const [specialExpense, setSpecialExpense] = useState("");
-  const [liquidity, setLiquidity] = useState("");
-  const [timeHorizon, setTimeHorizon] = useState("");
-  const [errors, setErrors] = useState<{
-    annualExpense?: string;
-    specialExpense?: string;
-    liquidity?: string;
-    timeHorizon?: string;
-  }>({});
+  const [riskChecks, setRiskChecks] = useState<Set<string>>(new Set());
+  const [hasEducation, setHasEducation] = useState<string>("");
+  const [priorities, setPriorities] = useState<Record<string, string>>({
+    income: "", growth: "", speculation: "", trading: "", capital: "",
+  });
+
+  const toggleRisk = (key: string) =>
+    setRiskChecks((prev) => {
+      const next = new Set(prev);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors: typeof errors = {};
-    if (!annualExpense) newErrors.annualExpense = "Please select an option";
-    if (!specialExpense) newErrors.specialExpense = "Please select an option";
-    if (!liquidity) newErrors.liquidity = "Please select an option";
-    if (!timeHorizon) newErrors.timeHorizon = "Please select an option";
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-    setErrors({});
-    await saveSignupStep("financialSituation", {
-      annualExpense,
-      specialExpense,
-      liquidityNeeds: liquidity,
-      investmentTimeHorizon: timeHorizon,
+    await saveSignupStep("riskTolerance", {
+      riskTolerances: Array.from(riskChecks),
+      hasFinancialEducation: hasEducation,
+      strategyPriorities: priorities,
     });
-    navigate("/risk-tolerance");
   };
 
   return (
@@ -179,143 +197,108 @@ export default function FinancialSituation() {
           {/* Card header */}
           <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
             <h1 className="font-bold uppercase" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>
-              Financial Situation
+              Risk Tolerance
             </h1>
           </div>
 
           <div className="px-8 py-6">
             <form onSubmit={handleSubmit} noValidate>
 
-              {/* Subtitle */}
-              <p className="mb-5" style={{ fontSize: "12px", color: "#777" }}>
-                Financial Situation and Needs, Liquidity Considerations and Tax Status
+              {/* Warning notice */}
+              <p className="mb-5 leading-relaxed" style={{ fontSize: "12px", color: "#555" }}>
+                <strong>We consider day trading to be a high-risk trading strategy.</strong>{" "}
+                Please ensure that you have read and understand the accompanying Day Trading Risk Disclosure Statement before submitting your new account documentation. It is in your best interest to carefully consider whether or not you have a significant risk tolerance before proceeding with this form.
               </p>
 
-              {/* Three columns */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              {/* Investment Risk Tolerance section */}
+              <div className="mb-5" style={{ border: "1px solid #dde3e9", borderRadius: "2px", padding: "16px 20px" }}>
+                <p className="font-semibold mb-1" style={{ fontSize: "15px", color: "#333" }}>
+                  Investment Risk Tolerance
+                </p>
+                <p className="mb-4" style={{ fontSize: "12px", color: "#777" }}>
+                  Please select the degree of risk you are willing to take with the assets in this account
+                </p>
 
-                {/* Annual Expenses */}
-                <div>
-                  <p className="font-bold mb-3 uppercase" style={{ fontSize: "12px", color: "#444", letterSpacing: "0.04em" }}>
-                    Annual Expenses
-                  </p>
-                  <div className="flex flex-col gap-1">
-                    {ANNUAL_EXPENSE_OPTIONS.map((opt) => (
-                      <label
-                        key={opt}
-                        style={{
-                          ...radioRowStyle,
-                          background: annualExpense === opt ? "#d8e4f0" : "#e8edf2",
-                        }}
-                      >
+                <div className="flex flex-col gap-3">
+                  {RISK_OPTIONS.map(({ key, label, desc }) => (
+                    <div key={key} className="flex items-start gap-4">
+                      <label className="flex items-center gap-2 cursor-pointer flex-shrink-0" style={{ minWidth: "200px" }}>
                         <input
-                          type="radio"
-                          name="annualExpense"
-                          value={opt}
-                          checked={annualExpense === opt}
-                          onChange={() => { setAnnualExpense(opt); setErrors((p) => ({ ...p, annualExpense: undefined })); }}
-                          style={{ marginRight: "8px", accentColor: "#3a7bd5", width: "14px", height: "14px", flexShrink: 0 }}
+                          type="checkbox"
+                          checked={riskChecks.has(key)}
+                          onChange={() => toggleRisk(key)}
+                          style={{ width: "14px", height: "14px", accentColor: "#3a7bd5", flexShrink: 0 }}
                         />
-                        {opt}
+                        <span style={{ fontSize: "13px", color: "#444", fontWeight: 500 }}>{label}</span>
                       </label>
-                    ))}
-                  </div>
-                  {errors.annualExpense && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.annualExpense}</p>}
-                </div>
-
-                {/* Special Expenses */}
-                <div>
-                  <p className="font-bold mb-3 uppercase" style={{ fontSize: "12px", color: "#444", letterSpacing: "0.04em" }}>
-                    Special Expenses <span style={{ textTransform: "none", fontWeight: 400 }}>(future &amp; non-recurring)</span>
-                  </p>
-                  <div className="flex flex-col gap-1">
-                    {SPECIAL_EXPENSE_OPTIONS.map((opt) => (
-                      <label
-                        key={opt}
-                        style={{
-                          ...radioRowStyle,
-                          background: specialExpense === opt ? "#d8e4f0" : "#e8edf2",
-                        }}
-                      >
-                        <input
-                          type="radio"
-                          name="specialExpense"
-                          value={opt}
-                          checked={specialExpense === opt}
-                          onChange={() => { setSpecialExpense(opt); setErrors((p) => ({ ...p, specialExpense: undefined })); }}
-                          style={{ marginRight: "8px", accentColor: "#3a7bd5", width: "14px", height: "14px", flexShrink: 0 }}
-                        />
-                        {opt}
-                      </label>
-                    ))}
-                  </div>
-                  {errors.specialExpense && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.specialExpense}</p>}
-                </div>
-
-                {/* Liquidity Needs */}
-                <div>
-                  <p className="font-bold mb-3 uppercase" style={{ fontSize: "12px", color: "#444", letterSpacing: "0.04em" }}>
-                    Liquidity Needs
-                  </p>
-                  <div className="flex flex-col gap-1">
-                    {LIQUIDITY_OPTIONS.map((opt) => (
-                      <label
-                        key={opt}
-                        style={{
-                          ...radioRowStyle,
-                          background: liquidity === opt ? "#d8e4f0" : "#e8edf2",
-                        }}
-                      >
-                        <input
-                          type="radio"
-                          name="liquidity"
-                          value={opt}
-                          checked={liquidity === opt}
-                          onChange={() => { setLiquidity(opt); setErrors((p) => ({ ...p, liquidity: undefined })); }}
-                          style={{ marginRight: "8px", accentColor: "#3a7bd5", width: "14px", height: "14px", flexShrink: 0 }}
-                        />
-                        {opt}
-                      </label>
-                    ))}
-                  </div>
-                  {errors.liquidity && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.liquidity}</p>}
+                      <p style={{ fontSize: "12px", color: "#666", lineHeight: "1.5" }}>{desc}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Time Horizon */}
-              <div className="mb-7">
-                <p className="mb-3" style={{ fontSize: "13px", color: "#444", fontWeight: 500 }}>
-                  The expected period you plan to achieve your financial goal(s)
+              {/* Education question */}
+              <div className="mb-5">
+                <p className="mb-2" style={{ fontSize: "13px", color: "#444" }}>
+                  Have you had education in trading/financial markets?<span style={{ color: "#e53e3e" }}>*</span>
                 </p>
-                <div className="flex flex-col gap-1" style={{ maxWidth: "300px" }}>
-                  {TIME_HORIZON_OPTIONS.map((opt) => (
-                    <label
-                      key={opt}
-                      style={{
-                        ...radioRowStyle,
-                        background: timeHorizon === opt ? "#d8e4f0" : "#e8edf2",
-                      }}
-                    >
+                <div className="flex items-center gap-6">
+                  {["Yes", "No"].map((opt) => (
+                    <label key={opt} className="flex items-center gap-1.5 cursor-pointer">
                       <input
                         type="radio"
-                        name="timeHorizon"
+                        name="education"
                         value={opt}
-                        checked={timeHorizon === opt}
-                        onChange={() => { setTimeHorizon(opt); setErrors((p) => ({ ...p, timeHorizon: undefined })); }}
-                        style={{ marginRight: "8px", accentColor: "#3a7bd5", width: "14px", height: "14px", flexShrink: 0 }}
+                        checked={hasEducation === opt}
+                        onChange={() => setHasEducation(opt)}
+                        style={{ width: "14px", height: "14px", accentColor: "#3a7bd5" }}
                       />
-                      {opt}
+                      <span style={{ fontSize: "13px", color: "#555" }}>{opt}</span>
                     </label>
                   ))}
                 </div>
-                {errors.timeHorizon && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.timeHorizon}</p>}
+              </div>
+
+              {/* Strategy priority section */}
+              <div className="mb-6">
+                <p className="mb-4" style={{ fontSize: "12px", color: "#555", lineHeight: "1.6" }}>
+                  Please detail the trading strategy you are looking to employ at Guardian On a scale of 1-5 in terms of priority, 5 being the highest, and 1 being the lowest in terms of priority, please review and evaluate the below.{" "}
+                  <span style={{ color: "#e53e3e" }}>*</span>
+                </p>
+
+                <div className="flex flex-col gap-3">
+                  {STRATEGIES.map(({ key, label, desc }) => (
+                    <div key={key} className="flex items-center gap-5">
+                      <div className="relative flex-shrink-0">
+                        <select
+                          value={priorities[key]}
+                          onChange={(e) => setPriorities((p) => ({ ...p, [key]: e.target.value }))}
+                          style={selectStyle}
+                          className="focus:outline-none"
+                        >
+                          <option value="" disabled>Please Select</option>
+                          {PRIORITY_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+                        </select>
+                        <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M6 9l6 6 6-6" />
+                          </svg>
+                        </div>
+                      </div>
+                      <p style={{ fontSize: "13px", color: "#555" }}>
+                        <strong style={{ color: "#333" }}>{label}</strong>{" "}
+                        <span>: {desc}</span>
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {/* Buttons */}
               <div className="flex gap-3">
                 <button
                   type="button"
-                  onClick={() => navigate("/income-details")}
+                  onClick={() => navigate("/financial-situation")}
                   className="font-medium hover:bg-gray-50 transition-colors"
                   style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}
                 >
