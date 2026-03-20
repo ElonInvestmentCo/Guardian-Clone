@@ -1,1 +1,12 @@
-{}
+{
+  "Emailmy488@gmail.com": {
+    "email": "Emailmy488@gmail.com",
+    "createdAt": "2026-03-20T16:30:58.865Z",
+    "updatedAt": "2026-03-20T16:30:58.865Z",
+    "general": {
+      "registrationType": "Individual Account",
+      "product": "Stocks",
+      "howHeard": "Google"
+    }
+  }
+}
