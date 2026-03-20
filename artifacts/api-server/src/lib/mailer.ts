@@ -1,6 +1,8 @@
 import { Resend } from "resend";
 
-const FROM_ADDRESS = "Guardian Trading <noreply@guardiantrading.com>";
+// Using Resend's shared test domain until guardiantrading.com is verified in the Resend dashboard.
+// Once the domain is verified, change this to: "Guardian Trading <noreply@guardiantrading.com>"
+const FROM_ADDRESS = "Guardian Trading <onboarding@resend.dev>";
 
 // Resend integration via Replit connector
 async function getResendCredentials(): Promise<{ apiKey: string; fromEmail?: string } | null> {
@@ -57,7 +59,7 @@ export async function sendVerificationEmail(
   }
 
   const client = new Resend(creds.apiKey);
-  const fromAddress = creds.fromEmail ? `Guardian Trading <${creds.fromEmail}>` : FROM_ADDRESS;
+  const fromAddress = FROM_ADDRESS;
 
   const html = `
 <!DOCTYPE html>
