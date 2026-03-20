@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
-import guardianLogo from "@assets/image_1773968210300.png";
+import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,8 +29,7 @@ export function Navbar() {
             <img
               src={guardianLogo}
               alt="Guardian Trading"
-              className="h-11 w-auto object-contain"
-              style={{ filter: "brightness(1.15) contrast(1.1)" }}
+              className="h-10 w-auto object-contain"
               data-testid="img-logo"
             />
           </Link>

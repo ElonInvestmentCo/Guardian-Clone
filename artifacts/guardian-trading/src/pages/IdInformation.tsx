@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import guardianLogo from "@assets/IMG_7934_1773719077190.png";
+import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";
 
 const COUNTRIES = ["United States", "Canada", "United Kingdom", "Australia", "Other"];
