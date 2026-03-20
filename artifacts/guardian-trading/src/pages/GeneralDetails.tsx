@@ -1,97 +1,38 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, Phone, ChevronDown } from "lucide-react";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
 
 const REGISTRATION_TYPES = ["Individual Account", "Limited Liability Company"];
 const PRODUCTS = ["Stocks", "Stocks And Options"];
 const HOW_HEARD = [
-  "Google",
-  "Facebook",
-  "Linkedin",
-  "Twitter",
-  "Benzinga",
-  "EliteTrader",
-  "Instagram",
-  "YouTube",
-  "Word of Mouth",
-  "Other",
+  "Google", "Facebook", "Linkedin", "Twitter", "Benzinga",
+  "EliteTrader", "Instagram", "YouTube", "Word of Mouth", "Other",
 ];
 
-function CustomSelect({
-  value,
-  onChange,
-  options,
-  placeholder = "Please Select",
-  id,
-}: {
-  value: string;
-  onChange: (val: string) => void;
-  options: string[];
-  placeholder?: string;
-  id?: string;
-}) {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <div className="relative" id={id}>
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-3 py-2.5 bg-white border border-gray-300 text-sm text-gray-700 focus:outline-none focus:border-[#4a7fbd]"
-        style={{ borderBottomColor: open ? "#4a7fbd" : undefined }}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-      >
-        <span className={value ? "text-gray-800" : "text-gray-400"}>
-          {value || placeholder}
-        </span>
-        <ChevronDown
-          className={`w-4 h-4 text-gray-500 transition-transform ${open ? "rotate-180" : ""}`}
-        />
-      </button>
-
-      {open && (
-        <div className="absolute left-0 right-0 top-full z-20 bg-white border border-gray-300 border-t-0 shadow-md">
-          {options.map((opt) => (
-            <button
-              key={opt}
-              type="button"
-              onClick={() => {
-                onChange(opt);
-                setOpen(false);
-              }}
-              className="w-full text-left px-3 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
-            >
-              {opt}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
+const NAV_LINKS = [
+  { name: "HOME", href: "/" },
+  { name: "ABOUT US", href: "/about" },
+  { name: "SERVICES", href: "/#services", hasDropdown: true },
+  { name: "PLATFORMS", href: "/platforms" },
+  { name: "PRICING", href: "/#pricing" },
+  { name: "CONTACT US", href: "/contact" },
+];
 
 export default function GeneralDetails() {
-  const [registrationType, setRegistrationType] = useState("Individual Account");
+  const [registrationType, setRegistrationType] = useState("");
   const [product, setProduct] = useState("");
   const [howHeard, setHowHeard] = useState("");
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [errors, setErrors] = useState<{ product?: string; howHeard?: string }>({});
+  const [errors, setErrors] = useState<{
+    registrationType?: string;
+    product?: string;
+    howHeard?: string;
+  }>({});
   const [, navigate] = useLocation();
-
-  const navLinks = [
-    { name: "About", href: "/about" },
-    { name: "Services", href: "/#services" },
-    { name: "Platforms", href: "/platforms" },
-    { name: "Pricing", href: "/#pricing" },
-    { name: "Insights", href: "/#insights" },
-    { name: "Contact Us", href: "/contact" },
-  ];
 
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: typeof errors = {};
+    if (!registrationType) newErrors.registrationType = "Please select a registration type";
     if (!product) newErrors.product = "Please select a product";
     if (!howHeard) newErrors.howHeard = "Please select an option";
     if (Object.keys(newErrors).length > 0) {
@@ -103,212 +44,225 @@ export default function GeneralDetails() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      {/* Top bar */}
-      <div className="bg-[#1a1a1a] py-1.5 px-4 flex items-center justify-end">
+    <div className="min-h-screen flex flex-col" style={{ background: "#f4f4f4" }}>
+
+      {/* ── Top phone bar ── */}
+      <div
+        className="flex items-center justify-end px-6 py-1.5"
+        style={{ background: "#5baad4" }}
+      >
         <a
           href="tel:8449631512"
-          className="flex items-center gap-1.5 text-white text-xs font-medium"
+          className="flex items-center gap-1.5 text-white text-[13px] font-semibold"
         >
-          <Phone className="w-3 h-3" />
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="white">
+            <path d="M6.62 10.79a15.49 15.49 0 0 0 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.25 1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C9.61 21 3 14.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57-.11.35-.02.74-.25 1.02l-2.2 2.2z"/>
+          </svg>
           844-963-1512
         </a>
       </div>
 
-      {/* Navbar */}
-      <nav className="bg-[#151515] border-b border-white/5">
-        <div className="px-4 flex items-center justify-between h-[52px]">
-          <Link href="/" className="flex items-center">
+      {/* ── Navbar ── */}
+      <nav style={{ background: "#1c2e3e" }}>
+        <div className="flex items-center justify-between px-6 h-[54px]">
+          {/* Logo */}
+          <Link href="/" className="flex items-center flex-shrink-0">
             <img
               src={guardianLogo}
               alt="Guardian Trading"
-              className="h-8 w-auto object-contain"
-              data-testid="img-logo"
+              className="object-contain"
+              style={{ height: "38px", width: "auto" }}
             />
           </Link>
 
-          <div className="flex items-center gap-3">
-            <button
-              className="border border-[#4a7fbd] text-white text-sm px-4 py-1.5 hover:bg-[#4a7fbd]/20 transition-colors"
-              data-testid="button-logout"
-            >
-              Logout
-            </button>
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="text-white p-1"
-              data-testid="button-mobile-menu"
-              aria-label="Toggle menu"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {mobileOpen && (
-          <div className="bg-[#151515] border-t border-white/5 px-4 pb-4">
-            {navLinks.map((link) => (
+          {/* Nav links */}
+          <div className="hidden md:flex items-center gap-6">
+            {NAV_LINKS.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="block text-white text-sm py-2.5 border-b border-white/5"
+                className="flex items-center gap-0.5 text-white text-[13px] font-medium hover:text-[#5baad4] transition-colors"
+                style={{ letterSpacing: "0.02em" }}
               >
                 {link.name}
+                {link.hasDropdown && (
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: "2px" }}>
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                )}
               </Link>
             ))}
           </div>
-        )}
+
+          {/* Logout */}
+          <button
+            className="text-white text-[13px] font-medium px-5 py-1.5 border transition-colors hover:bg-white/10"
+            style={{ borderColor: "#5baad4", borderRadius: "3px" }}
+          >
+            Logout
+          </button>
+        </div>
       </nav>
 
-      {/* Main content */}
-      <main className="flex-1 px-4 py-5">
-        <div className="max-w-sm mx-auto">
-          <div className="bg-white border border-gray-200 shadow-sm overflow-hidden">
-            {/* Blue top stripe */}
-            <div className="h-1 bg-[#4a7fbd] w-full" />
+      {/* ── Main content ── */}
+      <main className="flex-1 px-6 py-6">
+        <div
+          className="bg-white"
+          style={{
+            borderRadius: "2px",
+            boxShadow: "0 1px 6px rgba(0,0,0,0.10)",
+            border: "1px solid #dde3e9",
+            borderLeft: "4px solid #3a7bd5",
+          }}
+        >
+          {/* Card header */}
+          <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
+            <h1
+              className="font-semibold"
+              style={{ color: "#3a7bd5", fontSize: "20px" }}
+            >
+              General Details
+            </h1>
+          </div>
 
-            <div className="px-5 py-5">
-              <h1 className="text-xl font-semibold text-[#4a7fbd] mb-5">General Details</h1>
+          {/* Form */}
+          <div className="px-8 py-6">
+            <form onSubmit={handleNext} noValidate>
 
-              <form onSubmit={handleNext} noValidate>
+              {/* Three dropdowns in a row */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+
                 {/* Registration Type */}
-                <div className="mb-4">
-                  <label className="block text-xs text-gray-600 mb-1.5">
-                    Registration Type <span className="text-red-500">*</span>
+                <div>
+                  <label className="block text-[13px] mb-1.5" style={{ color: "#555" }}>
+                    Registration Type <span style={{ color: "#e53e3e" }}>*</span>
                   </label>
-                  <CustomSelect
-                    value={registrationType}
-                    onChange={setRegistrationType}
-                    options={REGISTRATION_TYPES}
-                    placeholder="Please Select"
-                    id="registration-type"
-                  />
+                  <div className="relative">
+                    <select
+                      value={registrationType}
+                      onChange={(e) => {
+                        setRegistrationType(e.target.value);
+                        if (errors.registrationType)
+                          setErrors((p) => ({ ...p, registrationType: undefined }));
+                      }}
+                      className="w-full appearance-none text-[13px] focus:outline-none"
+                      style={{
+                        background: "#e8edf2",
+                        border: "1px solid #ccd3da",
+                        borderRadius: "3px",
+                        padding: "9px 32px 9px 10px",
+                        color: registrationType ? "#333" : "#888",
+                      }}
+                    >
+                      <option value="" disabled>Please Select</option>
+                      {REGISTRATION_TYPES.map((o) => (
+                        <option key={o} value={o}>{o}</option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                    </div>
+                  </div>
+                  {errors.registrationType && (
+                    <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.registrationType}</p>
+                  )}
                 </div>
 
                 {/* Product */}
-                <div className="mb-4">
-                  <label className="block text-xs text-gray-600 mb-1.5">
-                    Product you want to trade <span className="text-red-500">*</span>
+                <div>
+                  <label className="block text-[13px] mb-1.5" style={{ color: "#555" }}>
+                    Product you want to trade <span style={{ color: "#e53e3e" }}>*</span>
                   </label>
-                  <CustomSelect
-                    value={product}
-                    onChange={(v) => {
-                      setProduct(v);
-                      if (errors.product) setErrors((p) => ({ ...p, product: undefined }));
-                    }}
-                    options={PRODUCTS}
-                    placeholder="Please Select"
-                    id="product"
-                  />
+                  <div className="relative">
+                    <select
+                      value={product}
+                      onChange={(e) => {
+                        setProduct(e.target.value);
+                        if (errors.product) setErrors((p) => ({ ...p, product: undefined }));
+                      }}
+                      className="w-full appearance-none text-[13px] focus:outline-none"
+                      style={{
+                        background: "#e8edf2",
+                        border: "1px solid #ccd3da",
+                        borderRadius: "3px",
+                        padding: "9px 32px 9px 10px",
+                        color: product ? "#333" : "#888",
+                      }}
+                    >
+                      <option value="" disabled>Please Select</option>
+                      {PRODUCTS.map((o) => (
+                        <option key={o} value={o}>{o}</option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                    </div>
+                  </div>
                   {errors.product && (
-                    <p className="mt-1 text-xs text-red-500">{errors.product}</p>
+                    <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.product}</p>
                   )}
                 </div>
 
                 {/* How did you hear */}
-                <div className="mb-6">
-                  <label className="block text-xs text-gray-600 mb-1.5">
-                    How did you hear about us? <span className="text-red-500">*</span>
+                <div>
+                  <label className="block text-[13px] mb-1.5" style={{ color: "#555" }}>
+                    How did you hear about us? <span style={{ color: "#e53e3e" }}>*</span>
                   </label>
-                  <CustomSelect
-                    value={howHeard}
-                    onChange={(v) => {
-                      setHowHeard(v);
-                      if (errors.howHeard) setErrors((p) => ({ ...p, howHeard: undefined }));
-                    }}
-                    options={HOW_HEARD}
-                    placeholder="Please Select"
-                    id="how-heard"
-                  />
+                  <div className="relative">
+                    <select
+                      value={howHeard}
+                      onChange={(e) => {
+                        setHowHeard(e.target.value);
+                        if (errors.howHeard) setErrors((p) => ({ ...p, howHeard: undefined }));
+                      }}
+                      className="w-full appearance-none text-[13px] focus:outline-none"
+                      style={{
+                        background: "#e8edf2",
+                        border: "1px solid #ccd3da",
+                        borderRadius: "3px",
+                        padding: "9px 32px 9px 10px",
+                        color: howHeard ? "#333" : "#888",
+                      }}
+                    >
+                      <option value="" disabled>Please Select</option>
+                      {HOW_HEARD.map((o) => (
+                        <option key={o} value={o}>{o}</option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                    </div>
+                  </div>
                   {errors.howHeard && (
-                    <p className="mt-1 text-xs text-red-500">{errors.howHeard}</p>
+                    <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.howHeard}</p>
                   )}
                 </div>
+              </div>
 
-                {/* Next button */}
-                <button
-                  type="submit"
-                  className="w-36 py-2.5 bg-[#4a7fbd] hover:bg-[#3d6fad] text-white font-semibold text-sm rounded transition-colors"
-                  data-testid="button-next"
-                >
-                  Next
-                </button>
-              </form>
-            </div>
+              {/* Next button */}
+              <button
+                type="submit"
+                className="text-white text-[13px] font-semibold transition-opacity hover:opacity-90"
+                style={{
+                  background: "#3a7bd5",
+                  borderRadius: "3px",
+                  padding: "9px 28px",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+              >
+                Next
+              </button>
+            </form>
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-[#1a1a1a] pt-10 pb-6 mt-8">
-        <div className="px-5 max-w-sm mx-auto">
-          {/* Logo */}
-          <div className="flex items-center gap-2 mb-8">
-            <img
-              src={guardianLogo}
-              alt="Guardian Trading"
-              className="h-8 w-auto object-contain"
-            />
-          </div>
-
-          {/* Links grid */}
-          <div className="grid grid-cols-2 gap-8 mb-8">
-            <div>
-              <h4 className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-3">
-                Company
-              </h4>
-              <ul className="flex flex-col gap-2">
-                {["About", "Services", "Platforms", "Pricing", "Insights"].map((item) => (
-                  <li key={item}>
-                    <Link href={`/${item.toLowerCase()}`} className="text-gray-400 text-sm hover:text-white">
-                      {item}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-3">
-                Legal
-              </h4>
-              <ul className="flex flex-col gap-2">
-                {["Disclosures", "Privacy Policy"].map((item) => (
-                  <li key={item}>
-                    <a href="#" className="text-gray-400 text-sm hover:text-white">
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Contact */}
-          <div className="mb-8">
-            <h4 className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-3">
-              Contact
-            </h4>
-            <div className="flex flex-col gap-1.5">
-              <a href="tel:8886020092" className="text-gray-400 text-sm hover:text-white">
-                888-602-0092
-              </a>
-              <a href="mailto:info@guardiantrading.com" className="text-gray-400 text-sm hover:text-white">
-                info@guardiantrading.com
-              </a>
-              <p className="text-gray-400 text-sm">
-                1301 Route 36 Suite 109 Hazlet, NJ 07730
-              </p>
-            </div>
-          </div>
-
-          {/* Bottom */}
-          <div className="border-t border-white/10 pt-5">
-            <p className="text-gray-500 text-xs text-center">
-              Guardian Trading ~ A Division of Velocity Clearing, LLC ("Velocity"). Member FINRA/ SIPC.
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
