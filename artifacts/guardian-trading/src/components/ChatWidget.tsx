@@ -75,100 +75,117 @@ export default function ChatWidget() {
       >
         {/* ── HOME SCREEN ── */}
         {screen === "home" && (
-          <div className="flex flex-col flex-1">
-            {/* Hero gradient header */}
+          <div className="flex flex-col" style={{ minHeight: "580px", background: "#0e0e0e" }}>
+            {/* ── Hero gradient header ── */}
             <div
-              className="relative overflow-hidden px-5 pt-5 pb-7"
+              className="relative overflow-hidden"
               style={{
-                background: "linear-gradient(135deg, #1a6b7a 0%, #0d3a4a 40%, #0a1a2a 100%)",
-                minHeight: "200px",
+                background: "linear-gradient(150deg, #1c7d8a 0%, #0f4a5c 35%, #081828 70%, #080e18 100%)",
+                minHeight: "260px",
+                flexShrink: 0,
               }}
             >
-              {/* Dotted pattern top-right */}
+              {/* Dotted bar pattern – top-right */}
               <img
                 src={heroPattern}
                 alt=""
                 aria-hidden="true"
-                className="absolute top-0 right-0 h-full w-[55%] object-cover object-left pointer-events-none select-none opacity-30"
+                className="absolute top-0 right-0 h-full w-[52%] object-cover object-left pointer-events-none select-none"
+                style={{ opacity: 0.28 }}
               />
-              {/* Minimize button */}
-              <div className="relative z-10 flex justify-end mb-6">
+
+              {/* Minimize "–" */}
+              <div className="relative z-10 flex justify-end pt-4 pr-4">
                 <button
                   onClick={handleClose}
-                  className="text-white/60 hover:text-white transition-colors"
                   aria-label="Minimize"
+                  className="text-white/50 hover:text-white/90 transition-colors leading-none"
+                  style={{ fontSize: "22px", lineHeight: 1 }}
                 >
-                  <Minus className="w-5 h-5" />
+                  —
                 </button>
               </div>
+
               {/* Title */}
-              <h2 className="relative z-10 text-white font-bold leading-tight" style={{ fontSize: "28px" }}>
-                Guardian Trading<br />LiveChat
-              </h2>
+              <div className="relative z-10 px-5 pt-2 pb-10">
+                <h2
+                  className="text-white font-extrabold leading-[1.1]"
+                  style={{ fontSize: "34px", letterSpacing: "-0.5px" }}
+                >
+                  Guardian<br />Trading<br />LiveChat
+                </h2>
+              </div>
             </div>
 
-            {/* Conversation card */}
-            <div className="mx-4 -mt-4 relative z-10 bg-[#1e1e1e] rounded-xl overflow-hidden shadow-lg">
+            {/* ── Conversation card – overlaps gradient ── */}
+            <div
+              className="mx-4 relative z-10 rounded-2xl overflow-hidden shadow-xl"
+              style={{ background: "#1c1c1e", marginTop: "-28px" }}
+            >
               {/* Agent row */}
-              <div className="flex items-center gap-3 px-4 py-3">
-                <div className="relative flex-shrink-0">
-                  <div className="w-9 h-9 rounded-full bg-[#4a7fbd] flex items-center justify-center text-white font-bold text-sm">
+              <div className="flex items-start gap-3 px-4 pt-4 pb-3">
+                {/* Avatar */}
+                <div className="relative flex-shrink-0 mt-0.5">
+                  <div
+                    className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-[15px]"
+                    style={{ background: "#4a7fbd" }}
+                  >
                     R
                   </div>
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-400 border-2 border-[#1e1e1e]" />
+                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#3dd68c] border-2 border-[#1c1c1e]" />
                 </div>
+
+                {/* Name + message */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-white text-[13px] font-semibold leading-tight">
-                    Robert Cleary
-                    <span className="text-gray-400 font-normal"> • {timeStr}</span>
+                  <p className="text-[13px] leading-tight mb-1">
+                    <span className="text-white font-semibold">Robert Cleary</span>
+                    <span className="text-[#888] font-normal"> • {timeStr}</span>
                   </p>
-                  <p className="text-gray-300 text-[12px] leading-snug mt-0.5">
+                  <p className="text-[#ccc] text-[13px] leading-snug">
                     Have a question? Contact customer support, sales &amp; new accounts.
                   </p>
                 </div>
               </div>
 
-              {/* Let's chat button image */}
-              <div className="px-4 pb-4">
+              {/* Let's chat image button */}
+              <div className="px-3 pb-4">
                 <button
                   onClick={() => setScreen("chat")}
-                  className="w-full block transition-opacity hover:opacity-90 active:opacity-80 focus:outline-none"
+                  className="w-full block focus:outline-none transition-opacity hover:opacity-90 active:opacity-80"
                   aria-label="Let's chat"
                 >
-                  <img
-                    src={letsChatBtn}
-                    alt="Let's chat"
-                    className="w-full h-auto block"
-                  />
+                  <img src={letsChatBtn} alt="Let's chat" className="w-full h-auto block" />
                 </button>
               </div>
             </div>
 
-            {/* Spacer */}
-            <div className="flex-1" style={{ minHeight: "160px" }} />
+            {/* ── Spacer ── */}
+            <div className="flex-1" />
 
-            {/* Bottom nav */}
-            <div className="mx-3 mb-2 flex rounded-full overflow-hidden" style={{ background: "#252525" }}>
-              {/* Home — active */}
-              <button className="flex-1 flex flex-col items-center justify-center gap-[5px] py-4 text-white">
-                <Home className="w-[22px] h-[22px]" style={{ fill: "white", strokeWidth: 1.5 }} />
-                <span className="text-[12px] font-bold tracking-wide">Home</span>
-              </button>
-              {/* Chat */}
-              <button
-                onClick={() => setScreen("chat")}
-                className="flex-1 flex flex-col items-center justify-center gap-[5px] py-4 text-[#666] hover:text-[#999] transition-colors"
-              >
-                <MessageSquare className="w-[22px] h-[22px]" style={{ strokeWidth: 1.5 }} />
-                <span className="text-[12px] font-bold tracking-wide">Chat</span>
-              </button>
+            {/* ── Bottom nav pill ── */}
+            <div className="px-4 mb-3">
+              <div className="flex rounded-[18px] overflow-hidden" style={{ background: "#1e1e1e" }}>
+                {/* Home – active */}
+                <button className="flex-1 flex flex-col items-center justify-center gap-[6px] py-[14px] text-white">
+                  <Home className="w-[20px] h-[20px]" style={{ fill: "white", strokeWidth: 0 }} />
+                  <span className="text-[12px] font-bold">Home</span>
+                </button>
+                {/* Chat */}
+                <button
+                  onClick={() => setScreen("chat")}
+                  className="flex-1 flex flex-col items-center justify-center gap-[6px] py-[14px] text-[#555] hover:text-[#888] transition-colors"
+                >
+                  <MessageSquare className="w-[20px] h-[20px]" style={{ strokeWidth: 1.8 }} />
+                  <span className="text-[12px] font-bold">Chat</span>
+                </button>
+              </div>
             </div>
 
-            {/* Powered by LiveChat */}
-            <div className="flex items-center justify-center gap-1.5 py-3">
-              <span className="text-[#666] text-[11px]">Powered by</span>
-              <span className="text-[#ff5c35] text-[13px] leading-none">●</span>
-              <span className="text-white text-[11px] font-bold">LiveChat</span>
+            {/* ── Powered by LiveChat ── */}
+            <div className="flex items-center justify-center gap-[6px] pb-4">
+              <span className="text-[#555] text-[11px]">Powered by</span>
+              <span className="text-[#ff5c35] text-[12px] leading-none">●</span>
+              <span className="text-[#ccc] text-[11px] font-semibold">LiveChat</span>
             </div>
           </div>
         )}
