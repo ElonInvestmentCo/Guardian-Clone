@@ -2,7 +2,7 @@
   "Emailmy488@gmail.com": {
     "email": "Emailmy488@gmail.com",
     "createdAt": "2026-03-20T16:30:58.865Z",
-    "updatedAt": "2026-03-20T16:41:15.826Z",
+    "updatedAt": "2026-03-20T16:43:35.170Z",
     "general": {
       "registrationType": "Individual Account",
       "product": "Stocks",
@@ -35,6 +35,44 @@
       "state": "Texas",
       "yearsWithEmployer": "20",
       "phoneNumber": "5126866045"
+    },
+    "idInformation": {
+      "taxResidenceCountry": "United States",
+      "foreignIdType": "",
+      "taxIdType": "SSN",
+      "dateOfBirth": "enc:649e83a2a78d931353889aa1a7166957:45399cd3ab301bc2f0d2f3cfdeb140e6:8e0143086170baac597b",
+      "taxId": "enc:e5a6c5ec57c4247f88856e4dc1979d24:a67a97d859f127cf3d434e7092e1143d:d49f1e0f6aa9654a88",
+      "idType": "Driver's License",
+      "idNumber": "enc:f6c9b14f0c2cd8ad6a9e7f2d501312a8:440e6f155ee5eca43774572da340631e:9a872f497c2d1539c8cc",
+      "issuingState": "Texas",
+      "countryOfIssuance": "United States",
+      "issueDate": "07/28/2025",
+      "expirationDate": "08/08/2033"
+    },
+    "income": {
+      "annualIncome": "$250,001 - $500,000",
+      "netWorth": "$200,001 - $500,000",
+      "liquidNetWorth": "$500,001 - $1,000,000",
+      "taxRate": "31 - 35"
+    },
+    "riskTolerance": {
+      "riskTolerances": [
+        "conservative"
+      ],
+      "hasFinancialEducation": "Yes",
+      "strategyPriorities": {
+        "income": "1",
+        "growth": "2",
+        "speculation": "2",
+        "trading": "1",
+        "capital": "4"
+      }
+    },
+    "financialSituation": {
+      "annualExpense": "$50,001 - $100,000",
+      "specialExpense": "$250,001 - $500,000",
+      "liquidityNeeds": "Important",
+      "investmentTimeHorizon": "3 - 5"
     }
   }
 }
