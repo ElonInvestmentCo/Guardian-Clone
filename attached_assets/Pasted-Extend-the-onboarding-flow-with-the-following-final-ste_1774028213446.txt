@@ -1,0 +1,64 @@
+Extend the onboarding flow with the following final steps and pages:
+
+1. **Step 10 – Disclosures**
+
+   * Build the **Disclosures** page and set it as step **10**.
+   * Replicate the attached screenshot **pixel-perfectly** (layout, text blocks, checkboxes, spacing, typography).
+   * Ensure users can read and accept required disclosures before proceeding.
+
+2. **Step 11 – Signatures**
+
+   * Build the **Signatures** page and set it as step **11**.
+   * Match the attached screenshot exactly.
+   * Implement a **signature input feature**:
+
+     * Allow users to sign using mouse/touch (draw signature).
+     * Include clear/reset option.
+     * Validate that a signature is provided before continuing.
+
+3. **Final Page – Application Submitted**
+
+   * Build the **Application Submitted** confirmation page.
+   * Match the attached screenshot exactly.
+   * Include success messaging and next-step instructions.
+
+4. **Pending Page (Green Write-up)**
+
+   * Build the **Pending/Under Review** page with the green write-up.
+   * Replicate the screenshot exactly (colors, text styling, layout).
+   * Clearly indicate that the application is being reviewed.
+
+5. **Design & Build Requirements**
+
+   * Replicate all sections using **pixel-perfect accuracy**:
+
+     * Layout
+     * Typography
+     * Colors
+     * Spacing
+     * Alignment
+     * Icons and UI elements
+
+6. **Functionality**
+
+   * Maintain smooth step-by-step navigation.
+   * Preserve all user data across steps.
+   * Ensure validations (checkboxes, signature required, etc.).
+
+7. **UI/UX Consistency**
+
+   * Maintain consistent styling across all pages.
+   * Preserve animations, hover states, and transitions.
+
+8. **Responsiveness & Performance**
+
+   * Fully responsive across desktop, tablet, and mobile.
+   * Optimize for fast loading without reducing quality.
+
+9. **Final Validation**
+
+   * Ensure all steps (1–final) are correctly ordered.
+   * Confirm pixel-perfect match with screenshots.
+   * Test entire onboarding flow end-to-end.
+
+All pages must match the attached designs exactly and function as a complete, professional onboarding system.

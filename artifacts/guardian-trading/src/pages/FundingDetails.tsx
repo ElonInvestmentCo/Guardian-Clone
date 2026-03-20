@@ -90,6 +90,7 @@ export default function FundingDetails() {
       otherDescription: otherText,
       bankName, abaSwift, accountNumber, accountName, accountType,
     });
+    navigate("/disclosures");
   };
 
   return (

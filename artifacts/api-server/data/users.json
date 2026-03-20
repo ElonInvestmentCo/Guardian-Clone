@@ -2,7 +2,7 @@
   "Emailmy488@gmail.com": {
     "email": "Emailmy488@gmail.com",
     "createdAt": "2026-03-20T16:30:58.865Z",
-    "updatedAt": "2026-03-20T17:26:03.637Z",
+    "updatedAt": "2026-03-20T17:42:19.988Z",
     "general": {
       "registrationType": "Individual Account",
       "product": "Stocks",
@@ -67,10 +67,54 @@
       }
     },
     "financialSituation": {
-      "annualExpense": "$100,001 - $250,000",
-      "specialExpense": "$250,001 - $500,000",
+      "annualExpense": "$50,001 - $100,000",
+      "specialExpense": "$100,001 - $250,000",
       "liquidityNeeds": "Important",
-      "investmentTimeHorizon": "6 - 10"
+      "investmentTimeHorizon": "3 - 5"
+    },
+    "investmentExperience": {
+      "investments": {
+        "stocks": {
+          "enabled": true,
+          "years": "5+",
+          "transactions": "",
+          "knowledge": ""
+        },
+        "fixedIncome": {
+          "enabled": true,
+          "years": "",
+          "transactions": "",
+          "knowledge": ""
+        },
+        "options": {
+          "enabled": true,
+          "years": "",
+          "transactions": "",
+          "knowledge": ""
+        },
+        "futures": {
+          "enabled": true,
+          "years": "5+",
+          "transactions": "6-15",
+          "knowledge": "Limited"
+        }
+      }
+    },
+    "idProofUpload": {
+      "idType": "Driver's License",
+      "frontFileName": null,
+      "backFileName": null
+    },
+    "fundingDetails": {
+      "fundingSources": [
+        "Social Security Benefits"
+      ],
+      "otherDescription": "",
+      "bankName": "EDEDRDS",
+      "abaSwift": "ERSDRESDER",
+      "accountNumber": "SEERSDRESD",
+      "accountName": "SDERSDERS",
+      "accountType": "Checking"
     }
   }
 }
