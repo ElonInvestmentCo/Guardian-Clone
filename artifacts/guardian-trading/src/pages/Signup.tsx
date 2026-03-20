@@ -233,7 +233,7 @@ export default function Signup() {
                           width: "35px",
                           height: "35px",
                           objectFit: "contain",
-                          filter: "brightness(0) opacity(0.65)",
+                          filter: "brightness(0) opacity(0.85)",
                           transform: eyeActive === "pw" ? "scale(0.82)" : "scale(1)",
                           transition: "transform 0.15s cubic-bezier(0.34,1.56,0.64,1)",
                         }}
@@ -287,7 +287,7 @@ export default function Signup() {
                           width: "35px",
                           height: "35px",
                           objectFit: "contain",
-                          filter: "brightness(0) opacity(0.65)",
+                          filter: "brightness(0) opacity(0.85)",
                           transform: eyeActive === "cpw" ? "scale(0.82)" : "scale(1)",
                           transition: "transform 0.15s cubic-bezier(0.34,1.56,0.64,1)",
                         }}
