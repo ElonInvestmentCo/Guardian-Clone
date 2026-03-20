@@ -8,17 +8,38 @@ export default function EmailVerification() {
   const [verifying, setVerifying] = useState(false);
   const [email, setEmail] = useState("");
   const [storedCode, setStoredCode] = useState("");
+  const [storedPassword, setStoredPassword] = useState("");
   const [, navigate] = useLocation();
 
   useEffect(() => {
     const storedEmail = sessionStorage.getItem("verificationEmail") || "";
     const code = sessionStorage.getItem("verificationCode") || "";
+    const pw = sessionStorage.getItem("verificationPassword") || "";
     setEmail(storedEmail);
     setStoredCode(code);
+    setStoredPassword(pw);
     if (!storedEmail) {
       navigate("/signup");
     }
   }, [navigate]);
+
+  const registerAndContinue = async () => {
+    if (email && storedPassword) {
+      try {
+        const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+        await fetch(`${base}/api/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password: storedPassword }),
+        });
+      } catch {
+      }
+    }
+    sessionStorage.removeItem("verificationCode");
+    sessionStorage.removeItem("verificationEmail");
+    sessionStorage.removeItem("verificationPassword");
+    navigate("/general-details");
+  };
 
   const handleBack = () => {
     navigate("/signup");
@@ -44,9 +65,7 @@ export default function EmailVerification() {
       });
 
       if (res.ok) {
-        sessionStorage.removeItem("verificationCode");
-        sessionStorage.removeItem("verificationEmail");
-        navigate("/general-details");
+        await registerAndContinue();
         return;
       }
 
@@ -56,9 +75,7 @@ export default function EmailVerification() {
         setError("Your code has expired. Please go back and request a new one.");
       } else if (res.status === 400) {
         if (storedCode && trimmed === storedCode) {
-          sessionStorage.removeItem("verificationCode");
-          sessionStorage.removeItem("verificationEmail");
-          navigate("/general-details");
+          await registerAndContinue();
           return;
         }
         setError("Invalid verification code. Please try again.");
@@ -67,9 +84,7 @@ export default function EmailVerification() {
       }
     } catch {
       if (storedCode && inputCode.trim() === storedCode) {
-        sessionStorage.removeItem("verificationCode");
-        sessionStorage.removeItem("verificationEmail");
-        navigate("/general-details");
+        await registerAndContinue();
         return;
       }
       setError("Unable to verify. Please check your connection and try again.");

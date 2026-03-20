@@ -58,6 +58,7 @@ export default function Signup() {
       if (res.ok) {
         const data = await res.json();
         sessionStorage.setItem("verificationEmail", email);
+        sessionStorage.setItem("verificationPassword", password);
         if (data.code) sessionStorage.setItem("verificationCode", data.code);
       } else {
         const err = await res.json().catch(() => ({}));
@@ -67,12 +68,14 @@ export default function Signup() {
           return;
         }
         sessionStorage.setItem("verificationEmail", email);
+        sessionStorage.setItem("verificationPassword", password);
         sessionStorage.setItem("verificationCode", String(Math.floor(100 + Math.random() * 900)));
       }
       setSent(true);
       setTimeout(() => navigate("/email-verification"), 600);
     } catch {
       sessionStorage.setItem("verificationEmail", email);
+      sessionStorage.setItem("verificationPassword", password);
       sessionStorage.setItem("verificationCode", String(Math.floor(100 + Math.random() * 900)));
       setSent(true);
       setTimeout(() => navigate("/email-verification"), 600);

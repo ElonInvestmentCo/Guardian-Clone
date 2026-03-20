@@ -3,6 +3,45 @@ import { Router } from "express";
 const authRouter = Router();
 
 const verificationCodes = new Map<string, { code: string; expires: number }>();
+const registeredUsers = new Map<string, { passwordHash: string }>();
+
+function simpleHash(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
+  }
+  return hash.toString(16);
+}
+
+authRouter.post("/auth/register", (req, res) => {
+  const { email, password } = req.body as { email?: string; password?: string };
+  if (!email || !password) {
+    res.status(400).json({ error: "Email and password are required" });
+    return;
+  }
+  registeredUsers.set(email.toLowerCase(), { passwordHash: simpleHash(password) });
+  res.json({ success: true });
+});
+
+authRouter.post("/auth/login", (req, res) => {
+  const { email, password } = req.body as { email?: string; password?: string };
+
+  if (!email || !password) {
+    res.status(400).json({ error: "Email and password are required" });
+    return;
+  }
+
+  const user = registeredUsers.get(email.toLowerCase());
+
+  if (!user || user.passwordHash !== simpleHash(password)) {
+    console.log(`[Auth] Failed login attempt for ${email}`);
+    res.status(401).json({ error: "Invalid email or password" });
+    return;
+  }
+
+  console.log(`[Auth] Successful login for ${email}`);
+  res.json({ success: true, email });
+});
 
 authRouter.post("/auth/send-verification", (req, res) => {
   const { email } = req.body as { email?: string };

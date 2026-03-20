@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
 const eyeOpen = "/eye-open-clean.png";
 const eyeClosed = "/eye-closed-clean.png";
@@ -8,8 +8,9 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string; submit?: string }>({});
   const [loading, setLoading] = useState(false);
+  const [, navigate] = useLocation();
 
   const validate = () => {
     const newErrors: { email?: string; password?: string } = {};
@@ -26,7 +27,7 @@ export default function Login() {
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
@@ -35,9 +36,27 @@ export default function Login() {
     }
     setErrors({});
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const res = await fetch(`${base}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        console.log("[Login] Success:", data.email);
+        navigate("/");
+      } else {
+        console.error("[Login] Failed:", data.error || res.status);
+        setErrors({ submit: data.error || "Invalid email or password." });
+      }
+    } catch (err) {
+      console.error("[Login] Network error:", err);
+      setErrors({ submit: "Unable to connect. Please check your connection and try again." });
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -110,6 +129,10 @@ export default function Login() {
                   <p className="mt-1 text-xs text-red-500">{errors.password}</p>
                 )}
               </div>
+
+              {errors.submit && (
+                <p className="mb-3 text-xs text-red-500">{errors.submit}</p>
+              )}
 
               {/* Login Button */}
               <button
