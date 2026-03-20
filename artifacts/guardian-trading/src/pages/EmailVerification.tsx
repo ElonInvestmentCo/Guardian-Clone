@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
 
-const RESEND_COOLDOWN = 30;
+const RESEND_COOLDOWN = 180;
 
 export default function EmailVerification() {
   const [inputCode, setInputCode] = useState("");
@@ -13,22 +13,19 @@ export default function EmailVerification() {
   const [email, setEmail] = useState("");
   const [storedPassword, setStoredPassword] = useState("");
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN);
-  const [devMode, setDevMode] = useState(false);
   const [, navigate] = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const storedEmail = sessionStorage.getItem("verificationEmail") || "";
     const pw = sessionStorage.getItem("verificationPassword") || "";
-    const isDev = sessionStorage.getItem("verificationDevMode") === "1";
     setEmail(storedEmail);
     setStoredPassword(pw);
-    setDevMode(isDev);
     if (!storedEmail) {
       navigate("/signup");
       return;
     }
-    inputRef.current?.focus();
+    setTimeout(() => inputRef.current?.focus(), 100);
   }, [navigate]);
 
   useEffect(() => {
@@ -62,40 +59,16 @@ export default function EmailVerification() {
         setError(data.error || "Failed to resend code. Please try again.");
         return;
       }
-      const data = await res.json().catch(() => ({})) as { dev?: boolean };
-      if (data.dev) {
-        setDevMode(true);
-        sessionStorage.setItem("verificationDevMode", "1");
-      }
       setResendSuccess(true);
       setInputCode("");
       setCooldown(RESEND_COOLDOWN);
-      inputRef.current?.focus();
+      setTimeout(() => inputRef.current?.focus(), 50);
       setTimeout(() => setResendSuccess(false), 4000);
     } catch {
       setError("Unable to connect. Please check your connection and try again.");
     } finally {
       setResending(false);
     }
-  };
-
-  const registerAndContinue = async () => {
-    if (email && storedPassword) {
-      try {
-        const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-        await fetch(`${base}/api/auth/register`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password: storedPassword }),
-        });
-      } catch {
-        // Non-fatal — proceed anyway
-      }
-    }
-    sessionStorage.setItem("signupEmail", email);
-    sessionStorage.removeItem("verificationEmail");
-    sessionStorage.removeItem("verificationPassword");
-    navigate("/general-details");
   };
 
   const handleBack = () => {
@@ -125,16 +98,30 @@ export default function EmailVerification() {
         body: JSON.stringify({ email, code: trimmed }),
       });
 
-      if (res.ok) {
-        await registerAndContinue();
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({})) as { error?: string };
+        setError(data.error || "Something went wrong. Please try again.");
+        setVerifying(false);
         return;
       }
 
-      const data = await res.json().catch(() => ({})) as { error?: string };
-      setError(data.error || "Something went wrong. Please try again.");
+      // Fire-and-forget account registration — do not await so navigation is instant
+      if (email && storedPassword) {
+        fetch(`${base}/api/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password: storedPassword }),
+        }).catch(() => {});
+      }
+
+      // Clean up session and navigate immediately
+      sessionStorage.setItem("signupEmail", email);
+      sessionStorage.removeItem("verificationEmail");
+      sessionStorage.removeItem("verificationPassword");
+      sessionStorage.removeItem("verificationDevMode");
+      navigate("/general-details");
     } catch {
       setError("Unable to verify. Please check your connection and try again.");
-    } finally {
       setVerifying(false);
     }
   };
@@ -190,16 +177,6 @@ export default function EmailVerification() {
 
           {/* Body */}
           <div className="px-8 pt-8 pb-8">
-
-            {/* Dev mode notice */}
-            {devMode && (
-              <div
-                className="mb-6 px-3 py-3 rounded text-xs leading-relaxed"
-                style={{ background: "#fffbea", border: "1px solid #f0c040", color: "#7a5c00" }}
-              >
-                <strong>Development mode:</strong> Email delivery is unavailable (domain not yet verified in Resend). Check the <strong>API server console</strong> for your verification code.
-              </div>
-            )}
 
             {/* Guardian Trading logo */}
             <div className="flex justify-center mb-7">

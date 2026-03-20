@@ -43,19 +43,18 @@ export default function Login() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const data = await res.json().catch(() => ({}));
+      const data = await res.json().catch(() => ({}) as Record<string, string>);
       if (res.ok) {
-        console.log("[Login] Success:", data.email);
+        sessionStorage.setItem("signupEmail", (data as { email?: string }).email || email);
+        setLoading(false);
         navigate("/");
       } else {
-        console.error("[Login] Failed:", data.error || res.status);
-        setErrors({ submit: data.error || "Invalid email or password." });
+        setLoading(false);
+        setErrors({ submit: (data as { error?: string }).error || "Invalid email or password." });
       }
-    } catch (err) {
-      console.error("[Login] Network error:", err);
-      setErrors({ submit: "Unable to connect. Please check your connection and try again." });
-    } finally {
+    } catch {
       setLoading(false);
+      setErrors({ submit: "Unable to connect. Please check your connection and try again." });
     }
   };
 
