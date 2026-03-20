@@ -27,6 +27,8 @@ import Disclosures from "@/pages/Disclosures";
 import Signatures from "@/pages/Signatures";
 import ApplicationSubmitted from "@/pages/ApplicationSubmitted";
 import ApplicationPending from "@/pages/ApplicationPending";
+import AccountVerified from "@/pages/AccountVerified";
+import TradingDashboard from "@/pages/TradingDashboard";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/analytics/Dashboard";
 import Projects from "@/pages/analytics/Projects";
@@ -62,6 +64,8 @@ function Router() {
       <Route path="/signatures" component={Signatures} />
       <Route path="/application-submitted" component={ApplicationSubmitted} />
       <Route path="/application-pending" component={ApplicationPending} />
+      <Route path="/account-verified" component={AccountVerified} />
+      <Route path="/dashboard" component={TradingDashboard} />
       <Route path="/analytics" component={Dashboard} />
       <Route path="/analytics/projects" component={Projects} />
       <Route path="/analytics/campaigns" component={Campaigns} />

@@ -7,8 +7,10 @@
     "dateOfBirth": "enc:a424a32e7e0f908d1a0c660197e4a4f9:1be5098563b1a0375c814014a0933a08:63b7eeb37059b2902e2c",
     "taxId": "enc:46f1cd7bc4bf8bc5b97f517deefa74ab:99be6393e940ffef9e346731e58e9b26:2a2c8e99cd4200bf939ea5"
   },
-  "updatedAt": "2026-03-20T17:52:52.134Z",
+  "updatedAt": "2026-03-20T18:05:10.521Z",
   "documents": {
     "id_front": "data/users/test_at_guardiantrading.com/documents/id_front.jpg"
-  }
+  },
+  "status": "verified",
+  "verifiedAt": "2026-03-20T18:05:10.521Z"
 }
