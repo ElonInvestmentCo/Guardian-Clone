@@ -12,6 +12,7 @@ import dasLogo from "@assets/DAS-icon-50x50_1773948931248.png";
 import sterlingLogo from "@assets/sterling-icon-50x50_1773948931249.png";
 import benzingaBadge from "@assets/IMG_7973_1773721659915.png";
 import bgVector from "@assets/img-background-vector-1_1773948931248.png";
+import heroPattern from "@assets/pattern_1773965291387.png";
 import arrowIcon from "@assets/IMG_8065_1773952578861.PNG";
 import benzingaBannerImg from "@assets/img-benzinga-short-selling-review-1-846x218-1_1773952971025.jpg";
 import omsPlatformsImg from "@assets/Guardian_Trading_-_Google_Chrome_3_19_2026_9_40_04_PM_1773953383663.png";
@@ -95,10 +96,18 @@ export default function Home() {
 
             {/* Right column — laptop + phone platform screenshot (full-bleed on mobile) */}
             <div className="flex-1 w-full max-w-[580px] relative -mx-4 lg:mx-0">
+              {/* Dotted pattern behind platform image */}
+              <img
+                src={heroPattern}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+                style={{ opacity: 0.6, filter: "brightness(1.2) saturate(1.1)" }}
+              />
               <img
                 src={heroPlatform}
                 alt="Guardian Trading Platform — DAS Trader Pro on laptop and mobile"
-                className="w-full h-auto object-contain drop-shadow-2xl"
+                className="relative z-10 w-full h-auto object-contain drop-shadow-2xl"
                 style={{ filter: "brightness(1.05) contrast(1.05)" }}
               />
             </div>
