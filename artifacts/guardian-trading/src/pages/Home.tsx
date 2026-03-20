@@ -91,7 +91,8 @@ export default function Home() {
               </h1>
               <a
                 href="/signup"
-                className="inline-block border border-white text-white text-sm px-6 py-2.5 hover:bg-white hover:text-black transition-colors font-medium"
+                className="inline-block border text-white text-sm px-8 py-3 font-semibold tracking-wide transition-colors hover:bg-white/10"
+                style={{ borderColor: "#1ab8d4" }}
               >
                 Start Trading
               </a>
@@ -346,13 +347,15 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/#pricing"
-              className="inline-block border border-[#4a7fbd] text-white text-sm px-8 py-3 hover:bg-[#4a7fbd]/20 transition-colors font-medium"
+              className="inline-block border text-white text-sm px-8 py-3 font-semibold tracking-wide transition-colors hover:bg-white/10"
+              style={{ borderColor: "#1ab8d4" }}
             >
               Pricing Details
             </Link>
             <Link
               href="/signup"
-              className="inline-block bg-[#4a7fbd] hover:bg-[#3d6fad] text-white text-sm px-8 py-3 transition-colors font-medium"
+              className="inline-block text-white text-sm px-8 py-3 font-semibold tracking-wide transition-colors hover:brightness-110"
+              style={{ background: "#1e6fc4" }}
             >
               Open An Account
             </Link>
