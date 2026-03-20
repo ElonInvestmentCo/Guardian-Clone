@@ -1,11 +1,24 @@
 import { useState, useEffect, useCallback } from "react";
-import { X, ArrowLeft, MoreHorizontal, Minus } from "lucide-react";
+import { X, ArrowLeft, Minus, Home, MessageSquare, Send } from "lucide-react";
 import { useLocation } from "wouter";
 import chatIcon from "@assets/DAFF4A91-FB9A-40ED-9CF7-E072FEA1BB59_1773727452638.png";
 import needHelpImg from "@assets/8362510f188d6ddbeb52744b9d477783_1773966680140.png";
+import heroPattern from "@assets/pattern_1773965291387.png";
+
+type Screen = "home" | "chat";
+
+function formatTime() {
+  const now = new Date();
+  let h = now.getHours();
+  const m = now.getMinutes().toString().padStart(2, "0");
+  const ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12 || 12;
+  return `${h}:${m} ${ampm}`;
+}
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
+  const [screen, setScreen] = useState<Screen>("home");
   const [showIcon, setShowIcon] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupDismissed, setPopupDismissed] = useState(false);
@@ -15,10 +28,8 @@ export default function ChatWidget() {
     setShowIcon(false);
     setShowPopup(false);
     setPopupDismissed(false);
-
     const iconTimer = setTimeout(() => setShowIcon(true), 5000);
     const popupTimer = setTimeout(() => setShowPopup(true), 6000);
-
     return () => {
       clearTimeout(iconTimer);
       clearTimeout(popupTimer);
@@ -30,10 +41,17 @@ export default function ChatWidget() {
     return cleanup;
   }, [location, startTimers]);
 
-  const handlePopupClick = () => {
+  const handleOpen = () => {
     setOpen(true);
     setShowPopup(false);
   };
+
+  const handleClose = () => {
+    setOpen(false);
+    setScreen("home");
+  };
+
+  const handlePopupClick = () => handleOpen();
 
   const handlePopupClose = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -41,97 +59,202 @@ export default function ChatWidget() {
     setPopupDismissed(true);
   };
 
+  const timeStr = formatTime();
+
   return (
     <>
-      {/* Chat Panel */}
+      {/* ── CHAT PANEL ── */}
       <div
-        className={`fixed bottom-[84px] right-5 z-50 w-[340px] rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 ease-out origin-bottom-right ${
+        className={`fixed bottom-[84px] right-5 z-50 w-[340px] rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 ease-out origin-bottom-right flex flex-col ${
           open
             ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
             : "opacity-0 scale-90 translate-y-4 pointer-events-none"
         }`}
-        style={{ background: "#1a1a1a" }}
+        style={{ background: "#141414", maxHeight: "580px" }}
       >
-        {/* Header bar */}
-        <div className="flex items-center justify-between px-4 py-3" style={{ background: "#111" }}>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setOpen(false)}
-              className="text-gray-400 hover:text-white transition-colors"
+        {/* ── HOME SCREEN ── */}
+        {screen === "home" && (
+          <div className="flex flex-col flex-1">
+            {/* Hero gradient header */}
+            <div
+              className="relative overflow-hidden px-5 pt-5 pb-7"
+              style={{
+                background: "linear-gradient(135deg, #1a6b7a 0%, #0d3a4a 40%, #0a1a2a 100%)",
+                minHeight: "200px",
+              }}
             >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <button className="text-gray-400 hover:text-white transition-colors">
-              <MoreHorizontal className="w-5 h-5" />
-            </button>
-          </div>
-          <button
-            onClick={() => setOpen(false)}
-            className="w-8 h-8 rounded-full bg-[#2a2a2a] flex items-center justify-center text-gray-400 hover:text-white transition-colors"
-          >
-            <Minus className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Agent card */}
-        <div className="flex justify-center py-5 px-4">
-          <div className="flex items-center gap-3 bg-[#2a2a2a] rounded-full px-5 py-3 shadow-lg">
-            <div className="relative flex-shrink-0">
-              <div className="w-11 h-11 rounded-full bg-[#4a7fbd] flex items-center justify-center text-white font-bold text-lg">
-                R
-              </div>
-              <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-400 border-2 border-[#2a2a2a]" />
-            </div>
-            <div>
-              <p className="text-white font-semibold text-sm leading-tight">Robert Cleary</p>
-              <p className="text-gray-400 text-xs">Product Expert</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Chat body */}
-        <div className="px-4 pb-4 flex flex-col gap-3">
-          <div className="flex items-start gap-2">
-            <div className="w-8 h-8 rounded-full bg-[#4a7fbd] flex items-center justify-center text-white font-bold text-sm flex-shrink-0 mt-1">
-              R
-            </div>
-            <div className="flex-1 rounded-2xl rounded-tl-sm overflow-hidden" style={{ background: "#2a2a2a" }}>
-              <video
-                src={`${import.meta.env.BASE_URL}chat-preview.mp4`}
-                className="w-full h-[170px] object-cover object-center"
-                autoPlay
-                loop
-                muted
-                playsInline
+              {/* Dotted pattern top-right */}
+              <img
+                src={heroPattern}
+                alt=""
+                aria-hidden="true"
+                className="absolute top-0 right-0 h-full w-[55%] object-cover object-left pointer-events-none select-none opacity-30"
               />
-              <div className="px-4 py-3">
-                <p className="text-white text-sm leading-relaxed">
-                  Have a question? Contact customer support, sales &amp; new accounts.
-                </p>
+              {/* Minimize button */}
+              <div className="relative z-10 flex justify-end mb-6">
+                <button
+                  onClick={handleClose}
+                  className="text-white/60 hover:text-white transition-colors"
+                  aria-label="Minimize"
+                >
+                  <Minus className="w-5 h-5" />
+                </button>
+              </div>
+              {/* Title */}
+              <h2 className="relative z-10 text-white font-bold leading-tight" style={{ fontSize: "28px" }}>
+                Guardian Trading<br />LiveChat
+              </h2>
+            </div>
+
+            {/* Conversation card */}
+            <div className="mx-4 -mt-4 relative z-10 bg-[#1e1e1e] rounded-xl overflow-hidden shadow-lg">
+              {/* Agent row */}
+              <div className="flex items-center gap-3 px-4 py-3">
+                <div className="relative flex-shrink-0">
+                  <div className="w-9 h-9 rounded-full bg-[#4a7fbd] flex items-center justify-center text-white font-bold text-sm">
+                    R
+                  </div>
+                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-400 border-2 border-[#1e1e1e]" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white text-[13px] font-semibold leading-tight">
+                    Robert Cleary
+                    <span className="text-gray-400 font-normal"> • {timeStr}</span>
+                  </p>
+                  <p className="text-gray-300 text-[12px] leading-snug mt-0.5">
+                    Have a question? Contact customer support, sales &amp; new accounts.
+                  </p>
+                </div>
+              </div>
+
+              {/* Let's chat button */}
+              <div className="px-4 pb-4">
+                <button
+                  onClick={() => setScreen("chat")}
+                  className="w-full py-3 rounded-full font-bold text-[14px] flex items-center justify-center gap-2 transition-opacity hover:opacity-90 active:opacity-80"
+                  style={{ background: "#5aabdb", color: "#fff" }}
+                >
+                  Let's chat
+                  <Send className="w-4 h-4" />
+                </button>
               </div>
             </div>
+
+            {/* Spacer */}
+            <div className="flex-1" style={{ minHeight: "160px" }} />
+
+            {/* Bottom nav */}
+            <div className="mx-4 mb-3 bg-[#1e1e1e] rounded-2xl flex">
+              {/* Home — active */}
+              <button
+                className="flex-1 flex flex-col items-center gap-1 py-3 text-white"
+              >
+                <Home className="w-5 h-5" />
+                <span className="text-[11px] font-semibold">Home</span>
+              </button>
+              {/* Chat */}
+              <button
+                onClick={() => setScreen("chat")}
+                className="flex-1 flex flex-col items-center gap-1 py-3 text-gray-500 hover:text-gray-300 transition-colors"
+              >
+                <MessageSquare className="w-5 h-5" />
+                <span className="text-[11px] font-semibold">Chat</span>
+              </button>
+            </div>
+
+            {/* Powered by */}
+            <div className="flex items-center justify-center gap-1.5 py-2.5">
+              <span className="text-gray-500 text-[11px]">Powered by</span>
+              <span className="text-[#ff5c35] text-[11px]">●</span>
+              <span className="text-gray-400 text-[11px] font-semibold">LiveChat</span>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Let's chat button */}
-        <div className="px-4 pb-3">
-          <button
-            className="w-full py-3.5 rounded-full text-gray-900 font-bold text-[15px] transition-opacity hover:opacity-90 active:opacity-80"
-            style={{ background: "#76c9f5" }}
-          >
-            Let's chat
-          </button>
-        </div>
+        {/* ── CHAT SCREEN ── */}
+        {screen === "chat" && (
+          <div className="flex flex-col flex-1">
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3" style={{ background: "#111" }}>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setScreen("home")}
+                  className="text-gray-400 hover:text-white transition-colors"
+                  aria-label="Back to home"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+              </div>
+              <button
+                onClick={handleClose}
+                className="w-8 h-8 rounded-full bg-[#2a2a2a] flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+                aria-label="Close"
+              >
+                <Minus className="w-4 h-4" />
+              </button>
+            </div>
 
-        {/* Powered by LiveChat */}
-        <div className="flex items-center justify-center gap-1.5 py-2.5 border-t border-white/5">
-          <span className="text-gray-500 text-[11px]">Powered by</span>
-          <span className="text-[#ff5c35] text-[11px]">●</span>
-          <span className="text-gray-400 text-[11px] font-semibold">LiveChat</span>
-        </div>
+            {/* Agent card */}
+            <div className="flex justify-center py-5 px-4">
+              <div className="flex items-center gap-3 bg-[#2a2a2a] rounded-full px-5 py-3 shadow-lg">
+                <div className="relative flex-shrink-0">
+                  <div className="w-11 h-11 rounded-full bg-[#4a7fbd] flex items-center justify-center text-white font-bold text-lg">
+                    R
+                  </div>
+                  <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-400 border-2 border-[#2a2a2a]" />
+                </div>
+                <div>
+                  <p className="text-white font-semibold text-sm leading-tight">Robert Cleary</p>
+                  <p className="text-gray-400 text-xs">Product Expert</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Chat body */}
+            <div className="px-4 pb-4 flex flex-col gap-3">
+              <div className="flex items-start gap-2">
+                <div className="w-8 h-8 rounded-full bg-[#4a7fbd] flex items-center justify-center text-white font-bold text-sm flex-shrink-0 mt-1">
+                  R
+                </div>
+                <div className="flex-1 rounded-2xl rounded-tl-sm overflow-hidden" style={{ background: "#2a2a2a" }}>
+                  <video
+                    src={`${import.meta.env.BASE_URL}chat-preview.mp4`}
+                    className="w-full h-[170px] object-cover object-center"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  />
+                  <div className="px-4 py-3">
+                    <p className="text-white text-sm leading-relaxed">
+                      Have a question? Contact customer support, sales &amp; new accounts.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Let's chat button */}
+            <div className="px-4 pb-3">
+              <button
+                className="w-full py-3.5 rounded-full text-gray-900 font-bold text-[15px] transition-opacity hover:opacity-90 active:opacity-80"
+                style={{ background: "#76c9f5" }}
+              >
+                Let's chat
+              </button>
+            </div>
+
+            {/* Powered by */}
+            <div className="flex items-center justify-center gap-1.5 py-2.5 border-t border-white/5">
+              <span className="text-gray-500 text-[11px]">Powered by</span>
+              <span className="text-[#ff5c35] text-[11px]">●</span>
+              <span className="text-gray-400 text-[11px] font-semibold">LiveChat</span>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* "Need Help?" popup — appears 6s after page load, clickable to open chat */}
+      {/* "Need Help?" popup */}
       {!popupDismissed && (
         <div
           className={`fixed bottom-[84px] right-5 z-40 w-[190px] rounded-xl overflow-hidden shadow-2xl cursor-pointer transition-all duration-500 ease-out ${
@@ -143,7 +266,6 @@ export default function ChatWidget() {
           role="button"
           aria-label="Open chat"
         >
-          {/* Close (X) button */}
           <button
             onClick={handlePopupClose}
             aria-label="Close popup"
@@ -159,11 +281,14 @@ export default function ChatWidget() {
         </div>
       )}
 
-      {/* Trigger button — appears 5s after page load */}
+      {/* Trigger button */}
       <button
         onClick={() => {
-          setOpen((v) => !v);
-          if (showPopup) setShowPopup(false);
+          if (open) {
+            handleClose();
+          } else {
+            handleOpen();
+          }
         }}
         aria-label="Open chat"
         className={`fixed bottom-5 right-5 z-50 w-[62px] h-[62px] rounded-full shadow-2xl transition-all duration-500 hover:scale-105 active:scale-95 focus:outline-none overflow-hidden bg-transparent ${
