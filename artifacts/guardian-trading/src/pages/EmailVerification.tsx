@@ -1,18 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
 
-const COUNTDOWN_START = 180;
+const RESEND_COOLDOWN = 30;
 
 export default function EmailVerification() {
   const [inputCode, setInputCode] = useState("");
   const [error, setError] = useState("");
   const [verifying, setVerifying] = useState(false);
   const [resending, setResending] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
   const [email, setEmail] = useState("");
   const [storedPassword, setStoredPassword] = useState("");
-  const [countdown, setCountdown] = useState(COUNTDOWN_START);
+  const [cooldown, setCooldown] = useState(RESEND_COOLDOWN);
   const [, navigate] = useLocation();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const storedEmail = sessionStorage.getItem("verificationEmail") || "";
@@ -21,13 +23,15 @@ export default function EmailVerification() {
     setStoredPassword(pw);
     if (!storedEmail) {
       navigate("/signup");
+      return;
     }
+    inputRef.current?.focus();
   }, [navigate]);
 
   useEffect(() => {
-    if (countdown <= 0) return;
+    if (cooldown <= 0) return;
     const id = setInterval(() => {
-      setCountdown((prev) => {
+      setCooldown((prev) => {
         if (prev <= 1) {
           clearInterval(id);
           return 0;
@@ -36,12 +40,13 @@ export default function EmailVerification() {
       });
     }, 1000);
     return () => clearInterval(id);
-  }, [countdown]);
+  }, [cooldown]);
 
   const handleResend = async () => {
-    if (!email) return;
+    if (!email || resending || cooldown > 0) return;
     setResending(true);
     setError("");
+    setResendSuccess(false);
     try {
       const base = import.meta.env.BASE_URL.replace(/\/$/, "");
       const res = await fetch(`${base}/api/auth/send-verification`, {
@@ -54,7 +59,11 @@ export default function EmailVerification() {
         setError(data.error || "Failed to resend code. Please try again.");
         return;
       }
-      setCountdown(COUNTDOWN_START);
+      setResendSuccess(true);
+      setInputCode("");
+      setCooldown(RESEND_COOLDOWN);
+      inputRef.current?.focus();
+      setTimeout(() => setResendSuccess(false), 4000);
     } catch {
       setError("Unable to connect. Please check your connection and try again.");
     } finally {
@@ -92,6 +101,10 @@ export default function EmailVerification() {
       setError("Please enter the verification code");
       return;
     }
+    if (trimmed.length !== 6 || !/^\d{6}$/.test(trimmed)) {
+      setError("Please enter a valid 6-digit code");
+      return;
+    }
 
     setError("");
     setVerifying(true);
@@ -118,12 +131,21 @@ export default function EmailVerification() {
     }
   };
 
+  const maskedEmail = email
+    ? (() => {
+        const [user, domain] = email.split("@");
+        if (!domain) return email;
+        const visible = user.slice(0, Math.min(3, user.length));
+        return `${visible}${"*".repeat(Math.max(0, user.length - visible.length))}@${domain}`;
+      })()
+    : "";
+
   return (
     <div
       className="min-h-screen flex items-center justify-center p-6"
       style={{ background: "#f0f0f0" }}
     >
-      <div className="w-full" style={{ maxWidth: "340px" }}>
+      <div className="w-full" style={{ maxWidth: "360px" }}>
         <div
           className="bg-white overflow-hidden"
           style={{
@@ -154,39 +176,150 @@ export default function EmailVerification() {
               className="flex-1 text-center font-semibold"
               style={{ color: "#3a7bd5", fontSize: "17px", paddingRight: "30px" }}
             >
-              Email Authentication
+              Email Verification
             </h1>
           </div>
 
           {/* Body */}
-          <div className="px-8 pt-10 pb-8">
+          <div className="px-8 pt-8 pb-8">
 
             {/* Guardian Trading logo */}
-            <div className="flex justify-center mb-10">
+            <div className="flex justify-center mb-7">
               <img
                 src={guardianLogo}
                 alt="Guardian Trading"
-                style={{ height: "90px", width: "auto", objectFit: "contain" }}
+                style={{ height: "76px", width: "auto", objectFit: "contain" }}
               />
             </div>
 
-            {/* Countdown timer / Resend */}
-            <div className="text-center mb-5">
-              {countdown > 0 ? (
-                <span style={{ fontWeight: 600, fontSize: "13px", color: "#888" }}>
-                  {countdown}s
-                </span>
+            {/* Sent message */}
+            <div
+              className="text-center mb-6 px-2"
+              style={{ borderBottom: "1px solid #eee", paddingBottom: "18px" }}
+            >
+              <div className="flex justify-center mb-3">
+                <div
+                  className="flex items-center justify-center rounded-full"
+                  style={{ width: "40px", height: "40px", background: "#e8f0fb" }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3a7bd5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                </div>
+              </div>
+              <p className="text-sm font-semibold mb-1" style={{ color: "#1c2e3e" }}>
+                Verification code sent
+              </p>
+              <p className="text-xs leading-relaxed" style={{ color: "#666" }}>
+                We sent a 6-digit code to<br />
+                <span className="font-semibold" style={{ color: "#3a7bd5" }}>{maskedEmail}</span>
+              </p>
+            </div>
+
+            {/* Resend success notice */}
+            {resendSuccess && (
+              <div
+                className="flex items-center gap-2 mb-4 px-3 py-2 rounded text-xs"
+                style={{ background: "#e8f0fb", color: "#3a7bd5", border: "1px solid #c3d8f5" }}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                A new code has been sent to your email.
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} noValidate>
+              {/* Code input */}
+              <div className="mb-5">
+                <label className="block text-xs mb-2 font-semibold" style={{ color: "#555", letterSpacing: "0.04em" }}>
+                  ENTER VERIFICATION CODE
+                </label>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  inputMode="numeric"
+                  value={inputCode}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, "").slice(0, 6);
+                    setInputCode(val);
+                    if (error) setError("");
+                  }}
+                  placeholder="• • • • • •"
+                  maxLength={6}
+                  autoComplete="one-time-code"
+                  className="w-full focus:outline-none text-center"
+                  style={{
+                    background: "#f2f2f2",
+                    border: error ? "1px solid #e53e3e" : "1px solid #ccc",
+                    borderBottom: error ? "2px solid #e53e3e" : "2px solid #3a7bd5",
+                    borderRadius: "2px",
+                    padding: "12px 12px",
+                    color: "#1c2e3e",
+                    fontSize: "22px",
+                    fontWeight: 700,
+                    letterSpacing: "0.3em",
+                  }}
+                />
+                {error && (
+                  <p className="mt-2 text-xs text-center flex items-center justify-center gap-1" style={{ color: "#e53e3e" }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="8" x2="12" y2="12" />
+                      <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    {error}
+                  </p>
+                )}
+              </div>
+
+              {/* Submit */}
+              <div className="flex justify-center mb-5">
+                <button
+                  type="submit"
+                  disabled={verifying}
+                  className="text-white text-sm font-semibold flex items-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-60"
+                  style={{
+                    background: "#3a7bd5",
+                    borderRadius: "4px",
+                    padding: "10px 44px",
+                    border: "none",
+                    cursor: verifying ? "not-allowed" : "pointer",
+                    minWidth: "140px",
+                    justifyContent: "center",
+                    fontSize: "14px",
+                  }}
+                >
+                  {verifying ? (
+                    <>
+                      <Spinner />
+                      Verifying…
+                    </>
+                  ) : (
+                    "Verify Email"
+                  )}
+                </button>
+              </div>
+            </form>
+
+            {/* Resend row */}
+            <div className="text-center">
+              {cooldown > 0 ? (
+                <p className="text-xs" style={{ color: "#999" }}>
+                  Resend available in{" "}
+                  <span style={{ color: "#555", fontWeight: 600 }}>{cooldown}s</span>
+                </p>
               ) : (
                 <button
                   type="button"
                   onClick={handleResend}
                   disabled={resending}
-                  className="transition-opacity hover:opacity-80 disabled:opacity-50"
+                  className="text-xs transition-opacity hover:opacity-80 disabled:opacity-50"
                   style={{
                     background: "none",
                     border: "none",
-                    color: "#3a7bd5",
-                    fontSize: "13px",
+                    color: resending ? "#999" : "#3a7bd5",
                     fontWeight: 600,
                     cursor: resending ? "not-allowed" : "pointer",
                     padding: 0,
@@ -198,62 +331,10 @@ export default function EmailVerification() {
               )}
             </div>
 
-            <form onSubmit={handleSubmit} noValidate>
-              {/* Code input */}
-              <div className="mb-6">
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  value={inputCode}
-                  onChange={(e) => {
-                    setInputCode(e.target.value);
-                    if (error) setError("");
-                  }}
-                  placeholder="Verification Code"
-                  maxLength={6}
-                  className="w-full text-sm focus:outline-none"
-                  style={{
-                    background: "#f2f2f2",
-                    border: "1px solid #ccc",
-                    borderBottom: "2px solid #3a7bd5",
-                    borderRadius: "2px",
-                    padding: "10px 12px",
-                    color: "#333",
-                    fontSize: "14px",
-                  }}
-                />
-                {error && (
-                  <p className="mt-2 text-xs text-center" style={{ color: "#e53e3e" }}>{error}</p>
-                )}
-              </div>
-
-              {/* Submit */}
-              <div className="flex justify-center">
-                <button
-                  type="submit"
-                  disabled={verifying}
-                  className="text-white text-sm font-semibold flex items-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-60"
-                  style={{
-                    background: "#3a7bd5",
-                    borderRadius: "4px",
-                    padding: "9px 36px",
-                    border: "none",
-                    cursor: verifying ? "not-allowed" : "pointer",
-                    minWidth: "110px",
-                    justifyContent: "center",
-                  }}
-                >
-                  {verifying ? (
-                    <>
-                      <Spinner />
-                      Verifying…
-                    </>
-                  ) : (
-                    "Submit"
-                  )}
-                </button>
-              </div>
-            </form>
+            {/* Expiry note */}
+            <p className="text-center mt-4 text-xs" style={{ color: "#bbb" }}>
+              Code expires in 10 minutes
+            </p>
           </div>
         </div>
       </div>
