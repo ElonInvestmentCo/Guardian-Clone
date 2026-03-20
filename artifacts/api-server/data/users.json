@@ -116,5 +116,19 @@
       "accountName": "SDERSDERS",
       "accountType": "Checking"
     }
+  },
+  "test@guardiantrading.com": {
+    "email": "test@guardiantrading.com",
+    "createdAt": "2026-03-20T17:52:08.762Z",
+    "updatedAt": "2026-03-20T17:52:52.134Z",
+    "personalDetails": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "dateOfBirth": "enc:a424a32e7e0f908d1a0c660197e4a4f9:1be5098563b1a0375c814014a0933a08:63b7eeb37059b2902e2c",
+      "taxId": "enc:46f1cd7bc4bf8bc5b97f517deefa74ab:99be6393e940ffef9e346731e58e9b26:2a2c8e99cd4200bf939ea5"
+    },
+    "documents": {
+      "id_front": "data/users/test_at_guardiantrading.com/documents/id_front.jpg"
+    }
   }
 }

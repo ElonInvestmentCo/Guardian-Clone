@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Link, useLocation } from "wouter";
-import { saveSignupStep } from "@/lib/saveStep";
+import { saveSignupStep, uploadDocument } from "@/lib/saveStep";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";
 
@@ -36,16 +36,60 @@ const ID_TYPES = [
   "State ID",
 ];
 
+type UploadStatus = "idle" | "uploading" | "success" | "error";
+
+interface SlotState {
+  file: File | null;
+  status: UploadStatus;
+  savedPath: string | null;
+  errorMsg: string | null;
+}
+
 function FileUploadBox({
   label,
-  file,
-  onFile,
+  slot,
+  role,
+  onSlotChange,
 }: {
   label: string;
-  file: File | null;
-  onFile: (f: File | null) => void;
+  slot: SlotState;
+  role: string;
+  onSlotChange: (s: SlotState) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    if (!file) return;
+
+    // Reset input so user can re-pick same filename
+    e.target.value = "";
+
+    // Client-side validation
+    const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
+    if (!["jpg", "jpeg", "png", "pdf"].includes(ext)) {
+      onSlotChange({ file, status: "error", savedPath: null, errorMsg: "Invalid file type. Allowed: JPG, PNG, PDF." });
+      return;
+    }
+    if (file.size < 1024) {
+      onSlotChange({ file, status: "error", savedPath: null, errorMsg: "File too small (minimum 1 KB)." });
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      onSlotChange({ file, status: "error", savedPath: null, errorMsg: "File too large (maximum 8 MB)." });
+      return;
+    }
+
+    onSlotChange({ file, status: "uploading", savedPath: null, errorMsg: null });
+
+    const result = await uploadDocument(file, role);
+
+    if (result.success) {
+      onSlotChange({ file, status: "success", savedPath: result.path, errorMsg: null });
+    } else {
+      onSlotChange({ file, status: "error", savedPath: null, errorMsg: result.error });
+    }
+  };
 
   return (
     <div className="flex-1" style={{ border: "1px solid #dde3e9", borderRadius: "2px", padding: "14px 16px" }}>
@@ -53,34 +97,65 @@ function FileUploadBox({
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
+          disabled={slot.status === "uploading"}
           style={{
             padding: "5px 14px",
             fontSize: "12px",
-            background: "#edf1f5",
+            background: slot.status === "uploading" ? "#dde3e9" : "#edf1f5",
             border: "1px solid #ccd3da",
             borderRadius: "2px",
-            cursor: "pointer",
+            cursor: slot.status === "uploading" ? "not-allowed" : "pointer",
             color: "#444",
             whiteSpace: "nowrap",
           }}
         >
-          Choose File
+          {slot.status === "uploading" ? "Uploading…" : "Choose File"}
         </button>
-        <span style={{ fontSize: "12px", color: file ? "#333" : "#aaa" }}>
-          {file ? file.name : "No file chosen"}
+
+        {/* Status display */}
+        <span style={{ fontSize: "12px", flex: 1 }}>
+          {slot.status === "idle" && (
+            <span style={{ color: "#aaa" }}>No file chosen</span>
+          )}
+          {slot.status === "uploading" && (
+            <span style={{ color: "#5baad4" }}>Uploading {slot.file?.name}…</span>
+          )}
+          {slot.status === "success" && (
+            <span style={{ color: "#28a745", display: "flex", alignItems: "center", gap: "5px" }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#28a745" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              {slot.file?.name}
+            </span>
+          )}
+          {slot.status === "error" && (
+            <span style={{ color: "#dc3545" }}>
+              {slot.errorMsg ?? "Upload failed"}
+            </span>
+          )}
         </span>
+
+        {/* Re-upload button shown on error */}
+        {slot.status === "error" && (
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            style={{ fontSize: "11px", color: "#3a7bd5", background: "none", border: "none", cursor: "pointer", textDecoration: "underline", whiteSpace: "nowrap" }}
+          >
+            Retry
+          </button>
+        )}
+
         <input
           ref={inputRef}
           type="file"
-          accept=".jpeg,.jpg,.png"
+          accept=".jpeg,.jpg,.png,.pdf"
           style={{ display: "none" }}
-          onChange={(e) => onFile(e.target.files?.[0] ?? null)}
+          onChange={handleFileChange}
         />
       </div>
       <p style={{ fontSize: "11px", color: "#888" }}>
-        Allowed file extensions: &nbsp;.jpeg, .jpg, .png.
+        Allowed file extensions: &nbsp;.jpeg, .jpg, .png, .pdf
       </p>
-      <p style={{ fontSize: "11px", color: "#888" }}>File size: 1KB - 8MB.</p>
+      <p style={{ fontSize: "11px", color: "#888" }}>File size: 1 KB – 8 MB.</p>
     </div>
   );
 }
@@ -88,23 +163,28 @@ function FileUploadBox({
 export default function IdProofUpload() {
   const [, navigate] = useLocation();
   const [idType, setIdType] = useState("Government Issued ID");
-  const [frontFile, setFrontFile] = useState<File | null>(null);
-  const [backFile, setBackFile]   = useState<File | null>(null);
+
+  const [frontSlot, setFrontSlot] = useState<SlotState>({ file: null, status: "idle", savedPath: null, errorMsg: null });
+  const [backSlot,  setBackSlot]  = useState<SlotState>({ file: null, status: "idle", savedPath: null, errorMsg: null });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await saveSignupStep("idProofUpload", {
       idType,
-      frontFileName: frontFile?.name ?? null,
-      backFileName: backFile?.name ?? null,
+      frontFile: frontSlot.savedPath ?? frontSlot.file?.name ?? null,
+      backFile:  backSlot.savedPath  ?? backSlot.file?.name  ?? null,
+      frontUploaded: frontSlot.status === "success",
+      backUploaded:  backSlot.status  === "success",
     });
     navigate("/funding-details");
   };
 
+  const anyUploading = frontSlot.status === "uploading" || backSlot.status === "uploading";
+
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#f4f4f4" }}>
 
-      {/* ── Top phone bar ── */}
+      {/* Top bar */}
       <div className="flex items-center justify-end px-6 py-1.5" style={{ background: "#5baad4" }}>
         <a href="tel:8449631512" className="flex items-center gap-1.5 text-white font-semibold" style={{ fontSize: "13px" }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="white">
@@ -114,7 +194,7 @@ export default function IdProofUpload() {
         </a>
       </div>
 
-      {/* ── Navbar ── */}
+      {/* Navbar */}
       <nav style={{ background: "#1c2e3e" }}>
         <div className="flex items-center justify-between px-6 h-[54px]">
           <Link href="/" className="flex items-center flex-shrink-0">
@@ -122,7 +202,7 @@ export default function IdProofUpload() {
           </Link>
           <div className="hidden md:flex items-center gap-6">
             {NAV_LINKS.map((link) => (
-              <Link key={link.name} href={link.href} className="flex items-center gap-0.5 text-white hover:text-[#5baad4] transition-colors" style={{ fontSize: "13px", fontWeight: 500, letterSpacing: "0.02em" }}>
+              <Link key={link.name} href={link.href} className="flex items-center gap-0.5 text-white hover:text-[#5baad4] transition-colors" style={{ fontSize: "13px", fontWeight: 500 }}>
                 {link.name}
                 {link.hasDropdown && (
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: "2px" }}>
@@ -138,7 +218,7 @@ export default function IdProofUpload() {
         </div>
       </nav>
 
-      {/* ── Step progress bar ── */}
+      {/* Step progress bar */}
       <div className="bg-white px-6 py-5" style={{ borderBottom: "1px solid #dde3e9" }}>
         <div className="flex items-start justify-between">
           {STEPS.map((step, i) => {
@@ -152,8 +232,7 @@ export default function IdProofUpload() {
                     style={{ width: "28px", height: "28px", fontSize: "12px",
                       background: (active || done) ? "#3a7bd5" : "white",
                       color: (active || done) ? "white" : "#aaa",
-                      border: `2px solid ${(active || done) ? "#3a7bd5" : "#ccd3da"}`,
-                    }}>
+                      border: `2px solid ${(active || done) ? "#3a7bd5" : "#ccd3da"}` }}>
                     {step.n}
                   </div>
                   <div className="flex-1 h-[2px]" style={{ background: i === STEPS.length - 1 ? "transparent" : done ? "#3a7bd5" : "#ccd3da" }} />
@@ -168,11 +247,10 @@ export default function IdProofUpload() {
         </div>
       </div>
 
-      {/* ── Main content ── */}
+      {/* Main content */}
       <main className="flex-1 px-6 py-6">
         <div className="bg-white" style={{ borderRadius: "2px", boxShadow: "0 1px 6px rgba(0,0,0,0.10)", border: "1px solid #dde3e9", borderLeft: "4px solid #3a7bd5" }}>
 
-          {/* Card header */}
           <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
             <h1 className="font-bold uppercase" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>
               Identification Proof Upload
@@ -180,8 +258,6 @@ export default function IdProofUpload() {
           </div>
 
           <div className="px-8 py-6">
-
-            {/* Subtitle */}
             <p className="mb-5" style={{ fontSize: "12px", color: "#666", lineHeight: "1.6" }}>
               Government Issued ID. If Driver's License is used and the address is not the same as on the application please provide a utility bill with your name and address.
             </p>
@@ -189,43 +265,28 @@ export default function IdProofUpload() {
             <form onSubmit={handleSubmit} noValidate>
 
               {/* ID Type dropdown */}
-              <div className="mb-5 relative" style={{ maxWidth: "100%" }}>
+              <div className="mb-5 relative">
                 <select
                   value={idType}
                   onChange={(e) => setIdType(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "9px 36px 9px 12px",
-                    fontSize: "13px",
-                    color: "#444",
-                    background: "#f4f6f8",
-                    border: "1px solid #ccd3da",
-                    borderRadius: "2px",
-                    appearance: "none",
-                    cursor: "pointer",
-                  }}
+                  style={{ width: "100%", padding: "9px 36px 9px 12px", fontSize: "13px", color: "#444", background: "#f4f6f8", border: "1px solid #ccd3da", borderRadius: "2px", appearance: "none", cursor: "pointer" }}
                   className="focus:outline-none focus:border-[#3a7bd5]"
                 >
-                  {ID_TYPES.map((t) => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
+                  {ID_TYPES.map((t) => (<option key={t} value={t}>{t}</option>))}
                 </select>
                 <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M6 9l6 6 6-6" />
-                  </svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
                 </div>
               </div>
 
-              {/* Upload instruction */}
               <p className="mb-4" style={{ fontSize: "12px", color: "#555" }}>
-                Please upload a copy of the Applicant's Government Issued ID in jpeg format (Front and Back)
+                Please upload a copy of the Applicant's Government Issued ID (Front and Back). Accepted formats: JPG, PNG, PDF.
               </p>
 
-              {/* Two upload boxes */}
+              {/* Upload boxes */}
               <div className="flex gap-4 mb-5">
-                <FileUploadBox label="Front" file={frontFile} onFile={setFrontFile} />
-                <FileUploadBox label="Back"  file={backFile}  onFile={setBackFile}  />
+                <FileUploadBox label="Front" slot={frontSlot} role="id_front" onSlotChange={setFrontSlot} />
+                <FileUploadBox label="Back"  slot={backSlot}  role="id_back"  onSlotChange={setBackSlot}  />
               </div>
 
               {/* Hints link */}
@@ -247,10 +308,11 @@ export default function IdProofUpload() {
                 </button>
                 <button
                   type="submit"
+                  disabled={anyUploading}
                   className="text-white font-semibold transition-opacity hover:opacity-90"
-                  style={{ background: "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: "pointer", fontSize: "13px" }}
+                  style={{ background: anyUploading ? "#8ab4e8" : "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: anyUploading ? "not-allowed" : "pointer", fontSize: "13px" }}
                 >
-                  Next
+                  {anyUploading ? "Uploading…" : "Next"}
                 </button>
               </div>
             </form>
@@ -258,7 +320,7 @@ export default function IdProofUpload() {
         </div>
       </main>
 
-      {/* ── Dark Footer ── */}
+      {/* Footer */}
       <footer style={{ background: "#111" }}>
         <div className="px-10 pt-12 pb-10" style={{ borderBottom: "1px solid #2a2a2a" }}>
           <div className="flex flex-col lg:flex-row gap-10">
@@ -268,25 +330,17 @@ export default function IdProofUpload() {
             <div className="flex flex-1 flex-wrap gap-12">
               <div>
                 <h4 className="text-[11px] font-bold uppercase tracking-widest mb-4" style={{ color: "#aaa" }}>Company</h4>
-                <ul className="flex flex-col gap-2.5">
-                  {["About","Services","Platforms","Pricing","Insights"].map((item) => (
-                    <li key={item}><Link href={`/${item.toLowerCase()}`} className="text-[13px] hover:text-white transition-colors" style={{ color: "#bbb" }}>{item}</Link></li>
-                  ))}
-                </ul>
+                <ul className="flex flex-col gap-2.5">{["About","Services","Platforms","Pricing","Insights"].map((item) => (<li key={item}><Link href={`/${item.toLowerCase()}`} className="text-[13px] hover:text-white" style={{ color: "#bbb" }}>{item}</Link></li>))}</ul>
               </div>
               <div>
                 <h4 className="text-[11px] font-bold uppercase tracking-widest mb-4" style={{ color: "#aaa" }}>Legal</h4>
-                <ul className="flex flex-col gap-2.5">
-                  {["Disclosures","Privacy Policy"].map((item) => (
-                    <li key={item}><a href="#" className="text-[13px] hover:text-white transition-colors" style={{ color: "#bbb" }}>{item}</a></li>
-                  ))}
-                </ul>
+                <ul className="flex flex-col gap-2.5">{["Disclosures","Privacy Policy"].map((item) => (<li key={item}><a href="#" className="text-[13px] hover:text-white" style={{ color: "#bbb" }}>{item}</a></li>))}</ul>
               </div>
               <div>
                 <h4 className="text-[11px] font-bold uppercase tracking-widest mb-4" style={{ color: "#aaa" }}>Contact</h4>
                 <div className="flex flex-col gap-2.5">
-                  <a href="tel:8886020092" className="text-[13px] hover:text-white transition-colors" style={{ color: "#bbb" }}>888-602-0092</a>
-                  <a href="mailto:info@guardiantrading.com" className="text-[13px] hover:text-white transition-colors" style={{ color: "#bbb" }}>info@guardiantrading.com</a>
+                  <a href="tel:8886020092" className="text-[13px] hover:text-white" style={{ color: "#bbb" }}>888-602-0092</a>
+                  <a href="mailto:info@guardiantrading.com" className="text-[13px] hover:text-white" style={{ color: "#bbb" }}>info@guardiantrading.com</a>
                   <p className="text-[13px]" style={{ color: "#bbb" }}>1301 Route 36 Suite 109 Hazlet, NJ 07730</p>
                 </div>
               </div>
@@ -297,18 +351,10 @@ export default function IdProofUpload() {
           <p className="text-[13px] mb-1" style={{ color: "#aaa" }}>Guardian Trading – A Division of Velocity Clearing, LLC ("Velocity"). Member FINRA/ SIPC.</p>
           <p className="text-[13px] mb-6" style={{ color: "#aaa" }}>All securities and transactions are handled through Velocity.</p>
           <p className="text-[11px] uppercase leading-relaxed mb-5" style={{ color: "#666", maxWidth: "900px", margin: "0 auto 20px" }}>
-            @2023 VELOCITY CLEARING, LLC IS REGISTERED WITH THE SEC AND A MEMBER OF{" "}
-            <a href="https://www.finra.org" target="_blank" rel="noreferrer" style={{ color: "#5baad4" }}>FINRA</a> AND{" "}
-            <a href="https://www.sipc.org" target="_blank" rel="noreferrer" style={{ color: "#5baad4" }}>SIPC</a>.{" "}
-            MARKET VOLATILITY AND VOLUME MAY DELAY SYSTEMS ACCESS AND TRADE EXECUTION. CHECK THE BACKGROUND OF VELOCITY CLEARING ON{" "}
-            <a href="https://brokercheck.finra.org" target="_blank" rel="noreferrer" style={{ color: "#5baad4" }}>FINRA'S BROKER CHECK</a>.
+            @2023 VELOCITY CLEARING, LLC IS REGISTERED WITH THE SEC AND A MEMBER OF <a href="https://www.finra.org" target="_blank" rel="noreferrer" style={{ color: "#5baad4" }}>FINRA</a> AND <a href="https://www.sipc.org" target="_blank" rel="noreferrer" style={{ color: "#5baad4" }}>SIPC</a>. MARKET VOLATILITY AND VOLUME MAY DELAY SYSTEMS ACCESS AND TRADE EXECUTION. CHECK THE BACKGROUND OF VELOCITY CLEARING ON <a href="https://brokercheck.finra.org" target="_blank" rel="noreferrer" style={{ color: "#5baad4" }}>FINRA'S BROKER CHECK</a>.
           </p>
           <p className="text-[11px] uppercase leading-relaxed" style={{ color: "#666", maxWidth: "900px", margin: "0 auto" }}>
-            OPTIONS INVOLVE RISK AND ARE NOT SUITABLE FOR ALL INVESTORS. FOR MORE INFORMATION READ THE{" "}
-            <a href="#" style={{ color: "#5baad4" }}>CHARACTERISTICS AND RISKS OF STANDARDIZED OPTIONS</a>,{" "}
-            ALSO KNOWN AS THE OPTIONS DISCLOSURE DOCUMENT (ODD). ALTERNATIVELY, PLEASE CONTACT{" "}
-            <a href="mailto:info@guardiantrading.com" style={{ color: "#5baad4" }}>INFO@GUARDIANTRADING.COM</a>{" "}
-            TO RECEIVE A COPY OF THE ODD.
+            OPTIONS INVOLVE RISK AND ARE NOT SUITABLE FOR ALL INVESTORS. FOR MORE INFORMATION READ THE <a href="#" style={{ color: "#5baad4" }}>CHARACTERISTICS AND RISKS OF STANDARDIZED OPTIONS</a>, ALSO KNOWN AS THE OPTIONS DISCLOSURE DOCUMENT (ODD). ALTERNATIVELY, PLEASE CONTACT <a href="mailto:info@guardiantrading.com" style={{ color: "#5baad4" }}>INFO@GUARDIANTRADING.COM</a> TO RECEIVE A COPY OF THE ODD.
           </p>
         </div>
       </footer>
