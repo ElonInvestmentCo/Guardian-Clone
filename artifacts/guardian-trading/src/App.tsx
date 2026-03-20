@@ -20,6 +20,9 @@ import IdInformation from "@/pages/IdInformation";
 import IncomeDetails from "@/pages/IncomeDetails";
 import RiskTolerance from "@/pages/RiskTolerance";
 import FinancialSituation from "@/pages/FinancialSituation";
+import InvestmentExperience from "@/pages/InvestmentExperience";
+import IdProofUpload from "@/pages/IdProofUpload";
+import FundingDetails from "@/pages/FundingDetails";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/analytics/Dashboard";
 import Projects from "@/pages/analytics/Projects";
@@ -46,8 +49,11 @@ function Router() {
       <Route path="/professional-details" component={ProfessionalDetails} />
       <Route path="/id-information" component={IdInformation} />
       <Route path="/income-details" component={IncomeDetails} />
-      <Route path="/financial-situation" component={FinancialSituation} />
       <Route path="/risk-tolerance" component={RiskTolerance} />
+      <Route path="/financial-situation" component={FinancialSituation} />
+      <Route path="/investment-experience" component={InvestmentExperience} />
+      <Route path="/id-proof-upload" component={IdProofUpload} />
+      <Route path="/funding-details" component={FundingDetails} />
       <Route path="/analytics" component={Dashboard} />
       <Route path="/analytics/projects" component={Projects} />
       <Route path="/analytics/campaigns" component={Campaigns} />

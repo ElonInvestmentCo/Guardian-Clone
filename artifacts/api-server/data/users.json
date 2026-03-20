@@ -2,7 +2,7 @@
   "Emailmy488@gmail.com": {
     "email": "Emailmy488@gmail.com",
     "createdAt": "2026-03-20T16:30:58.865Z",
-    "updatedAt": "2026-03-20T17:04:39.335Z",
+    "updatedAt": "2026-03-20T17:26:03.637Z",
     "general": {
       "registrationType": "Individual Account",
       "product": "Stocks",
@@ -50,27 +50,27 @@
       "expirationDate": "08/08/2033"
     },
     "income": {
-      "annualIncome": "$25,000 and under",
-      "netWorth": "$25,000 and under",
-      "liquidNetWorth": "$25,000 and under",
-      "taxRate": "0 - 15"
+      "annualIncome": "$50,001 - $100,000",
+      "netWorth": "over $1,000,000",
+      "liquidNetWorth": "$200,001 - $500,000",
+      "taxRate": "26 - 30"
     },
     "riskTolerance": {
       "riskTolerance": "moderate",
-      "hasFinancialEducation": "",
+      "hasFinancialEducation": "Yes",
       "strategyPriorities": {
-        "income": "1",
-        "growth": "3",
-        "speculation": "2",
-        "trading": "4",
-        "capital": "5"
+        "income": "3",
+        "growth": "2",
+        "speculation": "4",
+        "trading": "5",
+        "capital": "1"
       }
     },
     "financialSituation": {
-      "annualExpense": "$250,001 - $500,000",
-      "specialExpense": "$50,001 - $100,000",
+      "annualExpense": "$100,001 - $250,000",
+      "specialExpense": "$250,001 - $500,000",
       "liquidityNeeds": "Important",
-      "investmentTimeHorizon": "Under 1 year"
+      "investmentTimeHorizon": "6 - 10"
     }
   }
 }

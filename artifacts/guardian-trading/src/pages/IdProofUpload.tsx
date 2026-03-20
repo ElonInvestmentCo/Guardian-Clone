@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { saveSignupStep } from "@/lib/saveStep";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
@@ -18,7 +18,7 @@ const STEPS = [
   { n: 11, label: "SIGNATURES" },
 ];
 
-const CURRENT_STEP = 6;
+const CURRENT_STEP = 8;
 
 const NAV_LINKS = [
   { name: "HOME", href: "/" },
@@ -29,126 +29,76 @@ const NAV_LINKS = [
   { name: "CONTACT US", href: "/contact" },
 ];
 
-const ANNUAL_EXPENSE_OPTIONS = [
-  "$50,000 and under",
-  "$50,001 - $100,000",
-  "$100,001 - $250,000",
-  "$250,001 - $500,000",
-  "over $500,000",
+const ID_TYPES = [
+  "Government Issued ID",
+  "Driver's License",
+  "Passport",
+  "State ID",
 ];
 
-const SPECIAL_EXPENSE_OPTIONS = [
-  "$50,000 and under",
-  "$50,001 - $100,000",
-  "$100,001 - $250,000",
-  "$250,001 - $500,000",
-  "over $500,000",
-];
-
-const LIQUIDITY_OPTIONS = [
-  "Very important",
-  "Important",
-  "Some what Important",
-  "Does not matter",
-];
-
-const TIME_HORIZON_OPTIONS = [
-  "Under 1 year",
-  "1 - 2",
-  "3 - 5",
-  "6 - 10",
-  "11 - 20",
-  "Over 20",
-];
-
-function SelectList({
+function FileUploadBox({
   label,
-  options,
-  selected,
-  onSelect,
-  error,
+  file,
+  onFile,
 }: {
   label: string;
-  options: string[];
-  selected: string;
-  onSelect: (v: string) => void;
-  error?: string;
+  file: File | null;
+  onFile: (f: File | null) => void;
 }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   return (
-    <div className="flex-1">
-      {label && (
-        <p className="font-bold mb-2 uppercase" style={{ fontSize: "12px", color: "#444", letterSpacing: "0.04em" }}>
-          {label}
-        </p>
-      )}
-      <div style={{ border: `1px solid ${error ? "#e53e3e" : "#dde3e9"}`, borderRadius: "2px", overflow: "hidden" }}>
-        {options.map((opt, i) => {
-          const isSel = selected === opt;
-          const isEven = i % 2 === 0;
-          return (
-            <div
-              key={opt}
-              onClick={() => onSelect(opt)}
-              className="cursor-pointer"
-              style={{
-                padding: "7px 12px",
-                fontSize: "13px",
-                color: "#444",
-                background: isSel ? "#cfe1f5" : isEven ? "#ffffff" : "#edf1f5",
-                userSelect: "none",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                transition: "background 0.15s ease",
-              }}
-            >
-              <span>{opt}</span>
-              {isSel && (
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginLeft: "8px" }}>
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              )}
-            </div>
-          );
-        })}
+    <div className="flex-1" style={{ border: "1px solid #dde3e9", borderRadius: "2px", padding: "14px 16px" }}>
+      <div className="flex items-center gap-3 mb-2">
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          style={{
+            padding: "5px 14px",
+            fontSize: "12px",
+            background: "#edf1f5",
+            border: "1px solid #ccd3da",
+            borderRadius: "2px",
+            cursor: "pointer",
+            color: "#444",
+            whiteSpace: "nowrap",
+          }}
+        >
+          Choose File
+        </button>
+        <span style={{ fontSize: "12px", color: file ? "#333" : "#aaa" }}>
+          {file ? file.name : "No file chosen"}
+        </span>
+        <input
+          ref={inputRef}
+          type="file"
+          accept=".jpeg,.jpg,.png"
+          style={{ display: "none" }}
+          onChange={(e) => onFile(e.target.files?.[0] ?? null)}
+        />
       </div>
-      {error && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{error}</p>}
+      <p style={{ fontSize: "11px", color: "#888" }}>
+        Allowed file extensions: &nbsp;.jpeg, .jpg, .png.
+      </p>
+      <p style={{ fontSize: "11px", color: "#888" }}>File size: 1KB - 8MB.</p>
     </div>
   );
 }
 
-export default function FinancialSituation() {
+export default function IdProofUpload() {
   const [, navigate] = useLocation();
-  const [annualExpense, setAnnualExpense] = useState("");
-  const [specialExpense, setSpecialExpense] = useState("");
-  const [liquidity, setLiquidity] = useState("");
-  const [timeHorizon, setTimeHorizon] = useState("");
-  const [errors, setErrors] = useState<{
-    annualExpense?: string;
-    specialExpense?: string;
-    liquidity?: string;
-    timeHorizon?: string;
-  }>({});
+  const [idType, setIdType] = useState("Government Issued ID");
+  const [frontFile, setFrontFile] = useState<File | null>(null);
+  const [backFile, setBackFile]   = useState<File | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors: typeof errors = {};
-    if (!annualExpense) newErrors.annualExpense = "Required";
-    if (!specialExpense) newErrors.specialExpense = "Required";
-    if (!liquidity) newErrors.liquidity = "Required";
-    if (!timeHorizon) newErrors.timeHorizon = "Required";
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-    setErrors({});
-    await saveSignupStep("financialSituation", {
-      annualExpense,
-      specialExpense,
-      liquidityNeeds: liquidity,
-      investmentTimeHorizon: timeHorizon,
+    await saveSignupStep("idProofUpload", {
+      idType,
+      frontFileName: frontFile?.name ?? null,
+      backFileName: backFile?.name ?? null,
     });
-    navigate("/investment-experience");
+    navigate("/funding-details");
   };
 
   return (
@@ -225,61 +175,71 @@ export default function FinancialSituation() {
           {/* Card header */}
           <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
             <h1 className="font-bold uppercase" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>
-              Financial Situation
+              Identification Proof Upload
             </h1>
           </div>
 
           <div className="px-8 py-6">
-            <p className="mb-5" style={{ fontSize: "12px", color: "#777" }}>
-              Financial Situation and Needs, Liquidity Considerations and Tax Status
+
+            {/* Subtitle */}
+            <p className="mb-5" style={{ fontSize: "12px", color: "#666", lineHeight: "1.6" }}>
+              Government Issued ID. If Driver's License is used and the address is not the same as on the application please provide a utility bill with your name and address.
             </p>
 
             <form onSubmit={handleSubmit} noValidate>
 
-              {/* Three columns */}
-              <div className="flex gap-4 mb-6">
-                <SelectList
-                  label="Annual Expenses"
-                  options={ANNUAL_EXPENSE_OPTIONS}
-                  selected={annualExpense}
-                  onSelect={(v) => { setAnnualExpense(v); setErrors((p) => ({ ...p, annualExpense: undefined })); }}
-                  error={errors.annualExpense}
-                />
-                <SelectList
-                  label="SPECIAL EXPENSES (future & non-recurring)"
-                  options={SPECIAL_EXPENSE_OPTIONS}
-                  selected={specialExpense}
-                  onSelect={(v) => { setSpecialExpense(v); setErrors((p) => ({ ...p, specialExpense: undefined })); }}
-                  error={errors.specialExpense}
-                />
-                <SelectList
-                  label="Liquidity Needs"
-                  options={LIQUIDITY_OPTIONS}
-                  selected={liquidity}
-                  onSelect={(v) => { setLiquidity(v); setErrors((p) => ({ ...p, liquidity: undefined })); }}
-                  error={errors.liquidity}
-                />
+              {/* ID Type dropdown */}
+              <div className="mb-5 relative" style={{ maxWidth: "100%" }}>
+                <select
+                  value={idType}
+                  onChange={(e) => setIdType(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "9px 36px 9px 12px",
+                    fontSize: "13px",
+                    color: "#444",
+                    background: "#f4f6f8",
+                    border: "1px solid #ccd3da",
+                    borderRadius: "2px",
+                    appearance: "none",
+                    cursor: "pointer",
+                  }}
+                  className="focus:outline-none focus:border-[#3a7bd5]"
+                >
+                  {ID_TYPES.map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </div>
               </div>
 
-              {/* Time horizon */}
-              <div className="mb-7" style={{ maxWidth: "360px" }}>
-                <p className="mb-2" style={{ fontSize: "13px", color: "#444", fontWeight: 500 }}>
-                  The expected period you plan to achieve your financial goal(s)
-                </p>
-                <SelectList
-                  label=""
-                  options={TIME_HORIZON_OPTIONS}
-                  selected={timeHorizon}
-                  onSelect={(v) => { setTimeHorizon(v); setErrors((p) => ({ ...p, timeHorizon: undefined })); }}
-                  error={errors.timeHorizon}
-                />
+              {/* Upload instruction */}
+              <p className="mb-4" style={{ fontSize: "12px", color: "#555" }}>
+                Please upload a copy of the Applicant's Government Issued ID in jpeg format (Front and Back)
+              </p>
+
+              {/* Two upload boxes */}
+              <div className="flex gap-4 mb-5">
+                <FileUploadBox label="Front" file={frontFile} onFile={setFrontFile} />
+                <FileUploadBox label="Back"  file={backFile}  onFile={setBackFile}  />
               </div>
+
+              {/* Hints link */}
+              <p className="mb-6">
+                <a href="#" style={{ fontSize: "12px", color: "#3a7bd5", textDecoration: "underline" }}>
+                  Image Hints and Tips
+                </a>
+              </p>
 
               {/* Buttons */}
               <div className="flex gap-3">
                 <button
                   type="button"
-                  onClick={() => navigate("/risk-tolerance")}
+                  onClick={() => navigate("/investment-experience")}
                   className="font-medium hover:bg-gray-50 transition-colors"
                   style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}
                 >

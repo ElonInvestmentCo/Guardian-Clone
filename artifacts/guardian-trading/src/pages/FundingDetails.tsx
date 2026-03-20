@@ -18,7 +18,7 @@ const STEPS = [
   { n: 11, label: "SIGNATURES" },
 ];
 
-const CURRENT_STEP = 6;
+const CURRENT_STEP = 9;
 
 const NAV_LINKS = [
   { name: "HOME", href: "/" },
@@ -29,126 +29,67 @@ const NAV_LINKS = [
   { name: "CONTACT US", href: "/contact" },
 ];
 
-const ANNUAL_EXPENSE_OPTIONS = [
-  "$50,000 and under",
-  "$50,001 - $100,000",
-  "$100,001 - $250,000",
-  "$250,001 - $500,000",
-  "over $500,000",
+const FUNDING_LEFT = [
+  "Wages/Income",
+  "Gift",
+  "Inheritance",
+  "Insurance Payout",
+  "Savings",
+  "Other",
 ];
 
-const SPECIAL_EXPENSE_OPTIONS = [
-  "$50,000 and under",
-  "$50,001 - $100,000",
-  "$100,001 - $250,000",
-  "$250,001 - $500,000",
-  "over $500,000",
+const FUNDING_RIGHT = [
+  "Pension or Retirement",
+  "Sale of an Asset",
+  "Social Security Benefits",
+  "Funds from another account",
 ];
 
-const LIQUIDITY_OPTIONS = [
-  "Very important",
-  "Important",
-  "Some what Important",
-  "Does not matter",
-];
+const ACCOUNT_TYPES = ["Checking", "Savings", "Money Market", "Other"];
 
-const TIME_HORIZON_OPTIONS = [
-  "Under 1 year",
-  "1 - 2",
-  "3 - 5",
-  "6 - 10",
-  "11 - 20",
-  "Over 20",
-];
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "8px 10px",
+  fontSize: "13px",
+  border: "1px solid #ccd3da",
+  borderRadius: "2px",
+  color: "#444",
+  background: "white",
+  outline: "none",
+};
 
-function SelectList({
-  label,
-  options,
-  selected,
-  onSelect,
-  error,
-}: {
-  label: string;
-  options: string[];
-  selected: string;
-  onSelect: (v: string) => void;
-  error?: string;
-}) {
-  return (
-    <div className="flex-1">
-      {label && (
-        <p className="font-bold mb-2 uppercase" style={{ fontSize: "12px", color: "#444", letterSpacing: "0.04em" }}>
-          {label}
-        </p>
-      )}
-      <div style={{ border: `1px solid ${error ? "#e53e3e" : "#dde3e9"}`, borderRadius: "2px", overflow: "hidden" }}>
-        {options.map((opt, i) => {
-          const isSel = selected === opt;
-          const isEven = i % 2 === 0;
-          return (
-            <div
-              key={opt}
-              onClick={() => onSelect(opt)}
-              className="cursor-pointer"
-              style={{
-                padding: "7px 12px",
-                fontSize: "13px",
-                color: "#444",
-                background: isSel ? "#cfe1f5" : isEven ? "#ffffff" : "#edf1f5",
-                userSelect: "none",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                transition: "background 0.15s ease",
-              }}
-            >
-              <span>{opt}</span>
-              {isSel && (
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginLeft: "8px" }}>
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              )}
-            </div>
-          );
-        })}
-      </div>
-      {error && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{error}</p>}
-    </div>
-  );
-}
-
-export default function FinancialSituation() {
+export default function FundingDetails() {
   const [, navigate] = useLocation();
-  const [annualExpense, setAnnualExpense] = useState("");
-  const [specialExpense, setSpecialExpense] = useState("");
-  const [liquidity, setLiquidity] = useState("");
-  const [timeHorizon, setTimeHorizon] = useState("");
-  const [errors, setErrors] = useState<{
-    annualExpense?: string;
-    specialExpense?: string;
-    liquidity?: string;
-    timeHorizon?: string;
-  }>({});
+  const [sources, setSources] = useState<Set<string>>(new Set());
+  const [otherText, setOtherText]       = useState("");
+  const [bankName, setBankName]         = useState("");
+  const [abaSwift, setAbaSwift]         = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [accountName, setAccountName]   = useState("");
+  const [accountType, setAccountType]   = useState("Checking");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const toggleSource = (src: string) =>
+    setSources((prev) => {
+      const next = new Set(prev);
+      next.has(src) ? next.delete(src) : next.add(src);
+      return next;
+    });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors: typeof errors = {};
-    if (!annualExpense) newErrors.annualExpense = "Required";
-    if (!specialExpense) newErrors.specialExpense = "Required";
-    if (!liquidity) newErrors.liquidity = "Required";
-    if (!timeHorizon) newErrors.timeHorizon = "Required";
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
+    const newErrors: Record<string, string> = {};
+    if (sources.size === 0) newErrors.sources = "Please select at least one funding source.";
+    if (!bankName.trim()) newErrors.bankName = "Required";
+    if (!abaSwift.trim()) newErrors.abaSwift = "Required";
+    if (!accountName.trim()) newErrors.accountName = "Required";
+    if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
     setErrors({});
-    await saveSignupStep("financialSituation", {
-      annualExpense,
-      specialExpense,
-      liquidityNeeds: liquidity,
-      investmentTimeHorizon: timeHorizon,
+    await saveSignupStep("fundingDetails", {
+      fundingSources: Array.from(sources),
+      otherDescription: otherText,
+      bankName, abaSwift, accountNumber, accountName, accountType,
     });
-    navigate("/investment-experience");
   };
 
   return (
@@ -225,61 +166,154 @@ export default function FinancialSituation() {
           {/* Card header */}
           <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
             <h1 className="font-bold uppercase" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>
-              Financial Situation
+              Funding Details
             </h1>
           </div>
 
           <div className="px-8 py-6">
-            <p className="mb-5" style={{ fontSize: "12px", color: "#777" }}>
-              Financial Situation and Needs, Liquidity Considerations and Tax Status
-            </p>
-
             <form onSubmit={handleSubmit} noValidate>
 
-              {/* Three columns */}
-              <div className="flex gap-4 mb-6">
-                <SelectList
-                  label="Annual Expenses"
-                  options={ANNUAL_EXPENSE_OPTIONS}
-                  selected={annualExpense}
-                  onSelect={(v) => { setAnnualExpense(v); setErrors((p) => ({ ...p, annualExpense: undefined })); }}
-                  error={errors.annualExpense}
-                />
-                <SelectList
-                  label="SPECIAL EXPENSES (future & non-recurring)"
-                  options={SPECIAL_EXPENSE_OPTIONS}
-                  selected={specialExpense}
-                  onSelect={(v) => { setSpecialExpense(v); setErrors((p) => ({ ...p, specialExpense: undefined })); }}
-                  error={errors.specialExpense}
-                />
-                <SelectList
-                  label="Liquidity Needs"
-                  options={LIQUIDITY_OPTIONS}
-                  selected={liquidity}
-                  onSelect={(v) => { setLiquidity(v); setErrors((p) => ({ ...p, liquidity: undefined })); }}
-                  error={errors.liquidity}
-                />
+              {/* Funding sources */}
+              <p className="mb-3" style={{ fontSize: "13px", color: "#444", fontWeight: 500 }}>
+                I am funding this account with (check all that apply)
+              </p>
+
+              <div className="flex gap-10 mb-3">
+                {/* Left column */}
+                <div className="flex flex-col gap-2.5" style={{ minWidth: "220px" }}>
+                  {FUNDING_LEFT.map((src) => (
+                    <label key={src} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={sources.has(src)}
+                        onChange={() => toggleSource(src)}
+                        style={{ width: "14px", height: "14px", accentColor: "#3a7bd5", flexShrink: 0 }}
+                      />
+                      <span style={{ fontSize: "13px", color: "#444" }}>{src}</span>
+                    </label>
+                  ))}
+                </div>
+                {/* Right column */}
+                <div className="flex flex-col gap-2.5">
+                  {FUNDING_RIGHT.map((src) => (
+                    <label key={src} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={sources.has(src)}
+                        onChange={() => toggleSource(src)}
+                        style={{ width: "14px", height: "14px", accentColor: "#3a7bd5", flexShrink: 0 }}
+                      />
+                      <span style={{ fontSize: "13px", color: "#444" }}>{src}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
 
-              {/* Time horizon */}
-              <div className="mb-7" style={{ maxWidth: "360px" }}>
-                <p className="mb-2" style={{ fontSize: "13px", color: "#444", fontWeight: 500 }}>
-                  The expected period you plan to achieve your financial goal(s)
-                </p>
-                <SelectList
-                  label=""
-                  options={TIME_HORIZON_OPTIONS}
-                  selected={timeHorizon}
-                  onSelect={(v) => { setTimeHorizon(v); setErrors((p) => ({ ...p, timeHorizon: undefined })); }}
-                  error={errors.timeHorizon}
-                />
+              {/* "Other" text field */}
+              {sources.has("Other") && (
+                <div className="mb-4" style={{ maxWidth: "480px" }}>
+                  <input
+                    type="text"
+                    placeholder="Please describe other funding source"
+                    value={otherText}
+                    onChange={(e) => setOtherText(e.target.value)}
+                    style={{ ...inputStyle, background: "#f4f6f8" }}
+                  />
+                </div>
+              )}
+              {/* Placeholder bar when Other not selected — matches screenshot grey bar */}
+              {!sources.has("Other") && (
+                <div className="mb-4" style={{ height: "34px", background: "#f0f2f5", border: "1px solid #dde3e9", borderRadius: "2px", maxWidth: "480px" }} />
+              )}
+
+              {errors.sources && <p className="mb-3 text-xs" style={{ color: "#e53e3e" }}>{errors.sources}</p>}
+
+              {/* Bank info row */}
+              <div className="flex gap-4 mb-4">
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>
+                    Name of the bank you will be funding your account from <span style={{ color: "#e53e3e" }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={bankName}
+                    onChange={(e) => { setBankName(e.target.value); setErrors((p) => ({ ...p, bankName: undefined as unknown as string })); }}
+                    style={{ ...inputStyle, borderColor: errors.bankName ? "#e53e3e" : "#ccd3da" }}
+                  />
+                  {errors.bankName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.bankName}</p>}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>
+                    ABA / SWIFT <span style={{ color: "#e53e3e" }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={abaSwift}
+                    onChange={(e) => { setAbaSwift(e.target.value); setErrors((p) => ({ ...p, abaSwift: undefined as unknown as string })); }}
+                    style={{ ...inputStyle, borderColor: errors.abaSwift ? "#e53e3e" : "#ccd3da" }}
+                  />
+                  {errors.abaSwift && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.abaSwift}</p>}
+                </div>
+              </div>
+
+              {/* Account row */}
+              <div className="flex gap-4 mb-6">
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>
+                    Account Number
+                  </label>
+                  <input
+                    type="text"
+                    value={accountNumber}
+                    onChange={(e) => setAccountNumber(e.target.value)}
+                    style={inputStyle}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>
+                    Account Name <span style={{ color: "#e53e3e" }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={accountName}
+                    onChange={(e) => { setAccountName(e.target.value); setErrors((p) => ({ ...p, accountName: undefined as unknown as string })); }}
+                    style={{ ...inputStyle, borderColor: errors.accountName ? "#e53e3e" : "#ccd3da" }}
+                  />
+                  {errors.accountName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.accountName}</p>}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>
+                    Account Type <span style={{ color: "#e53e3e" }}>*</span>
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={accountType}
+                      onChange={(e) => setAccountType(e.target.value)}
+                      style={{
+                        ...inputStyle,
+                        appearance: "none",
+                        paddingRight: "32px",
+                        cursor: "pointer",
+                        background: "#f4f6f8",
+                      }}
+                      className="focus:outline-none"
+                    >
+                      {ACCOUNT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+                    </select>
+                    <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Buttons */}
               <div className="flex gap-3">
                 <button
                   type="button"
-                  onClick={() => navigate("/risk-tolerance")}
+                  onClick={() => navigate("/id-proof-upload")}
                   className="font-medium hover:bg-gray-50 transition-colors"
                   style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}
                 >

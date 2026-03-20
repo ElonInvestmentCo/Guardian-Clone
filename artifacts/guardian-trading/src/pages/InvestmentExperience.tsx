@@ -18,7 +18,7 @@ const STEPS = [
   { n: 11, label: "SIGNATURES" },
 ];
 
-const CURRENT_STEP = 6;
+const CURRENT_STEP = 7;
 
 const NAV_LINKS = [
   { name: "HOME", href: "/" },
@@ -29,126 +29,75 @@ const NAV_LINKS = [
   { name: "CONTACT US", href: "/contact" },
 ];
 
-const ANNUAL_EXPENSE_OPTIONS = [
-  "$50,000 and under",
-  "$50,001 - $100,000",
-  "$100,001 - $250,000",
-  "$250,001 - $500,000",
-  "over $500,000",
+const INVESTMENTS = [
+  { key: "stocks",      label: "Stocks" },
+  { key: "fixedIncome", label: "Fixed Income" },
+  { key: "options",     label: "Options" },
+  { key: "futures",     label: "Futures" },
 ];
 
-const SPECIAL_EXPENSE_OPTIONS = [
-  "$50,000 and under",
-  "$50,001 - $100,000",
-  "$100,001 - $250,000",
-  "$250,001 - $500,000",
-  "over $500,000",
-];
+const YEARS_OPTIONS        = ["1-5", "5+"];
+const TRANSACTIONS_OPTIONS = ["0-5", "6-15", "16+"];
+const KNOWLEDGE_OPTIONS    = ["None", "Limited", "Good", "Extensive"];
 
-const LIQUIDITY_OPTIONS = [
-  "Very important",
-  "Important",
-  "Some what Important",
-  "Does not matter",
-];
+type InvRow = { enabled: boolean; years: string; transactions: string; knowledge: string };
+type InvState = Record<string, InvRow>;
 
-const TIME_HORIZON_OPTIONS = [
-  "Under 1 year",
-  "1 - 2",
-  "3 - 5",
-  "6 - 10",
-  "11 - 20",
-  "Over 20",
-];
+const initState = (): InvState =>
+  Object.fromEntries(
+    INVESTMENTS.map(({ key }) => [key, { enabled: false, years: "", transactions: "", knowledge: "" }])
+  );
 
-function SelectList({
-  label,
+function RadioGroup({
+  name,
   options,
-  selected,
-  onSelect,
-  error,
+  value,
+  onChange,
+  disabled,
 }: {
-  label: string;
+  name: string;
   options: string[];
-  selected: string;
-  onSelect: (v: string) => void;
-  error?: string;
+  value: string;
+  onChange: (v: string) => void;
+  disabled: boolean;
 }) {
   return (
-    <div className="flex-1">
-      {label && (
-        <p className="font-bold mb-2 uppercase" style={{ fontSize: "12px", color: "#444", letterSpacing: "0.04em" }}>
-          {label}
-        </p>
-      )}
-      <div style={{ border: `1px solid ${error ? "#e53e3e" : "#dde3e9"}`, borderRadius: "2px", overflow: "hidden" }}>
-        {options.map((opt, i) => {
-          const isSel = selected === opt;
-          const isEven = i % 2 === 0;
-          return (
-            <div
-              key={opt}
-              onClick={() => onSelect(opt)}
-              className="cursor-pointer"
-              style={{
-                padding: "7px 12px",
-                fontSize: "13px",
-                color: "#444",
-                background: isSel ? "#cfe1f5" : isEven ? "#ffffff" : "#edf1f5",
-                userSelect: "none",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                transition: "background 0.15s ease",
-              }}
-            >
-              <span>{opt}</span>
-              {isSel && (
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginLeft: "8px" }}>
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              )}
-            </div>
-          );
-        })}
-      </div>
-      {error && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{error}</p>}
+    <div className="flex flex-col gap-2">
+      {options.map((opt) => (
+        <label key={opt} className="flex items-center gap-2" style={{ cursor: disabled ? "default" : "pointer", opacity: disabled ? 0.38 : 1 }}>
+          <input
+            type="radio"
+            name={name}
+            value={opt}
+            checked={value === opt}
+            onChange={() => !disabled && onChange(opt)}
+            disabled={disabled}
+            style={{ width: "14px", height: "14px", accentColor: "#3a7bd5", flexShrink: 0 }}
+          />
+          <span style={{ fontSize: "13px", color: disabled ? "#aaa" : "#555" }}>{opt}</span>
+        </label>
+      ))}
     </div>
   );
 }
 
-export default function FinancialSituation() {
+export default function InvestmentExperience() {
   const [, navigate] = useLocation();
-  const [annualExpense, setAnnualExpense] = useState("");
-  const [specialExpense, setSpecialExpense] = useState("");
-  const [liquidity, setLiquidity] = useState("");
-  const [timeHorizon, setTimeHorizon] = useState("");
-  const [errors, setErrors] = useState<{
-    annualExpense?: string;
-    specialExpense?: string;
-    liquidity?: string;
-    timeHorizon?: string;
-  }>({});
+  const [data, setData] = useState<InvState>(initState);
+
+  const toggle = (key: string) =>
+    setData((prev) => ({
+      ...prev,
+      [key]: { ...prev[key], enabled: !prev[key].enabled },
+    }));
+
+  const set = (key: string, field: keyof InvRow, value: string) =>
+    setData((prev) => ({ ...prev, [key]: { ...prev[key], [field]: value } }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors: typeof errors = {};
-    if (!annualExpense) newErrors.annualExpense = "Required";
-    if (!specialExpense) newErrors.specialExpense = "Required";
-    if (!liquidity) newErrors.liquidity = "Required";
-    if (!timeHorizon) newErrors.timeHorizon = "Required";
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-    setErrors({});
-    await saveSignupStep("financialSituation", {
-      annualExpense,
-      specialExpense,
-      liquidityNeeds: liquidity,
-      investmentTimeHorizon: timeHorizon,
-    });
-    navigate("/investment-experience");
+    await saveSignupStep("investmentExperience", { investments: data });
+    navigate("/id-proof-upload");
   };
 
   return (
@@ -225,61 +174,95 @@ export default function FinancialSituation() {
           {/* Card header */}
           <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
             <h1 className="font-bold uppercase" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>
-              Financial Situation
+              Investment Experience
             </h1>
           </div>
 
           <div className="px-8 py-6">
-            <p className="mb-5" style={{ fontSize: "12px", color: "#777" }}>
-              Financial Situation and Needs, Liquidity Considerations and Tax Status
-            </p>
+
+            {/* Info notice */}
+            <div className="mb-6 px-4 py-3" style={{ background: "#f0f4f8", border: "1px solid #dde3e9", borderRadius: "2px" }}>
+              <p style={{ fontSize: "12px", color: "#555", lineHeight: "1.6" }}>
+                We are collecting the information below to better understand your investment experience. We recognize your responses may change over time as you work with us. Please check the boxes that best describe your investment experience to date.
+              </p>
+            </div>
 
             <form onSubmit={handleSubmit} noValidate>
 
-              {/* Three columns */}
-              <div className="flex gap-4 mb-6">
-                <SelectList
-                  label="Annual Expenses"
-                  options={ANNUAL_EXPENSE_OPTIONS}
-                  selected={annualExpense}
-                  onSelect={(v) => { setAnnualExpense(v); setErrors((p) => ({ ...p, annualExpense: undefined })); }}
-                  error={errors.annualExpense}
-                />
-                <SelectList
-                  label="SPECIAL EXPENSES (future & non-recurring)"
-                  options={SPECIAL_EXPENSE_OPTIONS}
-                  selected={specialExpense}
-                  onSelect={(v) => { setSpecialExpense(v); setErrors((p) => ({ ...p, specialExpense: undefined })); }}
-                  error={errors.specialExpense}
-                />
-                <SelectList
-                  label="Liquidity Needs"
-                  options={LIQUIDITY_OPTIONS}
-                  selected={liquidity}
-                  onSelect={(v) => { setLiquidity(v); setErrors((p) => ({ ...p, liquidity: undefined })); }}
-                  error={errors.liquidity}
-                />
-              </div>
+              {/* Table */}
+              <div style={{ border: "1px solid #dde3e9", borderRadius: "2px", overflow: "hidden" }}>
 
-              {/* Time horizon */}
-              <div className="mb-7" style={{ maxWidth: "360px" }}>
-                <p className="mb-2" style={{ fontSize: "13px", color: "#444", fontWeight: 500 }}>
-                  The expected period you plan to achieve your financial goal(s)
-                </p>
-                <SelectList
-                  label=""
-                  options={TIME_HORIZON_OPTIONS}
-                  selected={timeHorizon}
-                  onSelect={(v) => { setTimeHorizon(v); setErrors((p) => ({ ...p, timeHorizon: undefined })); }}
-                  error={errors.timeHorizon}
-                />
+                {/* Header row */}
+                <div style={{ display: "grid", gridTemplateColumns: "180px 1fr 1fr 1fr", borderBottom: "1px solid #dde3e9", padding: "8px 16px", background: "#f8fafc" }}>
+                  <span style={{ fontSize: "12px", fontWeight: 700, color: "#555" }}>Investment</span>
+                  <span style={{ fontSize: "12px", fontWeight: 700, color: "#555" }}>Year(s) Of Experience</span>
+                  <span style={{ fontSize: "12px", fontWeight: 700, color: "#555" }}>Transaction(s) Per Year</span>
+                  <span style={{ fontSize: "12px", fontWeight: 700, color: "#555" }}>Knowledge</span>
+                </div>
+
+                {/* Investment rows */}
+                {INVESTMENTS.map(({ key, label }, idx) => {
+                  const row = data[key];
+                  const isLast = idx === INVESTMENTS.length - 1;
+                  return (
+                    <div
+                      key={key}
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "180px 1fr 1fr 1fr",
+                        borderBottom: isLast ? "none" : "1px solid #dde3e9",
+                        padding: "14px 16px",
+                        alignItems: "flex-start",
+                        gap: "0",
+                      }}
+                    >
+                      {/* Checkbox + label */}
+                      <label className="flex items-center gap-2 cursor-pointer" style={{ paddingTop: "1px" }}>
+                        <input
+                          type="checkbox"
+                          checked={row.enabled}
+                          onChange={() => toggle(key)}
+                          style={{ width: "14px", height: "14px", accentColor: "#3a7bd5", flexShrink: 0 }}
+                        />
+                        <span style={{ fontSize: "13px", color: "#444", fontWeight: 500 }}>{label}</span>
+                      </label>
+
+                      {/* Years */}
+                      <RadioGroup
+                        name={`years-${key}`}
+                        options={YEARS_OPTIONS}
+                        value={row.years}
+                        onChange={(v) => set(key, "years", v)}
+                        disabled={!row.enabled}
+                      />
+
+                      {/* Transactions */}
+                      <RadioGroup
+                        name={`tx-${key}`}
+                        options={TRANSACTIONS_OPTIONS}
+                        value={row.transactions}
+                        onChange={(v) => set(key, "transactions", v)}
+                        disabled={!row.enabled}
+                      />
+
+                      {/* Knowledge */}
+                      <RadioGroup
+                        name={`know-${key}`}
+                        options={KNOWLEDGE_OPTIONS}
+                        value={row.knowledge}
+                        onChange={(v) => set(key, "knowledge", v)}
+                        disabled={!row.enabled}
+                      />
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Buttons */}
-              <div className="flex gap-3">
+              <div className="flex gap-3 mt-6">
                 <button
                   type="button"
-                  onClick={() => navigate("/risk-tolerance")}
+                  onClick={() => navigate("/financial-situation")}
                   className="font-medium hover:bg-gray-50 transition-colors"
                   style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}
                 >
