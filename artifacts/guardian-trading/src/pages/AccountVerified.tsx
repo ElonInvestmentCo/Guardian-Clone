@@ -1,0 +1,143 @@
+import { useEffect } from "react";
+import { Link, useLocation } from "wouter";
+import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
+import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";
+
+const STEPS = [
+  { n: 1,  label: "PERSONAL\nDETAILS" },
+  { n: 2,  label: "PROFESSIONAL\nDETAILS" },
+  { n: 3,  label: "ID\nINFORMATION" },
+  { n: 4,  label: "INCOME\nDETAILS" },
+  { n: 5,  label: "RISK\nTOLERANCE" },
+  { n: 6,  label: "FINANCIAL\nSITUATION" },
+  { n: 7,  label: "INVESTMENT\nEXPERIENCE" },
+  { n: 8,  label: "IDENTIFICATION\nPROOF UPLOAD" },
+  { n: 9,  label: "FUNDING\nDETAILS" },
+  { n: 10, label: "DISCLOSURES" },
+  { n: 11, label: "SIGNATURES" },
+];
+
+const NAV_LINKS = [
+  { name: "HOME", href: "/" },
+  { name: "ABOUT US", href: "/about" },
+  { name: "SERVICES", href: "/#services", hasDropdown: true },
+  { name: "PLATFORMS", href: "/platforms" },
+  { name: "PRICING", href: "/#pricing" },
+  { name: "CONTACT US", href: "/contact" },
+];
+
+export default function AccountVerified() {
+  const [, navigate] = useLocation();
+  const email = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("signupEmail") ?? "" : "";
+
+  // Auto-redirect after 5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => navigate("/dashboard"), 5000);
+    return () => clearTimeout(timer);
+  }, [navigate]);
+
+  return (
+    <div className="min-h-screen flex flex-col" style={{ background: "#f4f4f4" }}>
+
+      {/* Top bar */}
+      <div className="flex items-center justify-end px-6 py-1.5" style={{ background: "#5baad4" }}>
+        <a href="tel:8449631512" className="flex items-center gap-1.5 text-white font-semibold" style={{ fontSize: "13px" }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M6.62 10.79a15.49 15.49 0 0 0 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.25 1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C9.61 21 3 14.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57-.11.35-.02.74-.25 1.02l-2.2 2.2z"/></svg>
+          844-963-1512
+        </a>
+      </div>
+
+      {/* Navbar */}
+      <nav style={{ background: "#1c2e3e" }}>
+        <div className="flex items-center justify-between px-6 h-[54px]">
+          <Link href="/"><img src={guardianLogo} alt="Guardian Trading" style={{ height: "38px", width: "auto" }} /></Link>
+          <div className="hidden md:flex items-center gap-6">
+            {NAV_LINKS.map((link) => (
+              <Link key={link.name} href={link.href} className="flex items-center gap-0.5 text-white hover:text-[#5baad4]" style={{ fontSize: "13px", fontWeight: 500 }}>
+                {link.name}
+                {link.hasDropdown && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>}
+              </Link>
+            ))}
+          </div>
+          <button className="text-white font-medium px-5 py-1.5 border hover:bg-white/10" style={{ fontSize: "13px", borderColor: "#5baad4", borderRadius: "3px" }}>Logout</button>
+        </div>
+      </nav>
+
+      {/* Step bar — all completed */}
+      <div className="bg-white px-6 py-5" style={{ borderBottom: "1px solid #dde3e9" }}>
+        <div className="flex items-start justify-between">
+          {STEPS.map((step, i) => (
+            <div key={step.n} className="flex flex-col items-center" style={{ flex: 1 }}>
+              <div className="flex items-center w-full">
+                <div className="flex-1 h-[2px]" style={{ background: i === 0 ? "transparent" : "#3a7bd5" }} />
+                <div className="flex items-center justify-center rounded-full flex-shrink-0 font-bold"
+                  style={{ width: "28px", height: "28px", fontSize: "12px", background: "#3a7bd5", color: "white", border: "2px solid #3a7bd5" }}>
+                  {step.n}
+                </div>
+                <div className="flex-1 h-[2px]" style={{ background: i === STEPS.length - 1 ? "transparent" : "#3a7bd5" }} />
+              </div>
+              <p className="text-center mt-1.5 leading-tight whitespace-pre-line" style={{ fontSize: "9px", color: "#3a7bd5", fontWeight: 700, maxWidth: "70px" }}>
+                {step.label}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Main */}
+      <main className="flex-1 px-6 py-8 flex items-start justify-center">
+        <div className="bg-white w-full max-w-2xl" style={{ borderRadius: "4px", boxShadow: "0 2px 12px rgba(0,0,0,0.10)", border: "1px solid #dde3e9" }}>
+
+          {/* Green top stripe */}
+          <div style={{ height: "5px", background: "#28a745", borderRadius: "4px 4px 0 0" }} />
+
+          <div className="px-10 py-12 flex flex-col items-center text-center">
+            {/* Verified badge circle */}
+            <div className="flex items-center justify-center rounded-full mb-6"
+              style={{ width: "80px", height: "80px", background: "#e8f5e9", border: "3px solid #28a745" }}>
+              <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#28a745" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+
+            {/* Verified text badge */}
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full font-bold text-white mb-5"
+              style={{ background: "#28a745", fontSize: "14px" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Verified
+            </span>
+
+            <h1 className="font-bold mb-3" style={{ fontSize: "24px", color: "#1c2e3e" }}>
+              Your account has been successfully verified
+            </h1>
+            <p className="mb-2" style={{ fontSize: "14px", color: "#666", lineHeight: "1.65", maxWidth: "420px" }}>
+              Congratulations! Your Guardian Trading account is now active and ready to use. A confirmation email has been sent to{" "}
+              <strong style={{ color: "#3a7bd5" }}>{email || "your email address"}</strong>.
+            </p>
+            <p className="mb-8" style={{ fontSize: "13px", color: "#aaa" }}>
+              Redirecting to your dashboard in 5 seconds…
+            </p>
+
+            <button
+              onClick={() => navigate("/dashboard")}
+              style={{ background: "#3a7bd5", color: "white", border: "none", borderRadius: "4px", padding: "12px 36px", fontSize: "14px", fontWeight: 700, cursor: "pointer", letterSpacing: "0.02em" }}
+            >
+              Go to Dashboard
+            </button>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer style={{ background: "#111" }}>
+        <div className="px-10 py-8 text-center">
+          <p className="text-[13px] mb-1" style={{ color: "#aaa" }}>Guardian Trading – A Division of Velocity Clearing, LLC ("Velocity"). Member FINRA/ SIPC.</p>
+          <p className="text-[13px]" style={{ color: "#aaa" }}>All securities and transactions are handled through Velocity.</p>
+        </div>
+        <div className="px-10 pt-6 pb-8 text-center" style={{ borderTop: "1px solid #2a2a2a" }}>
+          <Link href="/"><img src={guardianReversedLogo} alt="Guardian Trading" style={{ height: "32px", width: "auto", margin: "0 auto 16px" }} /></Link>
+        </div>
+      </footer>
+    </div>
+  );
+}
