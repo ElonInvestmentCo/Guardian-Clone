@@ -107,14 +107,33 @@ export default function RiskTolerance() {
     income: "", growth: "", speculation: "", trading: "", capital: "",
   });
   const [riskError, setRiskError] = useState<string>("");
+  const [priorityError, setPriorityError] = useState<string>("");
+
+  const usedPriorities = Object.values(priorities).filter(Boolean);
+
+  const handlePriorityChange = (key: string, value: string) => {
+    setPriorities((p) => ({ ...p, [key]: value }));
+    setPriorityError("");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    let valid = true;
     if (!selectedRisk) {
       setRiskError("Please select a risk tolerance option before proceeding.");
-      return;
+      valid = false;
+    } else {
+      setRiskError("");
     }
-    setRiskError("");
+    const allAssigned = STRATEGIES.every(({ key }) => priorities[key] !== "");
+    const uniqueValues = new Set(Object.values(priorities).filter(Boolean));
+    if (!allAssigned || uniqueValues.size !== STRATEGIES.length) {
+      setPriorityError("Please assign a unique priority (1–5) to every strategy.");
+      valid = false;
+    } else {
+      setPriorityError("");
+    }
+    if (!valid) return;
     await saveSignupStep("riskTolerance", {
       riskTolerance: selectedRisk,
       hasFinancialEducation: hasEducation,
@@ -284,12 +303,22 @@ export default function RiskTolerance() {
                       <div className="relative flex-shrink-0">
                         <select
                           value={priorities[key]}
-                          onChange={(e) => setPriorities((p) => ({ ...p, [key]: e.target.value }))}
-                          style={selectStyle}
+                          onChange={(e) => handlePriorityChange(key, e.target.value)}
+                          style={{
+                            ...selectStyle,
+                            borderColor: priorityError && !priorities[key] ? "#e53e3e" : "#ccd3da",
+                          }}
                           className="focus:outline-none"
                         >
                           <option value="" disabled>Please Select</option>
-                          {PRIORITY_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+                          {PRIORITY_OPTIONS.map((o) => {
+                            const takenByOther = usedPriorities.includes(o) && priorities[key] !== o;
+                            return (
+                              <option key={o} value={o} disabled={takenByOther} style={{ color: takenByOther ? "#bbb" : "#555" }}>
+                                {o}{takenByOther ? " (taken)" : ""}
+                              </option>
+                            );
+                          })}
                         </select>
                         <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -304,6 +333,7 @@ export default function RiskTolerance() {
                     </div>
                   ))}
                 </div>
+                {priorityError && <p className="mt-2 text-xs" style={{ color: "#e53e3e" }}>{priorityError}</p>}
               </div>
 
               {/* Buttons */}
