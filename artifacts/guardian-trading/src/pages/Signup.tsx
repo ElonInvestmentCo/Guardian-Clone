@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 
-const eyeOpen = "/eye-open-clean.png";
-const eyeClosed = "/eye-closed-clean.png";
-
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [promoCode, setPromoCode] = useState("");
@@ -78,61 +75,96 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
-      <div className="w-full max-w-[340px]">
-        <div className="bg-white rounded-lg shadow-xl overflow-hidden border border-gray-200">
+    <div
+      className="min-h-screen flex items-center justify-center p-6"
+      style={{ background: "#f0f0f0" }}
+    >
+      <div className="w-full" style={{ maxWidth: "340px" }}>
+        {/* Card */}
+        <div
+          className="bg-white overflow-hidden"
+          style={{
+            borderRadius: "4px",
+            boxShadow: "0 2px 18px rgba(0,0,0,0.18)",
+            border: "1px solid #ddd",
+          }}
+        >
           {/* Blue top stripe */}
-          <div className="h-[5px] bg-[#4a7fbd] w-full" />
+          <div style={{ height: "4px", background: "#3a7bd5" }} />
 
           {/* Header */}
-          <div className="px-8 pt-7 pb-5 text-center border-b border-gray-200">
-            <h1 className="text-2xl font-semibold text-[#4a7fbd] leading-snug">
-              Begin an Online<br />Application
+          <div
+            className="text-center px-8 pt-6 pb-5"
+            style={{ borderBottom: "1px solid #e5e5e5" }}
+          >
+            <h1
+              className="font-semibold leading-snug"
+              style={{ color: "#3a7bd5", fontSize: "22px" }}
+            >
+              Begin an Online Application
             </h1>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm" style={{ color: "#555" }}>
               Already have an account?{" "}
-              <Link href="/login" className="text-[#4a7fbd] hover:underline">
+              <Link href="/login" style={{ color: "#3a7bd5" }} className="hover:underline">
                 Sign in
               </Link>
             </p>
           </div>
 
-          <div className="px-8 py-6">
+          {/* Form body */}
+          <div className="px-7 py-6">
             <form onSubmit={handleSubmit} noValidate>
+
               {/* Email */}
               <div className="mb-4">
-                <label className="block text-sm text-gray-700 mb-1">
-                  Email <span className="text-red-500">*</span>
+                <label className="block text-sm mb-1" style={{ color: "#444" }}>
+                  Email <span style={{ color: "#e53e3e" }}>*</span>
                 </label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
-                    if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+                    if (errors.email) setErrors((p) => ({ ...p, email: undefined }));
                   }}
-                  className="w-full px-4 py-3 bg-gray-100 border-0 rounded text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
+                  className="w-full text-sm focus:outline-none"
+                  style={{
+                    background: "#ebebeb",
+                    border: "none",
+                    borderRadius: "3px",
+                    padding: "10px 12px",
+                    color: "#333",
+                  }}
                 />
                 {errors.email && (
-                  <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+                  <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.email}</p>
                 )}
               </div>
 
               {/* Promo Code */}
               <div className="mb-4">
-                <label className="block text-sm text-gray-700 mb-1">Promo Code</label>
+                <label className="block text-sm mb-1" style={{ color: "#444" }}>
+                  Promo Code
+                </label>
                 <input
                   type="text"
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-100 border-0 rounded text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
+                  className="w-full text-sm focus:outline-none"
+                  style={{
+                    background: "#ebebeb",
+                    border: "none",
+                    borderRadius: "3px",
+                    padding: "10px 12px",
+                    color: "#333",
+                  }}
                 />
               </div>
 
               {/* Create Password */}
               <div className="mb-4">
-                <label className="block text-sm text-gray-700 mb-1">
-                  Create Password <span className="text-red-500">*</span>
+                <label className="block text-sm mb-1" style={{ color: "#444" }}>
+                  Create Password <span style={{ color: "#e53e3e" }}>*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -140,33 +172,36 @@ export default function Signup() {
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);
-                      if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+                      if (errors.password) setErrors((p) => ({ ...p, password: undefined }));
                     }}
-                    className="w-full px-4 py-3.5 pr-14 bg-gray-100 border-0 rounded text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
+                    className="w-full text-sm focus:outline-none"
+                    style={{
+                      background: "#ebebeb",
+                      border: "none",
+                      borderRadius: "3px",
+                      padding: "10px 44px 10px 12px",
+                      color: "#333",
+                    }}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 opacity-80 hover:opacity-100 transition-opacity"
+                    className="absolute right-0 top-0 h-full flex items-center justify-center transition-opacity hover:opacity-70"
+                    style={{ width: "42px" }}
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
-                    <img
-                      src={showPassword ? eyeClosed : eyeOpen}
-                      alt=""
-                      className="w-[35px] h-[35px] object-contain"
-                      style={{ filter: "brightness(0)" }}
-                    />
+                    <EyeIcon open={showPassword} />
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+                  <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.password}</p>
                 )}
               </div>
 
               {/* Confirm Password */}
               <div className="mb-6">
-                <label className="block text-sm text-gray-700 mb-1">
-                  Confirm Password <span className="text-red-500">*</span>
+                <label className="block text-sm mb-1" style={{ color: "#444" }}>
+                  Confirm Password <span style={{ color: "#e53e3e" }}>*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -175,39 +210,49 @@ export default function Signup() {
                     onChange={(e) => {
                       setConfirmPassword(e.target.value);
                       if (errors.confirmPassword)
-                        setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
+                        setErrors((p) => ({ ...p, confirmPassword: undefined }));
                     }}
-                    className="w-full px-4 py-3.5 pr-14 bg-gray-100 border-0 rounded text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
+                    className="w-full text-sm focus:outline-none"
+                    style={{
+                      background: "#ebebeb",
+                      border: "none",
+                      borderRadius: "3px",
+                      padding: "10px 44px 10px 12px",
+                      color: "#333",
+                    }}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 opacity-80 hover:opacity-100 transition-opacity"
+                    className="absolute right-0 top-0 h-full flex items-center justify-center transition-opacity hover:opacity-70"
+                    style={{ width: "42px" }}
                     aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                   >
-                    <img
-                      src={showConfirmPassword ? eyeClosed : eyeOpen}
-                      alt=""
-                      className="w-[35px] h-[35px] object-contain"
-                      style={{ filter: "brightness(0)" }}
-                    />
+                    <EyeIcon open={showConfirmPassword} />
                   </button>
                 </div>
                 {errors.confirmPassword && (
-                  <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>
+                  <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.confirmPassword}</p>
                 )}
               </div>
 
               {errors.submit && (
-                <p className="mb-3 text-xs text-red-500 text-center">{errors.submit}</p>
+                <p className="mb-3 text-xs text-center" style={{ color: "#e53e3e" }}>{errors.submit}</p>
               )}
 
-              {/* Submit Button */}
+              {/* Submit */}
               <div className="flex justify-center">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-10 py-2.5 bg-[#4a7fbd] hover:bg-[#3d6fad] text-white font-semibold rounded text-sm transition-colors disabled:opacity-70"
+                  className="text-white text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
+                  style={{
+                    background: "#3a7bd5",
+                    borderRadius: "4px",
+                    padding: "9px 36px",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
                 >
                   {loading ? "Submitting..." : "Submit"}
                 </button>
@@ -217,5 +262,20 @@ export default function Signup() {
         </div>
       </div>
     </div>
+  );
+}
+
+function EyeIcon({ open }: { open: boolean }) {
+  return open ? (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  ) : (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+      <line x1="1" y1="1" x2="23" y2="23" />
+    </svg>
   );
 }
