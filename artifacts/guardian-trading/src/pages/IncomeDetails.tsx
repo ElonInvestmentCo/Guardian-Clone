@@ -114,7 +114,7 @@ export default function IncomeDetails() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await saveSignupStep("income", { annualIncome, netWorth, liquidNetWorth, taxRate });
-    navigate("/risk-tolerance");
+    navigate("/financial-situation");
   };
 
   return (

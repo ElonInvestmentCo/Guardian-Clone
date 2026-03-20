@@ -9,16 +9,15 @@ const STEPS = [
   { n: 2,  label: "PROFESSIONAL\nDETAILS" },
   { n: 3,  label: "ID\nINFORMATION" },
   { n: 4,  label: "INCOME\nDETAILS" },
-  { n: 5,  label: "RISK\nTOLERANCE" },
-  { n: 6,  label: "FINANCIAL\nSITUATION" },
-  { n: 7,  label: "INVESTMENT\nEXPERIENCE" },
-  { n: 8,  label: "IDENTIFICATION\nPROOF UPLOAD" },
-  { n: 9,  label: "FUNDING\nDETAILS" },
-  { n: 10, label: "DISCLOSURES" },
-  { n: 11, label: "SIGNATURES" },
+  { n: 5,  label: "FINANCIAL\nSITUATION" },
+  { n: 6,  label: "INVESTMENT\nEXPERIENCE" },
+  { n: 7,  label: "IDENTIFICATION\nPROOF UPLOAD" },
+  { n: 8,  label: "FUNDING\nDETAILS" },
+  { n: 9,  label: "DISCLOSURES" },
+  { n: 10, label: "SIGNATURES" },
 ];
 
-const CURRENT_STEP = 6;
+const CURRENT_STEP = 5;
 
 const NAV_LINKS = [
   { name: "HOME", href: "/" },
@@ -102,7 +101,6 @@ export default function FinancialSituation() {
       liquidityNeeds: liquidity,
       investmentTimeHorizon: timeHorizon,
     });
-    navigate("/risk-tolerance");
   };
 
   return (
@@ -315,7 +313,7 @@ export default function FinancialSituation() {
               <div className="flex gap-3">
                 <button
                   type="button"
-                  onClick={() => navigate("/risk-tolerance")}
+                  onClick={() => navigate("/income-details")}
                   className="font-medium hover:bg-gray-50 transition-colors"
                   style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}
                 >

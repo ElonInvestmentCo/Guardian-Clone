@@ -18,7 +18,6 @@ import PersonalDetails from "@/pages/PersonalDetails";
 import ProfessionalDetails from "@/pages/ProfessionalDetails";
 import IdInformation from "@/pages/IdInformation";
 import IncomeDetails from "@/pages/IncomeDetails";
-import RiskTolerance from "@/pages/RiskTolerance";
 import FinancialSituation from "@/pages/FinancialSituation";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/analytics/Dashboard";
@@ -46,7 +45,6 @@ function Router() {
       <Route path="/professional-details" component={ProfessionalDetails} />
       <Route path="/id-information" component={IdInformation} />
       <Route path="/income-details" component={IncomeDetails} />
-      <Route path="/risk-tolerance" component={RiskTolerance} />
       <Route path="/financial-situation" component={FinancialSituation} />
       <Route path="/analytics" component={Dashboard} />
       <Route path="/analytics/projects" component={Projects} />

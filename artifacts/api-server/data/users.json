@@ -2,7 +2,7 @@
   "Emailmy488@gmail.com": {
     "email": "Emailmy488@gmail.com",
     "createdAt": "2026-03-20T16:30:58.865Z",
-    "updatedAt": "2026-03-20T16:43:35.170Z",
+    "updatedAt": "2026-03-20T16:47:39.084Z",
     "general": {
       "registrationType": "Individual Account",
       "product": "Stocks",
@@ -50,10 +50,10 @@
       "expirationDate": "08/08/2033"
     },
     "income": {
-      "annualIncome": "$250,001 - $500,000",
-      "netWorth": "$200,001 - $500,000",
-      "liquidNetWorth": "$500,001 - $1,000,000",
-      "taxRate": "31 - 35"
+      "annualIncome": "$25,000 and under",
+      "netWorth": "$25,000 and under",
+      "liquidNetWorth": "$25,000 and under",
+      "taxRate": "0 - 15"
     },
     "riskTolerance": {
       "riskTolerances": [
