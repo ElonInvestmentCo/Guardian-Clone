@@ -83,13 +83,18 @@ export default function Dashboard() {
     if (!projectId) { setLoading(false); return; }
     setLoading(true);
     const qs = `?project_id=${projectId}&period=${period}`;
+    const safeJson = async <T,>(res: Response, fallback: T): Promise<T> => {
+      if (!res.ok) return fallback;
+      try { return await res.json() as T; } catch { return fallback; }
+    };
+
     const [o, ts, pg, src, rt, geoData] = await Promise.all([
-      fetch(`${API}/analytics/overview${qs}`).then(r => r.json()) as Promise<Overview>,
-      fetch(`${API}/analytics/timeseries${qs}`).then(r => r.json()) as Promise<TimePoint[]>,
-      fetch(`${API}/analytics/pages${qs}`).then(r => r.json()) as Promise<PageRow[]>,
-      fetch(`${API}/analytics/sources${qs}`).then(r => r.json()) as Promise<SourceRow[]>,
-      fetch(`${API}/analytics/realtime?project_id=${projectId}`).then(r => r.json()) as Promise<Realtime>,
-      fetch(`${API}/analytics/geo${qs}`).then(r => r.json()).catch(() => ({ countries: [] })) as Promise<{ countries: GeoRow[] }>,
+      fetch(`${API}/analytics/overview${qs}`).then(r => safeJson<Overview>(r, { visitors: 0, pageviews: 0, sessions: 0, bounceRate: 0, devices: [], browsers: [] })),
+      fetch(`${API}/analytics/timeseries${qs}`).then(r => safeJson<TimePoint[]>(r, [])),
+      fetch(`${API}/analytics/pages${qs}`).then(r => safeJson<PageRow[]>(r, [])),
+      fetch(`${API}/analytics/sources${qs}`).then(r => safeJson<SourceRow[]>(r, [])),
+      fetch(`${API}/analytics/realtime?project_id=${projectId}`).then(r => safeJson<Realtime>(r, { activeVisitors: 0, eventsLast5Min: 0, activePages: [] })),
+      fetch(`${API}/analytics/geo${qs}`).then(r => safeJson<{ countries: GeoRow[] }>(r, { countries: [] })),
     ]);
     setOverview(o);
     setTimeseries(ts.map(d => ({ ...d, day: new Date(d.day).toLocaleDateString("en-US", { month:"short", day:"numeric" }) })));
@@ -106,8 +111,9 @@ export default function Dashboard() {
     const id = setInterval(() => {
       if (!projectId) return;
       void fetch(`${API}/analytics/realtime?project_id=${projectId}`)
-        .then(r => r.json())
-        .then(d => setRealtime(d as Realtime));
+        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+        .then(d => setRealtime(d as Realtime))
+        .catch(() => { /* ignore poll errors */ });
     }, 30000);
     return () => clearInterval(id);
   }, [projectId]);

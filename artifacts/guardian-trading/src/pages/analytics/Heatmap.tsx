@@ -144,20 +144,27 @@ export default function Heatmap() {
   useEffect(() => {
     if (!projectId) return;
     void fetch(`${API}/analytics/heatmap-pages?project_id=${projectId}`)
-      .then(r => r.json())
+      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then(d => {
         setPages(d as HeatPage[]);
         if ((d as HeatPage[]).length > 0) setSelectedPage((d as HeatPage[])[0]!.page_url);
-      });
+      })
+      .catch(() => { /* API unavailable */ });
   }, [projectId]);
 
   const loadPoints = useCallback(async () => {
     if (!projectId) return;
     setLoading(true);
-    const r = await fetch(`${API}/analytics/heatmap?project_id=${projectId}&page_url=${encodeURIComponent(selectedPage)}`);
-    const data = await r.json() as HeatPoint[];
-    setPoints(data);
-    setLoading(false);
+    try {
+      const r = await fetch(`${API}/analytics/heatmap?project_id=${projectId}&page_url=${encodeURIComponent(selectedPage)}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const data = await r.json() as HeatPoint[];
+      setPoints(data);
+    } catch {
+      setPoints([]);
+    } finally {
+      setLoading(false);
+    }
   }, [projectId, selectedPage]);
 
   useEffect(() => { void loadPoints(); }, [loadPoints]);

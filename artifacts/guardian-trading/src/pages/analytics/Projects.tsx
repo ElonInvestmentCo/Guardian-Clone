@@ -28,10 +28,16 @@ export default function Projects() {
 
   async function loadProjects() {
     setLoading(true);
-    const r = await fetch(`${API}/analytics/projects?email=${encodeURIComponent(OWNER_EMAIL)}`);
-    const data = await r.json() as Project[];
-    setProjects(data);
-    setLoading(false);
+    try {
+      const r = await fetch(`${API}/analytics/projects?email=${encodeURIComponent(OWNER_EMAIL)}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const data = await r.json() as Project[];
+      setProjects(data);
+    } catch {
+      setProjects([]);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => { void loadProjects(); }, []);

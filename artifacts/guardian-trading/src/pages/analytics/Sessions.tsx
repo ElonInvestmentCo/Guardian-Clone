@@ -91,10 +91,16 @@ export default function Sessions() {
   const load = useCallback(async () => {
     if (!projectId) { setLoading(false); return; }
     setLoading(true);
-    const r = await fetch(`${API}/analytics/sessions?project_id=${projectId}&period=${period}`);
-    const data = await r.json() as Session[];
-    setSessions(data);
-    setLoading(false);
+    try {
+      const r = await fetch(`${API}/analytics/sessions?project_id=${projectId}&period=${period}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const data = await r.json() as Session[];
+      setSessions(data);
+    } catch {
+      setSessions([]);
+    } finally {
+      setLoading(false);
+    }
   }, [projectId, period]);
 
   useEffect(() => { void load(); }, [load]);
@@ -102,10 +108,16 @@ export default function Sessions() {
   async function openReplay(sessionId: string) {
     setSelectedSession(sessionId);
     setReplayLoading(true);
-    const r = await fetch(`${API}/analytics/session/${sessionId}?project_id=${projectId}`);
-    const events = await r.json() as SessionEvent[];
-    setReplay(events);
-    setReplayLoading(false);
+    try {
+      const r = await fetch(`${API}/analytics/session/${sessionId}?project_id=${projectId}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const events = await r.json() as SessionEvent[];
+      setReplay(events);
+    } catch {
+      setReplay([]);
+    } finally {
+      setReplayLoading(false);
+    }
   }
 
   if (!projectId) {

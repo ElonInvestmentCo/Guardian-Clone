@@ -36,10 +36,16 @@ export default function Campaigns() {
   const load = useCallback(async () => {
     if (!projectId) { setLoading(false); return; }
     setLoading(true);
-    const r = await fetch(`${API}/analytics/campaigns?project_id=${projectId}&period=${period}`);
-    const data = await r.json() as Campaign[];
-    setCampaigns(data);
-    setLoading(false);
+    try {
+      const r = await fetch(`${API}/analytics/campaigns?project_id=${projectId}&period=${period}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const data = await r.json() as Campaign[];
+      setCampaigns(data);
+    } catch {
+      setCampaigns([]);
+    } finally {
+      setLoading(false);
+    }
   }, [projectId, period]);
 
   useEffect(() => { void load(); }, [load]);

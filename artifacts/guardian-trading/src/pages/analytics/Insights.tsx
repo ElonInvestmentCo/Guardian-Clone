@@ -64,10 +64,16 @@ export default function Insights() {
   async function load() {
     if (!projectId) { setLoading(false); return; }
     setLoading(true);
-    const r = await fetch(`${API}/analytics/ai-insights?project_id=${projectId}`);
-    const data = await r.json() as { insights: Insight[] };
-    setInsights(data.insights ?? []);
-    setLoading(false);
+    try {
+      const r = await fetch(`${API}/analytics/ai-insights?project_id=${projectId}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const data = await r.json() as { insights: Insight[] };
+      setInsights(data.insights ?? []);
+    } catch {
+      setInsights([]);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => { void load(); }, [projectId]);

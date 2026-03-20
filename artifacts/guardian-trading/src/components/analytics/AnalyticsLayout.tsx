@@ -36,23 +36,27 @@ export default function AnalyticsLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     void fetch(`${API}/analytics/projects?email=${encodeURIComponent(OWNER_EMAIL)}`)
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
       .then((d) => {
         const ps = d as Project[];
         setProjects(ps);
         const currentParams = new URLSearchParams(window.location.search);
         const urlProjectId = currentParams.get("project_id");
         if (urlProjectId) {
-          // URL already has project_id, sync state
           setSelectedId(urlProjectId);
           localStorage.setItem("gt_project_id", urlProjectId);
         } else if (ps.length > 0) {
-          // Auto-select first project and navigate with it
           const firstId = selectedId || ps[0]!.id;
           setSelectedId(firstId);
           localStorage.setItem("gt_project_id", firstId);
           navigate(`${basePath}?project_id=${firstId}`);
         }
+      })
+      .catch(() => {
+        // API unavailable — leave projects empty, no crash
       });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
