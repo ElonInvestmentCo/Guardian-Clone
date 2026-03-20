@@ -28,7 +28,13 @@ import Signatures from "@/pages/Signatures";
 import ApplicationSubmitted from "@/pages/ApplicationSubmitted";
 import ApplicationPending from "@/pages/ApplicationPending";
 import AccountVerified from "@/pages/AccountVerified";
-import TradingDashboard from "@/pages/TradingDashboard";
+// Dashboard pages
+import DashboardOverview from "@/pages/dashboard/Overview";
+import DashboardPositions from "@/pages/dashboard/Positions";
+import DashboardOrders from "@/pages/dashboard/Orders";
+import DashboardPortfolio from "@/pages/dashboard/Portfolio";
+import DashboardStatements from "@/pages/dashboard/Statements";
+import DashboardSettings from "@/pages/dashboard/Settings";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/analytics/Dashboard";
 import Projects from "@/pages/analytics/Projects";
@@ -65,7 +71,12 @@ function Router() {
       <Route path="/application-submitted" component={ApplicationSubmitted} />
       <Route path="/application-pending" component={ApplicationPending} />
       <Route path="/account-verified" component={AccountVerified} />
-      <Route path="/dashboard" component={TradingDashboard} />
+      <Route path="/dashboard" component={DashboardOverview} />
+      <Route path="/positions" component={DashboardPositions} />
+      <Route path="/orders" component={DashboardOrders} />
+      <Route path="/portfolio" component={DashboardPortfolio} />
+      <Route path="/statements" component={DashboardStatements} />
+      <Route path="/settings" component={DashboardSettings} />
       <Route path="/analytics" component={Dashboard} />
       <Route path="/analytics/projects" component={Projects} />
       <Route path="/analytics/campaigns" component={Campaigns} />
