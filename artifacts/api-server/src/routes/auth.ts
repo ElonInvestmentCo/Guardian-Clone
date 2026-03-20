@@ -97,6 +97,15 @@ authRouter.post("/auth/send-verification", async (req, res) => {
 
   if (!mailResult.success) {
     logAttempt("SEND_VERIFICATION", email, `email delivery failed: ${mailResult.error ?? "unknown"}`);
+
+    if (process.env["NODE_ENV"] === "development") {
+      // In development, allow the flow to continue even if Resend can't deliver
+      // (e.g. unverified domain / test-mode account). Code is visible in the server console.
+      console.warn(`[Auth][DEV] Email delivery failed — use this code to verify: ${code}`);
+      res.json({ success: true, dev: true });
+      return;
+    }
+
     res.status(500).json({ error: "Failed to send verification email. Please try again." });
     return;
   }

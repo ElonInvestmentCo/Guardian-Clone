@@ -55,13 +55,14 @@ export default function Signup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      const data = await res.json().catch(() => ({}));
+      const data = await res.json().catch(() => ({})) as { error?: string; dev?: boolean };
       if (!res.ok) {
-        setErrors({ submit: (data as { error?: string }).error || "Failed to send verification email. Please try again." });
+        setErrors({ submit: data.error || "Failed to send verification email. Please try again." });
         return;
       }
       sessionStorage.setItem("verificationEmail", email);
       sessionStorage.setItem("verificationPassword", password);
+      if (data.dev) sessionStorage.setItem("verificationDevMode", "1");
       setSent(true);
       setTimeout(() => navigate("/email-verification"), 600);
     } catch {

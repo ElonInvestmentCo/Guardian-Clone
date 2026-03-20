@@ -13,14 +13,17 @@ export default function EmailVerification() {
   const [email, setEmail] = useState("");
   const [storedPassword, setStoredPassword] = useState("");
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN);
+  const [devMode, setDevMode] = useState(false);
   const [, navigate] = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const storedEmail = sessionStorage.getItem("verificationEmail") || "";
     const pw = sessionStorage.getItem("verificationPassword") || "";
+    const isDev = sessionStorage.getItem("verificationDevMode") === "1";
     setEmail(storedEmail);
     setStoredPassword(pw);
+    setDevMode(isDev);
     if (!storedEmail) {
       navigate("/signup");
       return;
@@ -58,6 +61,11 @@ export default function EmailVerification() {
         const data = await res.json().catch(() => ({})) as { error?: string };
         setError(data.error || "Failed to resend code. Please try again.");
         return;
+      }
+      const data = await res.json().catch(() => ({})) as { dev?: boolean };
+      if (data.dev) {
+        setDevMode(true);
+        sessionStorage.setItem("verificationDevMode", "1");
       }
       setResendSuccess(true);
       setInputCode("");
@@ -182,6 +190,16 @@ export default function EmailVerification() {
 
           {/* Body */}
           <div className="px-8 pt-8 pb-8">
+
+            {/* Dev mode notice */}
+            {devMode && (
+              <div
+                className="mb-6 px-3 py-3 rounded text-xs leading-relaxed"
+                style={{ background: "#fffbea", border: "1px solid #f0c040", color: "#7a5c00" }}
+              >
+                <strong>Development mode:</strong> Email delivery is unavailable (domain not yet verified in Resend). Check the <strong>API server console</strong> for your verification code.
+              </div>
+            )}
 
             {/* Guardian Trading logo */}
             <div className="flex justify-center mb-7">
