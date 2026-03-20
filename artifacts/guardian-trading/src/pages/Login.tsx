@@ -47,7 +47,7 @@ export default function Login() {
       if (res.ok) {
         sessionStorage.setItem("signupEmail", (data as { email?: string }).email || email);
         setLoading(false);
-        navigate("/");
+        navigate("/dashboard");
       } else {
         setLoading(false);
         setErrors({ submit: (data as { error?: string }).error || "Invalid email or password." });

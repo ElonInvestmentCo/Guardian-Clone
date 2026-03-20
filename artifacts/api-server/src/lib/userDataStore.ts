@@ -36,6 +36,19 @@ function encryptValue(plaintext: string): string {
   return `enc:${iv.toString("hex")}:${authTag.toString("hex")}:${encrypted.toString("hex")}`;
 }
 
+function decryptValue(ciphertext: string): string {
+  if (!ciphertext.startsWith("enc:")) return ciphertext;
+  const parts = ciphertext.split(":");
+  if (parts.length !== 4) return ciphertext;
+  const key = getEncryptionKey();
+  const iv = Buffer.from(parts[1]!, "hex");
+  const authTag = Buffer.from(parts[2]!, "hex");
+  const encrypted = Buffer.from(parts[3]!, "hex");
+  const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+  decipher.setAuthTag(authTag);
+  return Buffer.concat([decipher.update(encrypted), decipher.final()]).toString("utf8");
+}
+
 function encryptSensitive(data: Record<string, unknown>): Record<string, unknown> {
   const result: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(data)) {
@@ -225,4 +238,27 @@ export function setUserStatus(email: string, status: string): void {
 export function getUserData(email: string): Record<string, unknown> | null {
   const master = readMaster();
   return master[email] ?? null;
+}
+
+/**
+ * Persist a hashed password for a user so login survives server restarts.
+ * The hash is stored encrypted in the user's profile under "credentials.passwordHash".
+ */
+export function saveUserCredentials(email: string, passwordHash: string): void {
+  upsertUserStep(email, "credentials", { passwordHash });
+}
+
+/**
+ * Retrieve and decrypt the stored password hash for a user.
+ * Returns null if no credentials exist for the user.
+ */
+export function getStoredPasswordHash(email: string): string | null {
+  const profile = readProfile(email);
+  const creds = profile["credentials"] as Record<string, unknown> | undefined;
+  if (!creds || typeof creds["passwordHash"] !== "string") return null;
+  try {
+    return decryptValue(creds["passwordHash"]);
+  } catch {
+    return null;
+  }
 }

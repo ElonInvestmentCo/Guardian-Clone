@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { sendVerificationEmail } from "../lib/mailer.js";
+import { saveUserCredentials, getStoredPasswordHash } from "../lib/userDataStore.js";
 
 const authRouter = Router();
 
@@ -44,10 +45,13 @@ authRouter.post("/auth/register", (req, res) => {
     return;
   }
   const key = email.toLowerCase();
+  const hash = simpleHash(password);
   registeredUsers.set(key, {
-    passwordHash: simpleHash(password),
+    passwordHash: hash,
     createdAt: Date.now(),
   });
+  // Also persist to disk so login survives server restarts
+  saveUserCredentials(email, hash);
   logAttempt("REGISTER", email, "success");
   res.json({ success: true });
 });
@@ -60,15 +64,34 @@ authRouter.post("/auth/login", (req, res) => {
     return;
   }
 
-  const user = registeredUsers.get(email.toLowerCase());
+  const hash = simpleHash(password);
+  const key = email.toLowerCase();
 
-  if (!user || user.passwordHash !== simpleHash(password)) {
+  // Check in-memory first (fast path for current session)
+  const memUser = registeredUsers.get(key);
+  if (memUser) {
+    if (memUser.passwordHash !== hash) {
+      logAttempt("LOGIN", email, "failed — invalid credentials");
+      res.status(401).json({ error: "Invalid email or password" });
+      return;
+    }
+    logAttempt("LOGIN", email, "success (memory)");
+    res.json({ success: true, email });
+    return;
+  }
+
+  // Fall back to persistent store (survives server restarts)
+  const storedHash = getStoredPasswordHash(email);
+  if (!storedHash || storedHash !== hash) {
     logAttempt("LOGIN", email, "failed — invalid credentials");
     res.status(401).json({ error: "Invalid email or password" });
     return;
   }
 
-  logAttempt("LOGIN", email, "success");
+  // Re-populate memory cache for this session
+  registeredUsers.set(key, { passwordHash: storedHash, createdAt: Date.now() });
+
+  logAttempt("LOGIN", email, "success (disk)");
   res.json({ success: true, email });
 });
 
