@@ -8,6 +8,7 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [eyeActive, setEyeActive] = useState<"pw" | "cpw" | null>(null);
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [errors, setErrors] = useState<{
@@ -40,16 +41,13 @@ export default function Signup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-
     setErrors({});
     setLoading(true);
-
     try {
       const base = import.meta.env.BASE_URL.replace(/\/$/, "");
       const res = await fetch(`${base}/api/auth/send-verification`, {
@@ -57,13 +55,10 @@ export default function Signup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-
       if (res.ok) {
         const data = await res.json();
         sessionStorage.setItem("verificationEmail", email);
-        if (data.code) {
-          sessionStorage.setItem("verificationCode", data.code);
-        }
+        if (data.code) sessionStorage.setItem("verificationCode", data.code);
       } else {
         const err = await res.json().catch(() => ({}));
         if (res.status === 400) {
@@ -72,25 +67,23 @@ export default function Signup() {
           return;
         }
         sessionStorage.setItem("verificationEmail", email);
-        const fallback = String(Math.floor(100 + Math.random() * 900));
-        sessionStorage.setItem("verificationCode", fallback);
+        sessionStorage.setItem("verificationCode", String(Math.floor(100 + Math.random() * 900)));
       }
-
       setSent(true);
-      setTimeout(() => {
-        navigate("/email-verification");
-      }, 600);
+      setTimeout(() => navigate("/email-verification"), 600);
     } catch {
       sessionStorage.setItem("verificationEmail", email);
-      const fallback = String(Math.floor(100 + Math.random() * 900));
-      sessionStorage.setItem("verificationCode", fallback);
+      sessionStorage.setItem("verificationCode", String(Math.floor(100 + Math.random() * 900)));
       setSent(true);
-      setTimeout(() => {
-        navigate("/email-verification");
-      }, 600);
+      setTimeout(() => navigate("/email-verification"), 600);
     } finally {
       setLoading(false);
     }
+  };
+
+  const triggerEyeAnim = (field: "pw" | "cpw") => {
+    setEyeActive(field);
+    setTimeout(() => setEyeActive(null), 200);
   };
 
   return (
@@ -98,26 +91,26 @@ export default function Signup() {
       className="min-h-screen flex items-center justify-center p-6"
       style={{ background: "#f0f0f0" }}
     >
-      <div className="w-full" style={{ maxWidth: "340px" }}>
+      <div className="w-full" style={{ maxWidth: "620px" }}>
         <div
           className="bg-white overflow-hidden"
           style={{
             borderRadius: "4px",
-            boxShadow: "0 2px 18px rgba(0,0,0,0.18)",
-            border: "1px solid #ddd",
+            boxShadow: "0 2px 20px rgba(0,0,0,0.15)",
+            border: "1px solid #d0d0d0",
           }}
         >
           {/* Blue top stripe */}
-          <div style={{ height: "4px", background: "#3a7bd5" }} />
+          <div style={{ height: "5px", background: "#3a7bd5" }} />
 
           {/* Header */}
           <div
-            className="text-center px-8 pt-6 pb-5"
-            style={{ borderBottom: "1px solid #e5e5e5" }}
+            className="text-center px-10 pt-7 pb-6"
+            style={{ borderBottom: "1px solid #e0e0e0" }}
           >
             <h1
               className="font-semibold leading-snug"
-              style={{ color: "#3a7bd5", fontSize: "22px" }}
+              style={{ color: "#3a7bd5", fontSize: "24px" }}
             >
               Begin an Online Application
             </h1>
@@ -130,11 +123,14 @@ export default function Signup() {
           </div>
 
           {/* Form body */}
-          <div className="px-7 py-6">
+          <div className="px-10 py-8">
             {sent ? (
-              <div className="flex flex-col items-center justify-center py-6 gap-3">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "#e8f0fb" }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3a7bd5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <div className="flex flex-col items-center justify-center py-8 gap-4">
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center"
+                  style={{ background: "#e8f0fb" }}
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3a7bd5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
@@ -148,8 +144,8 @@ export default function Signup() {
               <form onSubmit={handleSubmit} noValidate>
 
                 {/* Email */}
-                <div className="mb-4">
-                  <label className="block text-sm mb-1" style={{ color: "#444" }}>
+                <div className="mb-5">
+                  <label className="block text-sm mb-[6px]" style={{ color: "#333" }}>
                     Email <span style={{ color: "#e53e3e" }}>*</span>
                   </label>
                   <input
@@ -162,11 +158,12 @@ export default function Signup() {
                     }}
                     className="w-full text-sm focus:outline-none"
                     style={{
-                      background: "#ebebeb",
+                      background: "#e8e8e8",
                       border: "none",
                       borderRadius: "3px",
-                      padding: "10px 12px",
+                      padding: "13px 14px",
                       color: "#333",
+                      height: "46px",
                     }}
                   />
                   {errors.email && (
@@ -175,8 +172,8 @@ export default function Signup() {
                 </div>
 
                 {/* Promo Code */}
-                <div className="mb-4">
-                  <label className="block text-sm mb-1" style={{ color: "#444" }}>
+                <div className="mb-5">
+                  <label className="block text-sm mb-[6px]" style={{ color: "#333" }}>
                     Promo Code
                   </label>
                   <input
@@ -185,18 +182,19 @@ export default function Signup() {
                     onChange={(e) => setPromoCode(e.target.value)}
                     className="w-full text-sm focus:outline-none"
                     style={{
-                      background: "#ebebeb",
+                      background: "#e8e8e8",
                       border: "none",
                       borderRadius: "3px",
-                      padding: "10px 12px",
+                      padding: "13px 14px",
                       color: "#333",
+                      height: "46px",
                     }}
                   />
                 </div>
 
                 {/* Create Password */}
-                <div className="mb-4">
-                  <label className="block text-sm mb-1" style={{ color: "#444" }}>
+                <div className="mb-5">
+                  <label className="block text-sm mb-[6px]" style={{ color: "#333" }}>
                     Create Password <span style={{ color: "#e53e3e" }}>*</span>
                   </label>
                   <div className="relative">
@@ -210,21 +208,36 @@ export default function Signup() {
                       }}
                       className="w-full text-sm focus:outline-none"
                       style={{
-                        background: "#ebebeb",
+                        background: "#e8e8e8",
                         border: "none",
                         borderRadius: "3px",
-                        padding: "10px 44px 10px 12px",
+                        padding: "13px 52px 13px 14px",
                         color: "#333",
+                        height: "46px",
                       }}
                     />
                     <button
                       type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-0 top-0 h-full flex items-center justify-center transition-opacity hover:opacity-70"
-                      style={{ width: "42px" }}
+                      onClick={() => {
+                        triggerEyeAnim("pw");
+                        setShowPassword((v) => !v);
+                      }}
+                      className="absolute right-0 top-0 h-full flex items-center justify-center"
+                      style={{ width: "48px" }}
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
-                      <EyeIcon open={showPassword} />
+                      <img
+                        src={showPassword ? "/eye-open-clean.png" : "/eye-closed-clean.png"}
+                        alt=""
+                        style={{
+                          width: "30px",
+                          height: "30px",
+                          objectFit: "contain",
+                          filter: "brightness(0) opacity(0.65)",
+                          transform: eyeActive === "pw" ? "scale(0.82)" : "scale(1)",
+                          transition: "transform 0.15s cubic-bezier(0.34,1.56,0.64,1)",
+                        }}
+                      />
                     </button>
                   </div>
                   {errors.password && (
@@ -233,8 +246,8 @@ export default function Signup() {
                 </div>
 
                 {/* Confirm Password */}
-                <div className="mb-6">
-                  <label className="block text-sm mb-1" style={{ color: "#444" }}>
+                <div className="mb-8">
+                  <label className="block text-sm mb-[6px]" style={{ color: "#333" }}>
                     Confirm Password <span style={{ color: "#e53e3e" }}>*</span>
                   </label>
                   <div className="relative">
@@ -249,21 +262,36 @@ export default function Signup() {
                       }}
                       className="w-full text-sm focus:outline-none"
                       style={{
-                        background: "#ebebeb",
+                        background: "#e8e8e8",
                         border: "none",
                         borderRadius: "3px",
-                        padding: "10px 44px 10px 12px",
+                        padding: "13px 52px 13px 14px",
                         color: "#333",
+                        height: "46px",
                       }}
                     />
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-0 top-0 h-full flex items-center justify-center transition-opacity hover:opacity-70"
-                      style={{ width: "42px" }}
+                      onClick={() => {
+                        triggerEyeAnim("cpw");
+                        setShowConfirmPassword((v) => !v);
+                      }}
+                      className="absolute right-0 top-0 h-full flex items-center justify-center"
+                      style={{ width: "48px" }}
                       aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                     >
-                      <EyeIcon open={showConfirmPassword} />
+                      <img
+                        src={showConfirmPassword ? "/eye-open-clean.png" : "/eye-closed-clean.png"}
+                        alt=""
+                        style={{
+                          width: "30px",
+                          height: "30px",
+                          objectFit: "contain",
+                          filter: "brightness(0) opacity(0.65)",
+                          transform: eyeActive === "cpw" ? "scale(0.82)" : "scale(1)",
+                          transition: "transform 0.15s cubic-bezier(0.34,1.56,0.64,1)",
+                        }}
+                      />
                     </button>
                   </div>
                   {errors.confirmPassword && (
@@ -272,7 +300,7 @@ export default function Signup() {
                 </div>
 
                 {errors.submit && (
-                  <p className="mb-3 text-xs text-center" style={{ color: "#e53e3e" }}>{errors.submit}</p>
+                  <p className="mb-4 text-xs text-center" style={{ color: "#e53e3e" }}>{errors.submit}</p>
                 )}
 
                 {/* Submit */}
@@ -280,15 +308,16 @@ export default function Signup() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="text-white text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-60 flex items-center gap-2"
+                    className="text-white text-sm font-semibold flex items-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-60"
                     style={{
                       background: "#3a7bd5",
                       borderRadius: "4px",
-                      padding: "9px 36px",
+                      padding: "10px 44px",
                       border: "none",
                       cursor: loading ? "not-allowed" : "pointer",
-                      minWidth: "110px",
+                      minWidth: "120px",
                       justifyContent: "center",
+                      fontSize: "15px",
                     }}
                   >
                     {loading ? (
@@ -307,18 +336,6 @@ export default function Signup() {
         </div>
       </div>
     </div>
-  );
-}
-
-function EyeIcon({ open }: { open: boolean }) {
-  return (
-    <img
-      src={open ? "/eye-open-clean.png" : "/eye-closed-clean.png"}
-      alt={open ? "Hide password" : "Show password"}
-      width={22}
-      height={22}
-      style={{ objectFit: "contain", filter: "brightness(0) opacity(0.55)" }}
-    />
   );
 }
 
