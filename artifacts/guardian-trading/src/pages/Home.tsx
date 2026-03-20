@@ -85,7 +85,7 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
             {/* Left column */}
             <div className="flex-1 max-w-[520px]">
-              <p className="text-[11px] font-bold tracking-widest uppercase text-white/70 mb-4">TAKE ON THE MARKETS WITH GUARDIAN</p>
+              <p className="text-[13px] font-bold tracking-widest uppercase text-white mb-4">TAKE ON THE MARKETS WITH GUARDIAN</p>
               <h1 className="text-[2.6rem] lg:text-5xl font-display font-bold leading-tight text-white mb-8">
                 Optimized services, tools and support designed specifically for active traders.
               </h1>

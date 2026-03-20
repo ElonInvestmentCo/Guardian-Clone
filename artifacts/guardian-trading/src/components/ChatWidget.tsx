@@ -1,9 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X, ArrowLeft, MoreHorizontal, Minus } from "lucide-react";
+import { useLocation } from "wouter";
 import chatIcon from "@assets/DAFF4A91-FB9A-40ED-9CF7-E072FEA1BB59_1773727452638.png";
+import needHelpImg from "@assets/8362510f188d6ddbeb52744b9d477783_1773966680140.png";
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
+  const [showIcon, setShowIcon] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupDismissed, setPopupDismissed] = useState(false);
+  const [location] = useLocation();
+
+  const startTimers = useCallback(() => {
+    setShowIcon(false);
+    setShowPopup(false);
+    setPopupDismissed(false);
+
+    const iconTimer = setTimeout(() => setShowIcon(true), 5000);
+    const popupTimer = setTimeout(() => setShowPopup(true), 6000);
+
+    return () => {
+      clearTimeout(iconTimer);
+      clearTimeout(popupTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    const cleanup = startTimers();
+    return cleanup;
+  }, [location, startTimers]);
+
+  const handlePopupClick = () => {
+    setOpen(true);
+    setShowPopup(false);
+  };
+
+  const handlePopupClose = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowPopup(false);
+    setPopupDismissed(true);
+  };
 
   return (
     <>
@@ -55,15 +91,11 @@ export default function ChatWidget() {
 
         {/* Chat body */}
         <div className="px-4 pb-4 flex flex-col gap-3">
-          {/* Message bubble */}
           <div className="flex items-start gap-2">
-            {/* Avatar */}
             <div className="w-8 h-8 rounded-full bg-[#4a7fbd] flex items-center justify-center text-white font-bold text-sm flex-shrink-0 mt-1">
               R
             </div>
-            {/* Bubble */}
             <div className="flex-1 rounded-2xl rounded-tl-sm overflow-hidden" style={{ background: "#2a2a2a" }}>
-              {/* Video preview */}
               <video
                 src={`${import.meta.env.BASE_URL}chat-preview.mp4`}
                 className="w-full h-[170px] object-cover object-center"
@@ -99,11 +131,44 @@ export default function ChatWidget() {
         </div>
       </div>
 
-      {/* Trigger button */}
+      {/* "Need Help?" popup — appears 6s after page load, clickable to open chat */}
+      {!popupDismissed && (
+        <div
+          className={`fixed bottom-[84px] right-5 z-40 w-[190px] rounded-xl overflow-hidden shadow-2xl cursor-pointer transition-all duration-500 ease-out ${
+            showPopup && !open
+              ? "opacity-100 translate-y-0 pointer-events-auto"
+              : "opacity-0 translate-y-3 pointer-events-none"
+          }`}
+          onClick={handlePopupClick}
+          role="button"
+          aria-label="Open chat"
+        >
+          {/* Close (X) button */}
+          <button
+            onClick={handlePopupClose}
+            aria-label="Close popup"
+            className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-black/40 flex items-center justify-center text-white hover:bg-black/70 transition-colors"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+          <img
+            src={needHelpImg}
+            alt="Need Help? Click here and start chatting with us"
+            className="block w-full h-auto"
+          />
+        </div>
+      )}
+
+      {/* Trigger button — appears 5s after page load */}
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          setOpen((v) => !v);
+          if (showPopup) setShowPopup(false);
+        }}
         aria-label="Open chat"
-        className="fixed bottom-5 right-5 z-50 w-[62px] h-[62px] rounded-full shadow-2xl transition-transform hover:scale-105 active:scale-95 focus:outline-none overflow-hidden bg-transparent"
+        className={`fixed bottom-5 right-5 z-50 w-[62px] h-[62px] rounded-full shadow-2xl transition-all duration-500 hover:scale-105 active:scale-95 focus:outline-none overflow-hidden bg-transparent ${
+          showIcon ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none"
+        }`}
       >
         {open ? (
           <div className="w-full h-full rounded-full bg-[#5aabdb] flex items-center justify-center">
