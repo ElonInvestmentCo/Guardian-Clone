@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { X, ArrowLeft, Minus, Home, MessageSquare } from "lucide-react";
 import { useLocation } from "wouter";
+import chatIcon from "@assets/DAFF4A91-FB9A-40ED-9CF7-E072FEA1BB59_1773727452638.png";
 import needHelpImg from "@assets/8362510f188d6ddbeb52744b9d477783_1773966680140.png";
 import heroPattern from "@assets/pattern_1773965291387.png";
 import letsChatBtn from "@assets/IMG_8080_1773969229592.PNG";
@@ -16,21 +17,25 @@ function formatTime() {
   return `${h}:${m} ${ampm}`;
 }
 
+type AnimState = "hidden" | "float" | "idle" | "hover";
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [screen, setScreen] = useState<Screen>("home");
   const [showIcon, setShowIcon] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupDismissed, setPopupDismissed] = useState(false);
-  const [hovered, setHovered] = useState(false);
+  const [animState, setAnimState] = useState<AnimState>("hidden");
   const [location] = useLocation();
 
   const startTimers = useCallback(() => {
     setShowIcon(false);
     setShowPopup(false);
     setPopupDismissed(false);
+    setAnimState("hidden");
     const iconTimer = setTimeout(() => {
       setShowIcon(true);
+      setAnimState("float");
     }, 5000);
     const popupTimer = setTimeout(() => setShowPopup(true), 6000);
     return () => {
@@ -310,49 +315,42 @@ export default function ChatWidget() {
 
       {/* Trigger button */}
       <button
-        onClick={() => open ? handleClose() : handleOpen()}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        aria-label="Open chat"
-        style={{
-          position: "fixed",
-          bottom: "24px",
-          right: "24px",
-          zIndex: 9999,
-          width: "60px",
-          height: "60px",
-          borderRadius: "50%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "#000000",
-          boxShadow: hovered
-            ? "0 8px 24px rgba(0,0,0,0.6), 0 0 0 2px rgba(90,171,219,0.4)"
-            : "0 4px 16px rgba(0,0,0,0.5)",
-          transform: hovered && !open ? "translateY(-6px) scale(1.06)" : "translateY(0) scale(1)",
-          transition: "transform 0.22s ease, box-shadow 0.22s ease, opacity 0.4s ease",
-          opacity: showIcon ? 1 : 0,
-          pointerEvents: showIcon ? "auto" : "none",
-          border: "none",
-          outline: "none",
-          cursor: "pointer",
+        onClick={() => {
+          if (open) {
+            handleClose();
+          } else {
+            handleOpen();
+          }
         }}
+        onMouseEnter={() => {
+          if (!open) setAnimState("hover");
+        }}
+        onMouseLeave={() => {
+          if (!open) setAnimState("idle");
+        }}
+        onAnimationEnd={() => {
+          if (animState === "float") setAnimState("idle");
+        }}
+        aria-label="Open chat"
+        className={[
+          "fixed bottom-5 right-5 z-50 w-[62px] h-[62px] rounded-full focus:outline-none overflow-hidden bg-transparent active:scale-95 transition-opacity duration-500",
+          showIcon ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none",
+          !open && animState === "float" ? "chat-btn-float" : "",
+          !open && animState === "idle"  ? "chat-btn-idle"  : "",
+          !open && animState === "hover" ? "chat-btn-hover" : "",
+        ].join(" ")}
       >
         {open ? (
-          <X style={{ width: "22px", height: "22px", color: "#76d0f4" }} />
+          <div className="w-full h-full rounded-full bg-[#5aabdb] flex items-center justify-center">
+            <X className="w-6 h-6 text-white" />
+          </div>
         ) : (
-          /* Speech bubble with three blue dots */
-          <svg viewBox="0 0 40 40" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M20 4C11.163 4 4 10.492 4 18.4c0 4.636 2.37 8.764 6.08 11.48L8.5 35.5l6.84-3.2c1.48.38 3.03.6 4.66.6 8.837 0 16-6.492 16-14.5S28.837 4 20 4z"
-              fill="#111111"
-              stroke="#333333"
-              strokeWidth="1"
-            />
-            <circle cx="13.5" cy="18.5" r="2.2" fill="#5aabdb" />
-            <circle cx="20"   cy="18.5" r="2.2" fill="#5aabdb" />
-            <circle cx="26.5" cy="18.5" r="2.2" fill="#5aabdb" />
-          </svg>
+          <img
+            src={chatIcon}
+            alt="Chat"
+            className="w-full h-full object-cover rounded-full"
+            style={{ imageRendering: "crisp-edges" }}
+          />
         )}
       </button>
     </>
