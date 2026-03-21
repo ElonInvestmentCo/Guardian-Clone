@@ -12,35 +12,55 @@ export function Navbar() {
   }, [location]);
 
   const navLinks = [
-    { name: "About", href: "/about" },
-    { name: "Services", href: "/#services" },
-    { name: "Platforms", href: "/platforms" },
-    { name: "Pricing", href: "/#pricing" },
-    { name: "Insights", href: "/#insights" },
+    { name: "About",      href: "/about" },
+    { name: "Services",   href: "/#services" },
+    { name: "Platforms",  href: "/platforms" },
+    { name: "Pricing",    href: "/#pricing" },
+    { name: "Insights",   href: "/#insights" },
     { name: "Contact Us", href: "/contact" },
   ];
 
   return (
     <>
-      <nav className="fixed top-0 w-full z-50 bg-[#151515] border-b border-white/5">
-        <div className="w-full px-6 flex items-center justify-between h-[56px]">
-          {/* Logo */}
+      {/* ── Desktop / Tablet Navbar ─────────────────────────────────────────── */}
+      <nav
+        className="fixed top-0 w-full z-50"
+        style={{
+          background: "#0b1120",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          height: "85px",
+        }}
+      >
+        <div
+          className="w-full h-full flex items-center justify-between"
+          style={{ padding: "0 32px" }}
+        >
+          {/* ── Logo ─────────────────────────────────────────────────────────── */}
           <Link href="/" className="flex items-center flex-shrink-0">
             <img
               src={guardianLogo}
               alt="Guardian Trading"
-              className="h-10 w-auto object-contain"
+              style={{ height: "52px", width: "auto", objectFit: "contain" }}
               data-testid="img-logo"
             />
           </Link>
 
-          {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-6">
+          {/* ── Desktop Nav Links ─────────────────────────────────────────────── */}
+          <div className="hidden lg:flex items-center" style={{ gap: "36px" }}>
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-[13px] text-[#aaa] hover:text-white transition-colors"
+                className="transition-colors"
+                style={{
+                  fontSize: "14px",
+                  fontWeight: 600,
+                  color: "#c8d4e0",
+                  letterSpacing: "0.01em",
+                  textDecoration: "none",
+                }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#ffffff"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#c8d4e0"; }}
                 data-testid={`link-nav-${link.name.toLowerCase().replace(/\s/g, "-")}`}
               >
                 {link.name}
@@ -48,68 +68,132 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* Desktop Right Buttons */}
-          <div className="hidden lg:flex items-center gap-3">
+          {/* ── Desktop Right Buttons ─────────────────────────────────────────── */}
+          <div className="hidden lg:flex items-center" style={{ gap: "12px" }}>
+            {/* Login */}
             <Link
               href="/login"
-              className="text-[13px] text-white hover:text-primary transition-colors px-2"
+              style={{
+                fontSize: "14px", fontWeight: 600,
+                color: "#ffffff",
+                textDecoration: "none",
+                padding: "0 8px",
+                transition: "color 0.2s",
+              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#76d0f4"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#ffffff"; }}
               data-testid="link-login"
             >
               Login
             </Link>
+
+            {/* Client Portal BETA */}
             <Link
               href="/login"
-              className="text-[13px] text-white border border-[#4a7fbd] hover:bg-[#4a7fbd]/20 transition-colors px-4 py-1.5"
+              style={{
+                fontSize: "14px", fontWeight: 600,
+                color: "#ffffff",
+                border: "1.5px solid #3a6fa8",
+                borderRadius: "4px",
+                padding: "9px 20px",
+                textDecoration: "none",
+                transition: "background 0.2s, border-color 0.2s",
+                whiteSpace: "nowrap",
+              }}
+              onMouseEnter={(e) => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.background = "rgba(74,127,189,0.18)";
+                el.style.borderColor = "#5a90c8";
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.background = "transparent";
+                el.style.borderColor = "#3a6fa8";
+              }}
               data-testid="link-client-portal"
             >
               Client Portal BETA
             </Link>
+
+            {/* Create Account */}
             <Link
               href="/signup"
-              className="text-[13px] text-white bg-[#4a7fbd] hover:bg-[#3d6fad] transition-colors px-4 py-1.5"
+              style={{
+                fontSize: "14px", fontWeight: 700,
+                color: "#ffffff",
+                background: "#2a6abf",
+                borderRadius: "4px",
+                padding: "9px 22px",
+                textDecoration: "none",
+                transition: "background 0.2s",
+                whiteSpace: "nowrap",
+              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#1e5aaa"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "#2a6abf"; }}
               data-testid="link-create-account"
             >
               Create Account
             </Link>
           </div>
 
-          {/* Mobile Toggle */}
+          {/* ── Mobile Toggle ────────────────────────────────────────────────── */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="lg:hidden text-white p-2"
             data-testid="button-mobile-menu"
           >
-            {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </nav>
 
-      {/* Mobile Menu */}
+      {/* ── Mobile Menu ──────────────────────────────────────────────────────── */}
       {isOpen && (
-        <div className="fixed inset-0 z-40 bg-[#151515] pt-14 flex flex-col lg:hidden">
-          <div className="flex flex-col px-6 py-6 gap-1">
+        <div
+          className="fixed inset-0 z-40 flex flex-col lg:hidden"
+          style={{ background: "#0b1120", paddingTop: "85px" }}
+        >
+          <div className="flex flex-col px-8 py-4 gap-0">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-white text-lg py-3 border-b border-white/5"
+                style={{
+                  color: "white", fontSize: "17px", fontWeight: 600,
+                  padding: "14px 0",
+                  borderBottom: "1px solid rgba(255,255,255,0.07)",
+                  textDecoration: "none",
+                  display: "block",
+                }}
                 data-testid={`link-mobile-${link.name.toLowerCase()}`}
               >
                 {link.name}
               </Link>
             ))}
           </div>
-          <div className="px-6 mt-4 flex flex-col gap-3">
+          <div className="px-8 mt-6 flex flex-col gap-3">
             <Link
               href="/login"
-              className="w-full py-3 border border-[#4a7fbd] text-white text-center text-sm font-medium"
+              style={{
+                display: "block", padding: "14px",
+                border: "1.5px solid #3a6fa8",
+                color: "white", textAlign: "center",
+                fontSize: "15px", fontWeight: 600,
+                textDecoration: "none", borderRadius: "4px",
+              }}
               data-testid="link-mobile-client-portal"
             >
               Client Portal BETA
             </Link>
             <Link
               href="/signup"
-              className="w-full py-3 bg-[#4a7fbd] text-white text-center text-sm font-medium"
+              style={{
+                display: "block", padding: "14px",
+                background: "#2a6abf",
+                color: "white", textAlign: "center",
+                fontSize: "15px", fontWeight: 700,
+                textDecoration: "none", borderRadius: "4px",
+              }}
               data-testid="link-mobile-create-account"
             >
               Create Account

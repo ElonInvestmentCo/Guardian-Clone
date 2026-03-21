@@ -1,0 +1,123 @@
+REPLICATE AND USE PIXEL PERFECT DESIGN.
+
+### 1. HEADER / NAVBAR (MATCH ATTACHED SCREENSHOT EXACTLY)
+
+* Replicate the header/navbar to look EXACTLY like the attached screenshot.
+* It must be **full-width (edge-to-edge)** with no side gaps.
+* Increase the height to make it look **bold, premium, and dominant**.
+* Ensure:
+
+  * Clean horizontal alignment
+  * Proper spacing between logo, menu items, and buttons
+  * Crisp typography (semi-bold to bold)
+  * Modern dark theme styling
+  * Smooth hover effects on menu items
+
+Required styling:
+
+* Height: ~75–90px
+* Font weight: 600–700
+* Larger logo size
+* Even spacing between navigation links
+* Buttons styled clearly (e.g., “Login”, “Create Account”)
+
+Remove:
+
+* Any max-width containers limiting the navbar
+* Any unwanted margins/padding causing gaps
+
+Example:
+.navbar {
+width: 100%;
+height: 85px;
+padding: 0 30px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+---
+
+### 2. UPDATE THE CHAT WIDGET UI AND BEHAVIOR IMMEDIATELY:
+
+#### REPLACE CURRENT CHAT WIDGET DESIGN
+
+* Remove the existing chat widget design and animation completely.
+* Replace it with a **speech bubble icon with three dots (...) inside**.
+* This icon should clearly represent messaging/chat (modern UI style).
+* Use SVG or an icon library (FontAwesome preferred).
+
+#### POSITION (FLOATING BUTTON)
+
+.chat-widget {
+position: fixed;
+bottom: 20px;
+right: 20px;
+z-index: 9999;
+}
+
+#### DEFAULT LOOK (BUBBLE STYLE)
+
+* Perfect circle
+* Clean modern design
+* Subtle shadow
+
+.chat-widget {
+width: 60px;
+height: 60px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+background-color: #0b1f3a;
+box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+transition: all 0.25s ease;
+}
+
+#### REMOVE OLD ANIMATION
+
+* Completely REMOVE all previous animations (floatOnce, pulse, etc.)
+* NO animation on page load.
+
+#### NEW INTERACTION (FLOAT ON HOVER ONLY)
+
+* When cursor touches the widget:
+  → It gently floats upward like a bubble
+  → Then pauses (no looping)
+
+.chat-widget:hover {
+transform: translateY(-8px);
+}
+
+#### ADD SCALE + COLOR FEEDBACK
+
+* On hover:
+  → Slight scale up
+  → Slight color highlight
+
+.chat-widget:hover {
+transform: translateY(-8px) scale(1.05);
+background-color: #00c8ff;
+}
+
+#### ICON STYLE
+
+.chat-widget svg {
+width: 28px;
+height: 28px;
+fill: white;
+}
+
+---
+
+### FINAL REQUIREMENTS:
+
+* Pixel-perfect match to the screenshot for the navbar
+* Clean, modern, professional UI
+* Chat widget must:
+  → NOT animate automatically
+  → ONLY react on hover
+  → Float slightly like a bubble and stop
+  → Use speech bubble with three dots icon
+
+Replace any previous implementation completely.
