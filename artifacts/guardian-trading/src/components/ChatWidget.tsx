@@ -20,12 +20,12 @@ function formatTime() {
 type AnimState = "hidden" | "float" | "idle" | "hover";
 
 export default function ChatWidget() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [screen, setScreen] = useState<Screen>("home");
-  const [showIcon, setShowIcon] = useState(false);
+  const [showIcon, setShowIcon] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
   const [popupDismissed, setPopupDismissed] = useState(false);
-  const [animState, setAnimState] = useState<AnimState>("hidden");
+  const [animState, setAnimState] = useState<AnimState>("idle");
   const [location] = useLocation();
 
   const startTimers = useCallback(() => {
@@ -333,23 +333,17 @@ export default function ChatWidget() {
         }}
         aria-label="Open chat"
         className={[
-          "fixed bottom-5 right-5 z-50 w-[62px] h-[62px] rounded-full focus:outline-none overflow-hidden active:scale-95 transition-opacity duration-500",
-          showIcon ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none",
+          "fixed bottom-5 right-5 z-50 w-[62px] h-[62px] rounded-full focus:outline-none overflow-hidden active:scale-95 transition-all duration-500",
+          showIcon && !open ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none",
           !open && animState === "float" ? "chat-btn-float" : "",
           !open && animState === "hover" ? "chat-btn-hover" : "",
         ].join(" ")}
       >
-        {open ? (
-          <div className="w-full h-full bg-[#5aabdb] flex items-center justify-center">
-            <X className="w-6 h-6 text-white" />
-          </div>
-        ) : (
-          <img
-            src={chatIcon}
-            alt="Chat"
-            className="w-full h-full object-cover"
-          />
-        )}
+        <img
+          src={chatIcon}
+          alt="Chat"
+          className="w-full h-full object-cover"
+        />
       </button>
     </>
   );
