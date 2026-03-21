@@ -40,7 +40,7 @@ export function Navbar() {
             <img
               src={guardianLogo}
               alt="Guardian Trading"
-              style={{ height: "56px", width: "auto", objectFit: "contain" }}
+              style={{ height: "48px", width: "auto", objectFit: "contain" }}
               data-testid="img-logo"
             />
           </Link>
@@ -53,7 +53,7 @@ export function Navbar() {
                 href={link.href}
                 className="transition-colors"
                 style={{
-                  fontSize: "15.5px",
+                  fontSize: "13.5px",
                   fontWeight: 600,
                   color: "#c8d4e0",
                   letterSpacing: "0.01em",
@@ -74,7 +74,7 @@ export function Navbar() {
             <Link
               href="/login"
               style={{
-                fontSize: "15px", fontWeight: 600,
+                fontSize: "13.5px", fontWeight: 600,
                 color: "#ffffff",
                 textDecoration: "none",
                 padding: "0 8px",
@@ -91,7 +91,7 @@ export function Navbar() {
             <Link
               href="/login"
               style={{
-                fontSize: "15px", fontWeight: 600,
+                fontSize: "13.5px", fontWeight: 600,
                 color: "#ffffff",
                 border: "1.5px solid #3a6fa8",
                 borderRadius: "4px",
@@ -119,7 +119,7 @@ export function Navbar() {
             <Link
               href="/signup"
               style={{
-                fontSize: "15px", fontWeight: 700,
+                fontSize: "13.5px", fontWeight: 700,
                 color: "#ffffff",
                 background: "#2a6abf",
                 borderRadius: "4px",
