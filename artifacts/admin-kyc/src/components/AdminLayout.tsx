@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { clearSession } from "@/lib/api";
 
-export type View = "kyc" | "risk" | "audit";
+export type View = "kyc" | "risk" | "audit" | "users" | "activity";
 
 interface NavItem { id: View; label: string; icon: React.ReactNode; shortLabel: string; }
 
@@ -18,6 +18,18 @@ const NAV: NavItem[] = [
     ),
   },
   {
+    id: "users",
+    label: "Users",
+    shortLabel: "Users",
+    icon: (
+      <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.75" viewBox="0 0 24 24">
+        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+      </svg>
+    ),
+  },
+  {
     id: "risk",
     label: "Risk Events",
     shortLabel: "Risk",
@@ -26,6 +38,16 @@ const NAV: NavItem[] = [
         <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
         <line x1="12" y1="9" x2="12" y2="13" />
         <line x1="12" y1="17" x2="12.01" y2="17" />
+      </svg>
+    ),
+  },
+  {
+    id: "activity",
+    label: "Activity Logs",
+    shortLabel: "Activity",
+    icon: (
+      <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.75" viewBox="0 0 24 24">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
       </svg>
     ),
   },
@@ -122,7 +144,7 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
 
         {/* Mobile bottom nav */}
         <nav className="flex md:hidden flex-shrink-0 border-t border-gray-200 bg-white">
-          {NAV.map(({ id, label, shortLabel, icon }) => (
+          {NAV.map(({ id, shortLabel, icon }) => (
             <button
               key={id}
               onClick={() => handleNav(id)}
@@ -133,10 +155,9 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
                 border: "none",
                 cursor: "pointer",
               }}
-              aria-label={label}
             >
               {icon}
-              <span style={{ fontSize: "10px", fontWeight: activeView === id ? "700" : "400" }}>
+              <span style={{ fontSize: "9px", fontWeight: activeView === id ? "700" : "400" }}>
                 {shortLabel}
               </span>
             </button>
@@ -180,7 +201,7 @@ function SidebarContent({
       <div className="mx-4 mb-3 border-t border-white/10" />
 
       {/* Nav items */}
-      <nav className="flex-1 px-3 space-y-0.5">
+      <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
         {NAV.map(({ id, label, icon }) => {
           const active = activeView === id;
           return (

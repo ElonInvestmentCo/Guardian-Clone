@@ -460,4 +460,89 @@ router.get("/admin/global-audit", (req: Request, res: Response): void => {
   } catch (err) { res.status(500).json({ error: "Failed to load audit log" }); }
 });
 
+// ── GET /admin/all-users ──────────────────────────────────────────────────────
+router.get("/admin/all-users", (req: Request, res: Response): void => {
+  try {
+    const master = readMasterUsers();
+    const search  = (req.query.search  as string ?? "").toLowerCase();
+    const statusF = req.query.status   as string | undefined;
+    const roleF   = req.query.role     as string | undefined;
+
+    const users = Object.values(master).map((u) => {
+      const email   = u.email as string;
+      const profile = getUserProfileData(email);
+      const risk    = evaluateRisk(email);
+      const completed = (profile._completedStepNumbers as number[] | undefined) ?? [];
+      const p         = profile.personal as Record<string, string> | undefined;
+      const bal       = profile._balance  as { balance?: number; profit?: number } | undefined;
+      const auditLog  = (profile._auditLog as Array<Record<string, unknown>>) ?? [];
+      const lastAction = auditLog.length > 0 ? auditLog[auditLog.length - 1] : null;
+
+      return {
+        email,
+        name:           [p?.firstName ?? "", p?.lastName ?? ""].join(" ").trim() || email,
+        status:         (u.status as string) ?? "pending",
+        role:           (u.role   as string) ?? "user",
+        createdAt:      u.createdAt as string,
+        updatedAt:      u.updatedAt as string,
+        completedSteps: completed.length,
+        totalSteps:     11,
+        riskScore:      risk.score,
+        riskLevel:      risk.level,
+        flagCount:      risk.flags.length,
+        balance:        bal?.balance ?? 0,
+        profit:         bal?.profit  ?? 0,
+        lastActionType: lastAction ? (lastAction.actionType as string) : null,
+        lastActionAt:   lastAction ? (lastAction.timestamp  as string) : null,
+        auditCount:     auditLog.length,
+      };
+    });
+
+    const filtered = users
+      .filter((u) => !statusF || u.status === statusF)
+      .filter((u) => !roleF   || u.role   === roleF)
+      .filter((u) => !search  || u.email.toLowerCase().includes(search) || u.name.toLowerCase().includes(search))
+      .sort((a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime());
+
+    res.json({ total: filtered.length, users: filtered });
+  } catch (err) {
+    console.error("[Admin] all-users error:", err);
+    res.status(500).json({ error: "Failed to load users" });
+  }
+});
+
+// ── POST /admin/flag-user ─────────────────────────────────────────────────────
+router.post("/admin/flag-user", (req: Request, res: Response): void => {
+  try {
+    const { email, reason, adminNote } = req.body as { email: string; reason?: string; adminNote?: string };
+    if (!email) { res.status(400).json({ error: "email required" }); return; }
+    if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
+    const profile  = getUserProfileData(email);
+    const auditLog = (profile._auditLog as unknown[]) ?? [];
+    auditLog.push({ actionType: "ADMIN_FLAG", actor: "admin", reason: reason ?? null, note: adminNote ?? null, timestamp: new Date().toISOString() });
+    setUserProfileMeta(email, "_auditLog", auditLog);
+    setUserProfileMeta(email, "_flagged", true);
+    console.log(`[Admin] FLAGGED: ${email}`);
+    res.json({ success: true, email });
+  } catch (err) { res.status(500).json({ error: "Failed to flag user" }); }
+});
+
+// ── POST /admin/reset-password ────────────────────────────────────────────────
+router.post("/admin/reset-password", (req: Request, res: Response): void => {
+  try {
+    const { email, adminNote } = req.body as { email: string; adminNote?: string };
+    if (!email) { res.status(400).json({ error: "email required" }); return; }
+    if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
+    const profile  = getUserProfileData(email);
+    const creds    = (profile.credentials as Record<string, unknown>) ?? {};
+    delete creds.passwordHash;
+    setUserProfileMeta(email, "credentials", creds);
+    const auditLog = (profile._auditLog as unknown[]) ?? [];
+    auditLog.push({ actionType: "ADMIN_RESET_PASSWORD", actor: "admin", note: adminNote ?? null, timestamp: new Date().toISOString() });
+    setUserProfileMeta(email, "_auditLog", auditLog);
+    console.log(`[Admin] PASSWORD RESET: ${email}`);
+    res.json({ success: true, email });
+  } catch (err) { res.status(500).json({ error: "Failed to reset password" }); }
+});
+
 export default router;

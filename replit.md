@@ -119,23 +119,43 @@ Multi-step onboarding platform at `/` (guardian-trading artifact).
 
 ## Admin KYC Dashboard
 
-Separate web artifact at `/admin-kyc/`.
+Separate web artifact at `/admin-kyc/`. JWT Bearer token authentication (8h session).
 
-### Features
-- **KYC Review Queue** — sortable table of all applicants with risk score + status badges
-- **User Detail Side Panel** — full profile, risk flags, audit trail on row click
-- **Approve / Reject / Request Resubmission** actions with admin note field
-- **Admin Key authentication** — stores key in localStorage, protected by `X-Admin-Key` header
-- **Risk score visualization** — score gauge with severity flags list
-- **Audit timeline** — chronological log of all admin actions per user
+### Views (5 total)
+1. **KYC Queue** — Sortable table of all applicants with risk score, status badges, side panel with profile/risk/audit tabs and approve/reject/resubmit actions
+2. **Users** — Full user registry with search, status/role filters, sortable columns, per-row quick actions (suspend/ban/reactivate), "New User" modal, "View" → User Profile navigation
+3. **Risk Events** — Live fraud/risk flag monitor across all users
+4. **Activity Logs** — Global audit log with search, action-type filter, "View User →" button to open profile
+5. **Audit Log** — Timeline view of all admin actions with expand-for-detail cards
+
+### User Profile View
+Full-page detail accessed by clicking any user (from Users or Activity Logs). Tabs:
+- **Profile** — All KYC sections (Personal, Identity, Financial, Banking, Account, Trusted Contacts) with inline edit for name
+- **Risk** — Risk score gauge + flagged rules
+- **Audit** — Per-user audit timeline with color-coded action types
+- **Balance** — Current balance display + Set Balance form + balance history
+- **Admin Actions** — Full control panel: approve/reject/resubmit, suspend/ban/reactivate, assign role, reset password, flag user, delete account (with confirmation)
 
 ### Backend Admin Routes (api-server)
 - `GET  /api/admin/kyc-queue` — paginated user list, sorted by risk score
+- `GET  /api/admin/all-users` — all users with role, balance, last activity (searchable/filterable)
 - `GET  /api/admin/user-details/:email` — full profile + risk + audit log
-- `POST /api/admin/approve-user` — sets status=approved, appends audit entry
-- `POST /api/admin/reject-user` — sets status=rejected, appends reason + audit entry
-- `POST /api/admin/request-resubmission` — sets status=resubmit
-- All routes: rate-limited 60 req/min, protected by `ADMIN_SECRET` env var
+- `GET  /api/admin/user-balance/:email` — current balance + history
+- `GET  /api/admin/global-audit` — all admin actions across all users
+- `POST /api/admin/approve-user` — KYC approval
+- `POST /api/admin/reject-user` — KYC rejection with reason
+- `POST /api/admin/request-resubmission` — request KYC resubmission
+- `POST /api/admin/suspend-user` — suspend account
+- `POST /api/admin/ban-user` — ban account with reason
+- `POST /api/admin/reactivate-user` — restore account
+- `POST /api/admin/assign-role` — set user role (user/vip/restricted/admin)
+- `POST /api/admin/set-balance` — set balance + profit with history
+- `POST /api/admin/flag-user` — flag user with reason
+- `POST /api/admin/reset-password` — clear password hash (force reset)
+- `POST /api/admin/create-user` — admin-initiated user creation
+- `POST /api/admin/update-user` — update name fields
+- `DELETE /api/admin/delete-user` — permanent deletion
+- All routes: JWT Bearer auth, rate-limited 120 req/min, login rate-limited 5/15min per IP
 
 ### Fraud Detection Engine (`src/lib/fraud/riskEngine.ts`)
 - 9 fraud rules: DOB mismatch, incomplete steps, phone reuse, rapid submission, margin+max-risk combo, missing address, high risk tolerance, upload without ID profile, internal IP flag

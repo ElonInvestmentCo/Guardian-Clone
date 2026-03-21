@@ -15,6 +15,8 @@ const ACTION_FILTERS = [
   { value: "BALANCE",   label: "Balance Updates" },
 ];
 
+interface FlatEntry extends AuditEntry { _userEmail: string; }
+
 export default function AuditLogView() {
   const [search,     setSearch]     = useState("");
   const [actionType, setActionType] = useState("");
@@ -25,22 +27,28 @@ export default function AuditLogView() {
     staleTime: 30_000,
   });
 
-  const entries = data?.entries ?? [];
+  const allEntries: FlatEntry[] = useMemo(() => {
+    return (data?.entries ?? []).map((item) => ({
+      ...item.entry,
+      _userEmail: item.email,
+      email: item.entry.email ?? item.email,
+    }));
+  }, [data?.entries]);
 
   const filtered = useMemo(() => {
-    const q   = search.trim().toLowerCase();
+    const q    = search.trim().toLowerCase();
     const type = actionType.toUpperCase();
-    return entries.filter((e) => {
-      const matchType   = !type    || e.actionType.includes(type);
+    return allEntries.filter((e) => {
+      const matchType   = !type || e.actionType.includes(type);
       const matchSearch = !q
         || e.actionType.toLowerCase().includes(q)
         || (e.actor ?? "").toLowerCase().includes(q)
-        || (e.email ?? "").toLowerCase().includes(q)
+        || (e._userEmail ?? "").toLowerCase().includes(q)
         || (e.note  ?? "").toLowerCase().includes(q)
         || (e.reason ?? "").toLowerCase().includes(q);
       return matchType && matchSearch;
     });
-  }, [entries, search, actionType]);
+  }, [allEntries, search, actionType]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
@@ -50,7 +58,7 @@ export default function AuditLogView() {
         <div>
           <h1 style={{ margin: 0, fontSize: "17px", fontWeight: "700", color: "#111827" }}>Audit Log</h1>
           <p style={{ margin: 0, fontSize: "12px", color: "#6B7280", marginTop: "1px" }}>
-            {isLoading ? "Loading…" : `${filtered.length} of ${entries.length} events`}
+            {isLoading ? "Loading…" : `${filtered.length} of ${allEntries.length} events`}
           </p>
         </div>
         <button
@@ -71,7 +79,6 @@ export default function AuditLogView() {
 
       {/* Search + filter bar */}
       <div style={{ padding: "12px 20px", background: "white", borderBottom: "1px solid #E5E7EB", display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center", flexShrink: 0 }}>
-        {/* Search */}
         <div style={{ position: "relative", flex: "1 1 220px" }}>
           <svg
             width="14" height="14" fill="none" stroke="#9CA3AF" strokeWidth="2" viewBox="0 0 24 24"
@@ -90,7 +97,6 @@ export default function AuditLogView() {
               border: "1px solid #E5E7EB", borderRadius: "6px",
               fontSize: "12px", color: "#374151",
               outline: "none", fontFamily: "inherit",
-              transition: "border-color 0.15s",
             }}
             onFocus={(e) => { (e.target as HTMLElement).style.borderColor = "#2563EB"; }}
             onBlur={(e)  => { (e.target as HTMLElement).style.borderColor = "#E5E7EB"; }}
@@ -105,7 +111,6 @@ export default function AuditLogView() {
           )}
         </div>
 
-        {/* Action type filter */}
         <select
           value={actionType}
           onChange={(e) => setActionType(e.target.value)}
@@ -113,7 +118,6 @@ export default function AuditLogView() {
             padding: "8px 10px", border: "1px solid #E5E7EB", borderRadius: "6px",
             fontSize: "12px", color: "#374151", background: "white",
             cursor: "pointer", outline: "none", fontFamily: "inherit",
-            flex: "0 0 auto",
           }}
         >
           {ACTION_FILTERS.map(({ value, label }) => (
@@ -128,7 +132,7 @@ export default function AuditLogView() {
           <LoadingState />
         ) : isError ? (
           <ErrorState onRetry={() => refetch()} />
-        ) : entries.length === 0 ? (
+        ) : allEntries.length === 0 ? (
           <EmptyState
             icon="📋"
             title="No audit events yet"
@@ -155,7 +159,7 @@ export default function AuditLogView() {
                 { key: "SUSPEND",  label: "Suspended", color: "#EA580C" },
                 { key: "BAN",      label: "Banned",    color: "#9333EA" },
               ].map(({ key, label, color }) => {
-                const count = entries.filter((e) => e.actionType.includes(key)).length;
+                const count = allEntries.filter((e) => e.actionType.includes(key)).length;
                 return (
                   <div key={key} style={{ display: "flex", alignItems: "center", gap: "5px", padding: "3px 10px", borderRadius: "20px", background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
                     <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: color, flexShrink: 0 }} />
@@ -168,14 +172,12 @@ export default function AuditLogView() {
 
             {/* Timeline entries */}
             <div style={{ position: "relative", paddingLeft: "24px" }}>
-              {/* Vertical line */}
               <div style={{
                 position: "absolute", left: "7px", top: "8px", bottom: "8px",
                 width: "2px", background: "#E5E7EB", borderRadius: "1px",
               }} />
-
               {filtered.map((entry, i) => (
-                <AuditRow key={i} entry={entry} />
+                <AuditRow key={i} entry={entry} userEmail={entry._userEmail} />
               ))}
             </div>
           </div>
@@ -186,30 +188,25 @@ export default function AuditLogView() {
 }
 
 // ── Audit row component ────────────────────────────────────────────────────────
-function AuditRow({ entry }: { entry: AuditEntry }) {
+function AuditRow({ entry, userEmail }: { entry: AuditEntry; userEmail: string }) {
   const [expanded, setExpanded] = useState(false);
   const c = actionTypeColor(entry.actionType);
   const hasExtra = !!(entry.note || entry.reason || (entry.fields && entry.fields.length > 0) || entry.meta);
 
   return (
     <div style={{ position: "relative", marginBottom: "10px", paddingLeft: "20px" }}>
-      {/* Timeline dot */}
       <div style={{
         position: "absolute", left: "-23px", top: "10px",
         width: "10px", height: "10px", borderRadius: "50%",
         background: c.dot, border: "2px solid white",
         boxShadow: `0 0 0 2px ${c.dot}40`,
-        flexShrink: 0,
       }} />
 
-      {/* Card */}
       <div
         onClick={() => hasExtra && setExpanded((x) => !x)}
         style={{
-          background: "white",
-          border: "1px solid #E5E7EB",
-          borderRadius: "6px",
-          padding: "10px 14px",
+          background: "white", border: "1px solid #E5E7EB",
+          borderRadius: "6px", padding: "10px 14px",
           cursor: hasExtra ? "pointer" : "default",
           transition: "border-color 0.15s",
         }}
@@ -222,11 +219,9 @@ function AuditRow({ entry }: { entry: AuditEntry }) {
               <span style={{ fontWeight: "700", fontSize: "12px", color: c.text }}>
                 {actionTypeLabel(entry.actionType)}
               </span>
-              {entry.email && (
-                <span style={{ fontSize: "11px", color: "#6B7280", fontFamily: "monospace" }}>
-                  {entry.email}
-                </span>
-              )}
+              <span style={{ fontSize: "11px", color: "#6B7280", fontFamily: "monospace" }}>
+                {userEmail}
+              </span>
             </div>
             <div style={{ fontSize: "10px", color: "#9CA3AF", marginTop: "3px", display: "flex", gap: "8px", flexWrap: "wrap" }}>
               <span>{formatDate(entry.timestamp)}</span>

@@ -111,6 +111,15 @@ export interface KycUser {
   flagCount: number;
 }
 
+export interface AdminUser extends KycUser {
+  role: string;
+  balance: number;
+  profit: number;
+  lastActionType: string | null;
+  lastActionAt: string | null;
+  auditCount: number;
+}
+
 export interface RiskFlag {
   code: string;
   description: string;
@@ -152,9 +161,14 @@ export interface KycQueueResponse {
   users: KycUser[];
 }
 
+export interface AllUsersResponse {
+  total: number;
+  users: AdminUser[];
+}
+
 export interface GlobalAuditResponse {
   total: number;
-  entries: AuditEntry[];
+  entries: Array<{ email: string; entry: AuditEntry }>;
 }
 
 // ── API calls ─────────────────────────────────────────────────────────────────
@@ -174,6 +188,19 @@ export async function getKycQueue(params?: {
   return request<KycQueueResponse>("GET", `/admin/kyc-queue${qs}`);
 }
 
+export async function getAllUsers(params?: {
+  search?: string;
+  status?: string;
+  role?: string;
+}): Promise<AllUsersResponse> {
+  const q = new URLSearchParams();
+  if (params?.search) q.set("search", params.search);
+  if (params?.status) q.set("status", params.status);
+  if (params?.role)   q.set("role",   params.role);
+  const qs = q.toString() ? `?${q.toString()}` : "";
+  return request<AllUsersResponse>("GET", `/admin/all-users${qs}`);
+}
+
 export async function getUserDetails(email: string): Promise<UserDetails> {
   return request<UserDetails>("GET", `/admin/user-details/${encodeURIComponent(email)}`);
 }
@@ -190,6 +217,50 @@ export async function requestResubmission(email: string, fields?: string[], admi
   await request("POST", "/admin/request-resubmission", { email, fields, adminNote });
 }
 
-export async function getGlobalAudit(limit = 200): Promise<GlobalAuditResponse> {
+export async function suspendUser(email: string, adminNote?: string): Promise<void> {
+  await request("POST", "/admin/suspend-user", { email, adminNote });
+}
+
+export async function banUser(email: string, reason?: string, adminNote?: string): Promise<void> {
+  await request("POST", "/admin/ban-user", { email, reason, adminNote });
+}
+
+export async function reactivateUser(email: string, adminNote?: string): Promise<void> {
+  await request("POST", "/admin/reactivate-user", { email, adminNote });
+}
+
+export async function assignRole(email: string, role: string, adminNote?: string): Promise<void> {
+  await request("POST", "/admin/assign-role", { email, role, adminNote });
+}
+
+export async function setBalance(email: string, balance: number, profit: number, adminNote?: string): Promise<void> {
+  await request("POST", "/admin/set-balance", { email, balance, profit, adminNote });
+}
+
+export async function getUserBalance(email: string): Promise<{ balance: number; profit: number; updatedAt: string | null; history: unknown[] }> {
+  return request("GET", `/admin/user-balance/${encodeURIComponent(email)}`);
+}
+
+export async function flagUser(email: string, reason?: string, adminNote?: string): Promise<void> {
+  await request("POST", "/admin/flag-user", { email, reason, adminNote });
+}
+
+export async function resetPassword(email: string, adminNote?: string): Promise<void> {
+  await request("POST", "/admin/reset-password", { email, adminNote });
+}
+
+export async function createUser(email: string, displayName: string, role?: string): Promise<void> {
+  await request("POST", "/admin/create-user", { email, displayName, role });
+}
+
+export async function deleteUser(email: string, adminNote?: string): Promise<void> {
+  await request("DELETE", "/admin/delete-user", { email, adminNote });
+}
+
+export async function updateUser(email: string, firstName?: string, lastName?: string, adminNote?: string): Promise<void> {
+  await request("POST", "/admin/update-user", { email, firstName, lastName, adminNote });
+}
+
+export async function getGlobalAudit(limit = 500): Promise<GlobalAuditResponse> {
   return request<GlobalAuditResponse>("GET", `/admin/global-audit?limit=${limit}`);
 }
