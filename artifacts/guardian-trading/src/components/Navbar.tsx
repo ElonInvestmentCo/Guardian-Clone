@@ -33,14 +33,14 @@ export function Navbar() {
       >
         <div
           className="w-full h-full flex items-center justify-between"
-          style={{ padding: "0 44px" }}
+          style={{ padding: "0 44px 0 56px" }}
         >
           {/* ── Logo ─────────────────────────────────────────────────────────── */}
           <Link href="/" className="flex items-center flex-shrink-0">
             <img
               src={guardianLogo}
               alt="Guardian Trading"
-              style={{ height: "58px", width: "auto", objectFit: "contain" }}
+              style={{ height: "62px", width: "auto", objectFit: "contain" }}
               data-testid="img-logo"
             />
           </Link>
