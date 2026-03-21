@@ -88,7 +88,7 @@ export function Navbar() {
                   imageRendering: "auto",
                   filter: "contrast(1.08) brightness(1.06)",
                   transition: "filter 0.2s, transform 0.15s",
-                  borderRadius: "4px",
+                  borderRadius: "0",
                   cursor: "pointer",
                 }}
                 onMouseEnter={(e) => {
@@ -118,7 +118,7 @@ export function Navbar() {
                   imageRendering: "auto",
                   filter: "contrast(1.08) brightness(1.06)",
                   transition: "filter 0.2s, transform 0.15s",
-                  borderRadius: "4px",
+                  borderRadius: "0",
                   cursor: "pointer",
                 }}
                 onMouseEnter={(e) => {
