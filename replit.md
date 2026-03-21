@@ -107,10 +107,12 @@ Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` 
 
 #### Signup Data Storage (`src/routes/signup.ts`, `src/lib/userDataStore.ts`)
 - `POST /api/signup/save-step` — saves a named form step for a user; body: `{ email, step, data }`
-- Data is stored in `data/users.json` (file permissions: `600`, directory: `700`)
+- `GET /api/signup/get-progress?email=` — returns completed steps and step data for a user
+- Data is stored in `data/users/{sanitizeEmail}/profile.json` and `data/users.json`
 - Sensitive fields are AES-256-GCM encrypted before storage: `taxId`, `idNumber`, `dateOfBirth`, `password`, `passwordHash`, `foreignIdType`
 - Encryption key is read from env var `USER_DATA_KEY` (falls back to dev key with a warning)
-- Steps saved: `general`, `personal`, `professional`, `idInformation`, `income`, `riskTolerance`, `financialSituation`
+- All save-step calls are audit-logged: `[Audit][timestamp] action=SAVE_STEP step=X email=Y`
+- Steps saved: `general`, `personal`, `professional`, `idInformation`, `income`, `riskTolerance`, `financialSituation`, `investmentExperience`, `idProofUpload`, `fundingDetails`, `disclosures`, `signatures`
 - `pnpm --filter @workspace/api-server run dev` — run the dev server
 - `pnpm --filter @workspace/api-server run build` — production esbuild bundle (`dist/index.cjs`)
 - Build bundles an allowlist of deps (express, cors, pg, drizzle-orm, zod, etc.) and externalizes the rest

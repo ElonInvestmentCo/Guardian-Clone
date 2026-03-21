@@ -1,178 +1,197 @@
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useLocation } from "wouter";
 import { personalSchema } from "@/lib/onboarding/schema";
 import { saveStep } from "@/lib/onboarding/saveStep";
-import { CITIES_BY_STATE } from "@/lib/location/cities";
-import { useLocation } from "wouter";
+import { CITIES_BY_STATE, US_STATES } from "@/lib/location/cities";
+import OnboardingShell from "@/components/OnboardingShell";
 
-type FormData = any;
+type FormData = {
+  firstName: string;
+  lastName: string;
+  address: string;
+  aptSuite?: string;
+  state: string;
+  city: string;
+  zipCode: string;
+  phoneNumber: string;
+};
+
+const fieldStyle: React.CSSProperties = {
+  background: "#e8edf2",
+  border: "1px solid #ccd3da",
+  borderRadius: "3px",
+  padding: "9px 10px",
+  color: "#333",
+  fontSize: "13px",
+  width: "100%",
+};
+
+function FieldLabel({ children, required }: { children: React.ReactNode; required?: boolean }) {
+  return (
+    <label className="block mb-1" style={{ fontSize: "12px", color: "#555" }}>
+      {children}{required && <span style={{ color: "#e53e3e" }}> *</span>}
+    </label>
+  );
+}
 
 export default function PersonalDetails() {
   const [, navigate] = useLocation();
+  const [citySearch, setCitySearch] = useState("");
 
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(personalSchema),
     mode: "onChange",
   });
 
-  const form = watch();
-  const state = watch("state");
-
-  const [citySearch, setCitySearch] = useState("");
+  const formValues = watch();
+  const selectedState = watch("state");
 
   const cities = useMemo(() => {
-    return (CITIES_BY_STATE[state] || []).filter((c) =>
-      c.toLowerCase().includes(citySearch.toLowerCase()),
-    );
-  }, [state, citySearch]);
+    const stateCities = CITIES_BY_STATE[selectedState] ?? [];
+    return stateCities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
+  }, [selectedState, citySearch]);
 
   useEffect(() => {
     const t = setTimeout(() => {
-      saveStep("personal", form);
-    }, 600);
-
+      void saveStep("personal", formValues as Record<string, unknown>);
+    }, 700);
     return () => clearTimeout(t);
-  }, [form]);
+  }, [formValues]);
 
   const onSubmit = async (data: FormData) => {
-    await saveStep("personal", data);
+    await saveStep("personal", data as Record<string, unknown>);
     navigate("/professional-details");
   };
 
   return (
-    <div className="min-h-screen bg-[#f6f7f9] flex justify-center px-4 py-12">
-      <div className="w-full max-w-2xl">
-        {/* HEADER */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-[#111827]">
-            Personal details
+    <OnboardingShell currentStep={1}>
+      <div
+        className="bg-white"
+        style={{ borderRadius: "2px", boxShadow: "0 1px 6px rgba(0,0,0,0.10)", border: "1px solid #dde3e9", borderLeft: "4px solid #3a7bd5" }}
+      >
+        <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
+          <h1 className="font-bold uppercase" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>
+            Personal Details
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            This helps us verify your identity and personalize your account.
-          </p>
         </div>
 
-        {/* FORM CARD */}
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 space-y-5"
-        >
-          {/* NAME */}
-          <div className="grid grid-cols-2 gap-4">
-            <Field
-              label="First name"
-              error={errors.firstName}
-              {...register("firstName")}
-            />
-            <Field
-              label="Last name"
-              error={errors.lastName}
-              {...register("lastName")}
-            />
-          </div>
+        <div className="px-8 py-6">
+          <form onSubmit={handleSubmit(onSubmit)} noValidate>
 
-          {/* ADDRESS */}
-          <Field
-            label="Address"
-            error={errors.address}
-            {...register("address")}
-          />
+            {/* First Name / Last Name */}
+            <div className="grid grid-cols-2 gap-5 mb-4">
+              <div>
+                <FieldLabel required>First Name</FieldLabel>
+                <input {...register("firstName")} style={fieldStyle} className="focus:outline-none" />
+                {errors.firstName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.firstName.message}</p>}
+              </div>
+              <div>
+                <FieldLabel required>Last Name</FieldLabel>
+                <input {...register("lastName")} style={fieldStyle} className="focus:outline-none" />
+                {errors.lastName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.lastName.message}</p>}
+              </div>
+            </div>
 
-          <Field label="Apt / Suite (optional)" {...register("aptSuite")} />
+            {/* Address */}
+            <div className="mb-4">
+              <FieldLabel required>Address</FieldLabel>
+              <input {...register("address")} style={fieldStyle} className="focus:outline-none" />
+              {errors.address && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.address.message}</p>}
+            </div>
 
-          {/* LOCATION GRID */}
-          <div className="grid grid-cols-3 gap-4">
-            <Select label="State" {...register("state")} />
+            {/* Apt / Suite */}
+            <div className="mb-4">
+              <FieldLabel>Apt / Suite (optional)</FieldLabel>
+              <input {...register("aptSuite")} style={fieldStyle} className="focus:outline-none" />
+            </div>
 
-            {/* CITY SEARCH */}
-            <div>
-              <label className="text-xs text-gray-600">City</label>
+            {/* State / City / ZIP */}
+            <div className="grid grid-cols-3 gap-5 mb-4">
+              <div>
+                <FieldLabel required>State</FieldLabel>
+                <div className="relative">
+                  <select
+                    {...register("state")}
+                    style={{ ...fieldStyle, appearance: "none", paddingRight: "28px", cursor: "pointer" }}
+                    className="focus:outline-none"
+                  >
+                    <option value="">Please Select</option>
+                    {US_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                  <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+                  </div>
+                </div>
+                {errors.state && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.state.message}</p>}
+              </div>
 
-              <input
-                placeholder="Search city..."
-                value={citySearch}
-                onChange={(e) => setCitySearch(e.target.value)}
-                className="w-full mt-1 px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black/10"
-              />
+              <div>
+                <FieldLabel required>City</FieldLabel>
+                <input
+                  placeholder="Search city…"
+                  value={citySearch}
+                  onChange={(e) => setCitySearch(e.target.value)}
+                  style={{ ...fieldStyle, marginBottom: "6px" }}
+                  className="focus:outline-none"
+                />
+                <div className="relative">
+                  <select
+                    {...register("city")}
+                    style={{ ...fieldStyle, appearance: "none", paddingRight: "28px", cursor: "pointer" }}
+                    className="focus:outline-none"
+                  >
+                    <option value="">Select city</option>
+                    {cities.map((c) => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+                  </div>
+                </div>
+                {errors.city && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.city.message}</p>}
+              </div>
 
-              <select
-                {...register("city")}
-                className="w-full mt-2 px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black/10"
+              <div>
+                <FieldLabel required>ZIP Code</FieldLabel>
+                <input {...register("zipCode")} style={fieldStyle} className="focus:outline-none" placeholder="12345" />
+                {errors.zipCode && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.zipCode.message}</p>}
+              </div>
+            </div>
+
+            {/* Phone */}
+            <div className="mb-6" style={{ maxWidth: "50%" }}>
+              <FieldLabel required>Phone Number</FieldLabel>
+              <input {...register("phoneNumber")} style={fieldStyle} className="focus:outline-none" placeholder="(555) 000-0000" />
+              {errors.phoneNumber && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.phoneNumber.message}</p>}
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => navigate("/general-details")}
+                className="font-medium hover:bg-gray-50 transition-colors"
+                style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}
               >
-                <option value="">Select city</option>
-                {cities.map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </select>
+                Previous
+              </button>
+              <button
+                type="submit"
+                className="text-white font-semibold transition-opacity hover:opacity-90"
+                style={{ background: "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: "pointer", fontSize: "13px" }}
+              >
+                Next
+              </button>
             </div>
-
-            <Field
-              label="ZIP code"
-              error={errors.zipCode}
-              {...register("zipCode")}
-            />
-          </div>
-
-          {/* PHONE */}
-          <Field
-            label="Phone number"
-            error={errors.phoneNumber}
-            {...register("phoneNumber")}
-          />
-
-          {/* ERROR SUMMARY */}
-          {Object.keys(errors).length > 0 && (
-            <div className="text-xs text-red-500 bg-red-50 border border-red-100 p-3 rounded-md">
-              Please fix the highlighted fields to continue.
-            </div>
-          )}
-
-          {/* CTA */}
-          <button
-            disabled={!isValid}
-            className="w-full mt-2 bg-black text-white py-2.5 rounded-md text-sm font-medium hover:bg-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition"
-          >
-            Continue
-          </button>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
-  );
-}
-
-/* ---------------- FIELD ---------------- */
-
-function Field({ label, error, ...props }: any) {
-  return (
-    <div>
-      <label className="text-xs text-gray-600">{label}</label>
-      <input
-        {...props}
-        className="w-full mt-1 px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black/10"
-      />
-      {error && <p className="text-xs text-red-500 mt-1">{error.message}</p>}
-    </div>
-  );
-}
-
-/* ---------------- SELECT ---------------- */
-
-function Select({ label, ...props }: any) {
-  return (
-    <div>
-      <label className="text-xs text-gray-600">{label}</label>
-      <select
-        {...props}
-        className="w-full mt-1 px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black/10"
-      >
-        <option value="">Select</option>
-      </select>
-    </div>
+    </OnboardingShell>
   );
 }

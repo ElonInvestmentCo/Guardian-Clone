@@ -26,6 +26,29 @@ export async function saveSignupStep(
 }
 
 /**
+ * Retrieve all saved progress steps for the current session user.
+ */
+export async function getProgress(): Promise<{
+  steps: Record<string, unknown>;
+  completedSteps: string[];
+}> {
+  const email = sessionStorage.getItem("signupEmail");
+  if (!email) return { steps: {}, completedSteps: [] };
+  try {
+    const res = await fetch(
+      `${BASE}/api/signup/get-progress?email=${encodeURIComponent(email)}`
+    );
+    const body = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+    return {
+      steps: (body["steps"] as Record<string, unknown>) ?? {},
+      completedSteps: (body["completedSteps"] as string[]) ?? [],
+    };
+  } catch {
+    return { steps: {}, completedSteps: [] };
+  }
+}
+
+/**
  * Trigger account verification for the current session user.
  * Updates status to "verified" and fires the confirmation email.
  */
