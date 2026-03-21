@@ -2,25 +2,6 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
 
-function EyeOpen() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
-
-function EyeClosed() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" />
-      <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" />
-      <line x1="1" y1="1" x2="23" y2="23" />
-    </svg>
-  );
-}
-
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -130,10 +111,19 @@ export default function Login() {
                   <button
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9 text-gray-400 hover:text-gray-600 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
-                    {showPassword ? <EyeOpen /> : <EyeClosed />}
+                    <img
+                      src={showPassword ? "/eye-open-clean.png" : "/eye-closed-clean.png"}
+                      alt=""
+                      style={{
+                        width: "35px",
+                        height: "35px",
+                        objectFit: "contain",
+                        filter: "brightness(0) opacity(0.85)",
+                      }}
+                    />
                   </button>
                 </div>
                 {errors.password && (
