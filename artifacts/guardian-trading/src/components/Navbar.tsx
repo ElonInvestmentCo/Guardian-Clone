@@ -53,14 +53,14 @@ export function Navbar() {
                 href={link.href}
                 className="transition-colors"
                 style={{
-                  fontSize: "13.5px",
+                  fontSize: "14.5px",
                   fontWeight: 600,
-                  color: "#c8d4e0",
+                  color: "#ffffff",
                   letterSpacing: "0.01em",
                   textDecoration: "none",
                 }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#ffffff"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#c8d4e0"; }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#76d0f4"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#ffffff"; }}
                 data-testid={`link-nav-${link.name.toLowerCase().replace(/\s/g, "-")}`}
               >
                 {link.name}
@@ -74,7 +74,7 @@ export function Navbar() {
             <Link
               href="/login"
               style={{
-                fontSize: "13.5px", fontWeight: 600,
+                fontSize: "14.5px", fontWeight: 600,
                 color: "#ffffff",
                 textDecoration: "none",
                 padding: "0 8px",
@@ -91,7 +91,7 @@ export function Navbar() {
             <Link
               href="/login"
               style={{
-                fontSize: "13.5px", fontWeight: 600,
+                fontSize: "14.5px", fontWeight: 600,
                 color: "#ffffff",
                 border: "1.5px solid #3a6fa8",
                 borderRadius: "4px",
@@ -119,7 +119,7 @@ export function Navbar() {
             <Link
               href="/signup"
               style={{
-                fontSize: "13.5px", fontWeight: 700,
+                fontSize: "14.5px", fontWeight: 700,
                 color: "#ffffff",
                 background: "#2a6abf",
                 borderRadius: "4px",
