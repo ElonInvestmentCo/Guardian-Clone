@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
 import { Briefcase, User, UserCircle, Landmark, GraduationCap } from "lucide-react";
-import { saveSignupStep } from "@/lib/saveStep";
+import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
 
 const COUNTRIES = ["United States", "Canada", "United Kingdom", "Australia", "Other"];
@@ -24,20 +23,12 @@ const EMPLOYMENT_OPTIONS = [
 ];
 
 const fieldStyle: React.CSSProperties = {
-  background: "#e8edf2",
-  border: "1px solid #ccd3da",
-  borderRadius: "3px",
-  padding: "9px 10px",
-  color: "#333",
-  fontSize: "13px",
-  width: "100%",
+  background: "#e8edf2", border: "1px solid #ccd3da", borderRadius: "3px",
+  padding: "9px 10px", color: "#333", fontSize: "13px", width: "100%",
 };
 
 const selectStyle: React.CSSProperties = {
-  ...fieldStyle,
-  appearance: "none" as const,
-  paddingRight: "28px",
-  cursor: "pointer",
+  ...fieldStyle, appearance: "none" as const, paddingRight: "28px", cursor: "pointer",
 };
 
 function FieldLabel({ children, required }: { children: React.ReactNode; required?: boolean }) {
@@ -67,19 +58,26 @@ function SelectField({ value, onChange, options, placeholder = "Please Select" }
 }
 
 export default function ProfessionalDetails() {
-  const [, navigate] = useLocation();
-  const [employment, setEmployment] = useState("employed");
+  const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(2);
+
+  const sd = savedData as Record<string, string>;
+  const [employment, setEmployment] = useState(sd.employmentStatus ?? "employed");
   const [form, setForm] = useState({
-    employerName: "", positionTitle: "", employerAddress: "",
-    aptSuiteNo: "", country: "", city: "", state: "",
-    yearsWithEmployer: "", phoneNumber: "",
+    employerName:      sd.employerName      ?? "",
+    positionTitle:     sd.positionTitle     ?? "",
+    employerAddress:   sd.employerAddress   ?? "",
+    aptSuiteNo:        sd.aptSuiteNo        ?? "",
+    country:           sd.country           ?? "",
+    city:              sd.city              ?? "",
+    state:             sd.state             ?? "",
+    yearsWithEmployer: sd.yearsWithEmployer ?? "",
+    phoneNumber:       sd.phoneNumber       ?? "",
   });
   const set = (k: keyof typeof form) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await saveSignupStep("professional", { employmentStatus: employment, ...form });
-    navigate("/id-information");
+    await submit({ employmentStatus: employment, ...form });
   };
 
   return (
@@ -92,16 +90,17 @@ export default function ProfessionalDetails() {
         </div>
 
         <div className="px-8 py-6">
+          {globalError && (
+            <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>
+              {globalError}
+            </div>
+          )}
 
-          {/* Employment tiles */}
           <div className="flex gap-3 mb-6">
             {EMPLOYMENT_OPTIONS.map(({ key, label, Icon }) => {
               const sel = employment === key;
               return (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => setEmployment(key)}
+                <button key={key} type="button" onClick={() => setEmployment(key)}
                   className="flex-1 flex flex-col items-center justify-center gap-2 py-5 transition-colors"
                   style={{ background: sel ? "#3a7bd5" : "#dce6f0", color: sel ? "white" : "#333", border: "none", borderRadius: "3px", cursor: "pointer", minHeight: "80px" }}
                 >
@@ -113,89 +112,37 @@ export default function ProfessionalDetails() {
           </div>
 
           <form onSubmit={handleSubmit} noValidate>
-
-            {/* Row 1 */}
             <div className="grid grid-cols-2 gap-5 mb-4">
-              <div>
-                <FieldLabel required>Employer Name</FieldLabel>
-                <input style={fieldStyle} className="focus:outline-none" value={form.employerName} onChange={(e) => set("employerName")(e.target.value)} />
-              </div>
-              <div>
-                <FieldLabel required>Position/Title</FieldLabel>
-                <input style={fieldStyle} className="focus:outline-none" value={form.positionTitle} onChange={(e) => set("positionTitle")(e.target.value)} />
-              </div>
+              <div><FieldLabel required>Employer Name</FieldLabel><input style={fieldStyle} className="focus:outline-none" value={form.employerName} onChange={(e) => set("employerName")(e.target.value)} /></div>
+              <div><FieldLabel required>Position/Title</FieldLabel><input style={fieldStyle} className="focus:outline-none" value={form.positionTitle} onChange={(e) => set("positionTitle")(e.target.value)} /></div>
             </div>
-
-            {/* Row 2 */}
             <div className="grid grid-cols-2 gap-5 mb-4">
-              <div>
-                <FieldLabel required>Address Of Employer</FieldLabel>
-                <input style={fieldStyle} className="focus:outline-none" value={form.employerAddress} onChange={(e) => set("employerAddress")(e.target.value)} />
-              </div>
-              <div>
-                <FieldLabel>Apt/Suite No</FieldLabel>
-                <input style={fieldStyle} className="focus:outline-none" value={form.aptSuiteNo} onChange={(e) => set("aptSuiteNo")(e.target.value)} />
-              </div>
+              <div><FieldLabel required>Address Of Employer</FieldLabel><input style={fieldStyle} className="focus:outline-none" value={form.employerAddress} onChange={(e) => set("employerAddress")(e.target.value)} /></div>
+              <div><FieldLabel>Apt/Suite No</FieldLabel><input style={fieldStyle} className="focus:outline-none" value={form.aptSuiteNo} onChange={(e) => set("aptSuiteNo")(e.target.value)} /></div>
             </div>
-
-            {/* Row 3 */}
             <div className="grid grid-cols-3 gap-5 mb-4">
-              <div>
-                <FieldLabel required>Country</FieldLabel>
-                <SelectField value={form.country} onChange={set("country")} options={COUNTRIES} />
-              </div>
-              <div>
-                <FieldLabel required>City</FieldLabel>
-                <SelectField value={form.city} onChange={set("city")} options={[]} />
-              </div>
-              <div>
-                <FieldLabel required>State/Province</FieldLabel>
-                <SelectField value={form.state} onChange={set("state")} options={US_STATES} />
-              </div>
+              <div><FieldLabel required>Country</FieldLabel><SelectField value={form.country} onChange={set("country")} options={COUNTRIES} /></div>
+              <div><FieldLabel required>City</FieldLabel><SelectField value={form.city} onChange={set("city")} options={[]} /></div>
+              <div><FieldLabel required>State/Province</FieldLabel><SelectField value={form.state} onChange={set("state")} options={US_STATES} /></div>
             </div>
-
-            {/* Row 4 */}
             <div className="grid grid-cols-2 gap-5 mb-1">
-              <div>
-                <FieldLabel required>Year With Employer</FieldLabel>
-                <input style={fieldStyle} className="focus:outline-none" value={form.yearsWithEmployer} onChange={(e) => set("yearsWithEmployer")(e.target.value)} />
-              </div>
+              <div><FieldLabel required>Year With Employer</FieldLabel><input style={fieldStyle} className="focus:outline-none" value={form.yearsWithEmployer} onChange={(e) => set("yearsWithEmployer")(e.target.value)} /></div>
               <div>
                 <FieldLabel required>Phone Number</FieldLabel>
                 <div className="flex items-center gap-2">
                   <div className="flex items-center flex-1" style={{ ...fieldStyle, padding: 0, paddingLeft: "10px" }}>
-                    <input
-                      type="tel"
-                      placeholder="(___) ___-____"
-                      value={form.phoneNumber}
-                      onChange={(e) => set("phoneNumber")(e.target.value)}
-                      className="flex-1 focus:outline-none bg-transparent"
-                      style={{ fontSize: "13px", padding: "9px 8px", border: "none" }}
-                    />
+                    <input type="tel" placeholder="(___) ___-____" value={form.phoneNumber} onChange={(e) => set("phoneNumber")(e.target.value)} className="flex-1 focus:outline-none bg-transparent" style={{ fontSize: "13px", padding: "9px 8px", border: "none" }} />
                   </div>
                   <div className="flex items-center justify-center rounded-full text-white flex-shrink-0" style={{ width: "20px", height: "20px", background: "#3a7bd5", fontSize: "11px", fontWeight: "bold" }}>i</div>
                 </div>
               </div>
             </div>
-            <p className="mb-6" style={{ fontSize: "11px", color: "#999" }}>
-              Phone numbers are checked for validity in the country that you are applying
-            </p>
+            <p className="mb-6" style={{ fontSize: "11px", color: "#999" }}>Phone numbers are checked for validity in the country that you are applying</p>
 
             <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => navigate("/personal-details")}
-                className="font-medium hover:bg-gray-50 transition-colors"
-                style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}
-              >
-                Previous
-              </button>
-              <button
-                type="submit"
-                className="text-white font-semibold transition-opacity hover:opacity-90"
-                style={{ background: "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: "pointer", fontSize: "13px" }}
-              >
-                Next
+              <button type="button" onClick={goBack} className="font-medium hover:bg-gray-50 transition-colors" style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}>Previous</button>
+              <button type="submit" disabled={isSubmitting} className="text-white font-semibold transition-opacity hover:opacity-90" style={{ background: isSubmitting ? "#8ab4e8" : "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: isSubmitting ? "not-allowed" : "pointer", fontSize: "13px" }}>
+                {isSubmitting ? "Saving…" : "Next"}
               </button>
             </div>
           </form>

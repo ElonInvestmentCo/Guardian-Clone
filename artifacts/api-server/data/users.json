@@ -2,27 +2,21 @@
   "Emailmy488@gmail.com": {
     "email": "Emailmy488@gmail.com",
     "createdAt": "2026-03-20T16:30:58.865Z",
-    "updatedAt": "2026-03-20T21:08:13.229Z",
+    "updatedAt": "2026-03-21T13:52:55.745Z",
     "general": {
       "registrationType": "Individual Account",
       "product": "Stocks",
-      "howHeard": "Benzinga"
+      "howHeard": "Facebook"
     },
     "personal": {
-      "firstName": "Willow",
-      "lastName": "Wealth",
-      "address": "15911 Frontier Rd",
+      "firstName": "",
+      "lastName": "",
+      "address": "",
       "aptSuite": "",
-      "country": "United States",
+      "state": "",
       "city": "",
-      "state": "Texas",
-      "zipCode": "77355",
-      "mailingDifferent": true,
-      "phoneNumber": "5126866045",
-      "numDependents": "1",
-      "altPhoneNumber": "",
-      "maritalStatus": "Single",
-      "trustedContact": "No"
+      "zipCode": "",
+      "phoneNumber": ""
     },
     "professional": {
       "employmentStatus": "employed",
@@ -149,7 +143,10 @@
       "hasSigned": true
     },
     "status": "verified",
-    "verifiedAt": "2026-03-20T18:06:09.033Z"
+    "verifiedAt": "2026-03-20T18:06:09.033Z",
+    "credentials": {
+      "passwordHash": "enc:6c0f7f5307332ffc4854bbec4ac11687:1da532719b59ec0d140e72109368b836:90014fb38bf6031a"
+    }
   },
   "test@guardiantrading.com": {
     "email": "test@guardiantrading.com",

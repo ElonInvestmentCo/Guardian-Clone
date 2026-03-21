@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
-import { saveSignupStep } from "@/lib/saveStep";
+import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
 
 type YNVal = "yes" | "no" | "";
@@ -21,26 +20,29 @@ function YesNo({ value, onChange }: { value: YNVal; onChange: (v: YNVal) => void
 }
 
 export default function Disclosures() {
-  const [, navigate] = useLocation();
-  const [wantsMargin, setWantsMargin] = useState<YNVal>("no");
-  const [initialDeposit, setInitialDeposit] = useState("");
-  const [q1, setQ1] = useState<YNVal>("");
-  const [q2, setQ2] = useState<YNVal>("");
-  const [q3, setQ3] = useState<YNVal>("");
-  const [q4, setQ4] = useState<YNVal>("");
-  const [q5, setQ5] = useState<YNVal>("");
-  const [q6, setQ6] = useState<YNVal>("");
-  const [q7, setQ7] = useState<YNVal>("");
-  const [q8, setQ8] = useState<YNVal>("");
-  const [q9, setQ9] = useState<YNVal>("");
-  const [q10, setQ10] = useState<YNVal>("");
-  const [taxWithholding, setTaxWithholding] = useState<"not_subject" | "subject" | "non_resident">("not_subject");
-  const [partnershipCheck, setPartnershipCheck] = useState(false);
+  const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(10);
+
+  const sd = savedData as Record<string, unknown>;
+  const [wantsMargin,      setWantsMargin]      = useState<YNVal>((sd.wantsMargin      as YNVal) ?? "no");
+  const [initialDeposit,   setInitialDeposit]   = useState((sd.initialDeposit          as string) ?? "");
+  const [q1,  setQ1]  = useState<YNVal>((sd.q1  as YNVal) ?? "");
+  const [q2,  setQ2]  = useState<YNVal>((sd.q2  as YNVal) ?? "");
+  const [q3,  setQ3]  = useState<YNVal>((sd.q3  as YNVal) ?? "");
+  const [q4,  setQ4]  = useState<YNVal>((sd.q4  as YNVal) ?? "");
+  const [q5,  setQ5]  = useState<YNVal>((sd.q5  as YNVal) ?? "");
+  const [q6,  setQ6]  = useState<YNVal>((sd.q6  as YNVal) ?? "");
+  const [q7,  setQ7]  = useState<YNVal>((sd.q7  as YNVal) ?? "");
+  const [q8,  setQ8]  = useState<YNVal>((sd.q8  as YNVal) ?? "");
+  const [q9,  setQ9]  = useState<YNVal>((sd.q9  as YNVal) ?? "");
+  const [q10, setQ10] = useState<YNVal>((sd.q10 as YNVal) ?? "");
+  const [taxWithholding, setTaxWithholding] = useState<"not_subject" | "subject" | "non_resident">(
+    (sd.taxWithholding as "not_subject" | "subject" | "non_resident") ?? "not_subject"
+  );
+  const [partnershipCheck, setPartnershipCheck] = useState((sd.partnershipCheck as boolean) ?? false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await saveSignupStep("disclosures", { wantsMargin, initialDeposit, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, taxWithholding, partnershipCheck });
-    navigate("/signatures");
+    await submit({ wantsMargin, initialDeposit, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, taxWithholding, partnershipCheck });
   };
 
   const qStyle: React.CSSProperties = { fontSize: "12px", color: "#555", lineHeight: "1.55", marginBottom: "2px" };
@@ -55,6 +57,10 @@ export default function Disclosures() {
         </div>
 
         <div className="px-8 py-6">
+          {globalError && (
+            <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>{globalError}</div>
+          )}
+
           <form onSubmit={handleSubmit} noValidate>
 
             <div className="mb-5">
@@ -66,7 +72,7 @@ export default function Disclosures() {
 
             <div className="mb-5 p-3" style={{ background: "#fafbfc", border: "1px solid #e8edf2", borderRadius: "2px" }}>
               <p style={{ fontSize: "11.5px", color: "#666", lineHeight: "1.6" }}>
-                <strong>Please Note:</strong> Please Day trading accounts are only offered to an account that maintains balance greater than $25,000. Therefore, Guardian requires an Initial deposit for such accounts of at least $30,000.
+                <strong>Please Note:</strong> Day trading accounts are only offered to an account that maintains balance greater than $25,000. Therefore, Guardian requires an Initial deposit for such accounts of at least $30,000.
               </p>
             </div>
 
@@ -116,15 +122,9 @@ export default function Disclosures() {
                 <div>
                   <p style={{ fontSize: "12px", color: "#444", fontWeight: 600, marginBottom: "6px" }}>Not Subject to Backup Withholding</p>
                   <ol style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.7", paddingLeft: "18px" }}>
-                    <li>The number shown on this form is my correct taxpayer identification number (or I am waiting for a number to be issued to me), and</li>
-                    <li>I am not subject to backup withholding, or
-                      <ol type="a" style={{ paddingLeft: "18px", marginTop: "4px" }}>
-                        <li>I am exempt from backup withholding, or</li>
-                        <li>I have not been notified by the Internal Revenue Service (IRS) that I am subject to backup withholding as a result of failure to report all interest or dividends, or</li>
-                      </ol>
-                      <p style={{ marginTop: "4px" }}>The IRS has notified me that I am no longer subject to backup withholding</p>
-                    </li>
-                    <li>I am a U.S. citizen or other U.S. person (defined below), and</li>
+                    <li>The number shown on this form is my correct taxpayer identification number, and</li>
+                    <li>I am not subject to backup withholding, or exempt from backup withholding, and</li>
+                    <li>I am a U.S. citizen or other U.S. person, and</li>
                     <li>The FATCA code(s) entered on this form (if any) indicating that I am exempt from FATCA reporting is correct.</li>
                   </ol>
                 </div>
@@ -135,8 +135,8 @@ export default function Disclosures() {
                 <div>
                   <p style={{ fontSize: "12px", color: "#444", fontWeight: 600, marginBottom: "6px" }}>Subject to Backup Withholding</p>
                   <ol style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.7", paddingLeft: "18px" }}>
-                    <li>The number shown on this form is my correct taxpayer identification number (or I am waiting for a number to be issued to me), and</li>
-                    <li>I am a U.S. citizen or other U.S. person (defined below), and</li>
+                    <li>The number shown on this form is my correct taxpayer identification number, and</li>
+                    <li>I am a U.S. citizen or other U.S. person, and</li>
                     <li>The FATCA code(s) entered on this form (if any) indicating that I am exempt from FATCA reporting is correct.</li>
                   </ol>
                 </div>
@@ -144,7 +144,7 @@ export default function Disclosures() {
 
               <label className="flex gap-2 mb-3 cursor-pointer">
                 <input type="checkbox" checked={partnershipCheck} onChange={(e) => setPartnershipCheck(e.target.checked)} style={{ marginTop: "2px", flexShrink: 0, accentColor: "#3a7bd5" }} />
-                <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.65" }}>Check this box if you are a partnership (including an LLC classified as a partnership for U.S. federal tax purposes) trust, or estate that has any foreign partners, owners, or beneficiaries, and you are providing this form to a partnership, trust, or estate. You must check this box if you receive a Form W-8 (or documentary evidence) from any partner, owner, or beneficiary establishing foreign status or if you receive a Form W-9 from any partner, owner, or beneficiary that has checked this box. Note a partnership that provides a Form W-9 and checks this box may be required to complete Schedules K-2 and K-3 (Form 1065). For more information, see the Partnership Instructions for Schedules K-2 and K-3 (Form 1065).</p>
+                <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.65" }}>Check this box if you are a partnership, trust, or estate that has any foreign partners, owners, or beneficiaries providing this form. Note: a partnership that provides a Form W-9 and checks this box may be required to complete Schedules K-2 and K-3 (Form 1065).</p>
               </label>
 
               <label className="flex gap-2 cursor-pointer">
@@ -154,8 +154,10 @@ export default function Disclosures() {
             </div>
 
             <div className="flex gap-3">
-              <button type="button" onClick={() => navigate("/funding-details")} className="font-medium hover:bg-gray-50" style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}>Previous</button>
-              <button type="submit" className="text-white font-semibold hover:opacity-90" style={{ background: "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: "pointer", fontSize: "13px" }}>Next</button>
+              <button type="button" onClick={goBack} className="font-medium hover:bg-gray-50" style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}>Previous</button>
+              <button type="submit" disabled={isSubmitting} className="text-white font-semibold hover:opacity-90" style={{ background: isSubmitting ? "#8ab4e8" : "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: isSubmitting ? "not-allowed" : "pointer", fontSize: "13px" }}>
+                {isSubmitting ? "Saving…" : "Next"}
+              </button>
             </div>
           </form>
         </div>

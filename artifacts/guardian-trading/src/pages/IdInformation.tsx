@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
-import { saveSignupStep } from "@/lib/saveStep";
+import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
 
 const COUNTRIES = ["United States", "Canada", "United Kingdom", "Australia", "Other"];
@@ -17,17 +16,11 @@ const US_STATES = [
 ];
 
 const fieldStyle: React.CSSProperties = {
-  background: "#e8edf2",
-  border: "1px solid #ccd3da",
-  borderRadius: "3px",
-  padding: "9px 10px",
-  color: "#333",
-  fontSize: "13px",
-  width: "100%",
+  background: "#e8edf2", border: "1px solid #ccd3da", borderRadius: "3px",
+  padding: "9px 10px", color: "#333", fontSize: "13px", width: "100%",
 };
-
 const selectStyle: React.CSSProperties = { ...fieldStyle, appearance: "none" as const, paddingRight: "28px", cursor: "pointer" };
-const dateStyle: React.CSSProperties = { ...fieldStyle, paddingRight: "36px" };
+const dateStyle: React.CSSProperties  = { ...fieldStyle, paddingRight: "36px" };
 
 function FieldLabel({ children, required }: { children: React.ReactNode; required?: boolean }) {
   return (
@@ -69,26 +62,27 @@ function DateField({ value, onChange, placeholder = "MMM/DD/YYYY" }: {
 }
 
 export default function IdInformation() {
-  const [, navigate] = useLocation();
+  const { savedData, submit, goBack, isSubmitting, validationErrors, globalError } = useOnboardingStep(3);
+
+  const sd = savedData as Record<string, string>;
   const [form, setForm] = useState({
-    taxResidenceCountry: "United States",
-    foreignIdType: "",
-    taxIdType: "",
-    dateOfBirth: "",
-    taxId: "",
-    idType: "",
-    idNumber: "",
-    issuingState: "",
-    countryOfIssuance: "",
-    issueDate: "",
-    expirationDate: "",
+    taxResidenceCountry: sd.taxResidenceCountry ?? "United States",
+    foreignIdType:       sd.foreignIdType       ?? "",
+    taxIdType:           sd.taxIdType           ?? "",
+    dateOfBirth:         sd.dateOfBirth         ?? "",
+    taxId:               sd.taxId               ?? "",
+    idType:              sd.idType              ?? "",
+    idNumber:            sd.idNumber            ?? "",
+    issuingState:        sd.issuingState        ?? "",
+    countryOfIssuance:   sd.countryOfIssuance   ?? "",
+    issueDate:           sd.issueDate           ?? "",
+    expirationDate:      sd.expirationDate      ?? "",
   });
   const set = (k: keyof typeof form) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await saveSignupStep("idInformation", { ...form });
-    navigate("/income-details");
+    await submit({ ...form });
   };
 
   return (
@@ -96,9 +90,7 @@ export default function IdInformation() {
       <div className="bg-white" style={{ borderRadius: "2px", boxShadow: "0 1px 6px rgba(0,0,0,0.10)", border: "1px solid #dde3e9", borderLeft: "4px solid #3a7bd5" }}>
 
         <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
-          <h1 className="font-bold uppercase mb-1" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>
-            ID Information
-          </h1>
+          <h1 className="font-bold uppercase mb-1" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>ID Information</h1>
           <p className="font-semibold uppercase" style={{ color: "#3a7bd5", fontSize: "10px", letterSpacing: "0.05em" }}>
             Important Information About Procedures For Opening A New Account USA Patriot Act Information
           </p>
@@ -106,84 +98,51 @@ export default function IdInformation() {
 
         <div className="px-8 py-6">
           <p className="mb-5 leading-relaxed" style={{ fontSize: "12px", color: "#666" }}>
-            To help the government fight the funding of terrorism and money-laundering activities, Federal law requires that Guardian verify your identity by obtaining your name, date of birth, address, and a government-issued identification number before opening your account. In certain circumstances, Guardian may obtain and verify this information with respect to any person(s) authorized to effect transactions in an account. For certain entities, such as trusts, estates, corporations, partnerships, or other organizations, identifying documentation is also required. Your account may be restricted and/or closed if Guardian cannot verify this information. Guardian will not be responsible for any losses or damages (including but not limited to lost opportunities) resulting from any failure to provide this information, or from any restriction placed upon, or closing of, your account.
+            To help the government fight the funding of terrorism and money-laundering activities, Federal law requires that Guardian verify your identity by obtaining your name, date of birth, address, and a government-issued identification number before opening your account.
           </p>
 
-          <form onSubmit={handleSubmit} noValidate>
-
-            <div className="grid grid-cols-4 gap-5 mb-4">
-              <div>
-                <FieldLabel required>Country of Tax Residence</FieldLabel>
-                <SelectField value={form.taxResidenceCountry} onChange={set("taxResidenceCountry")} options={COUNTRIES} />
-              </div>
-              <div>
-                <FieldLabel>Foreign ID Type</FieldLabel>
-                <input style={fieldStyle} className="focus:outline-none" value={form.foreignIdType} onChange={(e) => set("foreignIdType")(e.target.value)} />
-              </div>
-              <div>
-                <FieldLabel required>Tax ID Type</FieldLabel>
-                <SelectField value={form.taxIdType} onChange={set("taxIdType")} options={TAX_ID_TYPES} />
-              </div>
-              <div>
-                <FieldLabel required>Date of Birth</FieldLabel>
-                <DateField value={form.dateOfBirth} onChange={set("dateOfBirth")} />
-              </div>
+          {globalError && (
+            <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>
+              {globalError}
             </div>
+          )}
 
+          {Object.keys(validationErrors).length > 0 && (
+            <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>
+              {Object.values(validationErrors).map((e, i) => <div key={i}>{e}</div>)}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="grid grid-cols-4 gap-5 mb-4">
+              <div><FieldLabel required>Country of Tax Residence</FieldLabel><SelectField value={form.taxResidenceCountry} onChange={set("taxResidenceCountry")} options={COUNTRIES} /></div>
+              <div><FieldLabel>Foreign ID Type</FieldLabel><input style={fieldStyle} className="focus:outline-none" value={form.foreignIdType} onChange={(e) => set("foreignIdType")(e.target.value)} /></div>
+              <div><FieldLabel required>Tax ID Type</FieldLabel><SelectField value={form.taxIdType} onChange={set("taxIdType")} options={TAX_ID_TYPES} /></div>
+              <div><FieldLabel required>Date of Birth</FieldLabel><DateField value={form.dateOfBirth} onChange={set("dateOfBirth")} /></div>
+            </div>
             <div className="mb-5" style={{ maxWidth: "25%" }}>
               <FieldLabel required>Tax ID (SS# / EIN / Foreign ID)</FieldLabel>
               <input style={fieldStyle} className="focus:outline-none" value={form.taxId} onChange={(e) => set("taxId")(e.target.value)} />
             </div>
 
-            <p className="mb-4 font-semibold" style={{ fontSize: "13px", color: "#444" }}>
-              Valid Government Issued Photo ID
-            </p>
+            <p className="mb-4 font-semibold" style={{ fontSize: "13px", color: "#444" }}>Valid Government Issued Photo ID</p>
 
             <div className="grid grid-cols-4 gap-5 mb-4">
-              <div>
-                <FieldLabel required>ID Type</FieldLabel>
-                <SelectField value={form.idType} onChange={set("idType")} options={ID_TYPES} />
-              </div>
-              <div>
-                <FieldLabel required>ID Number</FieldLabel>
-                <input style={fieldStyle} className="focus:outline-none" value={form.idNumber} onChange={(e) => set("idNumber")(e.target.value)} />
-              </div>
-              <div>
-                <FieldLabel required>Issuing State</FieldLabel>
-                <SelectField value={form.issuingState} onChange={set("issuingState")} options={US_STATES} />
-              </div>
-              <div>
-                <FieldLabel required>Country of Issuance</FieldLabel>
-                <SelectField value={form.countryOfIssuance} onChange={set("countryOfIssuance")} options={COUNTRIES} />
-              </div>
+              <div><FieldLabel required>ID Type</FieldLabel><SelectField value={form.idType} onChange={set("idType")} options={ID_TYPES} /></div>
+              <div><FieldLabel required>ID Number</FieldLabel><input style={fieldStyle} className="focus:outline-none" value={form.idNumber} onChange={(e) => set("idNumber")(e.target.value)} /></div>
+              <div><FieldLabel required>Issuing State</FieldLabel><SelectField value={form.issuingState} onChange={set("issuingState")} options={US_STATES} /></div>
+              <div><FieldLabel required>Country of Issuance</FieldLabel><SelectField value={form.countryOfIssuance} onChange={set("countryOfIssuance")} options={COUNTRIES} /></div>
             </div>
 
             <div className="grid grid-cols-2 gap-5 mb-6" style={{ maxWidth: "50%" }}>
-              <div>
-                <FieldLabel required>Issue Date</FieldLabel>
-                <DateField value={form.issueDate} onChange={set("issueDate")} />
-              </div>
-              <div>
-                <FieldLabel required>Expiration Date</FieldLabel>
-                <DateField value={form.expirationDate} onChange={set("expirationDate")} />
-              </div>
+              <div><FieldLabel required>Issue Date</FieldLabel><DateField value={form.issueDate} onChange={set("issueDate")} /></div>
+              <div><FieldLabel required>Expiration Date</FieldLabel><DateField value={form.expirationDate} onChange={set("expirationDate")} /></div>
             </div>
 
             <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => navigate("/professional-details")}
-                className="font-medium hover:bg-gray-50 transition-colors"
-                style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}
-              >
-                Previous
-              </button>
-              <button
-                type="submit"
-                className="text-white font-semibold transition-opacity hover:opacity-90"
-                style={{ background: "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: "pointer", fontSize: "13px" }}
-              >
-                Next
+              <button type="button" onClick={goBack} className="font-medium hover:bg-gray-50 transition-colors" style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}>Previous</button>
+              <button type="submit" disabled={isSubmitting} className="text-white font-semibold transition-opacity hover:opacity-90" style={{ background: isSubmitting ? "#8ab4e8" : "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: isSubmitting ? "not-allowed" : "pointer", fontSize: "13px" }}>
+                {isSubmitting ? "Saving…" : "Next"}
               </button>
             </div>
           </form>

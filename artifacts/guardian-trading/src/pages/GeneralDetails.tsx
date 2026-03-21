@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
-import { saveSignupStep } from "@/lib/saveStep";
+import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
 
 const REGISTRATION_TYPES = ["Individual Account", "Limited Liability Company"];
@@ -11,15 +10,18 @@ const HOW_HEARD = [
 ];
 
 export default function GeneralDetails() {
-  const [registrationType, setRegistrationType] = useState("");
-  const [product, setProduct] = useState("");
-  const [howHeard, setHowHeard] = useState("");
+  const { savedData, submit, isSubmitting, globalError } = useOnboardingStep(0);
+
+  const [registrationType, setRegistrationType] = useState(
+    (savedData.registrationType as string) ?? ""
+  );
+  const [product, setProduct] = useState((savedData.product as string) ?? "");
+  const [howHeard, setHowHeard] = useState((savedData.howHeard as string) ?? "");
   const [errors, setErrors] = useState<{
     registrationType?: string;
     product?: string;
     howHeard?: string;
   }>({});
-  const [, navigate] = useLocation();
 
   const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,8 +34,7 @@ export default function GeneralDetails() {
       return;
     }
     setErrors({});
-    await saveSignupStep("general", { registrationType, product, howHeard });
-    navigate("/personal-details");
+    await submit({ registrationType, product, howHeard });
   };
 
   return (
@@ -54,6 +55,12 @@ export default function GeneralDetails() {
         </div>
 
         <div className="px-8 py-6">
+          {globalError && (
+            <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>
+              {globalError}
+            </div>
+          )}
+
           <form onSubmit={handleNext} noValidate>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
 
@@ -85,7 +92,7 @@ export default function GeneralDetails() {
               {/* Product */}
               <div>
                 <label className="block text-[13px] mb-1.5" style={{ color: "#555" }}>
-                  Product you want to trade <span style={{ color: "#e53e3e" }}>*</span>
+                  Product <span style={{ color: "#e53e3e" }}>*</span>
                 </label>
                 <div className="relative">
                   <select
@@ -107,10 +114,10 @@ export default function GeneralDetails() {
                 {errors.product && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.product}</p>}
               </div>
 
-              {/* How did you hear */}
+              {/* How Heard */}
               <div>
                 <label className="block text-[13px] mb-1.5" style={{ color: "#555" }}>
-                  How did you hear about us? <span style={{ color: "#e53e3e" }}>*</span>
+                  How Did You Hear About Us? <span style={{ color: "#e53e3e" }}>*</span>
                 </label>
                 <div className="relative">
                   <select
@@ -135,10 +142,11 @@ export default function GeneralDetails() {
 
             <button
               type="submit"
-              className="text-white text-[13px] font-semibold transition-opacity hover:opacity-90"
-              style={{ background: "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: "pointer" }}
+              disabled={isSubmitting}
+              className="text-white font-semibold transition-opacity hover:opacity-90"
+              style={{ background: isSubmitting ? "#8ab4e8" : "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: isSubmitting ? "not-allowed" : "pointer", fontSize: "13px" }}
             >
-              Next
+              {isSubmitting ? "Saving…" : "Next"}
             </button>
           </form>
         </div>

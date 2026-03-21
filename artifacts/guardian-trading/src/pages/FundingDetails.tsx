@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
-import { saveSignupStep } from "@/lib/saveStep";
+import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
 
-const FUNDING_LEFT = ["Wages/Income", "Gift", "Inheritance", "Insurance Payout", "Savings", "Other"];
-const FUNDING_RIGHT = ["Pension or Retirement", "Sale of an Asset", "Social Security Benefits", "Funds from another account"];
-const ACCOUNT_TYPES = ["Checking", "Savings", "Money Market", "Other"];
+const FUNDING_LEFT  = ["Wages/Income","Gift","Inheritance","Insurance Payout","Savings","Other"];
+const FUNDING_RIGHT = ["Pension or Retirement","Sale of an Asset","Social Security Benefits","Funds from another account"];
+const ACCOUNT_TYPES = ["Checking","Savings","Money Market","Other"];
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "8px 10px", fontSize: "13px", border: "1px solid #ccd3da",
@@ -13,29 +12,40 @@ const inputStyle: React.CSSProperties = {
 };
 
 export default function FundingDetails() {
-  const [, navigate] = useLocation();
-  const [sources, setSources] = useState<Set<string>>(new Set());
-  const [otherText, setOtherText] = useState("");
-  const [bankName, setBankName] = useState("");
-  const [abaSwift, setAbaSwift] = useState("");
-  const [accountNumber, setAccountNumber] = useState("");
-  const [accountName, setAccountName] = useState("");
-  const [accountType, setAccountType] = useState("Checking");
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(9);
 
-  const toggleSource = (src: string) => setSources((prev) => { const next = new Set(prev); next.has(src) ? next.delete(src) : next.add(src); return next; });
+  const sd = savedData as Record<string, unknown>;
+  const [sources,       setSources]       = useState<Set<string>>(new Set((sd.fundingSources as string[]) ?? []));
+  const [otherText,     setOtherText]     = useState((sd.otherDescription as string) ?? "");
+  const [bankName,      setBankName]      = useState((sd.bankName         as string) ?? "");
+  const [abaSwift,      setAbaSwift]      = useState((sd.abaSwift         as string) ?? "");
+  const [accountNumber, setAccountNumber] = useState((sd.accountNumber    as string) ?? "");
+  const [accountName,   setAccountName]   = useState((sd.accountName      as string) ?? "");
+  const [accountType,   setAccountType]   = useState((sd.accountType      as string) ?? "Checking");
+  const [errors,        setErrors]        = useState<Record<string, string>>({});
+
+  const toggleSource = (src: string) => setSources((prev) => {
+    const next = new Set(prev); next.has(src) ? next.delete(src) : next.add(src); return next;
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
-    if (sources.size === 0) newErrors.sources = "Please select at least one funding source.";
-    if (!bankName.trim()) newErrors.bankName = "Required";
-    if (!abaSwift.trim()) newErrors.abaSwift = "Required";
-    if (!accountName.trim()) newErrors.accountName = "Required";
+    if (sources.size === 0)    newErrors.sources     = "Please select at least one funding source.";
+    if (!bankName.trim())      newErrors.bankName    = "Required";
+    if (!abaSwift.trim())      newErrors.abaSwift    = "Required";
+    if (!accountName.trim())   newErrors.accountName = "Required";
     if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
     setErrors({});
-    await saveSignupStep("fundingDetails", { fundingSources: Array.from(sources), otherDescription: otherText, bankName, abaSwift, accountNumber, accountName, accountType });
-    navigate("/disclosures");
+    await submit({
+      fundingSources:   Array.from(sources),
+      otherDescription: otherText,
+      bankName,
+      abaSwift,
+      accountNumber,
+      accountName,
+      accountType,
+    });
   };
 
   return (
@@ -47,8 +57,11 @@ export default function FundingDetails() {
         </div>
 
         <div className="px-8 py-6">
-          <form onSubmit={handleSubmit} noValidate>
+          {globalError && (
+            <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>{globalError}</div>
+          )}
 
+          <form onSubmit={handleSubmit} noValidate>
             <p className="mb-3" style={{ fontSize: "13px", color: "#444", fontWeight: 500 }}>I am funding this account with (check all that apply)</p>
 
             <div className="flex gap-10 mb-3">
@@ -77,18 +90,17 @@ export default function FundingDetails() {
             ) : (
               <div className="mb-4" style={{ height: "34px", background: "#f0f2f5", border: "1px solid #dde3e9", borderRadius: "2px", maxWidth: "480px" }} />
             )}
-
             {errors.sources && <p className="mb-3 text-xs" style={{ color: "#e53e3e" }}>{errors.sources}</p>}
 
             <div className="flex gap-4 mb-4">
               <div style={{ flex: 1 }}>
                 <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>Name of the bank you will be funding your account from <span style={{ color: "#e53e3e" }}>*</span></label>
-                <input type="text" value={bankName} onChange={(e) => { setBankName(e.target.value); setErrors((p) => ({ ...p, bankName: undefined as unknown as string })); }} style={{ ...inputStyle, borderColor: errors.bankName ? "#e53e3e" : "#ccd3da" }} />
+                <input type="text" value={bankName} onChange={(e) => { setBankName(e.target.value); setErrors((p) => ({ ...p, bankName: "" })); }} style={{ ...inputStyle, borderColor: errors.bankName ? "#e53e3e" : "#ccd3da" }} />
                 {errors.bankName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.bankName}</p>}
               </div>
               <div style={{ flex: 1 }}>
                 <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>ABA / SWIFT <span style={{ color: "#e53e3e" }}>*</span></label>
-                <input type="text" value={abaSwift} onChange={(e) => { setAbaSwift(e.target.value); setErrors((p) => ({ ...p, abaSwift: undefined as unknown as string })); }} style={{ ...inputStyle, borderColor: errors.abaSwift ? "#e53e3e" : "#ccd3da" }} />
+                <input type="text" value={abaSwift} onChange={(e) => { setAbaSwift(e.target.value); setErrors((p) => ({ ...p, abaSwift: "" })); }} style={{ ...inputStyle, borderColor: errors.abaSwift ? "#e53e3e" : "#ccd3da" }} />
                 {errors.abaSwift && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.abaSwift}</p>}
               </div>
             </div>
@@ -100,7 +112,7 @@ export default function FundingDetails() {
               </div>
               <div style={{ flex: 1 }}>
                 <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>Account Name <span style={{ color: "#e53e3e" }}>*</span></label>
-                <input type="text" value={accountName} onChange={(e) => { setAccountName(e.target.value); setErrors((p) => ({ ...p, accountName: undefined as unknown as string })); }} style={{ ...inputStyle, borderColor: errors.accountName ? "#e53e3e" : "#ccd3da" }} />
+                <input type="text" value={accountName} onChange={(e) => { setAccountName(e.target.value); setErrors((p) => ({ ...p, accountName: "" })); }} style={{ ...inputStyle, borderColor: errors.accountName ? "#e53e3e" : "#ccd3da" }} />
                 {errors.accountName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.accountName}</p>}
               </div>
               <div style={{ flex: 1 }}>
@@ -117,8 +129,10 @@ export default function FundingDetails() {
             </div>
 
             <div className="flex gap-3">
-              <button type="button" onClick={() => navigate("/id-proof-upload")} className="font-medium hover:bg-gray-50 transition-colors" style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}>Previous</button>
-              <button type="submit" className="text-white font-semibold transition-opacity hover:opacity-90" style={{ background: "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: "pointer", fontSize: "13px" }}>Next</button>
+              <button type="button" onClick={goBack} className="font-medium hover:bg-gray-50 transition-colors" style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}>Previous</button>
+              <button type="submit" disabled={isSubmitting} className="text-white font-semibold transition-opacity hover:opacity-90" style={{ background: isSubmitting ? "#8ab4e8" : "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: isSubmitting ? "not-allowed" : "pointer", fontSize: "13px" }}>
+                {isSubmitting ? "Saving…" : "Next"}
+              </button>
             </div>
           </form>
         </div>

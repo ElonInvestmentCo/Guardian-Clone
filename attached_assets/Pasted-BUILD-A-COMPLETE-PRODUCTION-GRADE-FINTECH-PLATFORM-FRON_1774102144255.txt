@@ -1,0 +1,223 @@
+BUILD A COMPLETE PRODUCTION-GRADE FINTECH PLATFORM (FRONTEND + BACKEND + ADMIN SYSTEM)
+
+This is a FULL SYSTEM BUILD for a regulated fintech onboarding + KYC + admin verification platform (Stripe / Coinbase / brokerage-level architecture).
+
+DO NOT produce demo code. DO NOT leave placeholders. Everything must be production-ready, modular, and scalable.
+
+────────────────────────────────────
+1. CORE SYSTEM OVERVIEW
+────────────────────────────────────
+
+Build a full fintech onboarding + compliance system with:
+
+A. Customer App (Frontend)
+B. Backend API (KYC + onboarding engine)
+C. Admin Verification Dashboard
+D. Fraud Detection Layer
+E. Document Verification (ID upload + OCR processing)
+
+All systems must be connected and production-grade.
+
+────────────────────────────────────
+2. FRONTEND (USER ONBOARDING SYSTEM)
+────────────────────────────────────
+
+Enhance existing 11-step onboarding system into:
+
+- Stripe-level UX onboarding flow
+- Fully controlled state machine (no step skipping)
+- Persistent onboarding session
+- Auto-save + retry queue system
+- Step validation before progression
+
+Frontend must include:
+
+/components/onboarding/
+- OnboardingShell (main layout controller)
+- StepGuard (route protection)
+- ProgressTracker
+- FormField system (reusable inputs)
+
+Rules:
+- All steps must be controlled by backend state
+- No direct URL access to unauthorized steps
+- UI must reflect backend status only
+
+────────────────────────────────────
+3. BACKEND ARCHITECTURE (CORE FINTECH ENGINE)
+────────────────────────────────────
+
+Build backend using a scalable architecture (Node.js / NestJS / FastAPI acceptable but must be structured cleanly):
+
+/api/
+- /auth (user session + JWT)
+- /onboarding
+  - POST /save-step
+  - POST /validate-step
+  - GET /progress
+- /kyc
+  - POST /submit-document
+  - POST /verify-document
+  - GET /kyc-status
+- /admin
+  - GET /kyc-queue
+  - POST /approve-user
+  - POST /reject-user
+  - GET /user-details
+- /fraud
+  - POST /risk-score
+  - GET /risk-events
+
+────────────────────────────────────
+4. KYC DOCUMENT VERIFICATION SYSTEM
+────────────────────────────────────
+
+Implement full document system:
+
+FEATURES:
+- ID upload (passport, driver license, national ID)
+- Image preprocessing (auto crop, clarity check)
+- OCR extraction (name, DOB, ID number)
+- Data validation against onboarding info
+- Face match (optional structure hook)
+
+PIPELINE:
+1. User uploads document
+2. System stores securely (S3-like storage structure)
+3. OCR engine extracts data
+4. Backend validates extracted data
+5. Risk engine assigns score
+6. Admin review required if risk is high
+
+Use OCR integration (Tesseract or cloud OCR API abstraction layer).
+
+────────────────────────────────────
+5. ADMIN KYC DASHBOARD (CRITICAL)
+────────────────────────────────────
+
+Build full admin system:
+
+/admin-dashboard
+
+FEATURES:
+
+1. KYC Review Queue
+- list of pending users
+- filter by risk score
+- filter by document status
+
+2. User Detail View
+- full onboarding data
+- uploaded documents
+- OCR extracted data
+- risk score breakdown
+- audit logs timeline
+
+3. Approval Actions
+- Approve user
+- Reject user
+- Request resubmission
+
+4. Audit Trail Viewer
+- all user actions logged
+- step-by-step timeline
+
+UI REQUIREMENTS:
+- fintech-grade dashboard UI (Stripe / Plaid style)
+- clean tables
+- side panel user inspector
+- status badges (pending / approved / rejected / flagged)
+
+────────────────────────────────────
+6. FRAUD DETECTION LAYER
+────────────────────────────────────
+
+Implement a risk scoring engine:
+
+Create /lib/fraud/riskEngine.ts
+
+RULES:
+- multiple accounts detection (email/phone/IP)
+- mismatched identity data
+- suspicious document patterns
+- rapid onboarding attempts
+- invalid geographic patterns
+
+OUTPUT:
+- riskScore (0–100)
+- riskLevel (low / medium / high / critical)
+- flags array
+
+If riskScore > threshold:
+- send to manual admin review queue
+
+────────────────────────────────────
+7. DATABASE DESIGN (MANDATORY)
+────────────────────────────────────
+
+Design production-ready schema:
+
+Users
+OnboardingSessions
+KycDocuments
+KycVerifications
+FraudScores
+AuditLogs
+AdminActions
+
+Each table must include:
+- timestamps
+- userId relation
+- status tracking
+- history logs
+
+────────────────────────────────────
+8. SECURITY REQUIREMENTS (VERY IMPORTANT)
+────────────────────────────────────
+
+- JWT authentication for all protected routes
+- Admin role-based access control
+- Encrypted document storage
+- Secure file upload validation
+- Rate limiting on onboarding + KYC endpoints
+- Input sanitization for all requests
+
+────────────────────────────────────
+9. AUDIT + COMPLIANCE SYSTEM
+────────────────────────────────────
+
+Every action must be logged:
+
+AuditLog must include:
+- userId
+- actionType
+- stepId
+- fieldChanged
+- oldValue
+- newValue
+- timestamp
+- ipAddress
+
+This is REQUIRED for fintech compliance (AML/KYC readiness).
+
+────────────────────────────────────
+10. OUTPUT REQUIREMENTS
+────────────────────────────────────
+
+Return:
+
+1. Full folder structure (frontend + backend + admin)
+2. Complete backend API implementation
+3. Full admin dashboard UI implementation
+4. Frontend onboarding integration
+5. Fraud detection engine implementation
+6. KYC OCR pipeline implementation
+7. Database schema design
+8. Security implementation details
+
+────────────────────────────────────
+FINAL RULE:
+This must be a real production-grade fintech system (Stripe / Coinbase / brokerage-level architecture).
+
+No placeholders. No pseudo-code. No incomplete systems.
+Everything must be fully functional and connected.

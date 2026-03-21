@@ -12,7 +12,7 @@
     "accountName": "SDERSDERS",
     "accountType": "Checking"
   },
-  "updatedAt": "2026-03-20T21:08:13.229Z",
+  "updatedAt": "2026-03-21T13:52:55.745Z",
   "disclosures": {
     "wantsMargin": "no",
     "initialDeposit": "",
@@ -50,6 +50,19 @@
   "general": {
     "registrationType": "Individual Account",
     "product": "Stocks",
-    "howHeard": "Benzinga"
+    "howHeard": "Facebook"
+  },
+  "credentials": {
+    "passwordHash": "enc:6c0f7f5307332ffc4854bbec4ac11687:1da532719b59ec0d140e72109368b836:90014fb38bf6031a"
+  },
+  "personal": {
+    "firstName": "",
+    "lastName": "",
+    "address": "",
+    "aptSuite": "",
+    "state": "",
+    "city": "",
+    "zipCode": "",
+    "phoneNumber": ""
   }
 }

@@ -5,6 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { LoadingProvider } from "@/context/LoadingContext";
 import { PageLoader } from "@/components/PageLoader";
 import { NavigationLoader } from "@/components/NavigationLoader";
+import { OnboardingProvider } from "@/lib/onboarding/OnboardingContext";
+import { OnboardingGuard } from "@/lib/onboarding/OnboardingGuard";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
 import Platforms from "@/pages/Platforms";
@@ -28,7 +30,6 @@ import Signatures from "@/pages/Signatures";
 import ApplicationSubmitted from "@/pages/ApplicationSubmitted";
 import ApplicationPending from "@/pages/ApplicationPending";
 import AccountVerified from "@/pages/AccountVerified";
-// Dashboard pages
 import DashboardOverview from "@/pages/dashboard/Overview";
 import DashboardPositions from "@/pages/dashboard/Positions";
 import DashboardOrders from "@/pages/dashboard/Orders";
@@ -48,6 +49,7 @@ const queryClient = new QueryClient();
 function Router() {
   return (
     <Switch>
+      {/* ── Public routes ─────────────────────────────────────────────── */}
       <Route path="/" component={Home} />
       <Route path="/about" component={About} />
       <Route path="/platforms" component={Platforms} />
@@ -56,33 +58,66 @@ function Router() {
       <Route path="/signup" component={Signup} />
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/email-verification" component={EmailVerification} />
-      <Route path="/general-details" component={GeneralDetails} />
-      <Route path="/personal-details" component={PersonalDetails} />
-      <Route path="/professional-details" component={ProfessionalDetails} />
-      <Route path="/id-information" component={IdInformation} />
-      <Route path="/income-details" component={IncomeDetails} />
-      <Route path="/risk-tolerance" component={RiskTolerance} />
-      <Route path="/financial-situation" component={FinancialSituation} />
-      <Route path="/investment-experience" component={InvestmentExperience} />
-      <Route path="/id-proof-upload" component={IdProofUpload} />
-      <Route path="/funding-details" component={FundingDetails} />
-      <Route path="/disclosures" component={Disclosures} />
-      <Route path="/signatures" component={Signatures} />
+
+      {/* ── Onboarding — sequential, guarded ──────────────────────────── */}
+      <Route path="/general-details">
+        {() => <OnboardingGuard step={0}><GeneralDetails /></OnboardingGuard>}
+      </Route>
+      <Route path="/personal-details">
+        {() => <OnboardingGuard step={1}><PersonalDetails /></OnboardingGuard>}
+      </Route>
+      <Route path="/professional-details">
+        {() => <OnboardingGuard step={2}><ProfessionalDetails /></OnboardingGuard>}
+      </Route>
+      <Route path="/id-information">
+        {() => <OnboardingGuard step={3}><IdInformation /></OnboardingGuard>}
+      </Route>
+      <Route path="/income-details">
+        {() => <OnboardingGuard step={4}><IncomeDetails /></OnboardingGuard>}
+      </Route>
+      <Route path="/risk-tolerance">
+        {() => <OnboardingGuard step={5}><RiskTolerance /></OnboardingGuard>}
+      </Route>
+      <Route path="/financial-situation">
+        {() => <OnboardingGuard step={6}><FinancialSituation /></OnboardingGuard>}
+      </Route>
+      <Route path="/investment-experience">
+        {() => <OnboardingGuard step={7}><InvestmentExperience /></OnboardingGuard>}
+      </Route>
+      <Route path="/id-proof-upload">
+        {() => <OnboardingGuard step={8}><IdProofUpload /></OnboardingGuard>}
+      </Route>
+      <Route path="/funding-details">
+        {() => <OnboardingGuard step={9}><FundingDetails /></OnboardingGuard>}
+      </Route>
+      <Route path="/disclosures">
+        {() => <OnboardingGuard step={10}><Disclosures /></OnboardingGuard>}
+      </Route>
+      <Route path="/signatures">
+        {() => <OnboardingGuard step={11}><Signatures /></OnboardingGuard>}
+      </Route>
+
+      {/* ── Post-onboarding ───────────────────────────────────────────── */}
       <Route path="/application-submitted" component={ApplicationSubmitted} />
       <Route path="/application-pending" component={ApplicationPending} />
       <Route path="/account-verified" component={AccountVerified} />
+
+      {/* ── Dashboard ─────────────────────────────────────────────────── */}
       <Route path="/dashboard" component={DashboardOverview} />
       <Route path="/positions" component={DashboardPositions} />
       <Route path="/orders" component={DashboardOrders} />
       <Route path="/portfolio" component={DashboardPortfolio} />
       <Route path="/statements" component={DashboardStatements} />
       <Route path="/settings" component={DashboardSettings} />
+
+      {/* ── Analytics ─────────────────────────────────────────────────── */}
       <Route path="/analytics" component={Dashboard} />
       <Route path="/analytics/projects" component={Projects} />
       <Route path="/analytics/campaigns" component={Campaigns} />
       <Route path="/analytics/heatmaps" component={Heatmap} />
       <Route path="/analytics/sessions" component={Sessions} />
       <Route path="/analytics/insights" component={Insights} />
+
       <Route component={NotFound} />
     </Switch>
   );
@@ -94,8 +129,10 @@ function App() {
       <TooltipProvider>
         <LoadingProvider>
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <NavigationLoader />
-            <Router />
+            <OnboardingProvider>
+              <NavigationLoader />
+              <Router />
+            </OnboardingProvider>
           </WouterRouter>
           <PageLoader />
           <Toaster />

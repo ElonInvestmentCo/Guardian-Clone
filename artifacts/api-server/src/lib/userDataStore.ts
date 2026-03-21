@@ -262,3 +262,27 @@ export function getStoredPasswordHash(email: string): string | null {
     return null;
   }
 }
+
+/**
+ * Read the full per-user profile JSON (all saved steps, meta fields, etc.).
+ * Returns an empty object if the user has no profile yet.
+ */
+export function getUserProfileData(email: string): Record<string, unknown> {
+  return readProfile(email);
+}
+
+/**
+ * Write a single meta field (prefixed with `_` by convention) directly into
+ * the user's per-user profile JSON without going through encryptSensitive.
+ * Used for storing `_completedStepNumbers`, `_auditLog`, etc.
+ */
+export function setUserProfileMeta(
+  email: string,
+  key: string,
+  value: unknown
+): void {
+  const profile = readProfile(email);
+  profile[key] = value;
+  profile["updatedAt"] = new Date().toISOString();
+  writeProfile(email, profile);
+}

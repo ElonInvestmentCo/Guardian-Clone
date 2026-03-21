@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useLocation } from "wouter";
-import { saveSignupStep } from "@/lib/saveStep";
+import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
 
 const DISCLOSURE_DOCS = [
@@ -15,24 +14,27 @@ const DISCLOSURE_DOCS = [
 ];
 
 export default function Signatures() {
-  const [, navigate] = useLocation();
+  const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(11);
+
+  const sd = savedData as Record<string, unknown>;
 
   const [consents, setConsents] = useState<Record<string, boolean>>(
+    (sd.consents as Record<string, boolean>) ??
     Object.fromEntries(DISCLOSURE_DOCS.map((d) => [d, false]))
   );
-  const [tradingPlan, setTradingPlan] = useState("");
-  const [electronicDelivery, setElectronicDelivery] = useState(false);
-  const [signatureDataUrl, setSignatureDataUrl] = useState<string | null>(null);
-  const [signatureName, setSignatureName] = useState("");
+  const [tradingPlan,       setTradingPlan]       = useState((sd.tradingPlan       as string)  ?? "");
+  const [electronicDelivery,setElectronicDelivery]= useState((sd.electronicDelivery as boolean) ?? false);
+  const [signatureDataUrl,  setSignatureDataUrl]   = useState<string | null>(null);
+  const [signatureName,     setSignatureName]      = useState((sd.signatureName     as string)  ?? "");
 
   const [showElectronicModal, setShowElectronicModal] = useState(false);
-  const [electronicAgreed, setElectronicAgreed] = useState(false);
-  const [showSignatureModal, setShowSignatureModal] = useState(false);
-  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [electronicAgreed,    setElectronicAgreed]    = useState(false);
+  const [showSignatureModal,  setShowSignatureModal]   = useState(false);
+  const [showSubmitModal,     setShowSubmitModal]      = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const drawing = useRef(false);
-  const lastPos = useRef<{ x: number; y: number } | null>(null);
+  const drawing   = useRef(false);
+  const lastPos   = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     if (showSignatureModal && canvasRef.current) {
@@ -51,7 +53,7 @@ export default function Signatures() {
   };
 
   const startDraw = (e: React.MouseEvent | React.TouchEvent) => { e.preventDefault(); const canvas = canvasRef.current; if (!canvas) return; drawing.current = true; lastPos.current = getXY(e, canvas); };
-  const doDraw = (e: React.MouseEvent | React.TouchEvent) => {
+  const doDraw   = (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault(); if (!drawing.current || !lastPos.current) return;
     const canvas = canvasRef.current; if (!canvas) return;
     const ctx = canvas.getContext("2d"); if (!ctx) return;
@@ -61,10 +63,19 @@ export default function Signatures() {
     lastPos.current = pos;
   };
   const stopDraw = () => { drawing.current = false; lastPos.current = null; };
-  const clearCanvas = () => { const canvas = canvasRef.current; if (!canvas) return; const ctx = canvas.getContext("2d"); if (!ctx) return; ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvas.width, canvas.height); };
+  const clearCanvas = () => {
+    const canvas = canvasRef.current; if (!canvas) return;
+    const ctx = canvas.getContext("2d"); if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  };
   const submitSignature = () => { const canvas = canvasRef.current; if (!canvas) return; setSignatureDataUrl(canvas.toDataURL("image/png")); setShowSignatureModal(false); };
+
   const handleNext = (e: React.FormEvent) => { e.preventDefault(); setShowSubmitModal(true); };
-  const handleSubmitConfirm = async () => { await saveSignupStep("signatures", { consents, tradingPlan, electronicDelivery, signatureName, hasSigned: !!signatureDataUrl }); navigate("/application-submitted"); };
+
+  const handleSubmitConfirm = async () => {
+    setShowSubmitModal(false);
+    await submit({ consents, tradingPlan, electronicDelivery, signatureName, hasSigned: !!signatureDataUrl });
+  };
 
   return (
     <OnboardingShell currentStep={11}>
@@ -75,8 +86,11 @@ export default function Signatures() {
         </div>
 
         <div className="px-8 py-6">
-          <form onSubmit={handleNext} noValidate>
+          {globalError && (
+            <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>{globalError}</div>
+          )}
 
+          <form onSubmit={handleNext} noValidate>
             <p className="mb-5" style={{ fontSize: "12px", color: "#555" }}>Please select the disclosures below and the check the box noting you have read and understood these disclosures.</p>
 
             <div className="mb-6" style={{ border: "1px solid #dde3e9", borderRadius: "2px" }}>
@@ -97,25 +111,25 @@ export default function Signatures() {
               <p style={{ fontSize: "11.5px", color: "#666", marginBottom: "8px" }}>Level 2 Software costs plus up to $165 in Add On Feeds will be waived for accounts generating $599 or more in commissions per month</p>
               <label className="flex gap-2 cursor-pointer">
                 <input type="radio" name="tradingPlan" checked={tradingPlan === "das_190"} onChange={() => setTradingPlan("das_190")} style={{ marginTop: "2px", flexShrink: 0, accentColor: "#3a7bd5" }} />
-                <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.6" }}><strong>Das Level 2 ($190):</strong> Regional Market Depth, Top Level Bids and Offers with Quoted Size for Major Listed Exchanges, includes NMS Listed Level 1 data. Does not include Options or Pink Sheet level 1. Additional ECN Book Feeds, Pink Sheet (OTC) Level 2, and Options Level 2 are offered at additional cost.</p>
+                <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.6" }}><strong>Das Level 2 ($190):</strong> Regional Market Depth, Top Level Bids and Offers with Quoted Size for Major Listed Exchanges.</p>
               </label>
             </div>
 
             <div className="mb-4">
               <p style={{ fontSize: "12px", color: "#444", fontWeight: 700, marginBottom: "3px" }}>Guardian Professional Trader</p>
-              <p style={{ fontSize: "11.5px", color: "#666", marginBottom: "8px" }}>For accounts Classified as Professional by either DasTrader or Sterling. Level 2 Software costs plus up to $150 in Add On Feeds will be waived for accounts generating $899 or more in commissions per month.</p>
+              <p style={{ fontSize: "11.5px", color: "#666", marginBottom: "8px" }}>For accounts Classified as Professional by either DasTrader or Sterling.</p>
               <label className="flex gap-2 cursor-pointer">
                 <input type="radio" name="tradingPlan" checked={tradingPlan === "das_200"} onChange={() => setTradingPlan("das_200")} style={{ marginTop: "2px", flexShrink: 0, accentColor: "#3a7bd5" }} />
-                <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.6" }}><strong>Das Level 2 ($200):</strong> Regional Market Depth, Top Level Bids and Offers with Quoted Size for Major Listed Exchanges, includes NMS Listed Level 1 data. Does not include Options or Pink Sheet level 1. Additional ECN Book Feeds, Pink Sheet (OTC) Level 2, and Options Level 2 are offered at additional cost.</p>
+                <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.6" }}><strong>Das Level 2 ($200):</strong> Regional Market Depth, Top Level Bids and Offers with Quoted Size for Major Listed Exchanges.</p>
               </label>
             </div>
 
             <div className="mb-6">
               <p style={{ fontSize: "12px", color: "#444", fontWeight: 700, marginBottom: "3px" }}>Sterling Trader Guardian Trading</p>
-              <p style={{ fontSize: "11.5px", color: "#666", marginBottom: "8px" }}>Level 1 Software costs plus up to $375 will be waived for accounts generating $799 or more in commissions per month. Add On Data Waiver Not available.</p>
+              <p style={{ fontSize: "11.5px", color: "#666", marginBottom: "8px" }}>Level 1 Software costs plus up to $375 will be waived for accounts generating $799 or more in commissions per month.</p>
               <label className="flex gap-2 cursor-pointer">
                 <input type="radio" name="tradingPlan" checked={tradingPlan === "sterling_275"} onChange={() => setTradingPlan("sterling_275")} style={{ marginTop: "2px", flexShrink: 0, accentColor: "#3a7bd5" }} />
-                <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.6" }}><strong>Sterling Trader ($275):</strong> All in package of Sterling Trader Pro including Nasdaq Total View, NYSE/AMEX/ARCA, Nasdaq Level 1, Direct Edge A, Direct Edge X, Options and OTC data are additional cost.</p>
+                <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.6" }}><strong>Sterling Trader ($275):</strong> All in package of Sterling Trader Pro including Nasdaq Total View, NYSE/AMEX/ARCA, Nasdaq Level 1.</p>
               </label>
             </div>
 
@@ -126,34 +140,31 @@ export default function Signatures() {
               </p>
               <label className="flex gap-2 cursor-pointer">
                 <input type="checkbox" checked={electronicDelivery} onChange={(e) => setElectronicDelivery(e.target.checked)} style={{ marginTop: "2px", flexShrink: 0, accentColor: "#3a7bd5" }} />
-                <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.65" }}>Please check this box if you wish only to receive communications electronically, including trade confirmations, prospectuses, account statements, proxy materials, tax-related documents, and marketing and sales documents. If you do not check this box, all such Communications will be delivered to you by standard mail.</p>
+                <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.65" }}>Please check this box if you wish only to receive communications electronically, including trade confirmations, prospectuses, account statements, proxy materials, tax-related documents, and marketing and sales documents.</p>
               </label>
             </div>
 
             <div className="mb-6" style={{ borderTop: "1px solid #eef1f4", paddingTop: "16px" }}>
-              <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.65", marginBottom: "16px" }}>By signing below, I/We attest to the accuracy of the information provided on this form. I/We acknowledge that we have received, read and agree to the terms and conditions contained in the attached Account Agreement, including the arbitration clause. By executing this agreement, I/We agree to be bound by the terms and conditions contained here in.</p>
-
+              <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.65", marginBottom: "16px" }}>By signing below, I/We attest to the accuracy of the information provided on this form. I/We acknowledge that we have received, read and agree to the terms and conditions contained in the attached Account Agreement, including the arbitration clause.</p>
               <div className="flex items-center gap-3 mb-4">
                 <p style={{ fontSize: "13px", color: "#333", fontWeight: 600 }}>ACCOUNT OWNER:</p>
                 <span style={{ fontSize: "12px", color: "#777" }}>Signature</span>
               </div>
-
               <button type="button" onClick={() => setShowElectronicModal(true)} style={{ background: "#3a7bd5", color: "white", border: "none", borderRadius: "3px", padding: "8px 20px", fontSize: "13px", cursor: "pointer", fontWeight: 600, marginBottom: "12px" }}>Signature</button>
-
               {signatureDataUrl && (
                 <div className="mb-4" style={{ border: "1px solid #dde3e9", borderRadius: "2px", padding: "4px", display: "inline-block" }}>
                   <img src={signatureDataUrl} alt="Signature" style={{ height: "80px", maxWidth: "300px", objectFit: "contain", display: "block" }} />
                 </div>
               )}
-
-              <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.65", marginBottom: "12px" }}>By entering your full name, you are signing this Agreement electronically. You agree your electronic signature is the legal equivalent of your manual/handwritten signature on this Agreement. By entering your name using any device, means or action, you consent to the legally binding terms and conditions of this Agreement. You further agree that your signature on this document (hereafter referred to as your 'E-Signature') is as valid as if you signed the document in writing. You also agree that no certification authority or other third-party verification is necessary to validate your E-Signature, and that the lack of such certification or third-party verification will not in any way affect the enforceability of your E-Signature or any resulting agreement between you and Guardian or any of its subsidiaries, affiliates or partners.</p>
-
+              <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.65", marginBottom: "12px" }}>By entering your full name, you are signing this Agreement electronically. You agree your electronic signature is the legal equivalent of your manual/handwritten signature on this Agreement.</p>
               <input type="text" placeholder="Your Name" value={signatureName} onChange={(e) => setSignatureName(e.target.value)} style={{ width: "100%", maxWidth: "360px", padding: "8px 10px", fontSize: "13px", border: "1px solid #ccd3da", borderRadius: "2px", color: "#444" }} />
             </div>
 
             <div className="flex gap-3">
-              <button type="button" onClick={() => navigate("/disclosures")} className="font-medium hover:bg-gray-50" style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}>Previous</button>
-              <button type="submit" className="text-white font-semibold hover:opacity-90" style={{ background: "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: "pointer", fontSize: "13px" }}>Next</button>
+              <button type="button" onClick={goBack} className="font-medium hover:bg-gray-50" style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}>Previous</button>
+              <button type="submit" disabled={isSubmitting} className="text-white font-semibold hover:opacity-90" style={{ background: isSubmitting ? "#8ab4e8" : "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: isSubmitting ? "not-allowed" : "pointer", fontSize: "13px" }}>
+                {isSubmitting ? "Saving…" : "Next"}
+              </button>
             </div>
           </form>
         </div>
@@ -166,7 +177,7 @@ export default function Signatures() {
             <h2 className="font-bold text-center mb-4" style={{ fontSize: "14px", color: "#333", letterSpacing: "0.04em", textTransform: "uppercase" }}>Electronic Records<br />and Signature<br />Disclosure</h2>
             <label className="flex gap-2 cursor-pointer mb-6">
               <input type="checkbox" checked={electronicAgreed} onChange={(e) => setElectronicAgreed(e.target.checked)} style={{ marginTop: "3px", flexShrink: 0, accentColor: "#3a7bd5" }} />
-              <p style={{ fontSize: "12px", color: "#555", lineHeight: "1.65" }}>By checking the box 'I agree to use Electronic Records and Signatures, you agree that you or the firm you represent will be legally bound by your electronic signature.</p>
+              <p style={{ fontSize: "12px", color: "#555", lineHeight: "1.65" }}>By checking the box 'I agree to use Electronic Records and Signatures', you agree that you or the firm you represent will be legally bound by your electronic signature.</p>
             </label>
             <div className="flex items-center gap-3">
               <button type="button" onClick={() => { if (!electronicAgreed) return; setShowElectronicModal(false); setShowSignatureModal(true); }} disabled={!electronicAgreed} style={{ background: electronicAgreed ? "#3a7bd5" : "#aaa", color: "white", border: "none", borderRadius: "3px", padding: "8px 20px", fontSize: "13px", cursor: electronicAgreed ? "pointer" : "not-allowed", fontWeight: 600, display: "flex", alignItems: "center", gap: "6px" }}>
@@ -213,7 +224,9 @@ export default function Signatures() {
             </div>
             <p className="mb-6" style={{ fontSize: "12px", color: "#555", lineHeight: "1.6" }}>By submitting the application you will not be able to edit the application</p>
             <div className="flex items-center gap-3">
-              <button type="button" onClick={handleSubmitConfirm} style={{ background: "#3a7bd5", color: "white", border: "none", borderRadius: "3px", padding: "8px 24px", fontSize: "13px", cursor: "pointer", fontWeight: 600 }}>Yes</button>
+              <button type="button" onClick={handleSubmitConfirm} disabled={isSubmitting} style={{ background: isSubmitting ? "#aaa" : "#3a7bd5", color: "white", border: "none", borderRadius: "3px", padding: "8px 24px", fontSize: "13px", cursor: isSubmitting ? "not-allowed" : "pointer", fontWeight: 600 }}>
+                {isSubmitting ? "Submitting…" : "Yes"}
+              </button>
               <button type="button" onClick={() => setShowSubmitModal(false)} style={{ background: "white", border: "1px solid #ccd3da", borderRadius: "3px", padding: "8px 24px", fontSize: "13px", cursor: "pointer", color: "#555" }}>Cancel</button>
             </div>
           </div>

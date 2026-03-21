@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
-import { useLocation } from "wouter";
-import { saveSignupStep, uploadDocument } from "@/lib/saveStep";
+import { uploadDocument } from "@/lib/saveStep";
+import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
 
 const ID_TYPES = ["Government Issued ID", "Driver's License", "Passport", "State ID"];
@@ -14,8 +14,8 @@ interface SlotState {
   errorMsg: string | null;
 }
 
-function FileUploadBox({ label, slot, role, onSlotChange }: {
-  label: string; slot: SlotState; role: string; onSlotChange: (s: SlotState) => void;
+function FileUploadBox({ slot, role, onSlotChange }: {
+  slot: SlotState; role: string; onSlotChange: (s: SlotState) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -42,32 +42,37 @@ function FileUploadBox({ label, slot, role, onSlotChange }: {
           {slot.status === "uploading" ? "Uploading…" : "Choose File"}
         </button>
         <span style={{ fontSize: "12px", flex: 1 }}>
-          {slot.status === "idle" && <span style={{ color: "#aaa" }}>No file chosen</span>}
+          {slot.status === "idle"      && <span style={{ color: "#aaa" }}>No file chosen</span>}
           {slot.status === "uploading" && <span style={{ color: "#5baad4" }}>Uploading {slot.file?.name}…</span>}
-          {slot.status === "success" && <span style={{ color: "#28a745", display: "flex", alignItems: "center", gap: "5px" }}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#28a745" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{slot.file?.name}</span>}
-          {slot.status === "error" && <span style={{ color: "#dc3545" }}>{slot.errorMsg ?? "Upload failed"}</span>}
+          {slot.status === "success"   && <span style={{ color: "#28a745", display: "flex", alignItems: "center", gap: "5px" }}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#28a745" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{slot.file?.name}</span>}
+          {slot.status === "error"     && <span style={{ color: "#dc3545" }}>{slot.errorMsg ?? "Upload failed"}</span>}
         </span>
         {slot.status === "error" && (
           <button type="button" onClick={() => inputRef.current?.click()} style={{ fontSize: "11px", color: "#3a7bd5", background: "none", border: "none", cursor: "pointer", textDecoration: "underline", whiteSpace: "nowrap" }}>Retry</button>
         )}
         <input ref={inputRef} type="file" accept=".jpeg,.jpg,.png,.pdf" style={{ display: "none" }} onChange={handleFileChange} />
       </div>
-      <p style={{ fontSize: "11px", color: "#888" }}>Allowed file extensions: &nbsp;.jpeg, .jpg, .png, .pdf</p>
-      <p style={{ fontSize: "11px", color: "#888" }}>File size: 1 KB – 8 MB.</p>
+      <p style={{ fontSize: "11px", color: "#888" }}>Allowed: .jpeg, .jpg, .png, .pdf — Size: 1 KB – 8 MB.</p>
     </div>
   );
 }
 
 export default function IdProofUpload() {
-  const [, navigate] = useLocation();
-  const [idType, setIdType] = useState("Government Issued ID");
+  const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(8);
+
+  const [idType,    setIdType]    = useState((savedData.idType as string) ?? "Government Issued ID");
   const [frontSlot, setFrontSlot] = useState<SlotState>({ file: null, status: "idle", savedPath: null, errorMsg: null });
-  const [backSlot, setBackSlot] = useState<SlotState>({ file: null, status: "idle", savedPath: null, errorMsg: null });
+  const [backSlot,  setBackSlot]  = useState<SlotState>({ file: null, status: "idle", savedPath: null, errorMsg: null });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await saveSignupStep("idProofUpload", { idType, frontFile: frontSlot.savedPath ?? frontSlot.file?.name ?? null, backFile: backSlot.savedPath ?? backSlot.file?.name ?? null, frontUploaded: frontSlot.status === "success", backUploaded: backSlot.status === "success" });
-    navigate("/funding-details");
+    await submit({
+      idType,
+      frontFile:     frontSlot.savedPath ?? frontSlot.file?.name ?? null,
+      backFile:      backSlot.savedPath  ?? backSlot.file?.name  ?? null,
+      frontUploaded: frontSlot.status === "success",
+      backUploaded:  backSlot.status  === "success",
+    });
   };
 
   const anyUploading = frontSlot.status === "uploading" || backSlot.status === "uploading";
@@ -85,6 +90,10 @@ export default function IdProofUpload() {
             Government Issued ID. If Driver's License is used and the address is not the same as on the application please provide a utility bill with your name and address.
           </p>
 
+          {globalError && (
+            <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>{globalError}</div>
+          )}
+
           <form onSubmit={handleSubmit} noValidate>
             <div className="mb-5 relative">
               <select value={idType} onChange={(e) => setIdType(e.target.value)} style={{ width: "100%", padding: "9px 36px 9px 12px", fontSize: "13px", color: "#444", background: "#f4f6f8", border: "1px solid #ccd3da", borderRadius: "2px", appearance: "none", cursor: "pointer" }} className="focus:outline-none focus:border-[#3a7bd5]">
@@ -95,19 +104,19 @@ export default function IdProofUpload() {
               </div>
             </div>
 
-            <p className="mb-4" style={{ fontSize: "12px", color: "#555" }}>Please upload a copy of the Applicant's Government Issued ID (Front and Back). Accepted formats: JPG, PNG, PDF.</p>
+            <p className="mb-4" style={{ fontSize: "12px", color: "#555" }}>Please upload a copy of the Applicant's Government Issued ID (Front and Back).</p>
 
             <div className="flex gap-4 mb-5">
-              <FileUploadBox label="Front" slot={frontSlot} role="id_front" onSlotChange={setFrontSlot} />
-              <FileUploadBox label="Back" slot={backSlot} role="id_back" onSlotChange={setBackSlot} />
+              <FileUploadBox slot={frontSlot} role="id_front" onSlotChange={setFrontSlot} />
+              <FileUploadBox slot={backSlot}  role="id_back"  onSlotChange={setBackSlot}  />
             </div>
 
             <p className="mb-6"><a href="#" style={{ fontSize: "12px", color: "#3a7bd5", textDecoration: "underline" }}>Image Hints and Tips</a></p>
 
             <div className="flex gap-3">
-              <button type="button" onClick={() => navigate("/investment-experience")} className="font-medium hover:bg-gray-50 transition-colors" style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}>Previous</button>
-              <button type="submit" disabled={anyUploading} className="text-white font-semibold transition-opacity hover:opacity-90" style={{ background: anyUploading ? "#8ab4e8" : "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: anyUploading ? "not-allowed" : "pointer", fontSize: "13px" }}>
-                {anyUploading ? "Uploading…" : "Next"}
+              <button type="button" onClick={goBack} className="font-medium hover:bg-gray-50 transition-colors" style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}>Previous</button>
+              <button type="submit" disabled={anyUploading || isSubmitting} className="text-white font-semibold transition-opacity hover:opacity-90" style={{ background: (anyUploading || isSubmitting) ? "#8ab4e8" : "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: (anyUploading || isSubmitting) ? "not-allowed" : "pointer", fontSize: "13px" }}>
+                {anyUploading ? "Uploading…" : isSubmitting ? "Saving…" : "Next"}
               </button>
             </div>
           </form>

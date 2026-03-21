@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLocation } from "wouter";
 import { personalSchema } from "@/lib/onboarding/schema";
-import { saveStep } from "@/lib/onboarding/saveStep";
+import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import { CITIES_BY_STATE, US_STATES } from "@/lib/location/cities";
 import OnboardingShell from "@/components/OnboardingShell";
 
@@ -37,7 +36,9 @@ function FieldLabel({ children, required }: { children: React.ReactNode; require
 }
 
 export default function PersonalDetails() {
-  const [, navigate] = useLocation();
+  const { savedData, submit, goBack, isSubmitting, validationErrors, globalError } =
+    useOnboardingStep(1);
+
   const [citySearch, setCitySearch] = useState("");
 
   const {
@@ -48,9 +49,18 @@ export default function PersonalDetails() {
   } = useForm<FormData>({
     resolver: zodResolver(personalSchema),
     mode: "onChange",
+    defaultValues: {
+      firstName:   (savedData.firstName   as string) ?? "",
+      lastName:    (savedData.lastName    as string) ?? "",
+      address:     (savedData.address     as string) ?? "",
+      aptSuite:    (savedData.aptSuite    as string) ?? "",
+      state:       (savedData.state       as string) ?? "",
+      city:        (savedData.city        as string) ?? "",
+      zipCode:     (savedData.zipCode     as string) ?? "",
+      phoneNumber: (savedData.phoneNumber as string) ?? "",
+    },
   });
 
-  const formValues = watch();
   const selectedState = watch("state");
 
   const cities = useMemo(() => {
@@ -58,16 +68,8 @@ export default function PersonalDetails() {
     return stateCities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
   }, [selectedState, citySearch]);
 
-  useEffect(() => {
-    const t = setTimeout(() => {
-      void saveStep("personal", formValues as Record<string, unknown>);
-    }, 700);
-    return () => clearTimeout(t);
-  }, [formValues]);
-
   const onSubmit = async (data: FormData) => {
-    await saveStep("personal", data as Record<string, unknown>);
-    navigate("/professional-details");
+    await submit(data as Record<string, unknown>);
   };
 
   return (
@@ -83,45 +85,45 @@ export default function PersonalDetails() {
         </div>
 
         <div className="px-8 py-6">
+          {globalError && (
+            <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>
+              {globalError}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
 
-            {/* First Name / Last Name */}
             <div className="grid grid-cols-2 gap-5 mb-4">
               <div>
                 <FieldLabel required>First Name</FieldLabel>
                 <input {...register("firstName")} style={fieldStyle} className="focus:outline-none" />
                 {errors.firstName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.firstName.message}</p>}
+                {validationErrors.firstName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{validationErrors.firstName}</p>}
               </div>
               <div>
                 <FieldLabel required>Last Name</FieldLabel>
                 <input {...register("lastName")} style={fieldStyle} className="focus:outline-none" />
                 {errors.lastName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.lastName.message}</p>}
+                {validationErrors.lastName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{validationErrors.lastName}</p>}
               </div>
             </div>
 
-            {/* Address */}
             <div className="mb-4">
               <FieldLabel required>Address</FieldLabel>
               <input {...register("address")} style={fieldStyle} className="focus:outline-none" />
               {errors.address && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.address.message}</p>}
             </div>
 
-            {/* Apt / Suite */}
             <div className="mb-4">
               <FieldLabel>Apt / Suite (optional)</FieldLabel>
               <input {...register("aptSuite")} style={fieldStyle} className="focus:outline-none" />
             </div>
 
-            {/* State / City / ZIP */}
             <div className="grid grid-cols-3 gap-5 mb-4">
               <div>
                 <FieldLabel required>State</FieldLabel>
                 <div className="relative">
-                  <select
-                    {...register("state")}
-                    style={{ ...fieldStyle, appearance: "none", paddingRight: "28px", cursor: "pointer" }}
-                    className="focus:outline-none"
-                  >
+                  <select {...register("state")} style={{ ...fieldStyle, appearance: "none", paddingRight: "28px", cursor: "pointer" }} className="focus:outline-none">
                     <option value="">Please Select</option>
                     {US_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
@@ -134,19 +136,9 @@ export default function PersonalDetails() {
 
               <div>
                 <FieldLabel required>City</FieldLabel>
-                <input
-                  placeholder="Search city…"
-                  value={citySearch}
-                  onChange={(e) => setCitySearch(e.target.value)}
-                  style={{ ...fieldStyle, marginBottom: "6px" }}
-                  className="focus:outline-none"
-                />
+                <input placeholder="Search city…" value={citySearch} onChange={(e) => setCitySearch(e.target.value)} style={{ ...fieldStyle, marginBottom: "6px" }} className="focus:outline-none" />
                 <div className="relative">
-                  <select
-                    {...register("city")}
-                    style={{ ...fieldStyle, appearance: "none", paddingRight: "28px", cursor: "pointer" }}
-                    className="focus:outline-none"
-                  >
+                  <select {...register("city")} style={{ ...fieldStyle, appearance: "none", paddingRight: "28px", cursor: "pointer" }} className="focus:outline-none">
                     <option value="">Select city</option>
                     {cities.map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
@@ -164,18 +156,17 @@ export default function PersonalDetails() {
               </div>
             </div>
 
-            {/* Phone */}
             <div className="mb-6" style={{ maxWidth: "50%" }}>
               <FieldLabel required>Phone Number</FieldLabel>
               <input {...register("phoneNumber")} style={fieldStyle} className="focus:outline-none" placeholder="(555) 000-0000" />
               {errors.phoneNumber && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.phoneNumber.message}</p>}
+              {validationErrors.phoneNumber && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{validationErrors.phoneNumber}</p>}
             </div>
 
-            {/* Buttons */}
             <div className="flex gap-3">
               <button
                 type="button"
-                onClick={() => navigate("/general-details")}
+                onClick={goBack}
                 className="font-medium hover:bg-gray-50 transition-colors"
                 style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}
               >
@@ -183,10 +174,11 @@ export default function PersonalDetails() {
               </button>
               <button
                 type="submit"
+                disabled={isSubmitting}
                 className="text-white font-semibold transition-opacity hover:opacity-90"
-                style={{ background: "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: "pointer", fontSize: "13px" }}
+                style={{ background: isSubmitting ? "#8ab4e8" : "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: isSubmitting ? "not-allowed" : "pointer", fontSize: "13px" }}
               >
-                Next
+                {isSubmitting ? "Saving…" : "Next"}
               </button>
             </div>
           </form>

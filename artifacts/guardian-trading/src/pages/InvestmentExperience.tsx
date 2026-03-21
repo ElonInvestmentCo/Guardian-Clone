@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
-import { saveSignupStep } from "@/lib/saveStep";
+import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
 
 const INVESTMENTS = [
@@ -17,10 +16,14 @@ const KNOWLEDGE_OPTIONS    = ["None", "Limited", "Good", "Extensive"];
 type InvRow = { enabled: boolean; years: string; transactions: string; knowledge: string };
 type InvState = Record<string, InvRow>;
 
-const initState = (): InvState =>
-  Object.fromEntries(
-    INVESTMENTS.map(({ key }) => [key, { enabled: false, years: "", transactions: "", knowledge: "" }])
+function initState(saved?: Record<string, InvRow>): InvState {
+  return Object.fromEntries(
+    INVESTMENTS.map(({ key }) => [
+      key,
+      saved?.[key] ?? { enabled: false, years: "", transactions: "", knowledge: "" },
+    ])
   );
+}
 
 function RadioGroup({ name, options, value, onChange, disabled }: {
   name: string; options: string[]; value: string; onChange: (v: string) => void; disabled: boolean;
@@ -38,16 +41,18 @@ function RadioGroup({ name, options, value, onChange, disabled }: {
 }
 
 export default function InvestmentExperience() {
-  const [, navigate] = useLocation();
-  const [data, setData] = useState<InvState>(initState);
+  const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(7);
+
+  const [data, setData] = useState<InvState>(() =>
+    initState((savedData.investments as Record<string, InvRow>) ?? undefined)
+  );
 
   const toggle = (key: string) => setData((prev) => ({ ...prev, [key]: { ...prev[key], enabled: !prev[key].enabled } }));
-  const set = (key: string, field: keyof InvRow, value: string) => setData((prev) => ({ ...prev, [key]: { ...prev[key], [field]: value } }));
+  const set    = (key: string, field: keyof InvRow, value: string) => setData((prev) => ({ ...prev, [key]: { ...prev[key], [field]: value } }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await saveSignupStep("investmentExperience", { investments: data });
-    navigate("/id-proof-upload");
+    await submit({ investments: data });
   };
 
   return (
@@ -61,9 +66,13 @@ export default function InvestmentExperience() {
         <div className="px-8 py-6">
           <div className="mb-6 px-4 py-3" style={{ background: "#f0f4f8", border: "1px solid #dde3e9", borderRadius: "2px" }}>
             <p style={{ fontSize: "12px", color: "#555", lineHeight: "1.6" }}>
-              We are collecting the information below to better understand your investment experience. We recognize your responses may change over time as you work with us. Please check the boxes that best describe your investment experience to date.
+              We are collecting the information below to better understand your investment experience. Please check the boxes that best describe your investment experience to date.
             </p>
           </div>
+
+          {globalError && (
+            <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>{globalError}</div>
+          )}
 
           <form onSubmit={handleSubmit} noValidate>
             <div style={{ border: "1px solid #dde3e9", borderRadius: "2px", overflow: "hidden" }}>
@@ -73,12 +82,11 @@ export default function InvestmentExperience() {
                 <span style={{ fontSize: "12px", fontWeight: 700, color: "#555" }}>Transaction(s) Per Year</span>
                 <span style={{ fontSize: "12px", fontWeight: 700, color: "#555" }}>Knowledge</span>
               </div>
-
               {INVESTMENTS.map(({ key, label }, idx) => {
                 const row = data[key];
                 const isLast = idx === INVESTMENTS.length - 1;
                 return (
-                  <div key={key} style={{ display: "grid", gridTemplateColumns: "180px 1fr 1fr 1fr", borderBottom: isLast ? "none" : "1px solid #dde3e9", padding: "14px 16px", alignItems: "flex-start", gap: "0" }}>
+                  <div key={key} style={{ display: "grid", gridTemplateColumns: "180px 1fr 1fr 1fr", borderBottom: isLast ? "none" : "1px solid #dde3e9", padding: "14px 16px", alignItems: "flex-start" }}>
                     <label className="flex items-center gap-2 cursor-pointer" style={{ paddingTop: "1px" }}>
                       <input type="checkbox" checked={row.enabled} onChange={() => toggle(key)} style={{ width: "14px", height: "14px", accentColor: "#3a7bd5", flexShrink: 0 }} />
                       <span style={{ fontSize: "13px", color: "#444", fontWeight: 500 }}>{label}</span>
@@ -92,8 +100,10 @@ export default function InvestmentExperience() {
             </div>
 
             <div className="flex gap-3 mt-6">
-              <button type="button" onClick={() => navigate("/financial-situation")} className="font-medium hover:bg-gray-50 transition-colors" style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}>Previous</button>
-              <button type="submit" className="text-white font-semibold transition-opacity hover:opacity-90" style={{ background: "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: "pointer", fontSize: "13px" }}>Next</button>
+              <button type="button" onClick={goBack} className="font-medium hover:bg-gray-50 transition-colors" style={{ padding: "9px 28px", border: "1px solid #ccd3da", borderRadius: "3px", background: "white", fontSize: "13px", color: "#555", cursor: "pointer" }}>Previous</button>
+              <button type="submit" disabled={isSubmitting} className="text-white font-semibold transition-opacity hover:opacity-90" style={{ background: isSubmitting ? "#8ab4e8" : "#3a7bd5", borderRadius: "3px", padding: "9px 28px", border: "none", cursor: isSubmitting ? "not-allowed" : "pointer", fontSize: "13px" }}>
+                {isSubmitting ? "Saving…" : "Next"}
+              </button>
             </div>
           </form>
         </div>
