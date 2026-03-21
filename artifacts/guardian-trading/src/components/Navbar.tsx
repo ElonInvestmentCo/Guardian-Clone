@@ -33,7 +33,7 @@ export function Navbar() {
       >
         <div
           className="w-full h-full flex items-center justify-between"
-          style={{ padding: "0 32px" }}
+          style={{ padding: "0 44px" }}
         >
           {/* ── Logo ─────────────────────────────────────────────────────────── */}
           <Link href="/" className="flex items-center flex-shrink-0">
@@ -46,7 +46,7 @@ export function Navbar() {
           </Link>
 
           {/* ── Desktop Nav Links ─────────────────────────────────────────────── */}
-          <div className="hidden lg:flex items-center" style={{ gap: "36px" }}>
+          <div className="hidden lg:flex items-center" style={{ gap: "24px" }}>
             {navLinks.map((link) => (
               <Link
                 key={link.name}
