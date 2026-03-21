@@ -289,7 +289,7 @@ export default function ChatWidget() {
       {/* "Need Help?" popup */}
       {!popupDismissed && (
         <div
-          className={`fixed bottom-[84px] right-5 z-40 w-[190px] rounded-xl overflow-hidden shadow-2xl cursor-pointer transition-all duration-500 ease-out ${
+          className={`fixed bottom-[84px] right-5 z-40 w-[190px] overflow-hidden shadow-2xl cursor-pointer transition-all duration-500 ease-out ${
             showPopup && !open
               ? "opacity-100 translate-y-0 pointer-events-auto"
               : "opacity-0 translate-y-3 pointer-events-none"
