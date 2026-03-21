@@ -48,18 +48,19 @@ export function Navbar() {
           </Link>
 
           {/* ── Desktop Nav Links ─────────────────────────────────────────────── */}
-          <div className="hidden lg:flex items-center" style={{ gap: "24px" }}>
+          <div className="hidden lg:flex items-center" style={{ gap: "26px" }}>
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
                 className="transition-colors"
                 style={{
-                  fontSize: "14.5px",
+                  fontSize: "15px",
                   fontWeight: 600,
                   color: "#ffffff",
-                  letterSpacing: "0.01em",
+                  letterSpacing: "0.03em",
                   textDecoration: "none",
+                  whiteSpace: "nowrap",
                 }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#76d0f4"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#ffffff"; }}
