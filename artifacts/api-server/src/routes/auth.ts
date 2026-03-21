@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { sendVerificationEmail } from "../lib/mailer.js";
-import { saveUserCredentials, getStoredPasswordHash } from "../lib/userDataStore.js";
+import { sendVerificationEmail, sendPasswordResetEmail } from "../lib/mailer.js";
+import { saveUserCredentials, getStoredPasswordHash, getUserData } from "../lib/userDataStore.js";
 
 const authRouter = Router();
 
@@ -17,6 +17,7 @@ interface UserRecord {
 }
 
 const verificationCodes = new Map<string, VerificationRecord>();
+const resetCodes = new Map<string, VerificationRecord>();
 const registeredUsers = new Map<string, UserRecord>();
 
 const MAX_VERIFY_ATTEMPTS = 5;
@@ -168,6 +169,97 @@ authRouter.post("/auth/verify-code", (req, res) => {
 
   verificationCodes.delete(key);
   logAttempt("VERIFY_CODE", email, "success");
+  res.json({ success: true });
+});
+
+authRouter.post("/auth/send-reset-code", async (req, res) => {
+  const { email } = req.body as { email?: string };
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    res.status(400).json({ error: "Valid email is required" });
+    return;
+  }
+
+  const user = getUserData(email);
+  if (!user) {
+    res.json({ success: true });
+    return;
+  }
+
+  const code = generateCode();
+  const now = Date.now();
+
+  resetCodes.set(email.toLowerCase(), {
+    code,
+    expires: now + 10 * 60 * 1000,
+    attempts: 0,
+    createdAt: now,
+  });
+
+  logAttempt("SEND_RESET_CODE", email, `code=${code} expires_in=10min`);
+
+  const mailResult = await sendPasswordResetEmail(email, code);
+
+  if (!mailResult.success) {
+    logAttempt("SEND_RESET_CODE", email, `email delivery failed: ${mailResult.error ?? "unknown"}`);
+    res.status(500).json({ error: "Failed to send reset email. Please try again." });
+    return;
+  }
+
+  res.json({ success: true });
+});
+
+authRouter.post("/auth/reset-password", (req, res) => {
+  const { email, code, newPassword } = req.body as { email?: string; code?: string; newPassword?: string };
+
+  if (!email || !code || !newPassword) {
+    res.status(400).json({ error: "Email, code and new password are required" });
+    return;
+  }
+
+  if (newPassword.length < 8) {
+    res.status(400).json({ error: "Password must be at least 8 characters" });
+    return;
+  }
+
+  const key = email.toLowerCase();
+  const record = resetCodes.get(key);
+
+  if (!record) {
+    logAttempt("RESET_PASSWORD", email, "failed — no code on record");
+    res.status(400).json({ error: "No reset code found. Please request a new one." });
+    return;
+  }
+
+  if (Date.now() > record.expires) {
+    resetCodes.delete(key);
+    logAttempt("RESET_PASSWORD", email, "failed — code expired");
+    res.status(400).json({ error: "Reset code has expired. Please request a new one." });
+    return;
+  }
+
+  record.attempts += 1;
+
+  if (record.attempts > MAX_VERIFY_ATTEMPTS) {
+    resetCodes.delete(key);
+    logAttempt("RESET_PASSWORD", email, `failed — too many attempts (${record.attempts})`);
+    res.status(400).json({ error: "Too many failed attempts. Please request a new reset code." });
+    return;
+  }
+
+  if (record.code !== code.trim()) {
+    logAttempt("RESET_PASSWORD", email, `failed — wrong code (attempt ${record.attempts}/${MAX_VERIFY_ATTEMPTS})`);
+    res.status(400).json({ error: "Invalid reset code. Please try again." });
+    return;
+  }
+
+  resetCodes.delete(key);
+
+  const hash = simpleHash(newPassword);
+  registeredUsers.set(key, { passwordHash: hash, createdAt: Date.now() });
+  saveUserCredentials(email, hash);
+
+  logAttempt("RESET_PASSWORD", email, "success — new password saved");
   res.json({ success: true });
 });
 
