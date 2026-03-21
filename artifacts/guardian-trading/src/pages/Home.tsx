@@ -163,7 +163,7 @@ export default function Home() {
       <section id="pricing" className="bg-[#222222] py-10 px-4">
         <div className="max-w-[1100px] mx-auto">
           {/* Single dark card — heading left, pricing right */}
-          <div className="bg-[#0d0d0d] flex flex-col lg:flex-row">
+          <div className="bg-[#181818] flex flex-col lg:flex-row">
             {/* Left: heading */}
             <div className="flex-shrink-0 lg:w-[280px] px-10 py-10 flex items-center">
               <h2 className="text-2xl font-bold text-[#93c5fd] leading-snug">
