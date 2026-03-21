@@ -40,7 +40,7 @@ export function Navbar() {
             <img
               src={guardianLogo}
               alt="Guardian Trading"
-              style={{ height: "48px", width: "auto", objectFit: "contain" }}
+              style={{ height: "58px", width: "auto", objectFit: "contain" }}
               data-testid="img-logo"
             />
           </Link>
