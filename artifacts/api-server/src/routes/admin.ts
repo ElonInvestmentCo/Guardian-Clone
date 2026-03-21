@@ -1,19 +1,17 @@
 /**
  * Admin KYC management routes.
  *
- * Protected by X-Admin-Key header matching ADMIN_SECRET env var.
- * In production replace with JWT role-based auth.
- *
- * GET  /api/admin/kyc-queue
- * GET  /api/admin/user-details/:email
- * POST /api/admin/approve-user
- * POST /api/admin/reject-user
- * POST /api/admin/request-resubmission
+ * Authentication: JWT Bearer token issued by POST /admin/login
+ * (Mounted under /api in app.ts, so externally all routes are /api/admin/*)
+ * All /admin/* routes (except /login) require a valid session token.
+ * No development-mode bypass — auth is always enforced.
  */
 
 import { readFileSync } from "fs";
 import { join } from "path";
 import { Router, type Request, type Response, type NextFunction } from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import {
   getUserData,
   getUserProfileData,
@@ -30,7 +28,17 @@ import { evaluateRisk } from "../lib/fraud/riskEngine.js";
 
 const router = Router();
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Config ────────────────────────────────────────────────────────────────────
+const SESSION_TTL_HOURS = 8;
+const SESSION_TTL_MS    = SESSION_TTL_HOURS * 60 * 60 * 1000;
+
+function jwtSecret(): string {
+  const s = process.env.ADMIN_JWT_SECRET;
+  if (!s) throw new Error("ADMIN_JWT_SECRET is not set");
+  return s;
+}
+
+// ── File helpers ──────────────────────────────────────────────────────────────
 function masterPath(): string {
   return process.env.USER_DATA_DIR
     ? join(process.env.USER_DATA_DIR, "master.json")
@@ -38,32 +46,42 @@ function masterPath(): string {
 }
 
 function readMasterUsers(): Record<string, Record<string, unknown>> {
-  try {
-    return JSON.parse(readFileSync(masterPath(), "utf-8"));
-  } catch {
-    return {};
-  }
+  try { return JSON.parse(readFileSync(masterPath(), "utf-8")); }
+  catch { return {}; }
 }
 
-// ── Admin auth middleware ─────────────────────────────────────────────────────
-function requireAdmin(req: Request, res: Response, next: NextFunction): void {
-  const secret = process.env.ADMIN_SECRET;
-  if (!secret) {
-    if (process.env.NODE_ENV === "production") {
-      res.status(503).json({ error: "Admin system not configured" });
+// ── Security headers ──────────────────────────────────────────────────────────
+function securityHeaders(_req: Request, res: Response, next: NextFunction): void {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("Cache-Control", "no-store");
+  next();
+}
+
+// ── Login rate limiter: 5 attempts / 15 min per IP ───────────────────────────
+const loginAttempts = new Map<string, { count: number; resetAt: number }>();
+
+function loginRateLimit(req: Request, res: Response, next: NextFunction): void {
+  const ip  = req.ip ?? "unknown";
+  const now = Date.now();
+  const entry = loginAttempts.get(ip);
+
+  if (entry && now < entry.resetAt) {
+    if (entry.count >= 5) {
+      const retryAfter = Math.ceil((entry.resetAt - now) / 1000);
+      res.status(429).json({ error: `Too many login attempts. Try again in ${retryAfter}s.` });
       return;
     }
-    next();
-    return;
-  }
-  if (req.headers["x-admin-key"] !== secret) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
+    entry.count++;
+  } else {
+    loginAttempts.set(ip, { count: 1, resetAt: now + 15 * 60 * 1000 });
   }
   next();
 }
 
-// ── Rate limit (60 req/min per IP) ───────────────────────────────────────────
+// ── General admin rate limiter: 120 req / min per IP ─────────────────────────
 const rateMap = new Map<string, number[]>();
 function adminRateLimit(req: Request, res: Response, next: NextFunction): void {
   const ip  = req.ip ?? "unknown";
@@ -71,14 +89,96 @@ function adminRateLimit(req: Request, res: Response, next: NextFunction): void {
   const hits = (rateMap.get(ip) ?? []).filter((t) => now - t < 60_000);
   hits.push(now);
   rateMap.set(ip, hits);
-  if (hits.length > 60) { res.status(429).json({ error: "Too many requests" }); return; }
+  if (hits.length > 120) { res.status(429).json({ error: "Too many requests" }); return; }
   next();
 }
 
-router.use("/api/admin", adminRateLimit, requireAdmin);
+// ── JWT auth middleware (no dev bypass — always enforced) ─────────────────────
+function requireAdmin(req: Request, res: Response, next: NextFunction): void {
+  const authHeader = req.headers["authorization"] ?? "";
+  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
 
-// ── GET /api/admin/kyc-queue ─────────────────────────────────────────────────
-router.get("/api/admin/kyc-queue", (req: Request, res: Response): void => {
+  if (!token) {
+    res.status(401).json({ error: "Authentication required" });
+    return;
+  }
+
+  try {
+    const payload = jwt.verify(token, jwtSecret(), { issuer: "guardian-admin" }) as {
+      username: string;
+    };
+    if (!payload.username) throw new Error("Invalid payload");
+    (req as Request & { adminUser: string }).adminUser = payload.username;
+    next();
+  } catch {
+    res.status(401).json({ error: "Invalid or expired session. Please log in again." });
+  }
+}
+
+// Apply security headers to all /admin routes
+router.use("/admin", securityHeaders);
+
+// ── POST /admin/login (public) ────────────────────────────────────────────────
+router.post(
+  "/admin/login",
+  loginRateLimit,
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { username, password } = req.body as {
+        username?: string;
+        password?: string;
+      };
+
+      if (!username || !password) {
+        res.status(400).json({ error: "Username and password are required" });
+        return;
+      }
+
+      const expectedUsername = process.env.ADMIN_USERNAME;
+      const expectedHash     = process.env.ADMIN_PASSWORD_HASH;
+
+      if (!expectedUsername || !expectedHash) {
+        console.error("[Admin] Credentials not configured in environment");
+        res.status(503).json({ error: "Admin system is not configured" });
+        return;
+      }
+
+      // Always run bcrypt compare to prevent timing attacks
+      const usernameMatch = username === expectedUsername;
+      const passwordMatch = await bcrypt.compare(
+        password,
+        usernameMatch ? expectedHash : "$2b$12$invalidhashtopreventtimingattack000000000000000000000000"
+      );
+
+      if (!usernameMatch || !passwordMatch) {
+        await new Promise((r) => setTimeout(r, 400 + Math.random() * 300));
+        res.status(401).json({ error: "Invalid username or password" });
+        return;
+      }
+
+      loginAttempts.delete(req.ip ?? "unknown");
+
+      const token = jwt.sign(
+        { username },
+        jwtSecret(),
+        { expiresIn: `${SESSION_TTL_HOURS}h`, issuer: "guardian-admin" }
+      );
+
+      const expiresAt = Date.now() + SESSION_TTL_MS;
+      console.log(`[Admin] LOGIN SUCCESS: ${username} from ${req.ip ?? "unknown"}`);
+      res.json({ token, expiresAt });
+    } catch (err) {
+      console.error("[Admin] login error:", err);
+      res.status(500).json({ error: "Login failed" });
+    }
+  }
+);
+
+// ── All routes below require a valid JWT session ──────────────────────────────
+router.use("/admin", adminRateLimit, requireAdmin);
+
+// ── GET /admin/kyc-queue ──────────────────────────────────────────────────────
+router.get("/admin/kyc-queue", (req: Request, res: Response): void => {
   try {
     const master = readMasterUsers();
 
@@ -123,8 +223,8 @@ router.get("/api/admin/kyc-queue", (req: Request, res: Response): void => {
   }
 });
 
-// ── GET /api/admin/user-details/:email ───────────────────────────────────────
-router.get("/api/admin/user-details/:email", (req: Request, res: Response): void => {
+// ── GET /admin/user-details/:email ────────────────────────────────────────────
+router.get("/admin/user-details/:email", (req: Request, res: Response): void => {
   try {
     const email  = decodeURIComponent(req.params.email);
     const master = getUserData(email);
@@ -144,15 +244,14 @@ router.get("/api/admin/user-details/:email", (req: Request, res: Response): void
   }
 });
 
-// ── POST /api/admin/approve-user ─────────────────────────────────────────────
-router.post("/api/admin/approve-user", (req: Request, res: Response): void => {
+// ── POST /admin/approve-user ──────────────────────────────────────────────────
+router.post("/admin/approve-user", (req: Request, res: Response): void => {
   try {
     const { email, adminNote } = req.body as { email: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
     if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
 
     setUserStatus(email, "approved");
-
     const profile  = getUserProfileData(email);
     const auditLog = (profile._auditLog as unknown[]) ?? [];
     auditLog.push({ actionType: "ADMIN_APPROVE", actor: "admin", note: adminNote ?? null, timestamp: new Date().toISOString() });
@@ -166,15 +265,14 @@ router.post("/api/admin/approve-user", (req: Request, res: Response): void => {
   }
 });
 
-// ── POST /api/admin/reject-user ──────────────────────────────────────────────
-router.post("/api/admin/reject-user", (req: Request, res: Response): void => {
+// ── POST /admin/reject-user ───────────────────────────────────────────────────
+router.post("/admin/reject-user", (req: Request, res: Response): void => {
   try {
     const { email, reason, adminNote } = req.body as { email: string; reason?: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
     if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
 
     setUserStatus(email, "rejected");
-
     const profile  = getUserProfileData(email);
     const auditLog = (profile._auditLog as unknown[]) ?? [];
     auditLog.push({ actionType: "ADMIN_REJECT", actor: "admin", reason: reason ?? null, note: adminNote ?? null, timestamp: new Date().toISOString() });
@@ -188,15 +286,14 @@ router.post("/api/admin/reject-user", (req: Request, res: Response): void => {
   }
 });
 
-// ── POST /api/admin/request-resubmission ────────────────────────────────────
-router.post("/api/admin/request-resubmission", (req: Request, res: Response): void => {
+// ── POST /admin/request-resubmission ─────────────────────────────────────────
+router.post("/admin/request-resubmission", (req: Request, res: Response): void => {
   try {
     const { email, fields, adminNote } = req.body as { email: string; fields?: string[]; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
     if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
 
     setUserStatus(email, "resubmit");
-
     const profile  = getUserProfileData(email);
     const auditLog = (profile._auditLog as unknown[]) ?? [];
     auditLog.push({ actionType: "ADMIN_REQUEST_RESUBMIT", actor: "admin", fields: fields ?? [], note: adminNote ?? null, timestamp: new Date().toISOString() });
@@ -211,8 +308,8 @@ router.post("/api/admin/request-resubmission", (req: Request, res: Response): vo
   }
 });
 
-// ── POST /api/admin/create-user ──────────────────────────────────────────────
-router.post("/api/admin/create-user", (req: Request, res: Response): void => {
+// ── POST /admin/create-user ───────────────────────────────────────────────────
+router.post("/admin/create-user", (req: Request, res: Response): void => {
   try {
     const { email, displayName, role = "user" } = req.body as { email: string; displayName: string; role?: string };
     if (!email || !displayName) { res.status(400).json({ error: "email and displayName required" }); return; }
@@ -226,8 +323,8 @@ router.post("/api/admin/create-user", (req: Request, res: Response): void => {
   }
 });
 
-// ── DELETE /api/admin/delete-user ─────────────────────────────────────────────
-router.delete("/api/admin/delete-user", (req: Request, res: Response): void => {
+// ── DELETE /admin/delete-user ─────────────────────────────────────────────────
+router.delete("/admin/delete-user", (req: Request, res: Response): void => {
   try {
     const { email, adminNote } = req.body as { email: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
@@ -241,8 +338,8 @@ router.delete("/api/admin/delete-user", (req: Request, res: Response): void => {
   }
 });
 
-// ── POST /api/admin/update-user ───────────────────────────────────────────────
-router.post("/api/admin/update-user", (req: Request, res: Response): void => {
+// ── POST /admin/update-user ───────────────────────────────────────────────────
+router.post("/admin/update-user", (req: Request, res: Response): void => {
   try {
     const { email, firstName, lastName, adminNote } = req.body as { email: string; firstName?: string; lastName?: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
@@ -266,8 +363,8 @@ router.post("/api/admin/update-user", (req: Request, res: Response): void => {
   }
 });
 
-// ── POST /api/admin/suspend-user ──────────────────────────────────────────────
-router.post("/api/admin/suspend-user", (req: Request, res: Response): void => {
+// ── POST /admin/suspend-user ──────────────────────────────────────────────────
+router.post("/admin/suspend-user", (req: Request, res: Response): void => {
   try {
     const { email, adminNote } = req.body as { email: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
@@ -282,8 +379,8 @@ router.post("/api/admin/suspend-user", (req: Request, res: Response): void => {
   } catch (err) { res.status(500).json({ error: "Failed to suspend user" }); }
 });
 
-// ── POST /api/admin/ban-user ──────────────────────────────────────────────────
-router.post("/api/admin/ban-user", (req: Request, res: Response): void => {
+// ── POST /admin/ban-user ──────────────────────────────────────────────────────
+router.post("/admin/ban-user", (req: Request, res: Response): void => {
   try {
     const { email, reason, adminNote } = req.body as { email: string; reason?: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
@@ -298,8 +395,8 @@ router.post("/api/admin/ban-user", (req: Request, res: Response): void => {
   } catch (err) { res.status(500).json({ error: "Failed to ban user" }); }
 });
 
-// ── POST /api/admin/reactivate-user ───────────────────────────────────────────
-router.post("/api/admin/reactivate-user", (req: Request, res: Response): void => {
+// ── POST /admin/reactivate-user ───────────────────────────────────────────────
+router.post("/admin/reactivate-user", (req: Request, res: Response): void => {
   try {
     const { email, adminNote } = req.body as { email: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
@@ -314,8 +411,8 @@ router.post("/api/admin/reactivate-user", (req: Request, res: Response): void =>
   } catch (err) { res.status(500).json({ error: "Failed to reactivate user" }); }
 });
 
-// ── POST /api/admin/assign-role ───────────────────────────────────────────────
-router.post("/api/admin/assign-role", (req: Request, res: Response): void => {
+// ── POST /admin/assign-role ───────────────────────────────────────────────────
+router.post("/admin/assign-role", (req: Request, res: Response): void => {
   try {
     const { email, role, adminNote } = req.body as { email: string; role: string; adminNote?: string };
     if (!email || !role) { res.status(400).json({ error: "email and role required" }); return; }
@@ -332,8 +429,8 @@ router.post("/api/admin/assign-role", (req: Request, res: Response): void => {
   } catch (err) { res.status(500).json({ error: "Failed to assign role" }); }
 });
 
-// ── GET /api/admin/user-balance/:email ────────────────────────────────────────
-router.get("/api/admin/user-balance/:email", (req: Request, res: Response): void => {
+// ── GET /admin/user-balance/:email ────────────────────────────────────────────
+router.get("/admin/user-balance/:email", (req: Request, res: Response): void => {
   try {
     const email = decodeURIComponent(req.params.email);
     if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
@@ -342,8 +439,8 @@ router.get("/api/admin/user-balance/:email", (req: Request, res: Response): void
   } catch (err) { res.status(500).json({ error: "Failed to get balance" }); }
 });
 
-// ── POST /api/admin/set-balance ───────────────────────────────────────────────
-router.post("/api/admin/set-balance", (req: Request, res: Response): void => {
+// ── POST /admin/set-balance ───────────────────────────────────────────────────
+router.post("/admin/set-balance", (req: Request, res: Response): void => {
   try {
     const { email, balance, profit, adminNote } = req.body as { email: string; balance: number; profit: number; adminNote?: string };
     if (!email || balance === undefined || profit === undefined) { res.status(400).json({ error: "email, balance and profit required" }); return; }
@@ -354,8 +451,8 @@ router.post("/api/admin/set-balance", (req: Request, res: Response): void => {
   } catch (err) { res.status(500).json({ error: "Failed to set balance" }); }
 });
 
-// ── GET /api/admin/global-audit ───────────────────────────────────────────────
-router.get("/api/admin/global-audit", (req: Request, res: Response): void => {
+// ── GET /admin/global-audit ───────────────────────────────────────────────────
+router.get("/admin/global-audit", (req: Request, res: Response): void => {
   try {
     const limit = Math.min(500, parseInt(String(req.query.limit ?? "100")));
     const all   = getGlobalAuditLog().slice(0, limit);

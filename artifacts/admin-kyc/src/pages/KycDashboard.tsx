@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getKycQueue, type KycUser, type UserStatus } from "@/lib/api";
+import { getKycQueue, clearSession, type KycUser, type UserStatus } from "@/lib/api";
 import { formatDateShort, stepsPercent } from "@/lib/utils";
 import { RiskBadge, StatusBadge } from "@/components/Badges";
 import UserPanel from "@/components/UserPanel";
@@ -117,7 +117,7 @@ export default function KycDashboard() {
 
         <div style={{ padding: "12px 18px", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
           <button
-            onClick={() => { localStorage.removeItem("guardianAdminKey"); window.location.reload(); }}
+            onClick={() => { clearSession(); window.dispatchEvent(new CustomEvent("admin:session-expired")); }}
             style={{ fontSize: "11px", color: "rgba(255,255,255,0.45)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
           >
             Sign out

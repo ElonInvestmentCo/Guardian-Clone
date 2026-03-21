@@ -1,22 +1,76 @@
 /**
  * API client for the Guardian Admin KYC Dashboard.
- * All requests go to /api/admin/* and /api/fraud/* on the shared API server.
+ * Uses JWT Bearer token authentication — no plain-text keys.
  */
 
 const API_ROOT = "/api";
 
-function getAdminKey(): string {
-  return localStorage.getItem("guardianAdminKey") ?? "";
+const TOKEN_KEY   = "guardianAdminToken";
+const EXPIRY_KEY  = "guardianAdminExpiry";
+
+// ── Session management ────────────────────────────────────────────────────────
+
+export function getSession(): { token: string; expiresAt: number } | null {
+  const token    = localStorage.getItem(TOKEN_KEY);
+  const expiryRaw = localStorage.getItem(EXPIRY_KEY);
+  if (!token || !expiryRaw) return null;
+  const expiresAt = Number(expiryRaw);
+  if (Date.now() >= expiresAt) {
+    clearSession();
+    return null;
+  }
+  return { token, expiresAt };
 }
 
-async function request<T>(
-  method: string,
-  path: string,
-  body?: unknown,
-): Promise<T> {
+function saveSession(token: string, expiresAt: number): void {
+  localStorage.setItem(TOKEN_KEY,  token);
+  localStorage.setItem(EXPIRY_KEY, String(expiresAt));
+}
+
+export function clearSession(): void {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(EXPIRY_KEY);
+  // Remove legacy key if present
+  localStorage.removeItem("guardianAdminKey");
+}
+
+export function isAuthenticated(): boolean {
+  return getSession() !== null;
+}
+
+// ── Login ─────────────────────────────────────────────────────────────────────
+
+export async function login(username: string, password: string): Promise<void> {
+  const res = await fetch(`${API_ROOT}/admin/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    let message = `HTTP ${res.status}`;
+    try { message = JSON.parse(text).error ?? message; } catch { /* */ }
+    throw new Error(message);
+  }
+
+  const data = await res.json() as { token: string; expiresAt: number };
+  saveSession(data.token, data.expiresAt);
+}
+
+// ── Authenticated request ─────────────────────────────────────────────────────
+
+async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
+  const session = getSession();
+  if (!session) {
+    // Session expired — trigger logout
+    window.dispatchEvent(new CustomEvent("admin:session-expired"));
+    throw new Error("Session expired. Please log in again.");
+  }
+
   const headers: HeadersInit = {
     "Content-Type": "application/json",
-    "X-Admin-Key": getAdminKey(),
+    "Authorization": `Bearer ${session.token}`,
   };
 
   const res = await fetch(`${API_ROOT}${path}`, {
@@ -24,6 +78,12 @@ async function request<T>(
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
+
+  if (res.status === 401) {
+    clearSession();
+    window.dispatchEvent(new CustomEvent("admin:session-expired"));
+    throw new Error("Session expired. Please log in again.");
+  }
 
   if (!res.ok) {
     const text = await res.text();
@@ -38,7 +98,7 @@ async function request<T>(
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export type RiskLevel = "low" | "medium" | "high" | "critical";
-export type UserStatus = "pending" | "approved" | "rejected" | "resubmit";
+export type UserStatus = "pending" | "approved" | "rejected" | "resubmit" | "suspended" | "banned";
 
 export interface KycUser {
   email: string;
@@ -131,12 +191,4 @@ export async function getRiskEvents(params?: { minScore?: number; level?: string
   if (params?.level)    q.set("level",    params.level);
   const qs = q.toString() ? `?${q.toString()}` : "";
   return request<{ total: number; events: RiskScore[] }>("GET", `/fraud/risk-events${qs}`);
-}
-
-export function saveAdminKey(key: string): void {
-  localStorage.setItem("guardianAdminKey", key);
-}
-
-export function hasAdminKey(): boolean {
-  return !!localStorage.getItem("guardianAdminKey");
 }
