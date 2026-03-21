@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
+import clientPortalBtn from "@assets/Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443.png";
+import createAccountBtn from "@assets/Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345.png";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -69,49 +71,65 @@ export function Navbar() {
           </div>
 
           {/* ── Desktop Right Buttons ─────────────────────────────────────────── */}
-          <div className="hidden lg:flex items-center" style={{ gap: "20px" }}>
-            {/* Client Portal — bold blue text link */}
+          <div className="hidden lg:flex items-center" style={{ gap: "12px" }}>
+            {/* Client Portal BETA — image button */}
             <Link
               href="/login"
-              style={{
-                fontSize: "16px",
-                fontWeight: 700,
-                color: "#418CC7",
-                textDecoration: "none",
-                background: "none",
-                border: "none",
-                padding: "0",
-                whiteSpace: "nowrap",
-                transition: "color 0.2s",
-                display: "inline-block",
-              }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#76d0f4"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#418CC7"; }}
+              style={{ display: "inline-block", lineHeight: 0, textDecoration: "none" }}
               data-testid="link-client-portal"
             >
-              Client Portal
+              <img
+                src={clientPortalBtn}
+                alt="Client Portal BETA"
+                style={{
+                  height: "42px",
+                  width: "auto",
+                  display: "block",
+                  imageRendering: "auto",
+                  filter: "contrast(1.08) brightness(1.06)",
+                  transition: "filter 0.2s, transform 0.15s",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.filter = "contrast(1.15) brightness(1.18)";
+                  (e.currentTarget as HTMLImageElement).style.transform = "translateY(-1px)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.filter = "contrast(1.08) brightness(1.06)";
+                  (e.currentTarget as HTMLImageElement).style.transform = "translateY(0)";
+                }}
+              />
             </Link>
 
-            {/* Create Account — ghost style */}
+            {/* Create Account — image button */}
             <Link
               href="/signup"
-              style={{
-                fontSize: "16px",
-                fontWeight: 700,
-                color: "#ffffff",
-                background: "transparent",
-                border: "none",
-                padding: "10px 30px",
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-                display: "inline-block",
-                transition: "color 0.2s",
-              }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#76d0f4"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#ffffff"; }}
+              style={{ display: "inline-block", lineHeight: 0, textDecoration: "none" }}
               data-testid="link-create-account"
             >
-              Create Account
+              <img
+                src={createAccountBtn}
+                alt="Create Account"
+                style={{
+                  height: "42px",
+                  width: "auto",
+                  display: "block",
+                  imageRendering: "auto",
+                  filter: "contrast(1.08) brightness(1.06)",
+                  transition: "filter 0.2s, transform 0.15s",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.filter = "contrast(1.15) brightness(1.18)";
+                  (e.currentTarget as HTMLImageElement).style.transform = "translateY(-1px)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.filter = "contrast(1.08) brightness(1.06)";
+                  (e.currentTarget as HTMLImageElement).style.transform = "translateY(0)";
+                }}
+              />
             </Link>
           </div>
 
