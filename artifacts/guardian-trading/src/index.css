@@ -98,24 +98,15 @@
   transition: transform 0.18s ease, box-shadow 0.18s ease !important;
 }
 
-/* ── Chat widget bubble dots ─────────────────────────────────────────────── */
-@keyframes dotBubble {
-  0%   { transform: translateY(0);    opacity: 0.7; }
-  100% { transform: translateY(-6px); opacity: 1;   }
+/* ── Chat widget idle pulse ───────────────────────────────────────────────── */
+@keyframes chatPulse {
+  0%, 100% { box-shadow: 0 4px 18px rgba(0,0,0,0.55); }
+  50%       { box-shadow: 0 4px 18px rgba(0,0,0,0.55), 0 0 0 10px rgba(90,171,219,0.18); }
 }
 
-.chat-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #5aabdb;
-  display: inline-block;
-  transition: transform 0.22s ease;
+.chat-btn-idle {
+  animation: chatPulse 2.8s ease-in-out infinite;
 }
-
-.dot-hover-1 { animation: dotBubble 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0s     1 forwards; }
-.dot-hover-2 { animation: dotBubble 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.07s  1 forwards; }
-.dot-hover-3 { animation: dotBubble 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s  1 forwards; }
 
 @layer utilities {
   .glass-panel {

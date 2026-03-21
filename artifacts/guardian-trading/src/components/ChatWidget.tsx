@@ -333,30 +333,23 @@ export default function ChatWidget() {
         }}
         aria-label="Open chat"
         className={[
-          "fixed bottom-5 right-5 z-50 w-[62px] h-[62px] rounded-full focus:outline-none bg-black active:scale-95 transition-opacity duration-500 relative shadow-[0_4px_18px_rgba(0,0,0,0.55)]",
+          "fixed bottom-5 right-5 z-50 w-[62px] h-[62px] rounded-full focus:outline-none overflow-hidden active:scale-95 transition-opacity duration-500",
           showIcon ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none",
           !open && animState === "float" ? "chat-btn-float" : "",
+          !open && animState === "idle"  ? "chat-btn-idle"  : "",
           !open && animState === "hover" ? "chat-btn-hover" : "",
         ].join(" ")}
       >
         {open ? (
-          <div className="w-full h-full rounded-full bg-[#5aabdb] flex items-center justify-center">
+          <div className="w-full h-full bg-[#5aabdb] flex items-center justify-center">
             <X className="w-6 h-6 text-white" />
           </div>
         ) : (
-          <>
-            <img
-              src={chatIcon}
-              alt="Chat"
-              className="absolute inset-0 w-full h-full object-cover rounded-full"
-              style={{ imageRendering: "crisp-edges" }}
-            />
-            <div className="absolute bottom-[7px] left-0 right-0 flex justify-center gap-[4px] z-10">
-              <span className={`chat-dot${animState === "hover" ? " dot-hover-1" : ""}`} />
-              <span className={`chat-dot${animState === "hover" ? " dot-hover-2" : ""}`} />
-              <span className={`chat-dot${animState === "hover" ? " dot-hover-3" : ""}`} />
-            </div>
-          </>
+          <img
+            src={chatIcon}
+            alt="Chat"
+            className="w-full h-full object-cover"
+          />
         )}
       </button>
     </>

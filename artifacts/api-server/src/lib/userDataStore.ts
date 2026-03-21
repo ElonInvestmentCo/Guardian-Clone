@@ -286,3 +286,147 @@ export function setUserProfileMeta(
   profile["updatedAt"] = new Date().toISOString();
   writeProfile(email, profile);
 }
+
+/**
+ * Permanently delete a user from the master file and remove their profile directory.
+ */
+export function deleteUser(email: string): void {
+  const master = readMaster();
+  delete master[email];
+  writeMaster(master);
+  const userDir = getUserDir(email);
+  if (fs.existsSync(userDir)) {
+    fs.rmSync(userDir, { recursive: true, force: true });
+  }
+  console.log(`[UserDataStore] Deleted user: ${email}`);
+}
+
+/**
+ * Set (or update) a user's balance and profit, with full history tracking.
+ */
+export function setUserBalance(
+  email: string,
+  balance: number,
+  profit: number,
+  adminNote: string,
+  actor = "admin"
+): void {
+  const now = new Date().toISOString();
+  const profile = readProfile(email);
+  const current = (profile["_balance"] as { balance: number; profit: number } | undefined) ?? { balance: 0, profit: 0 };
+  const history = (profile["_balanceHistory"] as unknown[]) ?? [];
+
+  history.push({
+    timestamp: now,
+    actor,
+    prevBalance: current.balance,
+    prevProfit: current.profit,
+    newBalance: balance,
+    newProfit: profit,
+    note: adminNote,
+  });
+
+  profile["_balance"] = { balance, profit, updatedAt: now };
+  profile["_balanceHistory"] = history;
+  profile["updatedAt"] = now;
+
+  const auditLog = (profile["_auditLog"] as unknown[]) ?? [];
+  auditLog.push({
+    actionType: "ADMIN_SET_BALANCE",
+    actor,
+    note: adminNote || null,
+    meta: { balance, profit },
+    timestamp: now,
+  });
+  profile["_auditLog"] = auditLog;
+  writeProfile(email, profile);
+
+  console.log(`[UserDataStore] Balance set for ${email}: $${balance}, profit: $${profit}`);
+}
+
+/**
+ * Get a user's current balance, profit, and transaction history.
+ */
+export function getUserBalance(email: string): { balance: number; profit: number; updatedAt: string | null; history: unknown[] } {
+  const profile = readProfile(email);
+  const bal = profile["_balance"] as { balance: number; profit: number; updatedAt: string } | undefined;
+  return {
+    balance: bal?.balance ?? 0,
+    profit: bal?.profit ?? 0,
+    updatedAt: bal?.updatedAt ?? null,
+    history: (profile["_balanceHistory"] as unknown[]) ?? [],
+  };
+}
+
+/**
+ * Assign a role to a user (e.g. "user", "vip", "restricted", "admin").
+ */
+export function setUserRole(email: string, role: string, actor = "admin"): void {
+  const now = new Date().toISOString();
+  const master = readMaster();
+  if (!master[email]) master[email] = { email, createdAt: now };
+  master[email]["role"] = role;
+  master[email]["updatedAt"] = now;
+  writeMaster(master);
+
+  const profile = readProfile(email);
+  profile["role"] = role;
+  profile["updatedAt"] = now;
+  const auditLog = (profile["_auditLog"] as unknown[]) ?? [];
+  auditLog.push({ actionType: "ADMIN_ASSIGN_ROLE", actor, note: `Role set to: ${role}`, timestamp: now });
+  profile["_auditLog"] = auditLog;
+  writeProfile(email, profile);
+  console.log(`[UserDataStore] Role set to "${role}" for ${email}`);
+}
+
+/**
+ * Collect all audit log entries across every user, sorted by timestamp descending.
+ */
+export function getGlobalAuditLog(): Array<{ email: string; entry: unknown }> {
+  const master = readMaster();
+  const all: Array<{ email: string; entry: unknown }> = [];
+  for (const email of Object.keys(master)) {
+    const profile = readProfile(email);
+    const log = (profile["_auditLog"] as unknown[]) ?? [];
+    for (const entry of log) {
+      all.push({ email, entry });
+    }
+  }
+  all.sort((a, b) => {
+    const ta = ((a.entry as Record<string, unknown>)["timestamp"] as string) ?? "";
+    const tb = ((b.entry as Record<string, unknown>)["timestamp"] as string) ?? "";
+    return tb.localeCompare(ta);
+  });
+  return all;
+}
+
+/**
+ * Create a brand-new user account directly (admin-initiated, no onboarding required).
+ */
+export function createAdminUser(
+  email: string,
+  displayName: string,
+  role: string,
+  actor = "admin"
+): void {
+  const now = new Date().toISOString();
+  const master = readMaster();
+  if (master[email]) throw new Error(`User ${email} already exists`);
+  master[email] = { email, createdAt: now, updatedAt: now, status: "pending", role, createdBy: actor };
+  writeMaster(master);
+
+  const profile: Record<string, unknown> = {
+    email,
+    role,
+    createdAt: now,
+    updatedAt: now,
+    status: "pending",
+    createdBy: actor,
+    personal: { firstName: displayName.split(" ")[0] ?? "", lastName: displayName.split(" ").slice(1).join(" ") ?? "" },
+    _auditLog: [{ actionType: "ADMIN_CREATE_USER", actor, note: `Account created by admin. Name: ${displayName}`, timestamp: now }],
+  };
+  ensureDir(getUserDir(email));
+  ensureDir(getUserDocDir(email));
+  writeWithRetry(getUserProfilePath(email), JSON.stringify(profile, null, 2));
+  console.log(`[UserDataStore] Admin created user: ${email}`);
+}
