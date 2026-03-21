@@ -69,67 +69,46 @@ export function Navbar() {
           </div>
 
           {/* ── Desktop Right Buttons ─────────────────────────────────────────── */}
-          <div className="hidden lg:flex items-center" style={{ gap: "12px" }}>
-            {/* Login */}
+          <div className="hidden lg:flex items-center" style={{ gap: "20px" }}>
+            {/* Client Portal — bold blue text link */}
             <Link
               href="/login"
               style={{
-                fontSize: "14.5px", fontWeight: 600,
-                color: "#ffffff",
+                fontSize: "16px",
+                fontWeight: 700,
+                color: "#418CC7",
                 textDecoration: "none",
-                padding: "0 8px",
+                background: "none",
+                border: "none",
+                padding: "0",
+                whiteSpace: "nowrap",
+                transition: "color 0.2s",
+                display: "inline-block",
+              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#76d0f4"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#418CC7"; }}
+              data-testid="link-client-portal"
+            >
+              Client Portal
+            </Link>
+
+            {/* Create Account — ghost style */}
+            <Link
+              href="/signup"
+              style={{
+                fontSize: "16px",
+                fontWeight: 700,
+                color: "#ffffff",
+                background: "transparent",
+                border: "none",
+                padding: "10px 30px",
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+                display: "inline-block",
                 transition: "color 0.2s",
               }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#76d0f4"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#ffffff"; }}
-              data-testid="link-login"
-            >
-              Login
-            </Link>
-
-            {/* Client Portal BETA */}
-            <Link
-              href="/login"
-              style={{
-                fontSize: "14.5px", fontWeight: 600,
-                color: "#ffffff",
-                border: "1.5px solid #3a6fa8",
-                borderRadius: "4px",
-                padding: "9px 20px",
-                textDecoration: "none",
-                transition: "background 0.2s, border-color 0.2s",
-                whiteSpace: "nowrap",
-              }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.background = "rgba(74,127,189,0.18)";
-                el.style.borderColor = "#5a90c8";
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.background = "transparent";
-                el.style.borderColor = "#3a6fa8";
-              }}
-              data-testid="link-client-portal"
-            >
-              Client Portal BETA
-            </Link>
-
-            {/* Create Account */}
-            <Link
-              href="/signup"
-              style={{
-                fontSize: "14.5px", fontWeight: 700,
-                color: "#ffffff",
-                background: "#2a6abf",
-                borderRadius: "4px",
-                padding: "9px 22px",
-                textDecoration: "none",
-                transition: "background 0.2s",
-                whiteSpace: "nowrap",
-              }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#1e5aaa"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "#2a6abf"; }}
               data-testid="link-create-account"
             >
               Create Account
