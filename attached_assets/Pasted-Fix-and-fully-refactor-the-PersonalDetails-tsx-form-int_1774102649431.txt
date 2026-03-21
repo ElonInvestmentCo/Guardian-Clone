@@ -1,0 +1,173 @@
+Fix and fully refactor the PersonalDetails.tsx form into a production-grade fintech (Stripe-level) implementation.
+
+CURRENT PROBLEMS TO FIX:
+- Duplicate city input ("Search city" + "Select city")
+- Missing Country field
+- Broken location hierarchy
+- Weak validation
+- Uncontrolled inputs
+- Inconsistent form state handling
+
+GOAL:
+Build a clean, single-source-of-truth Personal Details form with:
+Country → State → City cascading dropdowns, strict validation, and onboarding state machine compatibility.
+
+────────────────────────────────────
+1. REPLACE ENTIRE LOCATION SYSTEM
+────────────────────────────────────
+
+Remove ALL existing location inputs.
+
+Replace with this structure:
+
+location: {
+  country: string | null,
+  state: string | null,
+  city: string | null
+}
+
+RULES:
+- Country is required first
+- State is disabled until country is selected
+- City is disabled until state is selected
+- Changing country resets state + city
+- Changing state resets city
+
+────────────────────────────────────
+2. FIX DUPLICATE CITY BUG (CRITICAL)
+────────────────────────────────────
+
+CAUSE:
+Two components are rendering city input:
+- autocomplete search field
+- dropdown select field
+
+SOLUTION:
+- REMOVE autocomplete entirely
+- KEEP ONLY ONE controlled dropdown
+
+Enforce:
+cityInputMode = "dropdown-only"
+
+NO TEXT INPUT FOR CITY.
+
+────────────────────────────────────
+3. CREATE CLEAN LOCATION SERVICE
+────────────────────────────────────
+
+Create:
+
+/lib/location/locationService.ts
+
+Implement:
+
+export function getCountries()
+export function getStates(countryCode)
+export function getCities(stateCode)
+
+All functions must return structured mock/real dataset.
+
+Cache results in memory.
+
+────────────────────────────────────
+4. PERSONAL DETAILS FORM (FULL REWRITE)
+────────────────────────────────────
+
+Update PersonalDetails.tsx:
+
+IMPORT:
+- useOnboardingStateMachine()
+- locationService
+
+FORM STRUCTURE:
+
+FIELDS:
+- firstName (required)
+- lastName (required)
+- address (required)
+- apt (optional)
+- country (required dropdown)
+- state (required dropdown)
+- city (required dropdown)
+- zipCode (required, 5-digit validation)
+- phoneNumber (required, E.164 validation)
+
+────────────────────────────────────
+5. UI COMPONENT RULES
+────────────────────────────────────
+
+Use ONLY:
+
+- CountrySelect
+- StateSelect
+- CitySelect
+
+Each must be:
+- controlled components
+- disabled when dependency missing
+- reset on parent change
+
+NO duplicate inputs allowed.
+
+────────────────────────────────────
+6. VALIDATION (STRICT FINTECH RULES)
+────────────────────────────────────
+
+Block submission unless:
+
+- firstName valid
+- lastName valid
+- address not empty
+- country selected
+- state selected
+- city selected
+- zipCode matches /^[0-9]{5}$/
+- phoneNumber matches E.164 format
+
+Show inline errors under each field.
+
+────────────────────────────────────
+7. STATE MACHINE INTEGRATION
+────────────────────────────────────
+
+On every change:
+
+- update onboarding state machine
+- persist step data automatically
+- debounce saves (500ms)
+- never allow local-only state
+
+Use:
+useOnboardingStateMachine().updateStep("personalDetails", data)
+
+────────────────────────────────────
+8. BUG FIX: DUPLICATE RENDERING ROOT CAUSE
+────────────────────────────────────
+
+Ensure:
+- NO conditional rendering of two city inputs
+- NO fallback autocomplete UI
+- NO duplicated form sections
+- ONE single location block only
+
+────────────────────────────────────
+9. FINAL OUTPUT REQUIREMENTS
+────────────────────────────────────
+
+Return:
+
+1. Fully rewritten PersonalDetails.tsx
+2. locationService.ts implementation
+3. updated validation logic
+4. state machine integration
+5. clean UI structure (production fintech standard)
+
+────────────────────────────────────
+FINAL RESULT:
+────────────────────────────────────
+
+- Stripe-level Personal Details form
+- No duplicate inputs
+- Fully controlled location hierarchy
+- Production-grade validation
+- Stable onboarding state integration

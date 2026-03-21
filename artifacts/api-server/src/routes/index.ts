@@ -8,6 +8,8 @@ import ingestRouter from "./ingest.js";
 import analyticsRouter from "./analytics.js";
 import trackingScriptRouter from "./trackingScript.js";
 import trackingRouter from "./tracking.js";
+import adminRouter from "./admin.js";
+import fraudRouter from "./fraud.js";
 
 const router: IRouter = Router();
 
@@ -20,5 +22,7 @@ router.use(ingestRouter);
 router.use(analyticsRouter);
 router.use(trackingScriptRouter);
 router.use(trackingRouter);
+router.use(adminRouter);
+router.use(fraudRouter);
 
 export default router;

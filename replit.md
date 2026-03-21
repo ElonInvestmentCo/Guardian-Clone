@@ -88,6 +88,63 @@ Default owner email for demo: `demo@guardiantrading.com`
 
 ---
 
+## Guardian Trading Onboarding
+
+Multi-step onboarding platform at `/` (guardian-trading artifact).
+
+### Features
+- 11 sequential steps with state machine enforcement
+- URL-bypass prevention via `OnboardingGuard`
+- Backend step validation with persistent session restoration
+- Field-level audit logging on all step saves
+- `useOnboardingStep(N)` unified controller hook with retry queue
+
+### Step Numbering
+- 0: GeneralDetails (no progress bar)
+- 1–11: Personal → Professional → ID Info → Income → Risk → Financial → Experience → ID Upload → Funding → Disclosures → Signatures
+
+### PersonalDetails (Step 1)
+- Country → State → City cascading dropdowns (pure `useState`, no react-hook-form)
+- `locationService.ts` in `src/lib/location/` — 15 countries, 50 US states + city data, Canada provinces, UK regions, AU territories, EU regions, India states
+- City falls back to text input when no dropdown data exists for a region
+
+### Key Files (guardian-trading)
+- `src/lib/onboarding/OnboardingContext.tsx` — state machine + session restore
+- `src/lib/onboarding/useOnboardingStep.ts` — unified controller hook
+- `src/lib/onboarding/OnboardingGuard.tsx` — route guard
+- `src/lib/location/locationService.ts` — cascading location data
+- `src/lib/onboarding/schema.ts` — Zod schemas for all 11 steps
+
+---
+
+## Admin KYC Dashboard
+
+Separate web artifact at `/admin-kyc/`.
+
+### Features
+- **KYC Review Queue** — sortable table of all applicants with risk score + status badges
+- **User Detail Side Panel** — full profile, risk flags, audit trail on row click
+- **Approve / Reject / Request Resubmission** actions with admin note field
+- **Admin Key authentication** — stores key in localStorage, protected by `X-Admin-Key` header
+- **Risk score visualization** — score gauge with severity flags list
+- **Audit timeline** — chronological log of all admin actions per user
+
+### Backend Admin Routes (api-server)
+- `GET  /api/admin/kyc-queue` — paginated user list, sorted by risk score
+- `GET  /api/admin/user-details/:email` — full profile + risk + audit log
+- `POST /api/admin/approve-user` — sets status=approved, appends audit entry
+- `POST /api/admin/reject-user` — sets status=rejected, appends reason + audit entry
+- `POST /api/admin/request-resubmission` — sets status=resubmit
+- All routes: rate-limited 60 req/min, protected by `ADMIN_SECRET` env var
+
+### Fraud Detection Engine (`src/lib/fraud/riskEngine.ts`)
+- 9 fraud rules: DOB mismatch, incomplete steps, phone reuse, rapid submission, margin+max-risk combo, missing address, high risk tolerance, upload without ID profile, internal IP flag
+- Score 0–100 → level: low / medium / high / critical
+- `POST /api/fraud/risk-score` — evaluate and cache score for a user
+- `GET  /api/fraud/risk-events` — list all risk evaluations across users
+
+---
+
 ## Packages
 
 ### `artifacts/api-server` (`@workspace/api-server`)

@@ -1,21 +1,7 @@
-import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { personalSchema } from "@/lib/onboarding/schema";
+import { useState, useEffect } from "react";
 import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
-import { CITIES_BY_STATE, US_STATES } from "@/lib/location/cities";
+import { getCountries, getStates, getCities, type LocationOption } from "@/lib/location/locationService";
 import OnboardingShell from "@/components/OnboardingShell";
-
-type FormData = {
-  firstName: string;
-  lastName: string;
-  address: string;
-  aptSuite?: string;
-  state: string;
-  city: string;
-  zipCode: string;
-  phoneNumber: string;
-};
 
 const fieldStyle: React.CSSProperties = {
   background: "#e8edf2",
@@ -27,50 +13,142 @@ const fieldStyle: React.CSSProperties = {
   width: "100%",
 };
 
+const errorBorderStyle: React.CSSProperties = {
+  ...fieldStyle,
+  borderColor: "#e53e3e",
+};
+
 function FieldLabel({ children, required }: { children: React.ReactNode; required?: boolean }) {
   return (
     <label className="block mb-1" style={{ fontSize: "12px", color: "#555" }}>
-      {children}{required && <span style={{ color: "#e53e3e" }}> *</span>}
+      {children}
+      {required && <span style={{ color: "#e53e3e" }}> *</span>}
     </label>
   );
 }
 
+const ChevronDown = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 9l6 6 6-6" />
+  </svg>
+);
+
+function SelectDropdown({
+  value,
+  onChange,
+  options,
+  placeholder,
+  disabled = false,
+  hasError = false,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: LocationOption[];
+  placeholder: string;
+  disabled?: boolean;
+  hasError?: boolean;
+}) {
+  return (
+    <div className="relative">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
+        style={{
+          ...fieldStyle,
+          borderColor: hasError ? "#e53e3e" : "#ccd3da",
+          appearance: "none",
+          paddingRight: "28px",
+          cursor: disabled ? "not-allowed" : "pointer",
+          opacity: disabled ? 0.5 : 1,
+        }}
+        className="focus:outline-none"
+      >
+        <option value="" disabled>{placeholder}</option>
+        {options.map((o) => (
+          <option key={o.code} value={o.code}>{o.label}</option>
+        ))}
+      </select>
+      <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
+        <ChevronDown />
+      </div>
+    </div>
+  );
+}
+
+interface FormErrors {
+  firstName?: string;
+  lastName?: string;
+  address?: string;
+  country?: string;
+  state?: string;
+  city?: string;
+  zipCode?: string;
+  phoneNumber?: string;
+}
+
 export default function PersonalDetails() {
-  const { savedData, submit, goBack, isSubmitting, validationErrors, globalError } =
-    useOnboardingStep(1);
+  const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(1);
 
-  const [citySearch, setCitySearch] = useState("");
+  const sd = savedData as Record<string, string>;
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(personalSchema),
-    mode: "onChange",
-    defaultValues: {
-      firstName:   (savedData.firstName   as string) ?? "",
-      lastName:    (savedData.lastName    as string) ?? "",
-      address:     (savedData.address     as string) ?? "",
-      aptSuite:    (savedData.aptSuite    as string) ?? "",
-      state:       (savedData.state       as string) ?? "",
-      city:        (savedData.city        as string) ?? "",
-      zipCode:     (savedData.zipCode     as string) ?? "",
-      phoneNumber: (savedData.phoneNumber as string) ?? "",
-    },
-  });
+  const [firstName,   setFirstName]   = useState(sd.firstName   ?? "");
+  const [lastName,    setLastName]    = useState(sd.lastName     ?? "");
+  const [address,     setAddress]     = useState(sd.address      ?? "");
+  const [aptSuite,    setAptSuite]    = useState(sd.aptSuite     ?? "");
+  const [country,     setCountry]     = useState(sd.country      ?? "");
+  const [state,       setState]       = useState(sd.state        ?? "");
+  const [city,        setCity]        = useState(sd.city         ?? "");
+  const [zipCode,     setZipCode]     = useState(sd.zipCode      ?? "");
+  const [phoneNumber, setPhoneNumber] = useState(sd.phoneNumber  ?? "");
+  const [errors,      setErrors]      = useState<FormErrors>({});
 
-  const selectedState = watch("state");
+  const [stateOptions, setStateOptions] = useState<LocationOption[]>([]);
+  const [cityOptions,  setCityOptions]  = useState<string[]>([]);
 
-  const cities = useMemo(() => {
-    const stateCities = CITIES_BY_STATE[selectedState] ?? [];
-    return stateCities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
-  }, [selectedState, citySearch]);
+  const countries = getCountries();
 
-  const onSubmit = async (data: FormData) => {
-    await submit(data as Record<string, unknown>);
+  useEffect(() => {
+    if (!country) { setStateOptions([]); setState(""); setCity(""); return; }
+    const states = getStates(country);
+    setStateOptions(states);
+    setState("");
+    setCity("");
+  }, [country]);
+
+  useEffect(() => {
+    if (!state) { setCityOptions([]); setCity(""); return; }
+    setCityOptions(getCities(state));
+    setCity("");
+  }, [state]);
+
+  const validate = (): boolean => {
+    const newErrors: FormErrors = {};
+    if (!firstName.trim())    newErrors.firstName   = "First name is required";
+    if (!lastName.trim())     newErrors.lastName    = "Last name is required";
+    if (!address.trim())      newErrors.address     = "Address is required";
+    if (!country)             newErrors.country     = "Country is required";
+    if (!state)               newErrors.state       = "State / province is required";
+    if (!city)                newErrors.city        = "City is required";
+    if (!/^\d{5}(-\d{4})?$/.test(zipCode.trim()))
+      newErrors.zipCode = "Enter a valid 5-digit ZIP code";
+    if (!/^\+?[1-9]\d{6,14}$/.test(phoneNumber.replace(/[\s\-().]/g, "")))
+      newErrors.phoneNumber = "Enter a valid phone number";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
+
+  const clearError = (field: keyof FormErrors) =>
+    setErrors((prev) => ({ ...prev, [field]: undefined }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+    await submit({ firstName, lastName, address, aptSuite, country, state, city, zipCode, phoneNumber });
+  };
+
+  const countryLabel = countries.find((c) => c.code === country)?.label ?? "";
+  const stateLabel   = stateOptions.find((s) => s.code === state)?.label ?? "";
 
   return (
     <OnboardingShell currentStep={1}>
@@ -91,78 +169,165 @@ export default function PersonalDetails() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          <form onSubmit={handleSubmit} noValidate>
 
+            {/* ── Name ─────────────────────────────────────────────── */}
             <div className="grid grid-cols-2 gap-5 mb-4">
               <div>
                 <FieldLabel required>First Name</FieldLabel>
-                <input {...register("firstName")} style={fieldStyle} className="focus:outline-none" />
-                {errors.firstName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.firstName.message}</p>}
-                {validationErrors.firstName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{validationErrors.firstName}</p>}
+                <input
+                  value={firstName}
+                  onChange={(e) => { setFirstName(e.target.value); clearError("firstName"); }}
+                  style={errors.firstName ? errorBorderStyle : fieldStyle}
+                  className="focus:outline-none"
+                />
+                {errors.firstName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.firstName}</p>}
               </div>
               <div>
                 <FieldLabel required>Last Name</FieldLabel>
-                <input {...register("lastName")} style={fieldStyle} className="focus:outline-none" />
-                {errors.lastName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.lastName.message}</p>}
-                {validationErrors.lastName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{validationErrors.lastName}</p>}
+                <input
+                  value={lastName}
+                  onChange={(e) => { setLastName(e.target.value); clearError("lastName"); }}
+                  style={errors.lastName ? errorBorderStyle : fieldStyle}
+                  className="focus:outline-none"
+                />
+                {errors.lastName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.lastName}</p>}
               </div>
             </div>
 
+            {/* ── Address ──────────────────────────────────────────── */}
             <div className="mb-4">
               <FieldLabel required>Address</FieldLabel>
-              <input {...register("address")} style={fieldStyle} className="focus:outline-none" />
-              {errors.address && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.address.message}</p>}
+              <input
+                value={address}
+                onChange={(e) => { setAddress(e.target.value); clearError("address"); }}
+                style={errors.address ? errorBorderStyle : fieldStyle}
+                className="focus:outline-none"
+              />
+              {errors.address && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.address}</p>}
             </div>
 
-            <div className="mb-4">
+            <div className="mb-5">
               <FieldLabel>Apt / Suite (optional)</FieldLabel>
-              <input {...register("aptSuite")} style={fieldStyle} className="focus:outline-none" />
+              <input
+                value={aptSuite}
+                onChange={(e) => setAptSuite(e.target.value)}
+                style={fieldStyle}
+                className="focus:outline-none"
+              />
             </div>
 
+            {/* ── Country → State → City cascade ───────────────────── */}
             <div className="grid grid-cols-3 gap-5 mb-4">
+
+              {/* Country */}
               <div>
-                <FieldLabel required>State</FieldLabel>
-                <div className="relative">
-                  <select {...register("state")} style={{ ...fieldStyle, appearance: "none", paddingRight: "28px", cursor: "pointer" }} className="focus:outline-none">
-                    <option value="">Please Select</option>
-                    {US_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                  <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
-                  </div>
-                </div>
-                {errors.state && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.state.message}</p>}
+                <FieldLabel required>Country</FieldLabel>
+                <SelectDropdown
+                  value={country}
+                  onChange={(v) => { setCountry(v); clearError("country"); }}
+                  options={countries}
+                  placeholder="Select country"
+                  hasError={!!errors.country}
+                />
+                {errors.country && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.country}</p>}
               </div>
 
+              {/* State / Province — disabled until country selected */}
+              <div>
+                <FieldLabel required>
+                  {country === "US" ? "State" : country === "CA" ? "Province" : country === "AU" ? "State / Territory" : "State / Region"}
+                </FieldLabel>
+                <SelectDropdown
+                  value={state}
+                  onChange={(v) => { setState(v); clearError("state"); }}
+                  options={stateOptions}
+                  placeholder={country ? "Select state" : "Select country first"}
+                  disabled={!country || stateOptions.length === 0}
+                  hasError={!!errors.state}
+                />
+                {errors.state && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.state}</p>}
+                {country && stateOptions.length === 0 && (
+                  <p className="mt-1 text-xs" style={{ color: "#888" }}>No regions available — enter city manually below</p>
+                )}
+              </div>
+
+              {/* City — disabled until state selected */}
               <div>
                 <FieldLabel required>City</FieldLabel>
-                <input placeholder="Search city…" value={citySearch} onChange={(e) => setCitySearch(e.target.value)} style={{ ...fieldStyle, marginBottom: "6px" }} className="focus:outline-none" />
-                <div className="relative">
-                  <select {...register("city")} style={{ ...fieldStyle, appearance: "none", paddingRight: "28px", cursor: "pointer" }} className="focus:outline-none">
-                    <option value="">Select city</option>
-                    {cities.map((c) => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                  <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+                {cityOptions.length > 0 ? (
+                  <div className="relative">
+                    <select
+                      value={city}
+                      onChange={(e) => { setCity(e.target.value); clearError("city"); }}
+                      disabled={!state}
+                      style={{
+                        ...fieldStyle,
+                        borderColor: errors.city ? "#e53e3e" : "#ccd3da",
+                        appearance: "none",
+                        paddingRight: "28px",
+                        cursor: !state ? "not-allowed" : "pointer",
+                        opacity: !state ? 0.5 : 1,
+                      }}
+                      className="focus:outline-none"
+                    >
+                      <option value="" disabled>{state ? "Select city" : "Select state first"}</option>
+                      {cityOptions.map((c) => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                    <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2"><ChevronDown /></div>
                   </div>
-                </div>
-                {errors.city && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.city.message}</p>}
+                ) : (
+                  <input
+                    value={city}
+                    onChange={(e) => { setCity(e.target.value); clearError("city"); }}
+                    placeholder={state ? "Enter city name" : "Select state first"}
+                    disabled={!state && stateOptions.length > 0}
+                    style={{
+                      ...fieldStyle,
+                      borderColor: errors.city ? "#e53e3e" : "#ccd3da",
+                      opacity: (!state && stateOptions.length > 0) ? 0.5 : 1,
+                    }}
+                    className="focus:outline-none"
+                  />
+                )}
+                {errors.city && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.city}</p>}
               </div>
+            </div>
 
+            {/* Location breadcrumb hint */}
+            {(country || state || city) && (
+              <p className="mb-4 text-xs" style={{ color: "#888" }}>
+                {[countryLabel, stateLabel, city].filter(Boolean).join(" › ")}
+              </p>
+            )}
+
+            {/* ── ZIP + Phone ───────────────────────────────────────── */}
+            <div className="grid grid-cols-2 gap-5 mb-6">
               <div>
-                <FieldLabel required>ZIP Code</FieldLabel>
-                <input {...register("zipCode")} style={fieldStyle} className="focus:outline-none" placeholder="12345" />
-                {errors.zipCode && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.zipCode.message}</p>}
+                <FieldLabel required>ZIP / Postal Code</FieldLabel>
+                <input
+                  value={zipCode}
+                  onChange={(e) => { setZipCode(e.target.value); clearError("zipCode"); }}
+                  placeholder="12345"
+                  style={errors.zipCode ? errorBorderStyle : fieldStyle}
+                  className="focus:outline-none"
+                />
+                {errors.zipCode && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.zipCode}</p>}
+              </div>
+              <div>
+                <FieldLabel required>Phone Number</FieldLabel>
+                <input
+                  value={phoneNumber}
+                  onChange={(e) => { setPhoneNumber(e.target.value); clearError("phoneNumber"); }}
+                  placeholder="+1 (555) 000-0000"
+                  style={errors.phoneNumber ? errorBorderStyle : fieldStyle}
+                  className="focus:outline-none"
+                />
+                {errors.phoneNumber && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.phoneNumber}</p>}
               </div>
             </div>
 
-            <div className="mb-6" style={{ maxWidth: "50%" }}>
-              <FieldLabel required>Phone Number</FieldLabel>
-              <input {...register("phoneNumber")} style={fieldStyle} className="focus:outline-none" placeholder="(555) 000-0000" />
-              {errors.phoneNumber && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.phoneNumber.message}</p>}
-              {validationErrors.phoneNumber && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{validationErrors.phoneNumber}</p>}
-            </div>
-
+            {/* ── Navigation ───────────────────────────────────────── */}
             <div className="flex gap-3">
               <button
                 type="button"
