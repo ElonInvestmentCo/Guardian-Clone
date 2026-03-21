@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { X, ArrowLeft, Minus, Home, MessageSquare } from "lucide-react";
 import { useLocation } from "wouter";
+import chatIcon from "@assets/DAFF4A91-FB9A-40ED-9CF7-E072FEA1BB59_1773727452638.png";
 import needHelpImg from "@assets/8362510f188d6ddbeb52744b9d477783_1773966680140.png";
 import heroPattern from "@assets/pattern_1773965291387.png";
 import letsChatBtn from "@assets/IMG_8080_1773969229592.PNG";
@@ -16,36 +17,26 @@ function formatTime() {
   return `${h}:${m} ${ampm}`;
 }
 
-/* Speech bubble SVG with three dots */
-function BubbleIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 32 32"
-      width="28"
-      height="28"
-      fill="white"
-      aria-hidden="true"
-    >
-      <path d="M16 2C8.28 2 2 7.48 2 14.2c0 3.9 2.02 7.36 5.2 9.66L6 29.5l6.08-3.28c1.27.3 2.6.46 3.92.46 7.72 0 14-5.48 14-12.2S23.72 2 16 2zm-4.5 13.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4.5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4.5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
-    </svg>
-  );
-}
+type AnimState = "hidden" | "float" | "idle" | "hover";
 
 export default function ChatWidget() {
-  const [open,           setOpen]           = useState(false);
-  const [screen,         setScreen]         = useState<Screen>("home");
-  const [showIcon,       setShowIcon]       = useState(false);
-  const [showPopup,      setShowPopup]      = useState(false);
+  const [open, setOpen] = useState(false);
+  const [screen, setScreen] = useState<Screen>("home");
+  const [showIcon, setShowIcon] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const [popupDismissed, setPopupDismissed] = useState(false);
-  const [hovered,        setHovered]        = useState(false);
-  const [location]                          = useLocation();
+  const [animState, setAnimState] = useState<AnimState>("hidden");
+  const [location] = useLocation();
 
   const startTimers = useCallback(() => {
     setShowIcon(false);
     setShowPopup(false);
     setPopupDismissed(false);
-    const iconTimer  = setTimeout(() => setShowIcon(true), 5000);
+    setAnimState("hidden");
+    const iconTimer = setTimeout(() => {
+      setShowIcon(true);
+      setAnimState("float");
+    }, 5000);
     const popupTimer = setTimeout(() => setShowPopup(true), 6000);
     return () => {
       clearTimeout(iconTimer);
@@ -66,51 +57,33 @@ export default function ChatWidget() {
   const handleClose = () => {
     setOpen(false);
     setScreen("home");
-    setHovered(false);
+  };
+
+  const handlePopupClick = () => handleOpen();
+
+  const handlePopupClose = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowPopup(false);
+    setPopupDismissed(true);
   };
 
   const timeStr = formatTime();
 
-  /* Trigger button computed style */
-  const triggerStyle: React.CSSProperties = {
-    position: "fixed",
-    bottom: "20px",
-    right: "20px",
-    zIndex: 9999,
-    width: "60px",
-    height: "60px",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background: hovered && !open ? "#1a6ab1" : "#0b1f3a",
-    boxShadow: hovered && !open
-      ? "0 12px 28px rgba(0,0,0,0.4), 0 0 0 3px rgba(42,106,191,0.35)"
-      : "0 8px 20px rgba(0,0,0,0.3)",
-    transform: hovered && !open ? "translateY(-8px) scale(1.05)" : "translateY(0) scale(1)",
-    transition: "transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, opacity 0.4s ease",
-    opacity: showIcon ? 1 : 0,
-    pointerEvents: showIcon ? "auto" : "none",
-    cursor: "pointer",
-    border: "none",
-    outline: "none",
-  };
-
   return (
     <>
-      {/* ── CHAT PANEL ──────────────────────────────────────────────────────── */}
+      {/* ── CHAT PANEL ── */}
       <div
-        className={`fixed bottom-[88px] right-5 z-50 w-[340px] rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 ease-out origin-bottom-right flex flex-col ${
+        className={`fixed bottom-[84px] right-5 z-50 w-[340px] rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 ease-out origin-bottom-right flex flex-col ${
           open
             ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
             : "opacity-0 scale-90 translate-y-4 pointer-events-none"
         }`}
         style={{ background: "#141414", maxHeight: "580px" }}
       >
-        {/* ── HOME SCREEN ─────────────────────────────────────────────────── */}
+        {/* ── HOME SCREEN ── */}
         {screen === "home" && (
           <div className="flex flex-col" style={{ minHeight: "580px", background: "#0e0e0e" }}>
-            {/* Hero gradient header */}
+            {/* ── Hero gradient header ── */}
             <div
               className="relative overflow-hidden"
               style={{
@@ -119,6 +92,7 @@ export default function ChatWidget() {
                 flexShrink: 0,
               }}
             >
+              {/* Dotted bar pattern – top-right */}
               <img
                 src={heroPattern}
                 alt=""
@@ -127,6 +101,7 @@ export default function ChatWidget() {
                 style={{ opacity: 0.28 }}
               />
 
+              {/* Minimize "–" */}
               <div className="relative z-10 flex justify-end pt-4 pr-4">
                 <button
                   onClick={handleClose}
@@ -138,6 +113,7 @@ export default function ChatWidget() {
                 </button>
               </div>
 
+              {/* Title */}
               <div className="relative z-10 px-5 pt-2 pb-10">
                 <h2
                   className="text-white font-extrabold leading-[1.1]"
@@ -147,18 +123,21 @@ export default function ChatWidget() {
                 </h2>
               </div>
 
+              {/* Fade-out overlay – blends hero bottom into widget bg */}
               <div
                 className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
                 style={{ background: "linear-gradient(to bottom, transparent 0%, #0e0e0e 100%)" }}
               />
             </div>
 
-            {/* Conversation card */}
+            {/* ── Conversation card – no bg, no border, fully blended ── */}
             <div
               className="mx-4 relative z-10"
               style={{ background: "transparent", marginTop: "-20px", boxShadow: "none", border: "none" }}
             >
+              {/* Agent row */}
               <div className="flex items-start gap-3 px-4 pt-4 pb-3">
+                {/* Avatar */}
                 <div className="relative flex-shrink-0 mt-0.5">
                   <div
                     className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-[15px]"
@@ -168,6 +147,8 @@ export default function ChatWidget() {
                   </div>
                   <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#3dd68c] border-2 border-[#0e0e0e]" />
                 </div>
+
+                {/* Name + message */}
                 <div className="flex-1 min-w-0">
                   <p className="text-[13px] leading-tight mb-1">
                     <span className="text-white font-semibold">Robert Cleary</span>
@@ -179,6 +160,7 @@ export default function ChatWidget() {
                 </div>
               </div>
 
+              {/* Let's chat image button */}
               <div className="px-3 pb-4">
                 <button
                   onClick={() => setScreen("chat")}
@@ -190,15 +172,18 @@ export default function ChatWidget() {
               </div>
             </div>
 
+            {/* ── Spacer ── */}
             <div className="flex-1" />
 
-            {/* Bottom nav pill */}
+            {/* ── Bottom nav pill ── */}
             <div className="px-4 mb-3">
               <div className="flex rounded-[18px] overflow-hidden" style={{ background: "#1e1e1e" }}>
+                {/* Home – active */}
                 <button className="flex-1 flex flex-col items-center justify-center gap-[6px] py-[14px] text-white">
                   <Home className="w-[20px] h-[20px]" style={{ fill: "white", strokeWidth: 0 }} />
                   <span className="text-[12px] font-bold">Home</span>
                 </button>
+                {/* Chat */}
                 <button
                   onClick={() => setScreen("chat")}
                   className="flex-1 flex flex-col items-center justify-center gap-[6px] py-[14px] text-[#555] hover:text-[#888] transition-colors"
@@ -209,6 +194,7 @@ export default function ChatWidget() {
               </div>
             </div>
 
+            {/* ── Powered by LiveChat ── */}
             <div className="flex items-center justify-center gap-[6px] pb-4">
               <span className="text-[#555] text-[11px]">Powered by</span>
               <span className="text-[#ff5c35] text-[12px] leading-none">●</span>
@@ -217,17 +203,20 @@ export default function ChatWidget() {
           </div>
         )}
 
-        {/* ── CHAT SCREEN ─────────────────────────────────────────────────── */}
+        {/* ── CHAT SCREEN ── */}
         {screen === "chat" && (
           <div className="flex flex-col flex-1">
+            {/* Header */}
             <div className="flex items-center justify-between px-4 py-3" style={{ background: "#111" }}>
-              <button
-                onClick={() => setScreen("home")}
-                className="text-gray-400 hover:text-white transition-colors"
-                aria-label="Back"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setScreen("home")}
+                  className="text-gray-400 hover:text-white transition-colors"
+                  aria-label="Back to home"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+              </div>
               <button
                 onClick={handleClose}
                 className="w-8 h-8 rounded-full bg-[#2a2a2a] flex items-center justify-center text-gray-400 hover:text-white transition-colors"
@@ -237,10 +226,13 @@ export default function ChatWidget() {
               </button>
             </div>
 
+            {/* Agent card */}
             <div className="flex justify-center py-5 px-4">
               <div className="flex items-center gap-3 bg-[#2a2a2a] rounded-full px-5 py-3 shadow-lg">
                 <div className="relative flex-shrink-0">
-                  <div className="w-11 h-11 rounded-full bg-[#4a7fbd] flex items-center justify-center text-white font-bold text-lg">R</div>
+                  <div className="w-11 h-11 rounded-full bg-[#4a7fbd] flex items-center justify-center text-white font-bold text-lg">
+                    R
+                  </div>
                   <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-400 border-2 border-[#2a2a2a]" />
                 </div>
                 <div>
@@ -250,14 +242,20 @@ export default function ChatWidget() {
               </div>
             </div>
 
+            {/* Chat body */}
             <div className="px-4 pb-4 flex flex-col gap-3">
               <div className="flex items-start gap-2">
-                <div className="w-8 h-8 rounded-full bg-[#4a7fbd] flex items-center justify-center text-white font-bold text-sm flex-shrink-0 mt-1">R</div>
+                <div className="w-8 h-8 rounded-full bg-[#4a7fbd] flex items-center justify-center text-white font-bold text-sm flex-shrink-0 mt-1">
+                  R
+                </div>
                 <div className="flex-1 rounded-2xl rounded-tl-sm overflow-hidden" style={{ background: "#2a2a2a" }}>
                   <video
                     src={`${import.meta.env.BASE_URL}chat-preview.mp4`}
                     className="w-full h-[170px] object-cover object-center"
-                    autoPlay loop muted playsInline
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
                   />
                   <div className="px-4 py-3">
                     <p className="text-white text-sm leading-relaxed">
@@ -268,6 +266,7 @@ export default function ChatWidget() {
               </div>
             </div>
 
+            {/* Let's chat button */}
             <div className="px-4 pb-3">
               <button
                 className="w-full py-3.5 rounded-full text-gray-900 font-bold text-[15px] transition-opacity hover:opacity-90 active:opacity-80"
@@ -277,6 +276,7 @@ export default function ChatWidget() {
               </button>
             </div>
 
+            {/* Powered by */}
             <div className="flex items-center justify-center gap-1.5 py-2.5 border-t border-white/5">
               <span className="text-gray-500 text-[11px]">Powered by</span>
               <span className="text-[#ff5c35] text-[11px]">●</span>
@@ -286,20 +286,20 @@ export default function ChatWidget() {
         )}
       </div>
 
-      {/* ── "Need Help?" popup ───────────────────────────────────────────────── */}
+      {/* "Need Help?" popup */}
       {!popupDismissed && (
         <div
-          className={`fixed bottom-[88px] right-5 z-40 w-[190px] rounded-xl overflow-hidden shadow-2xl cursor-pointer transition-all duration-500 ease-out ${
+          className={`fixed bottom-[84px] right-5 z-40 w-[190px] rounded-xl overflow-hidden shadow-2xl cursor-pointer transition-all duration-500 ease-out ${
             showPopup && !open
               ? "opacity-100 translate-y-0 pointer-events-auto"
               : "opacity-0 translate-y-3 pointer-events-none"
           }`}
-          onClick={handleOpen}
+          onClick={handlePopupClick}
           role="button"
           aria-label="Open chat"
         >
           <button
-            onClick={(e) => { e.stopPropagation(); setShowPopup(false); setPopupDismissed(true); }}
+            onClick={handlePopupClose}
             aria-label="Close popup"
             className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-black/40 flex items-center justify-center text-white hover:bg-black/70 transition-colors"
           >
@@ -313,18 +313,44 @@ export default function ChatWidget() {
         </div>
       )}
 
-      {/* ── Trigger button ───────────────────────────────────────────────────── */}
+      {/* Trigger button */}
       <button
-        onClick={() => open ? handleClose() : handleOpen()}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        onClick={() => {
+          if (open) {
+            handleClose();
+          } else {
+            handleOpen();
+          }
+        }}
+        onMouseEnter={() => {
+          if (!open) setAnimState("hover");
+        }}
+        onMouseLeave={() => {
+          if (!open) setAnimState("idle");
+        }}
+        onAnimationEnd={() => {
+          if (animState === "float") setAnimState("idle");
+        }}
         aria-label="Open chat"
-        style={triggerStyle}
+        className={[
+          "fixed bottom-5 right-5 z-50 w-[62px] h-[62px] rounded-full focus:outline-none overflow-hidden bg-transparent active:scale-95 transition-opacity duration-500",
+          showIcon ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none",
+          !open && animState === "float" ? "chat-btn-float" : "",
+          !open && animState === "idle"  ? "chat-btn-idle"  : "",
+          !open && animState === "hover" ? "chat-btn-hover" : "",
+        ].join(" ")}
       >
         {open ? (
-          <X style={{ width: "24px", height: "24px", color: "white" }} />
+          <div className="w-full h-full rounded-full bg-[#5aabdb] flex items-center justify-center">
+            <X className="w-6 h-6 text-white" />
+          </div>
         ) : (
-          <BubbleIcon />
+          <img
+            src={chatIcon}
+            alt="Chat"
+            className="w-full h-full object-cover rounded-full"
+            style={{ imageRendering: "crisp-edges" }}
+          />
         )}
       </button>
     </>
