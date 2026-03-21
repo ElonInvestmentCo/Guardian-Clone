@@ -26,7 +26,7 @@ export function Navbar() {
       <nav
         className="fixed top-0 w-full z-50"
         style={{
-          background: "#0b1120",
+          background: "#000000",
           borderBottom: "1px solid rgba(255,255,255,0.06)",
           height: "85px",
         }}
@@ -151,7 +151,7 @@ export function Navbar() {
       {isOpen && (
         <div
           className="fixed inset-0 z-40 flex flex-col lg:hidden"
-          style={{ background: "#0b1120", paddingTop: "85px" }}
+          style={{ background: "#000000", paddingTop: "85px" }}
         >
           <div className="flex flex-col px-8 py-4 gap-0">
             {navLinks.map((link) => (
