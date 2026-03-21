@@ -289,7 +289,7 @@ export default function ChatWidget() {
       {/* "Need Help?" popup */}
       {!popupDismissed && (
         <div
-          className={`fixed bottom-[84px] right-5 z-40 w-[190px] overflow-hidden shadow-2xl cursor-pointer transition-all duration-500 ease-out ${
+          className={`fixed bottom-[84px] right-5 z-40 w-[220px] overflow-hidden shadow-2xl cursor-pointer transition-all duration-500 ease-out ${
             showPopup && !open
               ? "opacity-100 translate-y-0 pointer-events-auto"
               : "opacity-0 translate-y-3 pointer-events-none"
@@ -336,7 +336,6 @@ export default function ChatWidget() {
           "fixed bottom-5 right-5 z-50 w-[62px] h-[62px] rounded-full focus:outline-none overflow-hidden active:scale-95 transition-opacity duration-500",
           showIcon ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none",
           !open && animState === "float" ? "chat-btn-float" : "",
-          !open && animState === "idle"  ? "chat-btn-idle"  : "",
           !open && animState === "hover" ? "chat-btn-hover" : "",
         ].join(" ")}
       >

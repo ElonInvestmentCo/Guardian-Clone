@@ -98,15 +98,6 @@
   transition: transform 0.18s ease, box-shadow 0.18s ease !important;
 }
 
-/* ── Chat widget idle pulse ───────────────────────────────────────────────── */
-@keyframes chatPulse {
-  0%, 100% { box-shadow: 0 4px 18px rgba(0,0,0,0.55); }
-  50%       { box-shadow: 0 4px 18px rgba(0,0,0,0.55), 0 0 0 10px rgba(90,171,219,0.18); }
-}
-
-.chat-btn-idle {
-  animation: chatPulse 2.8s ease-in-out infinite;
-}
 
 @layer utilities {
   .glass-panel {
