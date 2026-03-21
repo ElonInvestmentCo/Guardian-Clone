@@ -55,7 +55,7 @@ export function Navbar() {
                 href={link.href}
                 className="transition-colors"
                 style={{
-                  fontSize: "15px",
+                  fontSize: "16px",
                   fontWeight: 600,
                   color: "#ffffff",
                   letterSpacing: "0.03em",
