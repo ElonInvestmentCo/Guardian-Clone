@@ -35,16 +35,15 @@ function AppShell() {
     return () => clearInterval(id);
   }, [authed, handleLogout]);
 
-  // Show time remaining in title bar when close to expiry
+  // Auto-logout exactly when the token expires
   useEffect(() => {
-    if (!authed) return;
+    if (!authed) return undefined;
     const session = getSession();
-    if (!session) return;
+    if (!session) return undefined;
     const msLeft = session.expiresAt - Date.now();
-    if (msLeft > 0) {
-      const id = setTimeout(() => handleLogout(), msLeft);
-      return () => clearTimeout(id);
-    }
+    if (msLeft <= 0) { handleLogout(); return undefined; }
+    const id = setTimeout(() => handleLogout(), msLeft);
+    return () => clearTimeout(id);
   }, [authed, handleLogout]);
 
   if (!authed) {

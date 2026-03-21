@@ -40,15 +40,19 @@ export function statusColors(status: UserStatus): { bg: string; text: string; bo
     case "rejected":  return { bg: "#FEF2F2", text: "#DC2626", border: "#FECACA" };
     case "resubmit":  return { bg: "#EFF6FF", text: "#2563EB", border: "#BFDBFE" };
     case "pending":   return { bg: "#F9FAFB", text: "#374151", border: "#E5E7EB" };
+    case "suspended": return { bg: "#FFF7ED", text: "#EA580C", border: "#FED7AA" };
+    case "banned":    return { bg: "#FDF4FF", text: "#9333EA", border: "#E9D5FF" };
   }
 }
 
 export function statusLabel(status: UserStatus): string {
   switch (status) {
-    case "approved": return "Approved";
-    case "rejected": return "Rejected";
-    case "resubmit": return "Resubmit";
-    case "pending":  return "Pending";
+    case "approved":  return "Approved";
+    case "rejected":  return "Rejected";
+    case "resubmit":  return "Resubmit";
+    case "pending":   return "Pending";
+    case "suspended": return "Suspended";
+    case "banned":    return "Banned";
   }
 }
 
@@ -65,4 +69,21 @@ export function getProfileField(profile: Record<string, unknown>, step: string, 
   const stepData = profile[step] as Record<string, unknown> | undefined;
   const v = stepData?.[field];
   return v != null ? String(v) : "—";
+}
+
+export function actionTypeLabel(actionType: string): string {
+  return actionType
+    .replace(/^ADMIN_/, "")
+    .replace(/_/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+export function actionTypeColor(actionType: string): { dot: string; text: string } {
+  if (actionType.includes("APPROVE") || actionType.includes("REACTIVATE")) return { dot: "#16A34A", text: "#16A34A" };
+  if (actionType.includes("REJECT") || actionType.includes("BAN"))         return { dot: "#DC2626", text: "#DC2626" };
+  if (actionType.includes("SUSPEND"))  return { dot: "#EA580C", text: "#EA580C" };
+  if (actionType.includes("RESUBMIT")) return { dot: "#2563EB", text: "#2563EB" };
+  if (actionType.includes("DELETE"))   return { dot: "#9333EA", text: "#9333EA" };
+  return { dot: "#6B7280", text: "#6B7280" };
 }

@@ -30,7 +30,6 @@ function saveSession(token: string, expiresAt: number): void {
 export function clearSession(): void {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(EXPIRY_KEY);
-  // Remove legacy key if present
   localStorage.removeItem("guardianAdminKey");
 }
 
@@ -50,7 +49,7 @@ export async function login(username: string, password: string): Promise<void> {
   if (!res.ok) {
     const text = await res.text();
     let message = `HTTP ${res.status}`;
-    try { message = JSON.parse(text).error ?? message; } catch { /* */ }
+    try { message = JSON.parse(text).error ?? message; } catch { /**/ }
     throw new Error(message);
   }
 
@@ -63,7 +62,6 @@ export async function login(username: string, password: string): Promise<void> {
 async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
   const session = getSession();
   if (!session) {
-    // Session expired — trigger logout
     window.dispatchEvent(new CustomEvent("admin:session-expired"));
     throw new Error("Session expired. Please log in again.");
   }
@@ -88,7 +86,7 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
   if (!res.ok) {
     const text = await res.text();
     let message = `HTTP ${res.status}`;
-    try { message = JSON.parse(text).error ?? message; } catch { /* */ }
+    try { message = JSON.parse(text).error ?? message; } catch { /**/ }
     throw new Error(message);
   }
 
@@ -97,7 +95,7 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-export type RiskLevel = "low" | "medium" | "high" | "critical";
+export type RiskLevel  = "low" | "medium" | "high" | "critical";
 export type UserStatus = "pending" | "approved" | "rejected" | "resubmit" | "suspended" | "banned";
 
 export interface KycUser {
@@ -130,9 +128,11 @@ export interface RiskScore {
 export interface AuditEntry {
   actionType: string;
   actor: string;
+  email?: string;
   note?: string;
   reason?: string;
   fields?: string[];
+  meta?: Record<string, unknown>;
   timestamp: string;
 }
 
@@ -150,6 +150,11 @@ export interface KycQueueResponse {
   limit: number;
   pages: number;
   users: KycUser[];
+}
+
+export interface GlobalAuditResponse {
+  total: number;
+  entries: AuditEntry[];
 }
 
 // ── API calls ─────────────────────────────────────────────────────────────────
@@ -185,10 +190,6 @@ export async function requestResubmission(email: string, fields?: string[], admi
   await request("POST", "/admin/request-resubmission", { email, fields, adminNote });
 }
 
-export async function getRiskEvents(params?: { minScore?: number; level?: string }): Promise<{ total: number; events: RiskScore[] }> {
-  const q = new URLSearchParams();
-  if (params?.minScore) q.set("minScore", String(params.minScore));
-  if (params?.level)    q.set("level",    params.level);
-  const qs = q.toString() ? `?${q.toString()}` : "";
-  return request<{ total: number; events: RiskScore[] }>("GET", `/fraud/risk-events${qs}`);
+export async function getGlobalAudit(limit = 200): Promise<GlobalAuditResponse> {
+  return request<GlobalAuditResponse>("GET", `/admin/global-audit?limit=${limit}`);
 }
