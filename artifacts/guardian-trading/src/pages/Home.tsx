@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Link } from "wouter";
 import { X, Star, ArrowRight, Play } from "lucide-react";
-import ChatWidget from "@/components/ChatWidget";
 
 import heroPlatform from "@assets/IMG_7967_1773721659915.png";
 import shieldChart from "@assets/IMG_7968_1773721659915.png";
@@ -423,8 +422,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── CHAT WIDGET ── */}
-      <ChatWidget />
     </Layout>
   );
 }
