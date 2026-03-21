@@ -175,27 +175,25 @@ export default function ChatWidget() {
             {/* ── Spacer ── */}
             <div className="flex-1" />
 
-            {/* ── Bottom nav pill ── */}
-            <div className="px-4 mb-3">
-              <div className="flex rounded-[18px] overflow-hidden" style={{ background: "#1e1e1e" }}>
-                {/* Home – active */}
-                <button className="flex-1 flex flex-col items-center justify-center gap-[6px] py-[14px] text-white">
-                  <Home className="w-[20px] h-[20px]" style={{ fill: "white", strokeWidth: 0 }} />
-                  <span className="text-[12px] font-bold">Home</span>
-                </button>
-                {/* Chat */}
-                <button
-                  onClick={() => setScreen("chat")}
-                  className="flex-1 flex flex-col items-center justify-center gap-[6px] py-[14px] text-[#555] hover:text-[#888] transition-colors"
-                >
-                  <MessageSquare className="w-[20px] h-[20px]" style={{ strokeWidth: 1.8 }} />
-                  <span className="text-[12px] font-bold">Chat</span>
-                </button>
-              </div>
+            {/* ── Bottom nav ── */}
+            <div className="flex" style={{ background: "#1c1c1c", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+              {/* Home – active */}
+              <button className="flex-1 flex flex-col items-center justify-center gap-[5px] py-[13px] text-white">
+                <Home className="w-[20px] h-[20px]" style={{ fill: "white", strokeWidth: 0 }} />
+                <span className="text-[11px] font-bold">Home</span>
+              </button>
+              {/* Chat */}
+              <button
+                onClick={() => setScreen("chat")}
+                className="flex-1 flex flex-col items-center justify-center gap-[5px] py-[13px] text-[#555] hover:text-[#888] transition-colors"
+              >
+                <MessageSquare className="w-[20px] h-[20px]" style={{ strokeWidth: 1.8 }} />
+                <span className="text-[11px] font-bold">Chat</span>
+              </button>
             </div>
 
             {/* ── Powered by LiveChat ── */}
-            <div className="flex items-center justify-center gap-[6px] pb-4">
+            <div className="flex items-center justify-center gap-[6px] py-[10px]" style={{ background: "#1c1c1c", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
               <span className="text-[#555] text-[11px]">Powered by</span>
               <span className="text-[#ff5c35] text-[12px] leading-none">●</span>
               <span className="text-[#ccc] text-[11px] font-semibold">LiveChat</span>
@@ -267,17 +265,17 @@ export default function ChatWidget() {
             </div>
 
             {/* Let's chat button */}
-            <div className="px-4 pb-3">
+            <div style={{ padding: "12px 16px 12px", background: "#111" }}>
               <button
-                className="w-full py-3.5 rounded-full text-gray-900 font-bold text-[15px] transition-opacity hover:opacity-90 active:opacity-80"
-                style={{ background: "#76c9f5" }}
+                className="w-full py-3.5 text-gray-900 font-bold text-[15px] transition-opacity hover:opacity-90 active:opacity-80"
+                style={{ background: "#76c9f5", borderRadius: "8px", display: "block", width: "100%" }}
               >
                 Let's chat
               </button>
             </div>
 
             {/* Powered by */}
-            <div className="flex items-center justify-center gap-1.5 py-2.5 border-t border-white/5">
+            <div className="flex items-center justify-center gap-1.5 py-[10px]" style={{ background: "#111", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
               <span className="text-gray-500 text-[11px]">Powered by</span>
               <span className="text-[#ff5c35] text-[11px]">●</span>
               <span className="text-gray-400 text-[11px] font-semibold">LiveChat</span>
