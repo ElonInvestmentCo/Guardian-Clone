@@ -7,6 +7,7 @@ import { PageLoader } from "@/components/PageLoader";
 import { NavigationLoader } from "@/components/NavigationLoader";
 import { OnboardingProvider } from "@/lib/onboarding/OnboardingContext";
 import { OnboardingGuard } from "@/lib/onboarding/OnboardingGuard";
+import { ThemeProvider } from "@/context/ThemeContext";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
 import Platforms from "@/pages/Platforms";
@@ -128,14 +129,16 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <LoadingProvider>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <OnboardingProvider>
-              <NavigationLoader />
-              <Router />
-            </OnboardingProvider>
-          </WouterRouter>
-          <PageLoader />
-          <Toaster />
+          <ThemeProvider>
+            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+              <OnboardingProvider>
+                <NavigationLoader />
+                <Router />
+              </OnboardingProvider>
+            </WouterRouter>
+            <PageLoader />
+            <Toaster />
+          </ThemeProvider>
         </LoadingProvider>
       </TooltipProvider>
     </QueryClientProvider>

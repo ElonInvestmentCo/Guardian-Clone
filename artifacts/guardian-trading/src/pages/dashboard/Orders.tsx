@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Bell, Plus } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
+import { useTheme } from "@/context/ThemeContext";
 
 type OrderStatus = "Active" | "Pending" | "Filled" | "Cancelled";
 type OrderType = "Market" | "Limit" | "Stop" | "Stop Limit";
@@ -41,6 +42,7 @@ const STATUS_STYLE: Record<OrderStatus, React.CSSProperties> = {
 const TABS: OrderStatus[] = ["Active", "Pending", "Filled", "Cancelled"];
 
 export default function Orders() {
+  const { colors } = useTheme();
   const email = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("signupEmail") ?? "" : "";
   const displayName = email ? email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Trader";
 
@@ -71,7 +73,7 @@ export default function Orders() {
       <div style={{ padding: "28px" }}>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h1 style={{ fontSize: "22px", fontWeight: 700, color: "#111" }}>Orders</h1>
+          <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary }}>Orders</h1>
           <div className="flex items-center gap-3">
             <button onClick={() => setShowNewOrder(true)}
               className="flex items-center gap-2"
@@ -79,7 +81,7 @@ export default function Orders() {
               <Plus size={15} /> New Order
             </button>
             <div className="relative">
-              <Bell size={20} color="#555" style={{ cursor: "pointer" }} />
+              <Bell size={20} color={colors.bellColor} style={{ cursor: "pointer" }} />
               <span className="absolute -top-1 -right-1 flex items-center justify-center rounded-full text-white"
                 style={{ width: "14px", height: "14px", background: "#3a7bd5", fontSize: "8px", fontWeight: 700 }}>3</span>
             </div>
@@ -88,18 +90,18 @@ export default function Orders() {
                 style={{ width: "32px", height: "32px", background: "#3a7bd5", fontSize: "13px" }}>
                 {displayName[0]?.toUpperCase() ?? "U"}
               </div>
-              <span style={{ fontSize: "13px", fontWeight: 600, color: "#333" }}>{displayName}</span>
+              <span style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{displayName}</span>
             </div>
           </div>
         </div>
 
         {/* New Order modal */}
         {showNewOrder && (
-          <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: "rgba(0,0,0,0.35)" }}>
-            <div className="rounded-2xl" style={{ background: "#fff", padding: "28px", width: "360px", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }}>
+          <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: "rgba(0,0,0,0.45)" }}>
+            <div className="rounded-2xl" style={{ background: colors.card, padding: "28px", width: "360px", boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}>
               <div className="flex items-center justify-between mb-5">
-                <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#111" }}>Place New Order</h2>
-                <button onClick={() => setShowNewOrder(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#aaa", fontSize: "20px" }}>×</button>
+                <h2 style={{ fontSize: "16px", fontWeight: 700, color: colors.textPrimary }}>Place New Order</h2>
+                <button onClick={() => setShowNewOrder(false)} style={{ background: "none", border: "none", cursor: "pointer", color: colors.textMuted, fontSize: "20px" }}>×</button>
               </div>
               {submitted ? (
                 <div className="py-6 text-center">
@@ -108,24 +110,24 @@ export default function Orders() {
                 </div>
               ) : (
                 <>
-                  <div className="flex gap-2 mb-4 p-1 rounded-lg" style={{ background: "#f0f2f5" }}>
+                  <div className="flex gap-2 mb-4 p-1 rounded-lg" style={{ background: colors.filterBar }}>
                     {(["Buy", "Sell"] as const).map((s) => (
                       <button key={s} onClick={() => setNewSide(s)} style={{ flex: 1, padding: "7px", fontSize: "13px", fontWeight: 600, borderRadius: "7px", border: "none", cursor: "pointer",
                         background: newSide === s ? (s === "Buy" ? "#28a745" : "#dc3545") : "transparent",
-                        color: newSide === s ? "#fff" : "#888" }}>
+                        color: newSide === s ? "#fff" : colors.filterInactiveText }}>
                         {s}
                       </button>
                     ))}
                   </div>
                   {[
-                    { label: "Symbol", el: <input value={newSymbol} onChange={(e) => setNewSymbol(e.target.value.toUpperCase())} style={{ width: "100%", padding: "8px 12px", fontSize: "13px", border: "1.5px solid #e8e8e8", borderRadius: "8px", color: "#333", outline: "none", boxSizing: "border-box" as const }} /> },
-                    { label: "Order Type", el: <select value={newType} onChange={(e) => setNewType(e.target.value as OrderType)} style={{ width: "100%", padding: "8px 12px", fontSize: "13px", border: "1.5px solid #e8e8e8", borderRadius: "8px", color: "#333", outline: "none", background: "#fff" }}>
+                    { label: "Symbol", el: <input value={newSymbol} onChange={(e) => setNewSymbol(e.target.value.toUpperCase())} style={{ width: "100%", padding: "8px 12px", fontSize: "13px", border: `1.5px solid ${colors.inputBorder}`, borderRadius: "8px", color: colors.inputText, background: colors.inputBg, outline: "none", boxSizing: "border-box" as const }} /> },
+                    { label: "Order Type", el: <select value={newType} onChange={(e) => setNewType(e.target.value as OrderType)} style={{ width: "100%", padding: "8px 12px", fontSize: "13px", border: `1.5px solid ${colors.inputBorder}`, borderRadius: "8px", color: colors.inputText, outline: "none", background: colors.inputBg }}>
                       {(["Market", "Limit", "Stop", "Stop Limit"] as const).map((t) => <option key={t}>{t}</option>)}</select> },
-                    { label: "Quantity", el: <input type="number" value={newQty} onChange={(e) => setNewQty(e.target.value)} style={{ width: "100%", padding: "8px 12px", fontSize: "13px", border: "1.5px solid #e8e8e8", borderRadius: "8px", color: "#333", outline: "none", boxSizing: "border-box" as const }} /> },
-                    ...(newType !== "Market" ? [{ label: "Limit Price ($)", el: <input type="number" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} placeholder="0.00" style={{ width: "100%", padding: "8px 12px", fontSize: "13px", border: "1.5px solid #e8e8e8", borderRadius: "8px", color: "#333", outline: "none", boxSizing: "border-box" as const }} /> }] : []),
+                    { label: "Quantity", el: <input type="number" value={newQty} onChange={(e) => setNewQty(e.target.value)} style={{ width: "100%", padding: "8px 12px", fontSize: "13px", border: `1.5px solid ${colors.inputBorder}`, borderRadius: "8px", color: colors.inputText, background: colors.inputBg, outline: "none", boxSizing: "border-box" as const }} /> },
+                    ...(newType !== "Market" ? [{ label: "Limit Price ($)", el: <input type="number" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} placeholder="0.00" style={{ width: "100%", padding: "8px 12px", fontSize: "13px", border: `1.5px solid ${colors.inputBorder}`, borderRadius: "8px", color: colors.inputText, background: colors.inputBg, outline: "none", boxSizing: "border-box" as const }} /> }] : []),
                   ].map(({ label, el }) => (
                     <div key={label} className="mb-3">
-                      <label style={{ display: "block", fontSize: "11px", color: "#aaa", marginBottom: "5px", textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</label>
+                      <label style={{ display: "block", fontSize: "11px", color: colors.textMuted, marginBottom: "5px", textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</label>
                       {el}
                     </div>
                   ))}
@@ -142,44 +144,46 @@ export default function Orders() {
 
         {/* Tabs + search */}
         <div className="flex items-center gap-3 mb-5">
-          <div className="flex gap-1 p-1 rounded-lg" style={{ background: "#f0f2f5" }}>
+          <div className="flex gap-1 p-1 rounded-lg" style={{ background: colors.filterBar }}>
             <button onClick={() => setActiveTab("All")}
               style={{ padding: "5px 14px", fontSize: "12px", fontWeight: 600, borderRadius: "6px", border: "none", cursor: "pointer",
-                background: activeTab === "All" ? "#fff" : "transparent", color: activeTab === "All" ? "#1c2e3e" : "#888",
+                background: activeTab === "All" ? colors.filterActiveBg : "transparent",
+                color: activeTab === "All" ? colors.filterActiveText : colors.filterInactiveText,
                 boxShadow: activeTab === "All" ? "0 1px 3px rgba(0,0,0,0.1)" : "none" }}>
               All ({ALL_ORDERS.length})
             </button>
             {TABS.map((t) => (
               <button key={t} onClick={() => setActiveTab(t)}
                 style={{ padding: "5px 14px", fontSize: "12px", fontWeight: 600, borderRadius: "6px", border: "none", cursor: "pointer",
-                  background: activeTab === t ? "#fff" : "transparent", color: activeTab === t ? "#1c2e3e" : "#888",
+                  background: activeTab === t ? colors.filterActiveBg : "transparent",
+                  color: activeTab === t ? colors.filterActiveText : colors.filterInactiveText,
                   boxShadow: activeTab === t ? "0 1px 3px rgba(0,0,0,0.1)" : "none" }}>
                 {t} ({counts[t]})
               </button>
             ))}
           </div>
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search orders…"
-            style={{ padding: "8px 14px", fontSize: "13px", border: "1.5px solid #e8e8e8", borderRadius: "8px", outline: "none", color: "#333", minWidth: "200px" }} />
+            style={{ padding: "8px 14px", fontSize: "13px", border: `1.5px solid ${colors.inputBorder}`, borderRadius: "8px", outline: "none", color: colors.inputText, background: colors.inputBg, minWidth: "200px" }} />
         </div>
 
         {/* Table */}
-        <div className="rounded-xl" style={{ background: "#fff", overflow: "hidden" }}>
+        <div className="rounded-xl" style={{ background: colors.card, overflow: "hidden" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
-              <tr style={{ background: "#f9fafc" }}>
+              <tr style={{ background: colors.tableHead }}>
                 {["Order ID", "Symbol", "Side", "Type", "Qty", "Price", "Filled", "Status", "Date", "Time"].map((h) => (
-                  <th key={h} style={{ textAlign: "left", fontSize: "11px", color: "#aaa", fontWeight: 600, padding: "12px 14px", borderBottom: "1px solid #f0f0f0" }}>{h}</th>
+                  <th key={h} style={{ textAlign: "left", fontSize: "11px", color: colors.tableHeaderText, fontWeight: 600, padding: "12px 14px", borderBottom: `1px solid ${colors.cardBorder}` }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {filtered.map((o, i) => (
-                <tr key={i} style={{ borderBottom: "1px solid #f9f9f9" }}
-                  onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.background = "#fafbfc"}
+                <tr key={i} style={{ borderBottom: `1px solid ${colors.tableRowBorder}` }}
+                  onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.background = colors.tableRowHoverBg}
                   onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.background = ""}>
                   <td style={{ padding: "11px 14px", fontSize: "12px", color: "#3a7bd5", fontWeight: 600 }}>{o.id}</td>
                   <td style={{ padding: "11px 14px" }}>
-                    <span style={{ fontSize: "13px", fontWeight: 700, color: "#111" }}>{o.symbol}</span>
+                    <span style={{ fontSize: "13px", fontWeight: 700, color: colors.textPrimary }}>{o.symbol}</span>
                   </td>
                   <td style={{ padding: "11px 14px" }}>
                     <span style={{ fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "20px",
@@ -187,23 +191,23 @@ export default function Orders() {
                       {o.side}
                     </span>
                   </td>
-                  <td style={{ padding: "11px 14px", fontSize: "12px", color: "#666" }}>{o.type}</td>
-                  <td style={{ padding: "11px 14px", fontSize: "13px", color: "#333" }}>{o.qty}</td>
-                  <td style={{ padding: "11px 14px", fontSize: "13px", color: "#333" }}>{o.price ? `$${o.price.toFixed(2)}` : "Market"}</td>
-                  <td style={{ padding: "11px 14px", fontSize: "13px", color: "#333" }}>{o.filled}/{o.qty}</td>
+                  <td style={{ padding: "11px 14px", fontSize: "12px", color: colors.textSub }}>{o.type}</td>
+                  <td style={{ padding: "11px 14px", fontSize: "13px", color: colors.textSub }}>{o.qty}</td>
+                  <td style={{ padding: "11px 14px", fontSize: "13px", color: colors.textSub }}>{o.price ? `$${o.price.toFixed(2)}` : "Market"}</td>
+                  <td style={{ padding: "11px 14px", fontSize: "13px", color: colors.textSub }}>{o.filled}/{o.qty}</td>
                   <td style={{ padding: "11px 14px" }}>
                     <span style={{ ...STATUS_STYLE[o.status], fontSize: "11px", padding: "3px 10px", borderRadius: "20px", fontWeight: 600 }}>
                       {o.status}
                     </span>
                   </td>
-                  <td style={{ padding: "11px 14px", fontSize: "12px", color: "#999" }}>{o.date}</td>
-                  <td style={{ padding: "11px 14px", fontSize: "12px", color: "#999" }}>{o.time}</td>
+                  <td style={{ padding: "11px 14px", fontSize: "12px", color: colors.textMuted }}>{o.date}</td>
+                  <td style={{ padding: "11px 14px", fontSize: "12px", color: colors.textMuted }}>{o.time}</td>
                 </tr>
               ))}
             </tbody>
           </table>
           {filtered.length === 0 && (
-            <div className="py-12 text-center" style={{ color: "#aaa", fontSize: "14px" }}>No orders found.</div>
+            <div className="py-12 text-center" style={{ color: colors.textMuted, fontSize: "14px" }}>No orders found.</div>
           )}
         </div>
       </div>

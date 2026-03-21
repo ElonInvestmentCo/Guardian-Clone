@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Bell, Download, FileText, Filter } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
+import { useTheme } from "@/context/ThemeContext";
 
 interface Transaction {
   id: string;
@@ -38,6 +39,7 @@ const TYPE_STYLE: Record<string, React.CSSProperties> = {
 };
 
 export default function Statements() {
+  const { colors } = useTheme();
   const email = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("signupEmail") ?? "" : "";
   const displayName = email ? email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Trader";
 
@@ -73,18 +75,18 @@ export default function Statements() {
       <div style={{ padding: "28px" }}>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h1 style={{ fontSize: "22px", fontWeight: 700, color: "#111" }}>Statements</h1>
+          <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary }}>Statements</h1>
           <div className="flex items-center gap-3">
             <button onClick={() => handleDownload("csv")} className="flex items-center gap-2"
-              style={{ padding: "8px 16px", fontSize: "12px", fontWeight: 600, border: "1.5px solid #ddd", borderRadius: "8px", background: "#fff", color: "#555", cursor: "pointer" }}>
+              style={{ padding: "8px 16px", fontSize: "12px", fontWeight: 600, border: `1.5px solid ${colors.btnBorder}`, borderRadius: "8px", background: colors.btnBg, color: colors.btnText, cursor: "pointer" }}>
               <Download size={13} /> {downloading === "csv" ? "Exporting…" : "Export CSV"}
             </button>
             <button onClick={() => handleDownload("pdf")} className="flex items-center gap-2"
-              style={{ padding: "8px 16px", fontSize: "12px", fontWeight: 600, border: "1.5px solid #ddd", borderRadius: "8px", background: "#fff", color: "#555", cursor: "pointer" }}>
+              style={{ padding: "8px 16px", fontSize: "12px", fontWeight: 600, border: `1.5px solid ${colors.btnBorder}`, borderRadius: "8px", background: colors.btnBg, color: colors.btnText, cursor: "pointer" }}>
               <FileText size={13} /> {downloading === "pdf" ? "Generating…" : "Download PDF"}
             </button>
             <div className="relative">
-              <Bell size={20} color="#555" style={{ cursor: "pointer" }} />
+              <Bell size={20} color={colors.bellColor} style={{ cursor: "pointer" }} />
               <span className="absolute -top-1 -right-1 flex items-center justify-center rounded-full text-white"
                 style={{ width: "14px", height: "14px", background: "#3a7bd5", fontSize: "8px", fontWeight: 700 }}>3</span>
             </div>
@@ -93,77 +95,78 @@ export default function Statements() {
                 style={{ width: "32px", height: "32px", background: "#3a7bd5", fontSize: "13px" }}>
                 {displayName[0]?.toUpperCase() ?? "U"}
               </div>
-              <span style={{ fontSize: "13px", fontWeight: 600, color: "#333" }}>{displayName}</span>
+              <span style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{displayName}</span>
             </div>
           </div>
         </div>
 
         {/* Summary cards */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="rounded-xl p-5" style={{ background: "#fff" }}>
-            <p style={{ fontSize: "11px", color: "#aaa", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>Total Credits</p>
+          <div className="rounded-xl p-5" style={{ background: colors.card }}>
+            <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>Total Credits</p>
             <p style={{ fontSize: "22px", fontWeight: 800, color: "#28a745" }}>+${totalIn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-            <p style={{ fontSize: "11px", color: "#aaa", marginTop: "4px" }}>{TRANSACTIONS.filter((t) => t.amount > 0).length} transactions</p>
+            <p style={{ fontSize: "11px", color: colors.textMuted, marginTop: "4px" }}>{TRANSACTIONS.filter((t) => t.amount > 0).length} transactions</p>
           </div>
-          <div className="rounded-xl p-5" style={{ background: "#fff" }}>
-            <p style={{ fontSize: "11px", color: "#aaa", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>Total Debits</p>
+          <div className="rounded-xl p-5" style={{ background: colors.card }}>
+            <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>Total Debits</p>
             <p style={{ fontSize: "22px", fontWeight: 800, color: "#dc3545" }}>-${totalOut.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-            <p style={{ fontSize: "11px", color: "#aaa", marginTop: "4px" }}>{TRANSACTIONS.filter((t) => t.amount < 0).length} transactions</p>
+            <p style={{ fontSize: "11px", color: colors.textMuted, marginTop: "4px" }}>{TRANSACTIONS.filter((t) => t.amount < 0).length} transactions</p>
           </div>
-          <div className="rounded-xl p-5" style={{ background: "#fff" }}>
-            <p style={{ fontSize: "11px", color: "#aaa", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>Current Balance</p>
-            <p style={{ fontSize: "22px", fontWeight: 800, color: "#111" }}>$127,450.00</p>
+          <div className="rounded-xl p-5" style={{ background: colors.card }}>
+            <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>Current Balance</p>
+            <p style={{ fontSize: "22px", fontWeight: 800, color: colors.textPrimary }}>$127,450.00</p>
             <p style={{ fontSize: "11px", color: "#3a7bd5", fontWeight: 600, marginTop: "4px" }}>Account Equity</p>
           </div>
         </div>
 
         {/* Filters */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="flex items-center gap-1.5" style={{ color: "#aaa", fontSize: "13px" }}>
+          <div className="flex items-center gap-1.5" style={{ color: colors.textMuted, fontSize: "13px" }}>
             <Filter size={14} /> Filter:
           </div>
-          <div className="flex gap-1 p-1 rounded-lg" style={{ background: "#f0f2f5" }}>
+          <div className="flex gap-1 p-1 rounded-lg" style={{ background: colors.filterBar }}>
             {(["All", "Trade", "Deposit", "Withdrawal", "Dividend", "Fee"] as const).map((f) => (
               <button key={f} onClick={() => setTypeFilter(f)}
                 style={{ padding: "4px 12px", fontSize: "11px", fontWeight: 600, borderRadius: "5px", border: "none", cursor: "pointer",
-                  background: typeFilter === f ? "#fff" : "transparent", color: typeFilter === f ? "#1c2e3e" : "#888",
+                  background: typeFilter === f ? colors.filterActiveBg : "transparent",
+                  color: typeFilter === f ? colors.filterActiveText : colors.filterInactiveText,
                   boxShadow: typeFilter === f ? "0 1px 3px rgba(0,0,0,0.1)" : "none" }}>
                 {f}
               </button>
             ))}
           </div>
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search transactions…"
-            style={{ padding: "7px 14px", fontSize: "13px", border: "1.5px solid #e8e8e8", borderRadius: "8px", outline: "none", color: "#333", minWidth: "200px" }} />
+            style={{ padding: "7px 14px", fontSize: "13px", border: `1.5px solid ${colors.inputBorder}`, borderRadius: "8px", outline: "none", color: colors.inputText, background: colors.inputBg, minWidth: "200px" }} />
         </div>
 
         {/* Table */}
-        <div className="rounded-xl" style={{ background: "#fff", overflow: "hidden" }}>
+        <div className="rounded-xl" style={{ background: colors.card, overflow: "hidden" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
-              <tr style={{ background: "#f9fafc" }}>
+              <tr style={{ background: colors.tableHead }}>
                 {["Transaction ID", "Date", "Description", "Type", "Symbol", "Qty", "Price", "Amount", "Balance"].map((h) => (
-                  <th key={h} style={{ textAlign: "left", fontSize: "11px", color: "#aaa", fontWeight: 600, padding: "12px 14px", borderBottom: "1px solid #f0f0f0" }}>{h}</th>
+                  <th key={h} style={{ textAlign: "left", fontSize: "11px", color: colors.tableHeaderText, fontWeight: 600, padding: "12px 14px", borderBottom: `1px solid ${colors.cardBorder}` }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {filtered.map((t, i) => (
-                <tr key={i} style={{ borderBottom: "1px solid #f9f9f9" }}
-                  onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.background = "#fafbfc"}
+                <tr key={i} style={{ borderBottom: `1px solid ${colors.tableRowBorder}` }}
+                  onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.background = colors.tableRowHoverBg}
                   onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.background = ""}>
                   <td style={{ padding: "11px 14px", fontSize: "12px", color: "#3a7bd5", fontWeight: 600 }}>{t.id}</td>
-                  <td style={{ padding: "11px 14px", fontSize: "12px", color: "#999" }}>{t.date}</td>
-                  <td style={{ padding: "11px 14px", fontSize: "13px", color: "#333", fontWeight: 500 }}>{t.description}</td>
+                  <td style={{ padding: "11px 14px", fontSize: "12px", color: colors.textMuted }}>{t.date}</td>
+                  <td style={{ padding: "11px 14px", fontSize: "13px", color: colors.textSub, fontWeight: 500 }}>{t.description}</td>
                   <td style={{ padding: "11px 14px" }}>
                     <span style={{ ...TYPE_STYLE[t.type], fontSize: "11px", padding: "3px 10px", borderRadius: "20px", fontWeight: 600 }}>{t.type}</span>
                   </td>
-                  <td style={{ padding: "11px 14px", fontSize: "13px", fontWeight: 600, color: "#111" }}>{t.symbol ?? "—"}</td>
-                  <td style={{ padding: "11px 14px", fontSize: "12px", color: "#666" }}>{t.qty ?? "—"}</td>
-                  <td style={{ padding: "11px 14px", fontSize: "12px", color: "#666" }}>{t.price ? `$${t.price.toFixed(2)}` : "—"}</td>
+                  <td style={{ padding: "11px 14px", fontSize: "13px", fontWeight: 600, color: colors.textPrimary }}>{t.symbol ?? "—"}</td>
+                  <td style={{ padding: "11px 14px", fontSize: "12px", color: colors.textSub }}>{t.qty ?? "—"}</td>
+                  <td style={{ padding: "11px 14px", fontSize: "12px", color: colors.textSub }}>{t.price ? `$${t.price.toFixed(2)}` : "—"}</td>
                   <td style={{ padding: "11px 14px", fontSize: "13px", fontWeight: 700, color: t.amount >= 0 ? "#28a745" : "#dc3545" }}>
                     {t.amount >= 0 ? "+" : ""}${Math.abs(t.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
-                  <td style={{ padding: "11px 14px", fontSize: "13px", color: "#333", fontWeight: 500 }}>
+                  <td style={{ padding: "11px 14px", fontSize: "13px", color: colors.textSub, fontWeight: 500 }}>
                     ${t.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
                 </tr>
@@ -171,7 +174,7 @@ export default function Statements() {
             </tbody>
           </table>
           {filtered.length === 0 && (
-            <div className="py-12 text-center" style={{ color: "#aaa", fontSize: "14px" }}>No transactions match your filters.</div>
+            <div className="py-12 text-center" style={{ color: colors.textMuted, fontSize: "14px" }}>No transactions match your filters.</div>
           )}
         </div>
       </div>

@@ -5,8 +5,7 @@ import {
   ResponsiveContainer, TooltipProps, PieChart, Pie, Cell, Legend,
 } from "recharts";
 import DashboardLayout from "./DashboardLayout";
-
-// ── Ticker config ──────────────────────────────────────────────────────────────
+import { useTheme } from "@/context/ThemeContext";
 
 interface TickerConfig {
   symbol: string;
@@ -33,8 +32,6 @@ const ALLOCATION_DATA = [
 
 const ALLOC_COLORS = ["#3a7bd5", "#e63946", "#28a745", "#f59e0b", "#adb5bd"];
 
-// ── Generate initial historical data (last 60 data points = ~2min of ticks) ───
-
 function generateHistory(base: number, count = 60): { time: string; price: number }[] {
   const arr: { time: string; price: number }[] = [];
   let price = base * (0.97 + Math.random() * 0.02);
@@ -46,8 +43,6 @@ function generateHistory(base: number, count = 60): { time: string; price: numbe
   }
   return arr;
 }
-
-// ── Custom tooltip ─────────────────────────────────────────────────────────────
 
 function LiveTooltip({ active, payload }: TooltipProps<number, string>) {
   if (!active || !payload?.length) return null;
@@ -68,16 +63,14 @@ function AllocTooltip({ active, payload }: TooltipProps<number, string>) {
   );
 }
 
-// ── Component ──────────────────────────────────────────────────────────────────
-
 export default function Portfolio() {
+  const { colors } = useTheme();
   const email = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("signupEmail") ?? "" : "";
   const displayName = email ? email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Trader";
 
   const [selectedIdx, setSelectedIdx] = useState(0);
   const ticker = TICKERS[selectedIdx];
 
-  // Per-ticker live data
   const [dataMap, setDataMap] = useState<Record<string, { time: string; price: number }[]>>(
     () => Object.fromEntries(TICKERS.map((t) => [t.symbol, generateHistory(t.basePrice)]))
   );
@@ -117,10 +110,10 @@ export default function Portfolio() {
       <div style={{ padding: "28px 28px 28px 28px" }}>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h1 style={{ fontSize: "22px", fontWeight: 700, color: "#111" }}>Portfolio</h1>
+          <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary }}>Portfolio</h1>
           <div className="flex items-center gap-4">
             <div className="relative">
-              <Bell size={20} color="#555" style={{ cursor: "pointer" }} />
+              <Bell size={20} color={colors.bellColor} style={{ cursor: "pointer" }} />
               <span className="absolute -top-1 -right-1 flex items-center justify-center rounded-full text-white"
                 style={{ width: "14px", height: "14px", background: "#3a7bd5", fontSize: "8px", fontWeight: 700 }}>3</span>
             </div>
@@ -129,7 +122,7 @@ export default function Portfolio() {
                 style={{ width: "32px", height: "32px", background: "#3a7bd5", fontSize: "13px" }}>
                 {displayName[0]?.toUpperCase() ?? "U"}
               </div>
-              <span style={{ fontSize: "13px", fontWeight: 600, color: "#333" }}>{displayName}</span>
+              <span style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{displayName}</span>
             </div>
           </div>
         </div>
@@ -142,9 +135,9 @@ export default function Portfolio() {
             { label: "Buying Power",    value: "$45,200",  sub: "Available margin",   color: "#3a7bd5" },
             { label: "Open Positions",  value: "24",       sub: "Across 4 symbols",   color: "#f59e0b" },
           ].map((c) => (
-            <div key={c.label} className="rounded-xl p-5" style={{ background: "#fff" }}>
-              <p style={{ fontSize: "11px", color: "#aaa", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>{c.label}</p>
-              <p style={{ fontSize: "20px", fontWeight: 800, color: "#111", marginBottom: "4px" }}>{c.value}</p>
+            <div key={c.label} className="rounded-xl p-5" style={{ background: colors.card }}>
+              <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>{c.label}</p>
+              <p style={{ fontSize: "20px", fontWeight: 800, color: colors.textPrimary, marginBottom: "4px" }}>{c.value}</p>
               <p style={{ fontSize: "11px", color: c.color, fontWeight: 600 }}>{c.sub}</p>
             </div>
           ))}
@@ -153,8 +146,7 @@ export default function Portfolio() {
         {/* Live chart + allocation side by side */}
         <div className="flex gap-5 mb-6">
           {/* Live chart */}
-          <div className="flex-1 rounded-xl" style={{ background: "#fff", padding: "20px 22px" }}>
-            {/* Ticker selector */}
+          <div className="flex-1 rounded-xl" style={{ background: colors.card, padding: "20px 22px" }}>
             <div className="flex items-center justify-between mb-4">
               <div className="flex gap-2">
                 {TICKERS.map((t, i) => (
@@ -168,18 +160,17 @@ export default function Portfolio() {
                 ))}
               </div>
               <button onClick={() => setIsPaused((p) => !p)}
-                style={{ fontSize: "11px", padding: "4px 12px", borderRadius: "6px", border: "1.5px solid #ddd", background: isPaused ? "#fdecea" : "#e8f5e9", color: isPaused ? "#dc3545" : "#28a745", cursor: "pointer", fontWeight: 600 }}>
+                style={{ fontSize: "11px", padding: "4px 12px", borderRadius: "6px", border: "1.5px solid", background: isPaused ? "#fdecea" : "#e8f5e9", color: isPaused ? "#dc3545" : "#28a745", borderColor: isPaused ? "#f5c6cb" : "#c3e6cb", cursor: "pointer", fontWeight: 600 }}>
                 {isPaused ? "▶ Resume" : "⏸ Pause"}
               </button>
             </div>
 
-            {/* Price header */}
             <div className="flex items-baseline gap-3 mb-4">
-              <span style={{ fontSize: "28px", fontWeight: 800, color: "#111" }}>${currentPrice.toFixed(2)}</span>
+              <span style={{ fontSize: "28px", fontWeight: 800, color: colors.textPrimary }}>${currentPrice.toFixed(2)}</span>
               <span style={{ fontSize: "14px", fontWeight: 700, color: isPositive ? "#28a745" : "#dc3545" }}>
                 {isPositive ? "+" : ""}{priceChange.toFixed(2)} ({isPositive ? "+" : ""}{pctChange.toFixed(2)}%)
               </span>
-              <span style={{ fontSize: "12px", color: "#aaa" }}>{ticker.name}</span>
+              <span style={{ fontSize: "12px", color: colors.textMuted }}>{ticker.name}</span>
               <span className="ml-auto flex items-center gap-1.5" style={{ fontSize: "11px", color: "#28a745", fontWeight: 600 }}>
                 <span className="inline-block rounded-full" style={{ width: "7px", height: "7px", background: "#28a745", animation: "pulse 1.5s infinite" }} />
                 LIVE
@@ -190,13 +181,13 @@ export default function Portfolio() {
 
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={liveData} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" vertical={false} />
-                <XAxis dataKey="time" tick={{ fontSize: 9, fill: "#ccc" }} axisLine={false} tickLine={false}
+                <CartesianGrid strokeDasharray="3 3" stroke={colors.divider} vertical={false} />
+                <XAxis dataKey="time" tick={{ fontSize: 9, fill: colors.textMuted }} axisLine={false} tickLine={false}
                   interval={Math.floor(liveData.length / 6)} />
-                <YAxis tick={{ fontSize: 10, fill: "#bbb" }} axisLine={false} tickLine={false}
+                <YAxis tick={{ fontSize: 10, fill: colors.textMuted }} axisLine={false} tickLine={false}
                   domain={["auto", "auto"]} width={52}
                   tickFormatter={(v: number) => `$${v.toFixed(0)}`} />
-                <Tooltip content={<LiveTooltip />} cursor={{ stroke: "#e0e0e0", strokeWidth: 1 }} />
+                <Tooltip content={<LiveTooltip />} cursor={{ stroke: colors.divider, strokeWidth: 1 }} />
                 <Line type="monotone" dataKey="price" stroke={ticker.color} strokeWidth={2}
                   dot={false} activeDot={{ r: 4, fill: ticker.color, stroke: "#fff", strokeWidth: 2 }} isAnimationActive={false} />
               </LineChart>
@@ -204,8 +195,8 @@ export default function Portfolio() {
           </div>
 
           {/* Allocation donut */}
-          <div className="rounded-xl flex-shrink-0" style={{ background: "#fff", padding: "20px 22px", width: "280px" }}>
-            <p style={{ fontSize: "14px", fontWeight: 600, color: "#111", marginBottom: "16px" }}>Allocation</p>
+          <div className="rounded-xl flex-shrink-0" style={{ background: colors.card, padding: "20px 22px", width: "280px" }}>
+            <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary, marginBottom: "16px" }}>Allocation</p>
             <ResponsiveContainer width="100%" height={180}>
               <PieChart>
                 <Pie data={ALLOCATION_DATA} cx="50%" cy="50%" innerRadius={55} outerRadius={80}
@@ -213,17 +204,17 @@ export default function Portfolio() {
                   {ALLOCATION_DATA.map((_, i) => <Cell key={i} fill={ALLOC_COLORS[i]} />)}
                 </Pie>
                 <Tooltip content={<AllocTooltip />} />
-                <Legend formatter={(v) => <span style={{ fontSize: "11px", color: "#555" }}>{v}</span>} />
+                <Legend formatter={(v) => <span style={{ fontSize: "11px", color: colors.textSub }}>{v}</span>} />
               </PieChart>
             </ResponsiveContainer>
             <div className="mt-2">
               {ALLOCATION_DATA.map((d, i) => (
-                <div key={d.name} className="flex items-center justify-between py-1" style={{ borderBottom: "1px solid #f5f5f5" }}>
+                <div key={d.name} className="flex items-center justify-between py-1" style={{ borderBottom: `1px solid ${colors.divider}` }}>
                   <div className="flex items-center gap-2">
                     <div style={{ width: "10px", height: "10px", borderRadius: "2px", background: ALLOC_COLORS[i], flexShrink: 0 }} />
-                    <span style={{ fontSize: "12px", color: "#555" }}>{d.name}</span>
+                    <span style={{ fontSize: "12px", color: colors.textSub }}>{d.name}</span>
                   </div>
-                  <span style={{ fontSize: "12px", fontWeight: 600, color: "#333" }}>{d.pct}%</span>
+                  <span style={{ fontSize: "12px", fontWeight: 600, color: colors.textSub }}>{d.pct}%</span>
                 </div>
               ))}
             </div>
@@ -231,13 +222,13 @@ export default function Portfolio() {
         </div>
 
         {/* Holdings */}
-        <div className="rounded-xl" style={{ background: "#fff", padding: "20px 22px" }}>
-          <p style={{ fontSize: "14px", fontWeight: 600, color: "#111", marginBottom: "16px" }}>Holdings</p>
+        <div className="rounded-xl" style={{ background: colors.card, padding: "20px 22px" }}>
+          <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary, marginBottom: "16px" }}>Holdings</p>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr>
                 {["Symbol", "Name", "Qty", "Avg Cost", "Current Price", "Market Value", "P&L", "% Alloc"].map((h) => (
-                  <th key={h} style={{ textAlign: "left", fontSize: "11px", color: "#aaa", fontWeight: 600, paddingBottom: "10px", borderBottom: "1px solid #f5f5f5" }}>{h}</th>
+                  <th key={h} style={{ textAlign: "left", fontSize: "11px", color: colors.tableHeaderText, fontWeight: 600, paddingBottom: "10px", borderBottom: `1px solid ${colors.divider}` }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -251,25 +242,25 @@ export default function Portfolio() {
                 const mktVal = cur * t.quantity;
                 const alloc = ALLOCATION_DATA[i];
                 return (
-                  <tr key={t.symbol} style={{ borderBottom: "1px solid #f9f9f9" }}>
+                  <tr key={t.symbol} style={{ borderBottom: `1px solid ${colors.tableRowBorder}` }}>
                     <td style={{ padding: "12px 0" }}>
                       <div className="flex items-center gap-2">
                         <div className="flex items-center justify-center rounded-full text-white font-bold"
                           style={{ width: "28px", height: "28px", background: ALLOC_COLORS[i], fontSize: "10px" }}>
                           {t.symbol[0]}
                         </div>
-                        <span style={{ fontSize: "13px", fontWeight: 700, color: "#111" }}>{t.symbol}</span>
+                        <span style={{ fontSize: "13px", fontWeight: 700, color: colors.textPrimary }}>{t.symbol}</span>
                       </div>
                     </td>
-                    <td style={{ fontSize: "12px", color: "#666" }}>{t.name}</td>
-                    <td style={{ fontSize: "13px", color: "#333" }}>{t.quantity}</td>
-                    <td style={{ fontSize: "13px", color: "#333" }}>${avgCost.toFixed(2)}</td>
-                    <td style={{ fontSize: "13px", fontWeight: 600, color: "#111" }}>${cur.toFixed(2)}</td>
-                    <td style={{ fontSize: "13px", color: "#333" }}>${mktVal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+                    <td style={{ fontSize: "12px", color: colors.textSub }}>{t.name}</td>
+                    <td style={{ fontSize: "13px", color: colors.textSub }}>{t.quantity}</td>
+                    <td style={{ fontSize: "13px", color: colors.textSub }}>${avgCost.toFixed(2)}</td>
+                    <td style={{ fontSize: "13px", fontWeight: 600, color: colors.textPrimary }}>${cur.toFixed(2)}</td>
+                    <td style={{ fontSize: "13px", color: colors.textSub }}>${mktVal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
                     <td style={{ fontSize: "13px", fontWeight: 600, color: pos ? "#28a745" : "#dc3545" }}>
                       {pos ? "+" : ""}${pnl.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                     </td>
-                    <td style={{ fontSize: "12px", color: "#888" }}>{alloc.pct}%</td>
+                    <td style={{ fontSize: "12px", color: colors.textMuted }}>{alloc.pct}%</td>
                   </tr>
                 );
               })}

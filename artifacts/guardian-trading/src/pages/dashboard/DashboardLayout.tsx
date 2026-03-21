@@ -1,9 +1,10 @@
 import { useLocation, Link } from "wouter";
 import {
   LayoutDashboard, CreditCard, Send, BarChart2,
-  ArrowLeftRight, Settings, LogOut,
+  ArrowLeftRight, Settings, LogOut, Sun, Moon,
 } from "lucide-react";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
+import { useTheme } from "@/context/ThemeContext";
 
 const NAV = [
   { icon: LayoutDashboard, label: "Dashboard",  href: "/dashboard"   },
@@ -20,6 +21,7 @@ interface Props {
 
 export default function DashboardLayout({ children }: Props) {
   const [location, navigate] = useLocation();
+  const { theme, colors, toggleTheme } = useTheme();
 
   const handleLogout = () => {
     sessionStorage.clear();
@@ -27,7 +29,7 @@ export default function DashboardLayout({ children }: Props) {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: "#f0f2f5", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+    <div className="flex h-screen overflow-hidden" style={{ background: colors.bg, fontFamily: "system-ui, -apple-system, sans-serif" }}>
 
       {/* ── Sidebar ── */}
       <aside className="flex flex-col flex-shrink-0" style={{ width: "220px", background: "#1c2e3e", padding: "0" }}>
@@ -70,6 +72,21 @@ export default function DashboardLayout({ children }: Props) {
             </div>
             <span style={{ fontSize: "11px", color: "#4fc86a", fontWeight: 600 }}>Account Verified</span>
           </div>
+        </div>
+
+        {/* Theme toggle */}
+        <div style={{ padding: "0 10px 8px" }}>
+          <button
+            onClick={toggleTheme}
+            className="flex items-center gap-3 w-full rounded-lg"
+            title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+            style={{ padding: "9px 12px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)", cursor: "pointer", fontSize: "13.5px", borderRadius: "8px" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.12)"; (e.currentTarget as HTMLElement).style.color = "#fff"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)"; (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.7)"; }}
+          >
+            {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
+            <span>{theme === "light" ? "Dark Mode" : "Light Mode"}</span>
+          </button>
         </div>
 
         {/* Log out */}
