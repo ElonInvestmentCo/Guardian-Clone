@@ -17,19 +17,26 @@ function formatTime() {
   return `${h}:${m} ${ampm}`;
 }
 
+type AnimState = "hidden" | "float" | "idle" | "hover";
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [screen, setScreen] = useState<Screen>("home");
   const [showIcon, setShowIcon] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupDismissed, setPopupDismissed] = useState(false);
+  const [animState, setAnimState] = useState<AnimState>("hidden");
   const [location] = useLocation();
 
   const startTimers = useCallback(() => {
     setShowIcon(false);
     setShowPopup(false);
     setPopupDismissed(false);
-    const iconTimer = setTimeout(() => setShowIcon(true), 5000);
+    setAnimState("hidden");
+    const iconTimer = setTimeout(() => {
+      setShowIcon(true);
+      setAnimState("float");
+    }, 5000);
     const popupTimer = setTimeout(() => setShowPopup(true), 6000);
     return () => {
       clearTimeout(iconTimer);
@@ -315,10 +322,23 @@ export default function ChatWidget() {
             handleOpen();
           }
         }}
+        onMouseEnter={() => {
+          if (!open) setAnimState("hover");
+        }}
+        onMouseLeave={() => {
+          if (!open) setAnimState("idle");
+        }}
+        onAnimationEnd={() => {
+          if (animState === "float") setAnimState("idle");
+        }}
         aria-label="Open chat"
-        className={`fixed bottom-5 right-5 z-50 w-[62px] h-[62px] rounded-full shadow-2xl transition-all duration-500 hover:scale-105 active:scale-95 focus:outline-none overflow-hidden bg-transparent ${
-          showIcon ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none"
-        }`}
+        className={[
+          "fixed bottom-5 right-5 z-50 w-[62px] h-[62px] rounded-full focus:outline-none overflow-hidden bg-transparent active:scale-95 transition-opacity duration-500",
+          showIcon ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none",
+          !open && animState === "float" ? "chat-btn-float" : "",
+          !open && animState === "idle"  ? "chat-btn-idle"  : "",
+          !open && animState === "hover" ? "chat-btn-hover" : "",
+        ].join(" ")}
       >
         {open ? (
           <div className="w-full h-full rounded-full bg-[#5aabdb] flex items-center justify-center">

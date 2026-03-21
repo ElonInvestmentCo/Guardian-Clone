@@ -23,7 +23,7 @@ export function Navbar() {
   return (
     <>
       <nav className="fixed top-0 w-full z-50 bg-[#151515] border-b border-white/5">
-        <div className="max-w-[1200px] mx-auto px-4 flex items-center justify-between h-[56px]">
+        <div className="w-full px-6 flex items-center justify-between h-[56px]">
           {/* Logo */}
           <Link href="/" className="flex items-center flex-shrink-0">
             <img

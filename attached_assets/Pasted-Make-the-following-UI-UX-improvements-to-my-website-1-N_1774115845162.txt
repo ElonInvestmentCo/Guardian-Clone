@@ -1,0 +1,124 @@
+Make the following UI/UX improvements to my website:
+
+### 1. NAVBAR FULL WIDTH (EDGE-TO-EDGE)
+
+* Ensure the navbar/header stretches across the full viewport width.
+* Remove any max-width constraints or side padding from parent containers.
+* Apply:
+
+  * width: 100%;
+  * position: relative (or fixed if sticky is desired)
+  * left: 0;
+* If there is a wrapper/container class, override it with:
+
+  * max-width: 100%;
+  * padding-left: 0;
+  * padding-right: 0;
+
+Example CSS:
+.navbar {
+width: 100%;
+max-width: 100%;
+padding: 0 20px; /* optional small internal spacing */
+margin: 0;
+}
+
+body {
+margin: 0;
+}
+
+### 2. FLOATING CHAT WIDGET (BOTTOM RIGHT)
+
+* Position the chat widget in the bottom-right corner like a floating bubble.
+* It should stay fixed when scrolling.
+
+Example CSS:
+.chat-widget {
+position: fixed;
+bottom: 20px;
+right: 20px;
+z-index: 9999;
+cursor: pointer;
+}
+
+### 3. FLOATING ANIMATION (RUN ONCE)
+
+* Add a smooth floating/bounce animation when the widget loads.
+* The animation should:
+
+  * Run once on page load
+  * Slightly move up and down (subtle float effect)
+  * Stop completely after finishing
+
+Example CSS:
+@keyframes floatOnce {
+0% { transform: translateY(0); }
+30% { transform: translateY(-10px); }
+60% { transform: translateY(5px); }
+100% { transform: translateY(0); }
+}
+
+.chat-widget {
+animation: floatOnce 1.5s ease-out 1;
+}
+
+### 4. STOP ANIMATION ON HOVER + ADD INTERACTION
+
+* When the user hovers over the widget:
+
+  * Stop any animation immediately
+  * Slightly scale up
+  * Change color (e.g., brighter or accent color)
+
+Example CSS:
+.chat-widget:hover {
+animation: none;
+transform: scale(1.08);
+background-color: #00c8ff; /* adjust to brand color */
+}
+
+### 5. OPTIONAL: PULSE EFFECT BEFORE HOVER (SUBTLE)
+
+* Add a gentle glow/pulse effect AFTER the float animation ends to draw attention.
+
+@keyframes pulse {
+0% { box-shadow: 0 0 0 0 rgba(0,200,255, 0.6); }
+70% { box-shadow: 0 0 0 10px rgba(0,200,255, 0); }
+100% { box-shadow: 0 0 0 0 rgba(0,200,255, 0); }
+}
+
+.chat-widget.idle {
+animation: pulse 2.5s infinite;
+}
+
+### 6. BEHAVIOR LOGIC (IMPORTANT)
+
+* On page load:
+  → Run float animation once
+  → Then apply "idle" pulse class
+
+* On hover:
+  → Remove pulse animation
+  → Stop all animations
+  → Apply hover scale + color
+
+* On mouse leave:
+  → Return to idle pulse state
+
+### 7. CLEAN UI MATCH
+
+* Match the style from the screenshot:
+
+  * Rounded corners
+  * Soft shadow
+  * Slight gradient or glow
+  * Smooth transitions (transition: all 0.3s ease;)
+
+Example:
+.chat-widget {
+border-radius: 12px;
+box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+transition: all 0.3s ease;
+}
+
+Ensure everything looks modern, smooth, and responsive on both desktop and mobile.
