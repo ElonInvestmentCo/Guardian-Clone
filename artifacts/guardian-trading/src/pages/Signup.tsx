@@ -1,6 +1,25 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 
+function EyeOpen() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+function EyeClosed() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" />
+      <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" />
+      <line x1="1" y1="1" x2="23" y2="23" />
+    </svg>
+  );
+}
+
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [promoCode, setPromoCode] = useState("");
@@ -8,7 +27,6 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [eyeActive, setEyeActive] = useState<"pw" | "cpw" | null>(null);
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [errors, setErrors] = useState<{
@@ -69,11 +87,6 @@ export default function Signup() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const triggerEyeAnim = (field: "pw" | "cpw") => {
-    setEyeActive(field);
-    setTimeout(() => setEyeActive(null), 200);
   };
 
   return (
@@ -208,26 +221,12 @@ export default function Signup() {
                     />
                     <button
                       type="button"
-                      onClick={() => {
-                        triggerEyeAnim("pw");
-                        setShowPassword((v) => !v);
-                      }}
-                      className="absolute right-0 top-0 h-full flex items-center justify-center"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="absolute right-0 top-0 h-full flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
                       style={{ width: "48px" }}
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
-                      <img
-                        src={showPassword ? "/eye-open-clean.png" : "/eye-closed-clean.png"}
-                        alt=""
-                        style={{
-                          width: "35px",
-                          height: "35px",
-                          objectFit: "contain",
-                          filter: "brightness(0) opacity(0.85)",
-                          transform: eyeActive === "pw" ? "scale(0.82)" : "scale(1)",
-                          transition: "transform 0.15s cubic-bezier(0.34,1.56,0.64,1)",
-                        }}
-                      />
+                      {showPassword ? <EyeOpen /> : <EyeClosed />}
                     </button>
                   </div>
                   {errors.password && (
@@ -262,26 +261,12 @@ export default function Signup() {
                     />
                     <button
                       type="button"
-                      onClick={() => {
-                        triggerEyeAnim("cpw");
-                        setShowConfirmPassword((v) => !v);
-                      }}
-                      className="absolute right-0 top-0 h-full flex items-center justify-center"
+                      onClick={() => setShowConfirmPassword((v) => !v)}
+                      className="absolute right-0 top-0 h-full flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
                       style={{ width: "48px" }}
                       aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                     >
-                      <img
-                        src={showConfirmPassword ? "/eye-open-clean.png" : "/eye-closed-clean.png"}
-                        alt=""
-                        style={{
-                          width: "35px",
-                          height: "35px",
-                          objectFit: "contain",
-                          filter: "brightness(0) opacity(0.85)",
-                          transform: eyeActive === "cpw" ? "scale(0.82)" : "scale(1)",
-                          transition: "transform 0.15s cubic-bezier(0.34,1.56,0.64,1)",
-                        }}
-                      />
+                      {showConfirmPassword ? <EyeOpen /> : <EyeClosed />}
                     </button>
                   </div>
                   {errors.confirmPassword && (
