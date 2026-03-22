@@ -14,8 +14,8 @@ interface SlotState {
   errorMsg: string | null;
 }
 
-function FileUploadBox({ slot, role, onSlotChange }: {
-  slot: SlotState; role: string; onSlotChange: (s: SlotState) => void;
+function FileUploadBox({ slot, role, onSlotChange, label, hasError }: {
+  slot: SlotState; role: string; onSlotChange: (s: SlotState) => void; label: string; hasError: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -36,7 +36,8 @@ function FileUploadBox({ slot, role, onSlotChange }: {
   };
 
   return (
-    <div className="flex-1" style={{ border: "1px solid #dde3e9", borderRadius: "2px", padding: "14px 16px" }}>
+    <div className="flex-1" style={{ border: `1px solid ${hasError ? "#e53e3e" : "#dde3e9"}`, borderRadius: "2px", padding: "14px 16px" }}>
+      <p className="mb-2" style={{ fontSize: "11px", fontWeight: 600, color: "#444" }}>{label}</p>
       <div className="flex items-center gap-3 mb-2">
         <button type="button" onClick={() => inputRef.current?.click()} disabled={slot.status === "uploading"} style={{ padding: "5px 14px", fontSize: "12px", background: slot.status === "uploading" ? "#dde3e9" : "#edf1f5", border: "1px solid #ccd3da", borderRadius: "2px", cursor: slot.status === "uploading" ? "not-allowed" : "pointer", color: "#444", whiteSpace: "nowrap" }}>
           {slot.status === "uploading" ? "Uploading…" : "Choose File"}
@@ -63,9 +64,21 @@ export default function IdProofUpload() {
   const [idType,    setIdType]    = useState((savedData.idType as string) ?? "Government Issued ID");
   const [frontSlot, setFrontSlot] = useState<SlotState>({ file: null, status: "idle", savedPath: null, errorMsg: null });
   const [backSlot,  setBackSlot]  = useState<SlotState>({ file: null, status: "idle", savedPath: null, errorMsg: null });
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (frontSlot.status !== "success") {
+      setError("Please upload the front of your ID document.");
+      return;
+    }
+    if (backSlot.status !== "success") {
+      setError("Please upload the back of your ID document.");
+      return;
+    }
+
+    setError("");
     await submit({
       idType,
       frontFile:     frontSlot.savedPath ?? frontSlot.file?.name ?? null,
@@ -94,6 +107,10 @@ export default function IdProofUpload() {
             <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>{globalError}</div>
           )}
 
+          {error && (
+            <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>{error}</div>
+          )}
+
           <form onSubmit={handleSubmit} noValidate>
             <div className="mb-5 relative">
               <select value={idType} onChange={(e) => setIdType(e.target.value)} style={{ width: "100%", padding: "9px 36px 9px 12px", fontSize: "13px", color: "#444", background: "#f4f6f8", border: "1px solid #ccd3da", borderRadius: "2px", appearance: "none", cursor: "pointer" }} className="focus:outline-none focus:border-[#3a7bd5]">
@@ -104,11 +121,11 @@ export default function IdProofUpload() {
               </div>
             </div>
 
-            <p className="mb-4" style={{ fontSize: "12px", color: "#555" }}>Please upload a copy of the Applicant's Government Issued ID (Front and Back).</p>
+            <p className="mb-4" style={{ fontSize: "12px", color: "#555" }}>Please upload a copy of the Applicant's Government Issued ID (Front and Back). <span style={{ color: "#e53e3e" }}>*</span></p>
 
             <div className="flex gap-4 mb-5">
-              <FileUploadBox slot={frontSlot} role="id_front" onSlotChange={setFrontSlot} />
-              <FileUploadBox slot={backSlot}  role="id_back"  onSlotChange={setBackSlot}  />
+              <FileUploadBox slot={frontSlot} role="id_front" onSlotChange={(s) => { setFrontSlot(s); setError(""); }} label="Front of ID" hasError={!!error && frontSlot.status !== "success"} />
+              <FileUploadBox slot={backSlot}  role="id_back"  onSlotChange={(s) => { setBackSlot(s); setError(""); }} label="Back of ID" hasError={!!error && backSlot.status !== "success"} />
             </div>
 
             <p className="mb-6"><a href="#" style={{ fontSize: "12px", color: "#3a7bd5", textDecoration: "underline" }}>Image Hints and Tips</a></p>

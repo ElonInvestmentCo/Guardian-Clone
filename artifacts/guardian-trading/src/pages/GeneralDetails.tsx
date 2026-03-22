@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
+import { required, type FieldErrors, hasErrors } from "@/lib/validation";
 
 const REGISTRATION_TYPES = ["Individual Account", "Limited Liability Company"];
 const PRODUCTS = ["Stocks", "Stocks And Options"];
@@ -8,6 +9,8 @@ const HOW_HEARD = [
   "Google", "Facebook", "Linkedin", "Twitter", "Benzinga",
   "EliteTrader", "Instagram", "YouTube", "Word of Mouth", "Other",
 ];
+
+type Fields = "registrationType" | "product" | "howHeard";
 
 export default function GeneralDetails() {
   const { savedData, submit, isSubmitting, globalError } = useOnboardingStep(0);
@@ -17,25 +20,49 @@ export default function GeneralDetails() {
   );
   const [product, setProduct] = useState((savedData.product as string) ?? "");
   const [howHeard, setHowHeard] = useState((savedData.howHeard as string) ?? "");
-  const [errors, setErrors] = useState<{
-    registrationType?: string;
-    product?: string;
-    howHeard?: string;
-  }>({});
+  const [errors, setErrors] = useState<FieldErrors<Fields>>({});
+  const [touched, setTouched] = useState<Partial<Record<Fields, boolean>>>({});
+
+  const validate = (): FieldErrors<Fields> => {
+    const e: FieldErrors<Fields> = {};
+    const r1 = required(registrationType, "Registration type");
+    if (r1) e.registrationType = r1;
+    const r2 = required(product, "Product");
+    if (r2) e.product = r2;
+    const r3 = required(howHeard, "How you heard about us");
+    if (r3) e.howHeard = r3;
+    return e;
+  };
+
+  const validateField = (field: Fields) => {
+    const allErrors = validate();
+    setErrors((prev) => ({ ...prev, [field]: allErrors[field] }));
+  };
+
+  const markTouched = (field: Fields) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    validateField(field);
+  };
 
   const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors: typeof errors = {};
-    if (!registrationType) newErrors.registrationType = "Please select a registration type";
-    if (!product) newErrors.product = "Please select a product";
-    if (!howHeard) newErrors.howHeard = "Please select an option";
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-    setErrors({});
+    setTouched({ registrationType: true, product: true, howHeard: true });
+    const newErrors = validate();
+    setErrors(newErrors);
+    if (hasErrors(newErrors)) return;
     await submit({ registrationType, product, howHeard });
   };
+
+  const selectStyle = (hasError: boolean): React.CSSProperties => ({
+    background: "#e8edf2",
+    border: `1px solid ${hasError ? "#e53e3e" : "#ccd3da"}`,
+    borderRadius: "3px",
+    padding: "9px 32px 9px 10px",
+    color: "#333",
+    fontSize: "13px",
+    width: "100%",
+    appearance: "none" as const,
+  });
 
   return (
     <OnboardingShell>
@@ -64,7 +91,6 @@ export default function GeneralDetails() {
           <form onSubmit={handleNext} noValidate>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
 
-              {/* Registration Type */}
               <div>
                 <label className="block text-[13px] mb-1.5" style={{ color: "#555" }}>
                   Registration Type <span style={{ color: "#e53e3e" }}>*</span>
@@ -74,10 +100,11 @@ export default function GeneralDetails() {
                     value={registrationType}
                     onChange={(e) => {
                       setRegistrationType(e.target.value);
-                      if (errors.registrationType) setErrors((p) => ({ ...p, registrationType: undefined }));
+                      if (touched.registrationType) setTimeout(() => validateField("registrationType"), 0);
                     }}
-                    className="w-full appearance-none text-[13px] focus:outline-none"
-                    style={{ background: "#e8edf2", border: "1px solid #ccd3da", borderRadius: "3px", padding: "9px 32px 9px 10px", color: registrationType ? "#333" : "#888" }}
+                    onBlur={() => markTouched("registrationType")}
+                    className="w-full focus:outline-none"
+                    style={selectStyle(!!errors.registrationType && !!touched.registrationType)}
                   >
                     <option value="" disabled>Please Select</option>
                     {REGISTRATION_TYPES.map((o) => <option key={o} value={o}>{o}</option>)}
@@ -86,10 +113,9 @@ export default function GeneralDetails() {
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
                   </div>
                 </div>
-                {errors.registrationType && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.registrationType}</p>}
+                {errors.registrationType && touched.registrationType && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.registrationType}</p>}
               </div>
 
-              {/* Product */}
               <div>
                 <label className="block text-[13px] mb-1.5" style={{ color: "#555" }}>
                   Product <span style={{ color: "#e53e3e" }}>*</span>
@@ -99,10 +125,11 @@ export default function GeneralDetails() {
                     value={product}
                     onChange={(e) => {
                       setProduct(e.target.value);
-                      if (errors.product) setErrors((p) => ({ ...p, product: undefined }));
+                      if (touched.product) setTimeout(() => validateField("product"), 0);
                     }}
-                    className="w-full appearance-none text-[13px] focus:outline-none"
-                    style={{ background: "#e8edf2", border: "1px solid #ccd3da", borderRadius: "3px", padding: "9px 32px 9px 10px", color: product ? "#333" : "#888" }}
+                    onBlur={() => markTouched("product")}
+                    className="w-full focus:outline-none"
+                    style={selectStyle(!!errors.product && !!touched.product)}
                   >
                     <option value="" disabled>Please Select</option>
                     {PRODUCTS.map((o) => <option key={o} value={o}>{o}</option>)}
@@ -111,10 +138,9 @@ export default function GeneralDetails() {
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
                   </div>
                 </div>
-                {errors.product && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.product}</p>}
+                {errors.product && touched.product && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.product}</p>}
               </div>
 
-              {/* How Heard */}
               <div>
                 <label className="block text-[13px] mb-1.5" style={{ color: "#555" }}>
                   How Did You Hear About Us? <span style={{ color: "#e53e3e" }}>*</span>
@@ -124,10 +150,11 @@ export default function GeneralDetails() {
                     value={howHeard}
                     onChange={(e) => {
                       setHowHeard(e.target.value);
-                      if (errors.howHeard) setErrors((p) => ({ ...p, howHeard: undefined }));
+                      if (touched.howHeard) setTimeout(() => validateField("howHeard"), 0);
                     }}
-                    className="w-full appearance-none text-[13px] focus:outline-none"
-                    style={{ background: "#e8edf2", border: "1px solid #ccd3da", borderRadius: "3px", padding: "9px 32px 9px 10px", color: howHeard ? "#333" : "#888" }}
+                    onBlur={() => markTouched("howHeard")}
+                    className="w-full focus:outline-none"
+                    style={selectStyle(!!errors.howHeard && !!touched.howHeard)}
                   >
                     <option value="" disabled>Please Select</option>
                     {HOW_HEARD.map((o) => <option key={o} value={o}>{o}</option>)}
@@ -136,7 +163,7 @@ export default function GeneralDetails() {
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
                   </div>
                 </div>
-                {errors.howHeard && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.howHeard}</p>}
+                {errors.howHeard && touched.howHeard && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.howHeard}</p>}
               </div>
             </div>
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
+import { required, nameField, abaSwiftCode, accountNumber as validateAccountNum, type FieldErrors, hasErrors } from "@/lib/validation";
 
 const FUNDING_LEFT  = ["Wages/Income","Gift","Inheritance","Insurance Payout","Savings","Other"];
 const FUNDING_RIGHT = ["Pension or Retirement","Sale of an Asset","Social Security Benefits","Funds from another account"];
@@ -10,6 +11,8 @@ const inputStyle: React.CSSProperties = {
   width: "100%", padding: "8px 10px", fontSize: "13px", border: "1px solid #ccd3da",
   borderRadius: "2px", color: "#444", background: "white", outline: "none",
 };
+
+type Fields = "sources" | "bankName" | "abaSwift" | "accountNumber" | "accountName";
 
 export default function FundingDetails() {
   const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(9);
@@ -22,21 +25,31 @@ export default function FundingDetails() {
   const [accountNumber, setAccountNumber] = useState((sd.accountNumber    as string) ?? "");
   const [accountName,   setAccountName]   = useState((sd.accountName      as string) ?? "");
   const [accountType,   setAccountType]   = useState((sd.accountType      as string) ?? "Checking");
-  const [errors,        setErrors]        = useState<Record<string, string>>({});
+  const [errors,        setErrors]        = useState<FieldErrors<Fields>>({});
 
-  const toggleSource = (src: string) => setSources((prev) => {
+  const toggleSource = (src: string) => { setSources((prev) => {
     const next = new Set(prev); next.has(src) ? next.delete(src) : next.add(src); return next;
-  });
+  }); setErrors((p) => ({ ...p, sources: undefined })); };
+
+  const validateAll = (): FieldErrors<Fields> => {
+    const e: FieldErrors<Fields> = {};
+    if (sources.size === 0) e.sources = "Please select at least one funding source.";
+    const bn = nameField(bankName, "Bank name");
+    if (bn) e.bankName = bn;
+    const ab = abaSwiftCode(abaSwift);
+    if (ab) e.abaSwift = ab;
+    const an = required(accountName, "Account name");
+    if (an) e.accountName = an;
+    const acn = validateAccountNum(accountNumber);
+    if (acn) e.accountNumber = acn;
+    return e;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors: Record<string, string> = {};
-    if (sources.size === 0)    newErrors.sources     = "Please select at least one funding source.";
-    if (!bankName.trim())      newErrors.bankName    = "Required";
-    if (!abaSwift.trim())      newErrors.abaSwift    = "Required";
-    if (!accountName.trim())   newErrors.accountName = "Required";
-    if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
-    setErrors({});
+    const newErrors = validateAll();
+    setErrors(newErrors);
+    if (hasErrors(newErrors)) return;
     await submit({
       fundingSources:   Array.from(sources),
       otherDescription: otherText,
@@ -95,12 +108,12 @@ export default function FundingDetails() {
             <div className="flex gap-4 mb-4">
               <div style={{ flex: 1 }}>
                 <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>Name of the bank you will be funding your account from <span style={{ color: "#e53e3e" }}>*</span></label>
-                <input type="text" value={bankName} onChange={(e) => { setBankName(e.target.value); setErrors((p) => ({ ...p, bankName: "" })); }} style={{ ...inputStyle, borderColor: errors.bankName ? "#e53e3e" : "#ccd3da" }} />
+                <input type="text" value={bankName} onChange={(e) => { setBankName(e.target.value); setErrors((p) => ({ ...p, bankName: undefined })); }} style={{ ...inputStyle, borderColor: errors.bankName ? "#e53e3e" : "#ccd3da" }} />
                 {errors.bankName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.bankName}</p>}
               </div>
               <div style={{ flex: 1 }}>
                 <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>ABA / SWIFT <span style={{ color: "#e53e3e" }}>*</span></label>
-                <input type="text" value={abaSwift} onChange={(e) => { setAbaSwift(e.target.value); setErrors((p) => ({ ...p, abaSwift: "" })); }} style={{ ...inputStyle, borderColor: errors.abaSwift ? "#e53e3e" : "#ccd3da" }} />
+                <input type="text" value={abaSwift} onChange={(e) => { setAbaSwift(e.target.value); setErrors((p) => ({ ...p, abaSwift: undefined })); }} style={{ ...inputStyle, borderColor: errors.abaSwift ? "#e53e3e" : "#ccd3da" }} />
                 {errors.abaSwift && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.abaSwift}</p>}
               </div>
             </div>
@@ -112,7 +125,7 @@ export default function FundingDetails() {
               </div>
               <div style={{ flex: 1 }}>
                 <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>Account Name <span style={{ color: "#e53e3e" }}>*</span></label>
-                <input type="text" value={accountName} onChange={(e) => { setAccountName(e.target.value); setErrors((p) => ({ ...p, accountName: "" })); }} style={{ ...inputStyle, borderColor: errors.accountName ? "#e53e3e" : "#ccd3da" }} />
+                <input type="text" value={accountName} onChange={(e) => { setAccountName(e.target.value); setErrors((p) => ({ ...p, accountName: undefined })); }} style={{ ...inputStyle, borderColor: errors.accountName ? "#e53e3e" : "#ccd3da" }} />
                 {errors.accountName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.accountName}</p>}
               </div>
               <div style={{ flex: 1 }}>

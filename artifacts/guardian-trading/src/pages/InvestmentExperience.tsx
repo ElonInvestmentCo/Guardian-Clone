@@ -46,12 +46,28 @@ export default function InvestmentExperience() {
   const [data, setData] = useState<InvState>(() =>
     initState((savedData.investments as Record<string, InvRow>) ?? undefined)
   );
+  const [error, setError] = useState("");
 
-  const toggle = (key: string) => setData((prev) => ({ ...prev, [key]: { ...prev[key], enabled: !prev[key].enabled } }));
-  const set    = (key: string, field: keyof InvRow, value: string) => setData((prev) => ({ ...prev, [key]: { ...prev[key], [field]: value } }));
+  const toggle = (key: string) => { setData((prev) => ({ ...prev, [key]: { ...prev[key], enabled: !prev[key].enabled } })); setError(""); };
+  const set    = (key: string, field: keyof InvRow, value: string) => { setData((prev) => ({ ...prev, [key]: { ...prev[key], [field]: value } })); setError(""); };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const enabledKeys = Object.entries(data).filter(([, row]) => row.enabled);
+
+    if (enabledKeys.length === 0) {
+      setError("Please select at least one investment type to proceed.");
+      return;
+    }
+
+    const incomplete = enabledKeys.filter(([, row]) => !row.years || !row.transactions || !row.knowledge);
+    if (incomplete.length > 0) {
+      const names = incomplete.map(([k]) => INVESTMENTS.find((i) => i.key === k)?.label ?? k).join(", ");
+      setError(`Please complete all fields for: ${names}`);
+      return;
+    }
+
+    setError("");
     await submit({ investments: data });
   };
 
@@ -74,6 +90,10 @@ export default function InvestmentExperience() {
             <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>{globalError}</div>
           )}
 
+          {error && (
+            <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>{error}</div>
+          )}
+
           <form onSubmit={handleSubmit} noValidate>
             <div style={{ border: "1px solid #dde3e9", borderRadius: "2px", overflow: "hidden" }}>
               <div style={{ display: "grid", gridTemplateColumns: "180px 1fr 1fr 1fr", borderBottom: "1px solid #dde3e9", padding: "8px 16px", background: "#f8fafc" }}>
@@ -85,8 +105,9 @@ export default function InvestmentExperience() {
               {INVESTMENTS.map(({ key, label }, idx) => {
                 const row = data[key];
                 const isLast = idx === INVESTMENTS.length - 1;
+                const isIncomplete = row.enabled && (!row.years || !row.transactions || !row.knowledge);
                 return (
-                  <div key={key} style={{ display: "grid", gridTemplateColumns: "180px 1fr 1fr 1fr", borderBottom: isLast ? "none" : "1px solid #dde3e9", padding: "14px 16px", alignItems: "flex-start" }}>
+                  <div key={key} style={{ display: "grid", gridTemplateColumns: "180px 1fr 1fr 1fr", borderBottom: isLast ? "none" : "1px solid #dde3e9", padding: "14px 16px", alignItems: "flex-start", background: isIncomplete && error ? "#fffbfb" : "transparent" }}>
                     <label className="flex items-center gap-2 cursor-pointer" style={{ paddingTop: "1px" }}>
                       <input type="checkbox" checked={row.enabled} onChange={() => toggle(key)} style={{ width: "14px", height: "14px", accentColor: "#3a7bd5", flexShrink: 0 }} />
                       <span style={{ fontSize: "13px", color: "#444", fontWeight: 500 }}>{label}</span>

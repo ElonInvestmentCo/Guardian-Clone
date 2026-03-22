@@ -105,8 +105,14 @@ Multi-step onboarding platform at `/` (guardian-trading artifact).
 
 ### PersonalDetails (Step 1)
 - Country → State → City cascading dropdowns (pure `useState`, no react-hook-form)
-- `locationService.ts` in `src/lib/location/` — 15 countries, 50 US states + city data, Canada provinces, UK regions, AU territories, EU regions, India states
+- `locationService.ts` in `src/lib/location/` — 60+ countries, states for US/CA/GB/AU/DE/FR/IN/JP/MX/BR/IT/ES/NL/CH/AE/ZA/KR/CN/NG/PH/TR/PL/CO/AR/NZ/SA/IL/SE/NO/DK/IE/SG/HK with cities
 - City falls back to text input when no dropdown data exists for a region
+- Country-aware ZIP/postal code validation
+
+### Validation
+- `src/lib/validation.ts` — shared validators: name, email, phone, ZIP (country-aware), date, DOB (exact age calc), SSN/EIN, address, ABA/SWIFT, account number, deposit amount, ID expiration
+- All 12 step components have strict real-time field-level validation with error messages
+- Backend `signup.ts` has matching format validation: phone regex, SSN/EIN format, date parsing, ABA/SWIFT format, name character checks, conditional employer fields, investment experience rows, disclosure questions, signature consents
 
 ### Key Files (guardian-trading)
 - `src/lib/onboarding/OnboardingContext.tsx` — state machine + session restore

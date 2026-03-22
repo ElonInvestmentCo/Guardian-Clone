@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import { getCountries, getStates, getCities, type LocationOption } from "@/lib/location/locationService";
 import OnboardingShell from "@/components/OnboardingShell";
+import { nameField, addressField, phoneFormat, zipCode as validateZip, required, type FieldErrors, hasErrors } from "@/lib/validation";
 
 const fieldStyle: React.CSSProperties = {
   background: "#e8edf2",
@@ -18,11 +19,11 @@ const errorBorderStyle: React.CSSProperties = {
   borderColor: "#e53e3e",
 };
 
-function FieldLabel({ children, required }: { children: React.ReactNode; required?: boolean }) {
+function FieldLabel({ children, required: isReq }: { children: React.ReactNode; required?: boolean }) {
   return (
     <label className="block mb-1" style={{ fontSize: "12px", color: "#555" }}>
       {children}
-      {required && <span style={{ color: "#e53e3e" }}> *</span>}
+      {isReq && <span style={{ color: "#e53e3e" }}> *</span>}
     </label>
   );
 }
@@ -34,25 +35,17 @@ const ChevronDown = () => (
 );
 
 function SelectDropdown({
-  value,
-  onChange,
-  options,
-  placeholder,
-  disabled = false,
-  hasError = false,
+  value, onChange, options, placeholder, disabled = false, hasError = false, onBlur,
 }: {
-  value: string;
-  onChange: (v: string) => void;
-  options: LocationOption[];
-  placeholder: string;
-  disabled?: boolean;
-  hasError?: boolean;
+  value: string; onChange: (v: string) => void; options: LocationOption[];
+  placeholder: string; disabled?: boolean; hasError?: boolean; onBlur?: () => void;
 }) {
   return (
     <div className="relative">
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
         disabled={disabled}
         style={{
           ...fieldStyle,
@@ -76,35 +69,27 @@ function SelectDropdown({
   );
 }
 
-interface FormErrors {
-  firstName?: string;
-  lastName?: string;
-  address?: string;
-  country?: string;
-  state?: string;
-  city?: string;
-  zipCode?: string;
-  phoneNumber?: string;
-}
+type Fields = "firstName" | "lastName" | "address" | "country" | "state" | "city" | "zipCode" | "phoneNumber";
 
 export default function PersonalDetails() {
   const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(1);
 
   const sd = savedData as Record<string, string>;
 
-  const [firstName,   setFirstName]   = useState(sd.firstName   ?? "");
-  const [lastName,    setLastName]    = useState(sd.lastName     ?? "");
-  const [address,     setAddress]     = useState(sd.address      ?? "");
-  const [aptSuite,    setAptSuite]    = useState(sd.aptSuite     ?? "");
-  const [country,     setCountry]     = useState(sd.country      ?? "");
-  const [state,       setState]       = useState(sd.state        ?? "");
-  const [city,        setCity]        = useState(sd.city         ?? "");
-  const [zipCode,     setZipCode]     = useState(sd.zipCode      ?? "");
-  const [phoneNumber, setPhoneNumber] = useState(sd.phoneNumber  ?? "");
-  const [errors,      setErrors]      = useState<FormErrors>({});
+  const [firstName, setFirstName] = useState(sd.firstName ?? "");
+  const [lastName, setLastName] = useState(sd.lastName ?? "");
+  const [address, setAddress] = useState(sd.address ?? "");
+  const [aptSuite, setAptSuite] = useState(sd.aptSuite ?? "");
+  const [country, setCountry] = useState(sd.country ?? "");
+  const [state, setState] = useState(sd.state ?? "");
+  const [city, setCity] = useState(sd.city ?? "");
+  const [zipCodeVal, setZipCode] = useState(sd.zipCode ?? "");
+  const [phoneNumber, setPhoneNumber] = useState(sd.phoneNumber ?? "");
+  const [errors, setErrors] = useState<FieldErrors<Fields>>({});
+  const [touched, setTouched] = useState<Partial<Record<Fields, boolean>>>({});
 
   const [stateOptions, setStateOptions] = useState<LocationOption[]>([]);
-  const [cityOptions,  setCityOptions]  = useState<string[]>([]);
+  const [cityOptions, setCityOptions] = useState<string[]>([]);
 
   const countries = getCountries();
 
@@ -122,33 +107,61 @@ export default function PersonalDetails() {
     setCity("");
   }, [state]);
 
-  const validate = (): boolean => {
-    const newErrors: FormErrors = {};
-    if (!firstName.trim())    newErrors.firstName   = "First name is required";
-    if (!lastName.trim())     newErrors.lastName    = "Last name is required";
-    if (!address.trim())      newErrors.address     = "Address is required";
-    if (!country)             newErrors.country     = "Country is required";
-    if (!state)               newErrors.state       = "State / province is required";
-    if (!city)                newErrors.city        = "City is required";
-    if (!/^\d{5}(-\d{4})?$/.test(zipCode.trim()))
-      newErrors.zipCode = "Enter a valid 5-digit ZIP code";
-    if (!/^\+?[1-9]\d{6,14}$/.test(phoneNumber.replace(/[\s\-().]/g, "")))
-      newErrors.phoneNumber = "Enter a valid phone number";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const validateAll = (): FieldErrors<Fields> => {
+    const e: FieldErrors<Fields> = {};
+    const fn = nameField(firstName, "First name");
+    if (fn) e.firstName = fn;
+    const ln = nameField(lastName, "Last name");
+    if (ln) e.lastName = ln;
+    const addr = addressField(address, "Address");
+    if (addr) e.address = addr;
+    const cty = required(country, "Country");
+    if (cty) e.country = cty;
+    if (stateOptions.length > 0) {
+      const st = required(state, "State / province");
+      if (st) e.state = st;
+    }
+    const ct = required(city, "City");
+    if (ct) e.city = ct;
+    const zp = validateZip(zipCodeVal, country || "US");
+    if (zp) e.zipCode = zp;
+    const ph = phoneFormat(phoneNumber);
+    if (ph) e.phoneNumber = ph;
+    return e;
   };
 
-  const clearError = (field: keyof FormErrors) =>
-    setErrors((prev) => ({ ...prev, [field]: undefined }));
+  const validateField = (field: Fields) => {
+    const allErrors = validateAll();
+    setErrors((prev) => ({ ...prev, [field]: allErrors[field] }));
+  };
+
+  const markTouched = (field: Fields) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    validateField(field);
+  };
+
+  const handleChange = (field: Fields, value: string, setter: (v: string) => void) => {
+    setter(value);
+    if (touched[field]) {
+      setTimeout(() => validateField(field), 0);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
-    await submit({ firstName, lastName, address, aptSuite, country, state, city, zipCode, phoneNumber });
+    const allTouched: Partial<Record<Fields, boolean>> = {};
+    (["firstName", "lastName", "address", "country", "state", "city", "zipCode", "phoneNumber"] as Fields[]).forEach((f) => { allTouched[f] = true; });
+    setTouched(allTouched);
+    const newErrors = validateAll();
+    setErrors(newErrors);
+    if (hasErrors(newErrors)) return;
+    await submit({ firstName, lastName, address, aptSuite, country, state, city, zipCode: zipCodeVal, phoneNumber });
   };
 
   const countryLabel = countries.find((c) => c.code === country)?.label ?? "";
-  const stateLabel   = stateOptions.find((s) => s.code === state)?.label ?? "";
+  const stateLabel = stateOptions.find((s) => s.code === state)?.label ?? "";
+
+  const showError = (field: Fields) => errors[field] && touched[field];
 
   return (
     <OnboardingShell currentStep={1}>
@@ -171,40 +184,42 @@ export default function PersonalDetails() {
 
           <form onSubmit={handleSubmit} noValidate>
 
-            {/* ── Name ─────────────────────────────────────────────── */}
             <div className="grid grid-cols-2 gap-5 mb-4">
               <div>
                 <FieldLabel required>First Name</FieldLabel>
                 <input
                   value={firstName}
-                  onChange={(e) => { setFirstName(e.target.value); clearError("firstName"); }}
-                  style={errors.firstName ? errorBorderStyle : fieldStyle}
+                  onChange={(e) => handleChange("firstName", e.target.value, setFirstName)}
+                  onBlur={() => markTouched("firstName")}
+                  style={showError("firstName") ? errorBorderStyle : fieldStyle}
                   className="focus:outline-none"
                 />
-                {errors.firstName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.firstName}</p>}
+                {showError("firstName") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.firstName}</p>}
               </div>
               <div>
                 <FieldLabel required>Last Name</FieldLabel>
                 <input
                   value={lastName}
-                  onChange={(e) => { setLastName(e.target.value); clearError("lastName"); }}
-                  style={errors.lastName ? errorBorderStyle : fieldStyle}
+                  onChange={(e) => handleChange("lastName", e.target.value, setLastName)}
+                  onBlur={() => markTouched("lastName")}
+                  style={showError("lastName") ? errorBorderStyle : fieldStyle}
                   className="focus:outline-none"
                 />
-                {errors.lastName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.lastName}</p>}
+                {showError("lastName") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.lastName}</p>}
               </div>
             </div>
 
-            {/* ── Address ──────────────────────────────────────────── */}
             <div className="mb-4">
               <FieldLabel required>Address</FieldLabel>
               <input
                 value={address}
-                onChange={(e) => { setAddress(e.target.value); clearError("address"); }}
-                style={errors.address ? errorBorderStyle : fieldStyle}
+                onChange={(e) => handleChange("address", e.target.value, setAddress)}
+                onBlur={() => markTouched("address")}
+                placeholder="Street address"
+                style={showError("address") ? errorBorderStyle : fieldStyle}
                 className="focus:outline-none"
               />
-              {errors.address && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.address}</p>}
+              {showError("address") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.address}</p>}
             </div>
 
             <div className="mb-5">
@@ -217,53 +232,52 @@ export default function PersonalDetails() {
               />
             </div>
 
-            {/* ── Country → State → City cascade ───────────────────── */}
             <div className="grid grid-cols-3 gap-5 mb-4">
 
-              {/* Country */}
               <div>
                 <FieldLabel required>Country</FieldLabel>
                 <SelectDropdown
                   value={country}
-                  onChange={(v) => { setCountry(v); clearError("country"); }}
+                  onChange={(v) => { setCountry(v); if (touched.country) setTimeout(() => validateField("country"), 0); }}
+                  onBlur={() => markTouched("country")}
                   options={countries}
                   placeholder="Select country"
-                  hasError={!!errors.country}
+                  hasError={!!showError("country")}
                 />
-                {errors.country && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.country}</p>}
+                {showError("country") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.country}</p>}
               </div>
 
-              {/* State / Province — disabled until country selected */}
               <div>
                 <FieldLabel required>
                   {country === "US" ? "State" : country === "CA" ? "Province" : country === "AU" ? "State / Territory" : "State / Region"}
                 </FieldLabel>
                 <SelectDropdown
                   value={state}
-                  onChange={(v) => { setState(v); clearError("state"); }}
+                  onChange={(v) => { setState(v); if (touched.state) setTimeout(() => validateField("state"), 0); }}
+                  onBlur={() => markTouched("state")}
                   options={stateOptions}
                   placeholder={country ? "Select state" : "Select country first"}
                   disabled={!country || stateOptions.length === 0}
-                  hasError={!!errors.state}
+                  hasError={!!showError("state")}
                 />
-                {errors.state && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.state}</p>}
+                {showError("state") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.state}</p>}
                 {country && stateOptions.length === 0 && (
                   <p className="mt-1 text-xs" style={{ color: "#888" }}>No regions available — enter city manually below</p>
                 )}
               </div>
 
-              {/* City — disabled until state selected */}
               <div>
                 <FieldLabel required>City</FieldLabel>
                 {cityOptions.length > 0 ? (
                   <div className="relative">
                     <select
                       value={city}
-                      onChange={(e) => { setCity(e.target.value); clearError("city"); }}
+                      onChange={(e) => { setCity(e.target.value); if (touched.city) setTimeout(() => validateField("city"), 0); }}
+                      onBlur={() => markTouched("city")}
                       disabled={!state}
                       style={{
                         ...fieldStyle,
-                        borderColor: errors.city ? "#e53e3e" : "#ccd3da",
+                        borderColor: showError("city") ? "#e53e3e" : "#ccd3da",
                         appearance: "none",
                         paddingRight: "28px",
                         cursor: !state ? "not-allowed" : "pointer",
@@ -279,55 +293,55 @@ export default function PersonalDetails() {
                 ) : (
                   <input
                     value={city}
-                    onChange={(e) => { setCity(e.target.value); clearError("city"); }}
+                    onChange={(e) => handleChange("city", e.target.value, setCity)}
+                    onBlur={() => markTouched("city")}
                     placeholder={state ? "Enter city name" : "Select state first"}
                     disabled={!state && stateOptions.length > 0}
                     style={{
                       ...fieldStyle,
-                      borderColor: errors.city ? "#e53e3e" : "#ccd3da",
+                      borderColor: showError("city") ? "#e53e3e" : "#ccd3da",
                       opacity: (!state && stateOptions.length > 0) ? 0.5 : 1,
                     }}
                     className="focus:outline-none"
                   />
                 )}
-                {errors.city && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.city}</p>}
+                {showError("city") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.city}</p>}
               </div>
             </div>
 
-            {/* Location breadcrumb hint */}
             {(country || state || city) && (
               <p className="mb-4 text-xs" style={{ color: "#888" }}>
                 {[countryLabel, stateLabel, city].filter(Boolean).join(" › ")}
               </p>
             )}
 
-            {/* ── ZIP + Phone ───────────────────────────────────────── */}
             <div className="grid grid-cols-2 gap-5 mb-6">
               <div>
                 <FieldLabel required>ZIP / Postal Code</FieldLabel>
                 <input
-                  value={zipCode}
-                  onChange={(e) => { setZipCode(e.target.value); clearError("zipCode"); }}
-                  placeholder="12345"
-                  style={errors.zipCode ? errorBorderStyle : fieldStyle}
+                  value={zipCodeVal}
+                  onChange={(e) => handleChange("zipCode", e.target.value, setZipCode)}
+                  onBlur={() => markTouched("zipCode")}
+                  placeholder={country === "CA" ? "K1A 0B1" : country === "GB" ? "SW1A 1AA" : "12345"}
+                  style={showError("zipCode") ? errorBorderStyle : fieldStyle}
                   className="focus:outline-none"
                 />
-                {errors.zipCode && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.zipCode}</p>}
+                {showError("zipCode") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.zipCode}</p>}
               </div>
               <div>
                 <FieldLabel required>Phone Number</FieldLabel>
                 <input
                   value={phoneNumber}
-                  onChange={(e) => { setPhoneNumber(e.target.value); clearError("phoneNumber"); }}
+                  onChange={(e) => handleChange("phoneNumber", e.target.value, setPhoneNumber)}
+                  onBlur={() => markTouched("phoneNumber")}
                   placeholder="+1 (555) 000-0000"
-                  style={errors.phoneNumber ? errorBorderStyle : fieldStyle}
+                  style={showError("phoneNumber") ? errorBorderStyle : fieldStyle}
                   className="focus:outline-none"
                 />
-                {errors.phoneNumber && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.phoneNumber}</p>}
+                {showError("phoneNumber") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.phoneNumber}</p>}
               </div>
             </div>
 
-            {/* ── Navigation ───────────────────────────────────────── */}
             <div className="flex gap-3">
               <button
                 type="button"

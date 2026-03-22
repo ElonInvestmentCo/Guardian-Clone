@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
+import { required, depositAmount, type FieldErrors, hasErrors } from "@/lib/validation";
 
 type YNVal = "yes" | "no" | "";
 
-function YesNo({ value, onChange }: { value: YNVal; onChange: (v: YNVal) => void }) {
+function YesNo({ value, onChange, hasError }: { value: YNVal; onChange: (v: YNVal) => void; hasError?: boolean }) {
   return (
     <div className="flex items-center gap-5 mt-1.5">
       <label className="flex items-center gap-1.5 cursor-pointer">
@@ -15,9 +16,12 @@ function YesNo({ value, onChange }: { value: YNVal; onChange: (v: YNVal) => void
         <input type="radio" checked={value === "no"} onChange={() => onChange("no")} style={{ accentColor: "#3a7bd5" }} />
         <span style={{ fontSize: "12px", color: "#555" }}>No</span>
       </label>
+      {hasError && <span style={{ fontSize: "11px", color: "#e53e3e", marginLeft: "4px" }}>Required</span>}
     </div>
   );
 }
+
+type Fields = "initialDeposit" | "q1" | "q2" | "q3" | "q4" | "q5" | "q6" | "q7" | "q8" | "q9" | "q10";
 
 export default function Disclosures() {
   const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(10);
@@ -39,14 +43,49 @@ export default function Disclosures() {
     (sd.taxWithholding as "not_subject" | "subject" | "non_resident") ?? "not_subject"
   );
   const [partnershipCheck, setPartnershipCheck] = useState((sd.partnershipCheck as boolean) ?? false);
+  const [errors, setErrors] = useState<FieldErrors<Fields>>({});
+
+  const qValues = { q1, q2, q3, q4, q5, q6, q7, q8, q9, q10 };
+  const qSetters = { q1: setQ1, q2: setQ2, q3: setQ3, q4: setQ4, q5: setQ5, q6: setQ6, q7: setQ7, q8: setQ8, q9: setQ9, q10: setQ10 };
+
+  const validateAll = (): FieldErrors<Fields> => {
+    const e: FieldErrors<Fields> = {};
+    const dep = depositAmount(initialDeposit);
+    if (dep) e.initialDeposit = dep;
+    const qKeys = ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"] as const;
+    for (const qk of qKeys) {
+      const v = qValues[qk];
+      const r = required(v, "This question");
+      if (r) e[qk] = r;
+    }
+    return e;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const newErrors = validateAll();
+    setErrors(newErrors);
+    if (hasErrors(newErrors)) return;
     await submit({ wantsMargin, initialDeposit, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, taxWithholding, partnershipCheck });
   };
 
   const qStyle: React.CSSProperties = { fontSize: "12px", color: "#555", lineHeight: "1.55", marginBottom: "2px" };
   const blockStyle: React.CSSProperties = { marginBottom: "14px", paddingBottom: "14px", borderBottom: "1px solid #eef1f4" };
+
+  const questions: Array<{ q: string; key: keyof typeof qValues }> = [
+    { q: "Do you currently maintain an account at Guardian in which you have control, beneficial interest, or trading authority? *", key: "q1" },
+    { q: "Do you have a relationship with an entity that currently maintains an account at Guardian, such as employee, officer, shareholder, member, partner or owner? *", key: "q2" },
+    { q: "Are either you or an immediate family member an officer, director or at least a 10% shareholder in a publicly traded company? *", key: "q3" },
+    { q: "Are either you or an immediate family member employed by FINRA, a registered broker dealer or a securities exchange? *", key: "q4" },
+    { q: "Are you a senior officer of a bank, savings and loan institution, investment company, investment advisory firm, or other financial institution? *", key: "q5" },
+    { q: "Are either you or an immediate relative or family member a senior political figure? *", key: "q6" },
+  ];
+
+  const questions2: Array<{ q: string; key: keyof typeof qValues }> = [
+    { q: "If you are opening a day trading account with Guardian Trading, do you have $25,000 in available investment capital? *", key: "q8" },
+    { q: "Does your sole objective with this account involve high risk? *", key: "q9" },
+    { q: "Are you able to withstand losing more or all of your investment in your Guardian Trading account? *", key: "q10" },
+  ];
 
   return (
     <OnboardingShell currentStep={10}>
@@ -59,6 +98,12 @@ export default function Disclosures() {
         <div className="px-8 py-6">
           {globalError && (
             <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>{globalError}</div>
+          )}
+
+          {hasErrors(errors) && (
+            <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>
+              Please complete all required fields below before proceeding.
+            </div>
           )}
 
           <form onSubmit={handleSubmit} noValidate>
@@ -77,37 +122,27 @@ export default function Disclosures() {
             </div>
 
             <div style={blockStyle}>
-              <p style={qStyle}>Please state your approximate initial deposit: *</p>
-              <input type="text" value={initialDeposit} onChange={(e) => setInitialDeposit(e.target.value)} style={{ marginTop: "6px", width: "100%", maxWidth: "360px", padding: "7px 10px", fontSize: "13px", border: "1px solid #ccd3da", borderRadius: "2px", color: "#444" }} />
+              <p style={qStyle}>Please state your approximate initial deposit: <span style={{ color: "#e53e3e" }}>*</span></p>
+              <input type="text" value={initialDeposit} onChange={(e) => { setInitialDeposit(e.target.value); setErrors((p) => ({ ...p, initialDeposit: undefined })); }} placeholder="$30,000" style={{ marginTop: "6px", width: "100%", maxWidth: "360px", padding: "7px 10px", fontSize: "13px", border: `1px solid ${errors.initialDeposit ? "#e53e3e" : "#ccd3da"}`, borderRadius: "2px", color: "#444" }} />
+              {errors.initialDeposit && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.initialDeposit}</p>}
             </div>
 
-            {[
-              { q: "Do you currently maintain an account at Guardian in which you have control, beneficial interest, or trading authority? *", val: q1, set: setQ1 },
-              { q: "Do you have a relationship with an entity that currently maintains an account at Guardian, such as employee, officer, shareholder, member, partner or owner? *", val: q2, set: setQ2 },
-              { q: "Are either you or an immediate family member an officer, director or at least a 10% shareholder in a publicly traded company? *", val: q3, set: setQ3 },
-              { q: "Are either you or an immediate family member employed by FINRA, a registered broker dealer or a securities exchange? *", val: q4, set: setQ4 },
-              { q: "Are you a senior officer of a bank, savings and loan institution, investment company, investment advisory firm, or other financial institution? *", val: q5, set: setQ5 },
-              { q: "Are either you or an immediate relative or family member a senior political figure? *", val: q6, set: setQ6 },
-            ].map(({ q, val, set }, idx) => (
-              <div key={idx} style={blockStyle}>
+            {questions.map(({ q, key }) => (
+              <div key={key} style={blockStyle}>
                 <p style={qStyle}>{q}</p>
-                <YesNo value={val} onChange={set} />
+                <YesNo value={qValues[key] as YNVal} onChange={(v) => { qSetters[key](v); setErrors((p) => ({ ...p, [key]: undefined })); }} hasError={!!errors[key]} />
               </div>
             ))}
 
             <div style={blockStyle}>
               <p style={qStyle}>Have you read, reviewed, and agree to the 'Guardian Addendum to Customer Agreement fee Testing' form? <a href="#" style={{ color: "#3a7bd5", textDecoration: "underline" }}>View</a></p>
-              <YesNo value={q7} onChange={setQ7} />
+              <YesNo value={q7} onChange={(v) => { setQ7(v); setErrors((p) => ({ ...p, q7: undefined })); }} hasError={!!errors.q7} />
             </div>
 
-            {[
-              { q: "If you are opening a day trading account with Guardian Trading, do you have $25,000 in available investment capital? *", val: q8, set: setQ8 },
-              { q: "Does your sole objective with this account involve high risk? *", val: q9, set: setQ9 },
-              { q: "Are you able to withstand losing more or all of your investment in your Guardian Trading account? *", val: q10, set: setQ10 },
-            ].map(({ q, val, set }, idx) => (
-              <div key={idx} style={blockStyle}>
+            {questions2.map(({ q, key }) => (
+              <div key={key} style={blockStyle}>
                 <p style={qStyle}>{q}</p>
-                <YesNo value={val} onChange={set} />
+                <YesNo value={qValues[key] as YNVal} onChange={(v) => { qSetters[key](v); setErrors((p) => ({ ...p, [key]: undefined })); }} hasError={!!errors[key]} />
               </div>
             ))}
 

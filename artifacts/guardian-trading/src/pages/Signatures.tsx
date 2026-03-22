@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
+import { required, nameField, type FieldErrors, hasErrors } from "@/lib/validation";
 
 const DISCLOSURE_DOCS = [
   "Account Terms & Conditions",
@@ -12,6 +13,8 @@ const DISCLOSURE_DOCS = [
   "Margin Agreement",
   "Liquidation Notice",
 ];
+
+type Fields = "consents" | "tradingPlan" | "signatureName" | "signature";
 
 export default function Signatures() {
   const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(11);
@@ -31,6 +34,7 @@ export default function Signatures() {
   const [electronicAgreed,    setElectronicAgreed]    = useState(false);
   const [showSignatureModal,  setShowSignatureModal]   = useState(false);
   const [showSubmitModal,     setShowSubmitModal]      = useState(false);
+  const [errors, setErrors] = useState<FieldErrors<Fields>>({});
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const drawing   = useRef(false);
@@ -68,9 +72,27 @@ export default function Signatures() {
     const ctx = canvas.getContext("2d"); if (!ctx) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
   };
-  const submitSignature = () => { const canvas = canvasRef.current; if (!canvas) return; setSignatureDataUrl(canvas.toDataURL("image/png")); setShowSignatureModal(false); };
+  const submitSignature = () => { const canvas = canvasRef.current; if (!canvas) return; setSignatureDataUrl(canvas.toDataURL("image/png")); setShowSignatureModal(false); setErrors((p) => ({ ...p, signature: undefined })); };
 
-  const handleNext = (e: React.FormEvent) => { e.preventDefault(); setShowSubmitModal(true); };
+  const validateAll = (): FieldErrors<Fields> => {
+    const e: FieldErrors<Fields> = {};
+    const unconsented = DISCLOSURE_DOCS.filter((d) => !consents[d]);
+    if (unconsented.length > 0) e.consents = `Please consent to all ${DISCLOSURE_DOCS.length} disclosure documents`;
+    const tp = required(tradingPlan, "Trading plan selection");
+    if (tp) e.tradingPlan = tp;
+    if (!signatureDataUrl) e.signature = "Please draw your signature before submitting";
+    const sn = nameField(signatureName, "Signature name");
+    if (sn) e.signatureName = sn;
+    return e;
+  };
+
+  const handleNext = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors = validateAll();
+    setErrors(newErrors);
+    if (hasErrors(newErrors)) return;
+    setShowSubmitModal(true);
+  };
 
   const handleSubmitConfirm = async () => {
     setShowSubmitModal(false);
@@ -90,27 +112,34 @@ export default function Signatures() {
             <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>{globalError}</div>
           )}
 
+          {hasErrors(errors) && (
+            <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>
+              Please complete all required items below before submitting your application.
+            </div>
+          )}
+
           <form onSubmit={handleNext} noValidate>
             <p className="mb-5" style={{ fontSize: "12px", color: "#555" }}>Please select the disclosures below and the check the box noting you have read and understood these disclosures.</p>
 
-            <div className="mb-6" style={{ border: "1px solid #dde3e9", borderRadius: "2px" }}>
+            <div className="mb-6" style={{ border: `1px solid ${errors.consents ? "#e53e3e" : "#dde3e9"}`, borderRadius: "2px" }}>
               {DISCLOSURE_DOCS.map((doc, i) => (
                 <div key={doc} className="flex items-center" style={{ padding: "9px 14px", borderBottom: i < DISCLOSURE_DOCS.length - 1 ? "1px solid #eef1f4" : "none" }}>
                   <span style={{ fontSize: "12px", color: "#444", flex: 1 }}>{doc} *</span>
                   <a href="#" style={{ fontSize: "12px", color: "#3a7bd5", textDecoration: "underline", marginRight: "24px" }}>View</a>
                   <label className="flex items-center gap-1.5 cursor-pointer flex-shrink-0">
-                    <input type="checkbox" checked={consents[doc]} onChange={(e) => setConsents((p) => ({ ...p, [doc]: e.target.checked }))} style={{ accentColor: "#3a7bd5", width: "13px", height: "13px" }} />
+                    <input type="checkbox" checked={consents[doc]} onChange={(e) => { setConsents((p) => ({ ...p, [doc]: e.target.checked })); setErrors((p) => ({ ...p, consents: undefined })); }} style={{ accentColor: "#3a7bd5", width: "13px", height: "13px" }} />
                     <span style={{ fontSize: "12px", color: "#555" }}>I provide my consent</span>
                   </label>
                 </div>
               ))}
             </div>
+            {errors.consents && <p className="mb-4 text-xs" style={{ color: "#e53e3e" }}>{errors.consents}</p>}
 
-            <div className="mb-4">
-              <p style={{ fontSize: "12px", color: "#444", fontWeight: 700, marginBottom: "3px" }}>Das Trader Guardian Trading</p>
+            <div className="mb-4" style={{ border: errors.tradingPlan ? "1px solid #e53e3e" : "none", borderRadius: "2px", padding: errors.tradingPlan ? "12px" : "0" }}>
+              <p style={{ fontSize: "12px", color: "#444", fontWeight: 700, marginBottom: "3px" }}>Das Trader Guardian Trading <span style={{ color: "#e53e3e" }}>*</span></p>
               <p style={{ fontSize: "11.5px", color: "#666", marginBottom: "8px" }}>Level 2 Software costs plus up to $165 in Add On Feeds will be waived for accounts generating $599 or more in commissions per month</p>
               <label className="flex gap-2 cursor-pointer">
-                <input type="radio" name="tradingPlan" checked={tradingPlan === "das_190"} onChange={() => setTradingPlan("das_190")} style={{ marginTop: "2px", flexShrink: 0, accentColor: "#3a7bd5" }} />
+                <input type="radio" name="tradingPlan" checked={tradingPlan === "das_190"} onChange={() => { setTradingPlan("das_190"); setErrors((p) => ({ ...p, tradingPlan: undefined })); }} style={{ marginTop: "2px", flexShrink: 0, accentColor: "#3a7bd5" }} />
                 <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.6" }}><strong>Das Level 2 ($190):</strong> Regional Market Depth, Top Level Bids and Offers with Quoted Size for Major Listed Exchanges.</p>
               </label>
             </div>
@@ -119,7 +148,7 @@ export default function Signatures() {
               <p style={{ fontSize: "12px", color: "#444", fontWeight: 700, marginBottom: "3px" }}>Guardian Professional Trader</p>
               <p style={{ fontSize: "11.5px", color: "#666", marginBottom: "8px" }}>For accounts Classified as Professional by either DasTrader or Sterling.</p>
               <label className="flex gap-2 cursor-pointer">
-                <input type="radio" name="tradingPlan" checked={tradingPlan === "das_200"} onChange={() => setTradingPlan("das_200")} style={{ marginTop: "2px", flexShrink: 0, accentColor: "#3a7bd5" }} />
+                <input type="radio" name="tradingPlan" checked={tradingPlan === "das_200"} onChange={() => { setTradingPlan("das_200"); setErrors((p) => ({ ...p, tradingPlan: undefined })); }} style={{ marginTop: "2px", flexShrink: 0, accentColor: "#3a7bd5" }} />
                 <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.6" }}><strong>Das Level 2 ($200):</strong> Regional Market Depth, Top Level Bids and Offers with Quoted Size for Major Listed Exchanges.</p>
               </label>
             </div>
@@ -128,10 +157,11 @@ export default function Signatures() {
               <p style={{ fontSize: "12px", color: "#444", fontWeight: 700, marginBottom: "3px" }}>Sterling Trader Guardian Trading</p>
               <p style={{ fontSize: "11.5px", color: "#666", marginBottom: "8px" }}>Level 1 Software costs plus up to $375 will be waived for accounts generating $799 or more in commissions per month.</p>
               <label className="flex gap-2 cursor-pointer">
-                <input type="radio" name="tradingPlan" checked={tradingPlan === "sterling_275"} onChange={() => setTradingPlan("sterling_275")} style={{ marginTop: "2px", flexShrink: 0, accentColor: "#3a7bd5" }} />
+                <input type="radio" name="tradingPlan" checked={tradingPlan === "sterling_275"} onChange={() => { setTradingPlan("sterling_275"); setErrors((p) => ({ ...p, tradingPlan: undefined })); }} style={{ marginTop: "2px", flexShrink: 0, accentColor: "#3a7bd5" }} />
                 <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.6" }}><strong>Sterling Trader ($275):</strong> All in package of Sterling Trader Pro including Nasdaq Total View, NYSE/AMEX/ARCA, Nasdaq Level 1.</p>
               </label>
             </div>
+            {errors.tradingPlan && <p className="mb-4 text-xs" style={{ color: "#e53e3e" }}>{errors.tradingPlan}</p>}
 
             <div className="mb-5" style={{ borderTop: "1px solid #eef1f4", paddingTop: "16px" }}>
               <p style={{ fontSize: "12px", color: "#444", fontWeight: 600, marginBottom: "4px" }}>Consent for mail delivery of statements and confirms otherwise they will be delivered electronically</p>
@@ -148,16 +178,18 @@ export default function Signatures() {
               <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.65", marginBottom: "16px" }}>By signing below, I/We attest to the accuracy of the information provided on this form. I/We acknowledge that we have received, read and agree to the terms and conditions contained in the attached Account Agreement, including the arbitration clause.</p>
               <div className="flex items-center gap-3 mb-4">
                 <p style={{ fontSize: "13px", color: "#333", fontWeight: 600 }}>ACCOUNT OWNER:</p>
-                <span style={{ fontSize: "12px", color: "#777" }}>Signature</span>
+                <span style={{ fontSize: "12px", color: "#777" }}>Signature <span style={{ color: "#e53e3e" }}>*</span></span>
               </div>
               <button type="button" onClick={() => setShowElectronicModal(true)} style={{ background: "#3a7bd5", color: "white", border: "none", borderRadius: "3px", padding: "8px 20px", fontSize: "13px", cursor: "pointer", fontWeight: 600, marginBottom: "12px" }}>Signature</button>
+              {errors.signature && !signatureDataUrl && <p className="mb-2 text-xs" style={{ color: "#e53e3e" }}>{errors.signature}</p>}
               {signatureDataUrl && (
                 <div className="mb-4" style={{ border: "1px solid #dde3e9", borderRadius: "2px", padding: "4px", display: "inline-block" }}>
                   <img src={signatureDataUrl} alt="Signature" style={{ height: "80px", maxWidth: "300px", objectFit: "contain", display: "block" }} />
                 </div>
               )}
               <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.65", marginBottom: "12px" }}>By entering your full name, you are signing this Agreement electronically. You agree your electronic signature is the legal equivalent of your manual/handwritten signature on this Agreement.</p>
-              <input type="text" placeholder="Your Name" value={signatureName} onChange={(e) => setSignatureName(e.target.value)} style={{ width: "100%", maxWidth: "360px", padding: "8px 10px", fontSize: "13px", border: "1px solid #ccd3da", borderRadius: "2px", color: "#444" }} />
+              <input type="text" placeholder="Your Full Name *" value={signatureName} onChange={(e) => { setSignatureName(e.target.value); setErrors((p) => ({ ...p, signatureName: undefined })); }} style={{ width: "100%", maxWidth: "360px", padding: "8px 10px", fontSize: "13px", border: `1px solid ${errors.signatureName ? "#e53e3e" : "#ccd3da"}`, borderRadius: "2px", color: "#444" }} />
+              {errors.signatureName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.signatureName}</p>}
             </div>
 
             <div className="flex gap-3">
@@ -170,7 +202,6 @@ export default function Signatures() {
         </div>
       </div>
 
-      {/* Electronic Records Modal */}
       {showElectronicModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: "rgba(0,0,0,0.45)" }}>
           <div className="bg-white rounded shadow-xl" style={{ width: "380px", padding: "28px 28px 24px" }}>
@@ -190,7 +221,6 @@ export default function Signatures() {
         </div>
       )}
 
-      {/* Signature Drawing Modal */}
       {showSignatureModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: "rgba(0,0,0,0.45)" }}>
           <div className="bg-white rounded shadow-xl" style={{ width: "460px", padding: "24px" }}>
@@ -214,7 +244,6 @@ export default function Signatures() {
         </div>
       )}
 
-      {/* Application Submission Modal */}
       {showSubmitModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: "rgba(0,0,0,0.45)" }}>
           <div className="bg-white rounded shadow-xl" style={{ width: "380px", padding: "28px" }}>
