@@ -74,21 +74,6 @@ export default function DashboardLayout({ children }: Props) {
           </div>
         </div>
 
-        {/* Theme toggle */}
-        <div style={{ padding: "0 10px 8px" }}>
-          <button
-            onClick={toggleTheme}
-            className="flex items-center gap-3 w-full rounded-lg"
-            title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
-            style={{ padding: "9px 12px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)", cursor: "pointer", fontSize: "13.5px", borderRadius: "8px" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.12)"; (e.currentTarget as HTMLElement).style.color = "#fff"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)"; (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.7)"; }}
-          >
-            {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
-            <span>{theme === "light" ? "Dark Mode" : "Light Mode"}</span>
-          </button>
-        </div>
-
         {/* Log out */}
         <div style={{ padding: "0 10px 18px", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "12px", marginTop: "4px" }}>
           <button
@@ -104,9 +89,42 @@ export default function DashboardLayout({ children }: Props) {
         </div>
       </aside>
 
-      {/* ── Page content ── */}
-      <div className="flex-1 overflow-y-auto">
-        {children}
+      {/* ── Main area ── */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+
+        {/* ── Header bar ── */}
+        <div className="flex items-center justify-end flex-shrink-0" style={{
+          padding: "10px 24px",
+          borderBottom: `1px solid ${colors.cardBorder}`,
+          background: colors.card,
+        }}>
+          <button
+            onClick={toggleTheme}
+            className="flex items-center gap-2"
+            title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+            style={{
+              padding: "6px 14px",
+              borderRadius: "8px",
+              border: `1.5px solid ${colors.inputBorder}`,
+              background: colors.inputBg,
+              color: colors.textSub,
+              cursor: "pointer",
+              fontSize: "12px",
+              fontWeight: 600,
+              transition: "all 0.15s",
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "#3a7bd5"; (e.currentTarget as HTMLElement).style.color = "#3a7bd5"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = colors.inputBorder; (e.currentTarget as HTMLElement).style.color = colors.textSub; }}
+          >
+            {theme === "light" ? <Moon size={14} /> : <Sun size={14} />}
+            {theme === "light" ? "Dark Mode" : "Light Mode"}
+          </button>
+        </div>
+
+        {/* ── Page content ── */}
+        <div className="flex-1 overflow-y-auto">
+          {children}
+        </div>
       </div>
     </div>
   );
