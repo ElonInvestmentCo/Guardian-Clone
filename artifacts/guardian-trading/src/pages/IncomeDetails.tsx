@@ -61,11 +61,11 @@ export default function IncomeDetails() {
     <OnboardingShell currentStep={4}>
       <div className="bg-white" style={{ borderRadius: "2px", boxShadow: "0 1px 6px rgba(0,0,0,0.10)", border: "1px solid #dde3e9", borderLeft: "4px solid #3a7bd5" }}>
 
-        <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
+        <div className="px-4 sm:px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
           <h1 className="font-bold uppercase" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>Income Details</h1>
         </div>
 
-        <div className="px-8 py-6">
+        <div className="px-4 sm:px-8 py-6">
           {globalError && (
             <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>
               {globalError}
@@ -73,7 +73,7 @@ export default function IncomeDetails() {
           )}
 
           <form onSubmit={handleSubmit} noValidate>
-            <div className="flex gap-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               <SelectList label="Annual Income" options={ANNUAL_INCOME} selected={annualIncome} onSelect={setAnnualIncome} />
               <SelectList label="Net Worth" options={NET_WORTH} selected={netWorth} onSelect={setNetWorth} />
               <SelectList label="Liquid Net Worth" options={LIQUID_NET_WORTH} selected={liquidNetWorth} onSelect={setLiquidNetWorth} />

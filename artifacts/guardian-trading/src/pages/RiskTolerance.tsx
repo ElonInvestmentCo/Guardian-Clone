@@ -23,7 +23,7 @@ const PRIORITY_OPTIONS = ["1", "2", "3", "4", "5"];
 const selectStyle: React.CSSProperties = {
   background: "#e8edf2", border: "1px solid #ccd3da", borderRadius: "3px",
   padding: "7px 28px 7px 10px", color: "#555", fontSize: "13px",
-  appearance: "none" as const, cursor: "pointer", width: "160px",
+  appearance: "none" as const, cursor: "pointer",
 };
 
 export default function RiskTolerance() {
@@ -62,11 +62,11 @@ export default function RiskTolerance() {
     <OnboardingShell currentStep={5}>
       <div className="bg-white" style={{ borderRadius: "2px", boxShadow: "0 1px 6px rgba(0,0,0,0.10)", border: "1px solid #dde3e9", borderLeft: "4px solid #3a7bd5" }}>
 
-        <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
+        <div className="px-4 sm:px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
           <h1 className="font-bold uppercase" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>Risk Tolerance</h1>
         </div>
 
-        <div className="px-8 py-6">
+        <div className="px-4 sm:px-8 py-6">
           {globalError && (
             <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>{globalError}</div>
           )}
@@ -117,13 +117,13 @@ export default function RiskTolerance() {
               <p className="mb-4" style={{ fontSize: "12px", color: "#777" }}>Rank each strategy from 1 (highest priority) to 5 (lowest), using each number once:</p>
               <div className="flex flex-col gap-3">
                 {STRATEGIES.map(({ key, label, desc }) => (
-                  <div key={key} className="flex items-center gap-4">
+                  <div key={key} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                     <div className="flex-1">
                       <p style={{ fontSize: "13px", fontWeight: 500, color: "#333" }}>{label}</p>
                       <p style={{ fontSize: "11px", color: "#888" }}>{desc}</p>
                     </div>
-                    <div className="relative flex-shrink-0">
-                      <select value={priorities[key] ?? ""} onChange={(e) => handlePriorityChange(key, e.target.value)} style={selectStyle} className="focus:outline-none">
+                    <div className="relative flex-shrink-0 mt-2 sm:mt-0">
+                      <select value={priorities[key] ?? ""} onChange={(e) => handlePriorityChange(key, e.target.value)} style={selectStyle} className="focus:outline-none w-full sm:w-[160px]">
                         <option value="">—</option>
                         {PRIORITY_OPTIONS.map((p) => (
                           <option key={p} value={p} disabled={usedPriorities.includes(p) && priorities[key] !== p}>{p}</option>

@@ -94,11 +94,11 @@ export default function IdProofUpload() {
     <OnboardingShell currentStep={8}>
       <div className="bg-white" style={{ borderRadius: "2px", boxShadow: "0 1px 6px rgba(0,0,0,0.10)", border: "1px solid #dde3e9", borderLeft: "4px solid #3a7bd5" }}>
 
-        <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
+        <div className="px-4 sm:px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
           <h1 className="font-bold uppercase" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>Identification Proof Upload</h1>
         </div>
 
-        <div className="px-8 py-6">
+        <div className="px-4 sm:px-8 py-6">
           <p className="mb-5" style={{ fontSize: "12px", color: "#666", lineHeight: "1.6" }}>
             Government Issued ID. If Driver's License is used and the address is not the same as on the application please provide a utility bill with your name and address.
           </p>
@@ -123,7 +123,7 @@ export default function IdProofUpload() {
 
             <p className="mb-4" style={{ fontSize: "12px", color: "#555" }}>Please upload a copy of the Applicant's Government Issued ID (Front and Back). <span style={{ color: "#e53e3e" }}>*</span></p>
 
-            <div className="flex gap-4 mb-5">
+            <div className="flex flex-col sm:flex-row gap-4 mb-5">
               <FileUploadBox slot={frontSlot} role="id_front" onSlotChange={(s) => { setFrontSlot(s); setError(""); }} label="Front of ID" hasError={!!error && frontSlot.status !== "success"} />
               <FileUploadBox slot={backSlot}  role="id_back"  onSlotChange={(s) => { setBackSlot(s); setError(""); }} label="Back of ID" hasError={!!error && backSlot.status !== "success"} />
             </div>

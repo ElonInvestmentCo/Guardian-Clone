@@ -103,11 +103,11 @@ export default function Signatures() {
     <OnboardingShell currentStep={11}>
       <div className="bg-white" style={{ borderRadius: "2px", boxShadow: "0 1px 6px rgba(0,0,0,0.10)", border: "1px solid #dde3e9", borderLeft: "4px solid #3a7bd5" }}>
 
-        <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
+        <div className="px-4 sm:px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
           <h1 className="font-bold uppercase" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>Disclosures &amp; Signatures</h1>
         </div>
 
-        <div className="px-8 py-6">
+        <div className="px-4 sm:px-8 py-6">
           {globalError && (
             <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>{globalError}</div>
           )}
@@ -123,13 +123,15 @@ export default function Signatures() {
 
             <div className="mb-6" style={{ border: `1px solid ${errors.consents ? "#e53e3e" : "#dde3e9"}`, borderRadius: "2px" }}>
               {DISCLOSURE_DOCS.map((doc, i) => (
-                <div key={doc} className="flex items-center" style={{ padding: "9px 14px", borderBottom: i < DISCLOSURE_DOCS.length - 1 ? "1px solid #eef1f4" : "none" }}>
+                <div key={doc} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-0" style={{ padding: "9px 14px", borderBottom: i < DISCLOSURE_DOCS.length - 1 ? "1px solid #eef1f4" : "none" }}>
                   <span style={{ fontSize: "12px", color: "#444", flex: 1 }}>{doc} *</span>
-                  <a href="#" style={{ fontSize: "12px", color: "#3a7bd5", textDecoration: "underline", marginRight: "24px" }}>View</a>
-                  <label className="flex items-center gap-1.5 cursor-pointer flex-shrink-0">
-                    <input type="checkbox" checked={consents[doc]} onChange={(e) => { setConsents((p) => ({ ...p, [doc]: e.target.checked })); setErrors((p) => ({ ...p, consents: undefined })); }} style={{ accentColor: "#3a7bd5", width: "13px", height: "13px" }} />
-                    <span style={{ fontSize: "12px", color: "#555" }}>I provide my consent</span>
-                  </label>
+                  <div className="flex items-center gap-3 sm:gap-0">
+                    <a href="#" style={{ fontSize: "12px", color: "#3a7bd5", textDecoration: "underline", marginRight: "24px" }}>View</a>
+                    <label className="flex items-center gap-1.5 cursor-pointer flex-shrink-0">
+                      <input type="checkbox" checked={consents[doc]} onChange={(e) => { setConsents((p) => ({ ...p, [doc]: e.target.checked })); setErrors((p) => ({ ...p, consents: undefined })); }} style={{ accentColor: "#3a7bd5", width: "13px", height: "13px" }} />
+                      <span style={{ fontSize: "12px", color: "#555" }}>I provide my consent</span>
+                    </label>
+                  </div>
                 </div>
               ))}
             </div>
@@ -203,8 +205,8 @@ export default function Signatures() {
       </div>
 
       {showElectronicModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: "rgba(0,0,0,0.45)" }}>
-          <div className="bg-white rounded shadow-xl" style={{ width: "380px", padding: "28px 28px 24px" }}>
+        <div className="fixed inset-0 flex items-center justify-center z-50 px-4" style={{ background: "rgba(0,0,0,0.45)" }}>
+          <div className="bg-white rounded shadow-xl w-full max-w-[380px]" style={{ padding: "28px 28px 24px" }}>
             <h2 className="font-bold text-center mb-4" style={{ fontSize: "14px", color: "#333", letterSpacing: "0.04em", textTransform: "uppercase" }}>Electronic Records<br />and Signature<br />Disclosure</h2>
             <label className="flex gap-2 cursor-pointer mb-6">
               <input type="checkbox" checked={electronicAgreed} onChange={(e) => setElectronicAgreed(e.target.checked)} style={{ marginTop: "3px", flexShrink: 0, accentColor: "#3a7bd5" }} />
@@ -222,8 +224,8 @@ export default function Signatures() {
       )}
 
       {showSignatureModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: "rgba(0,0,0,0.45)" }}>
-          <div className="bg-white rounded shadow-xl" style={{ width: "460px", padding: "24px" }}>
+        <div className="fixed inset-0 flex items-center justify-center z-50 px-4" style={{ background: "rgba(0,0,0,0.45)" }}>
+          <div className="bg-white rounded shadow-xl w-full max-w-[460px]" style={{ padding: "24px" }}>
             <div className="flex items-center justify-between mb-4">
               <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#333" }}>Signature</h2>
               <button type="button" onClick={() => setShowSignatureModal(false)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#777", lineHeight: 1 }}>✕</button>
@@ -245,8 +247,8 @@ export default function Signatures() {
       )}
 
       {showSubmitModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: "rgba(0,0,0,0.45)" }}>
-          <div className="bg-white rounded shadow-xl" style={{ width: "380px", padding: "28px" }}>
+        <div className="fixed inset-0 flex items-center justify-center z-50 px-4" style={{ background: "rgba(0,0,0,0.45)" }}>
+          <div className="bg-white rounded shadow-xl w-full max-w-[380px]" style={{ padding: "28px" }}>
             <div className="flex items-center justify-between mb-4">
               <h2 style={{ fontSize: "15px", fontWeight: 700, color: "#333" }}>Application Submission</h2>
               <button type="button" onClick={() => setShowSubmitModal(false)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#777", lineHeight: 1 }}>✕</button>

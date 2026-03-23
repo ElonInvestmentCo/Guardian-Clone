@@ -65,11 +65,11 @@ export default function FundingDetails() {
     <OnboardingShell currentStep={9}>
       <div className="bg-white" style={{ borderRadius: "2px", boxShadow: "0 1px 6px rgba(0,0,0,0.10)", border: "1px solid #dde3e9", borderLeft: "4px solid #3a7bd5" }}>
 
-        <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
+        <div className="px-4 sm:px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
           <h1 className="font-bold uppercase" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>Funding Details</h1>
         </div>
 
-        <div className="px-8 py-6">
+        <div className="px-4 sm:px-8 py-6">
           {globalError && (
             <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>{globalError}</div>
           )}
@@ -77,7 +77,7 @@ export default function FundingDetails() {
           <form onSubmit={handleSubmit} noValidate>
             <p className="mb-3" style={{ fontSize: "13px", color: "#444", fontWeight: 500 }}>I am funding this account with (check all that apply)</p>
 
-            <div className="flex gap-10 mb-3">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 mb-3">
               <div className="flex flex-col gap-2.5" style={{ minWidth: "220px" }}>
                 {FUNDING_LEFT.map((src) => (
                   <label key={src} className="flex items-center gap-2 cursor-pointer">
@@ -105,30 +105,30 @@ export default function FundingDetails() {
             )}
             {errors.sources && <p className="mb-3 text-xs" style={{ color: "#e53e3e" }}>{errors.sources}</p>}
 
-            <div className="flex gap-4 mb-4">
-              <div style={{ flex: 1 }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
                 <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>Name of the bank you will be funding your account from <span style={{ color: "#e53e3e" }}>*</span></label>
                 <input type="text" value={bankName} onChange={(e) => { setBankName(e.target.value); setErrors((p) => ({ ...p, bankName: undefined })); }} style={{ ...inputStyle, borderColor: errors.bankName ? "#e53e3e" : "#ccd3da" }} />
                 {errors.bankName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.bankName}</p>}
               </div>
-              <div style={{ flex: 1 }}>
+              <div>
                 <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>ABA / SWIFT <span style={{ color: "#e53e3e" }}>*</span></label>
                 <input type="text" value={abaSwift} onChange={(e) => { setAbaSwift(e.target.value); setErrors((p) => ({ ...p, abaSwift: undefined })); }} style={{ ...inputStyle, borderColor: errors.abaSwift ? "#e53e3e" : "#ccd3da" }} />
                 {errors.abaSwift && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.abaSwift}</p>}
               </div>
             </div>
 
-            <div className="flex gap-4 mb-6">
-              <div style={{ flex: 1 }}>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+              <div>
                 <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>Account Number</label>
                 <input type="text" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} style={inputStyle} />
               </div>
-              <div style={{ flex: 1 }}>
+              <div>
                 <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>Account Name <span style={{ color: "#e53e3e" }}>*</span></label>
                 <input type="text" value={accountName} onChange={(e) => { setAccountName(e.target.value); setErrors((p) => ({ ...p, accountName: undefined })); }} style={{ ...inputStyle, borderColor: errors.accountName ? "#e53e3e" : "#ccd3da" }} />
                 {errors.accountName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.accountName}</p>}
               </div>
-              <div style={{ flex: 1 }}>
+              <div>
                 <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>Account Type <span style={{ color: "#e53e3e" }}>*</span></label>
                 <div className="relative">
                   <select value={accountType} onChange={(e) => setAccountType(e.target.value)} style={{ ...inputStyle, appearance: "none", paddingRight: "32px", cursor: "pointer", background: "#f4f6f8" }} className="focus:outline-none">

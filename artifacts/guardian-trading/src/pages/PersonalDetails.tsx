@@ -215,13 +215,13 @@ export default function PersonalDetails() {
         className="bg-white"
         style={{ borderRadius: "2px", boxShadow: "0 1px 6px rgba(0,0,0,0.10)", border: "1px solid #dde3e9", borderLeft: "4px solid #3a7bd5" }}
       >
-        <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
+        <div className="px-4 sm:px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
           <h1 className="font-bold uppercase" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>
             Personal Details
           </h1>
         </div>
 
-        <div className="px-8 py-6">
+        <div className="px-4 sm:px-8 py-6">
           {globalError && (
             <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>
               {globalError}
@@ -230,7 +230,7 @@ export default function PersonalDetails() {
 
           <form onSubmit={handleSubmit} noValidate>
 
-            <div className="grid grid-cols-2 gap-5 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-4">
               <div>
                 <FieldLabel required>First Name</FieldLabel>
                 <input
@@ -279,7 +279,7 @@ export default function PersonalDetails() {
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-5 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-4">
 
               <div>
                 <FieldLabel required>Country</FieldLabel>
@@ -366,7 +366,7 @@ export default function PersonalDetails() {
               </p>
             )}
 
-            <div className="grid grid-cols-2 gap-5 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
               <div>
                 <FieldLabel required>ZIP / Postal Code</FieldLabel>
                 <input

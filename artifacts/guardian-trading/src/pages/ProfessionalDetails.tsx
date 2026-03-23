@@ -205,24 +205,24 @@ export default function ProfessionalDetails() {
     <OnboardingShell currentStep={2}>
       <div className="bg-white" style={{ borderRadius: "2px", boxShadow: "0 1px 6px rgba(0,0,0,0.10)", border: "1px solid #dde3e9", borderLeft: "4px solid #3a7bd5" }}>
 
-        <div className="px-8 pt-6 pb-3" style={{ borderBottom: "1px solid #e8edf2" }}>
+        <div className="px-4 sm:px-8 pt-6 pb-3" style={{ borderBottom: "1px solid #e8edf2" }}>
           <h1 className="font-semibold mb-0.5" style={{ color: "#3a7bd5", fontSize: "20px" }}>Professional Details</h1>
           <p style={{ fontSize: "13px", color: "#555" }}>Are You Currently</p>
         </div>
 
-        <div className="px-8 py-6">
+        <div className="px-4 sm:px-8 py-6">
           {globalError && (
             <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>
               {globalError}
             </div>
           )}
 
-          <div className="flex gap-3 mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
             {EMPLOYMENT_OPTIONS.map(({ key, label, Icon }) => {
               const sel = employment === key;
               return (
                 <button key={key} type="button" onClick={() => { setEmployment(key); setErrors({}); setTouched({}); }}
-                  className="flex-1 flex flex-col items-center justify-center gap-2 py-5 transition-colors"
+                  className="flex flex-col items-center justify-center gap-2 py-5 transition-colors"
                   style={{ background: sel ? "#3a7bd5" : "#dce6f0", color: sel ? "white" : "#333", border: "none", borderRadius: "3px", cursor: "pointer", minHeight: "80px" }}
                 >
                   <Icon size={28} strokeWidth={1.5} />
@@ -235,7 +235,7 @@ export default function ProfessionalDetails() {
           <form onSubmit={handleSubmit} noValidate>
             {needsEmployer ? (
               <>
-                <div className="grid grid-cols-2 gap-5 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-4">
                   <div>
                     <FieldLabel req>Employer Name</FieldLabel>
                     <input style={showError("employerName") ? errorFieldStyle : fieldStyle} className="focus:outline-none" value={form.employerName} onChange={(e) => { set("employerName")(e.target.value); if (touched.employerName) setTimeout(() => validateField("employerName"), 0); }} onBlur={() => markTouched("employerName")} />
@@ -247,7 +247,7 @@ export default function ProfessionalDetails() {
                     {showError("positionTitle") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.positionTitle}</p>}
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-5 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-4">
                   <div>
                     <FieldLabel req>Address Of Employer</FieldLabel>
                     <input style={showError("employerAddress") ? errorFieldStyle : fieldStyle} className="focus:outline-none" value={form.employerAddress} onChange={(e) => { set("employerAddress")(e.target.value); if (touched.employerAddress) setTimeout(() => validateField("employerAddress"), 0); }} onBlur={() => markTouched("employerAddress")} autoComplete="street-address" />
@@ -258,7 +258,7 @@ export default function ProfessionalDetails() {
                     <input style={fieldStyle} className="focus:outline-none" value={form.aptSuiteNo} onChange={(e) => set("aptSuiteNo")(e.target.value)} />
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-5 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-4">
                   <div>
                     <FieldLabel req>Country</FieldLabel>
                     <SearchableSelect
@@ -306,7 +306,7 @@ export default function ProfessionalDetails() {
                     {showError("city") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.city}</p>}
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-5 mb-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-1">
                   <div>
                     <FieldLabel req>Years With Employer</FieldLabel>
                     <input style={showError("yearsWithEmployer") ? errorFieldStyle : fieldStyle} className="focus:outline-none" value={form.yearsWithEmployer} onChange={(e) => { set("yearsWithEmployer")(e.target.value); if (touched.yearsWithEmployer) setTimeout(() => validateField("yearsWithEmployer"), 0); }} onBlur={() => markTouched("yearsWithEmployer")} />

@@ -75,11 +75,11 @@ export default function InvestmentExperience() {
     <OnboardingShell currentStep={7}>
       <div className="bg-white" style={{ borderRadius: "2px", boxShadow: "0 1px 6px rgba(0,0,0,0.10)", border: "1px solid #dde3e9", borderLeft: "4px solid #3a7bd5" }}>
 
-        <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
+        <div className="px-4 sm:px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
           <h1 className="font-bold uppercase" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>Investment Experience</h1>
         </div>
 
-        <div className="px-8 py-6">
+        <div className="px-4 sm:px-8 py-6">
           <div className="mb-6 px-4 py-3" style={{ background: "#f0f4f8", border: "1px solid #dde3e9", borderRadius: "2px" }}>
             <p style={{ fontSize: "12px", color: "#555", lineHeight: "1.6" }}>
               We are collecting the information below to better understand your investment experience. Please check the boxes that best describe your investment experience to date.
@@ -96,7 +96,7 @@ export default function InvestmentExperience() {
 
           <form onSubmit={handleSubmit} noValidate>
             <div style={{ border: "1px solid #dde3e9", borderRadius: "2px", overflow: "hidden" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "180px 1fr 1fr 1fr", borderBottom: "1px solid #dde3e9", padding: "8px 16px", background: "#f8fafc" }}>
+              <div className="hidden lg:grid" style={{ gridTemplateColumns: "180px 1fr 1fr 1fr", borderBottom: "1px solid #dde3e9", padding: "8px 16px", background: "#f8fafc" }}>
                 <span style={{ fontSize: "12px", fontWeight: 700, color: "#555" }}>Investment</span>
                 <span style={{ fontSize: "12px", fontWeight: 700, color: "#555" }}>Year(s) Of Experience</span>
                 <span style={{ fontSize: "12px", fontWeight: 700, color: "#555" }}>Transaction(s) Per Year</span>
@@ -107,7 +107,7 @@ export default function InvestmentExperience() {
                 const isLast = idx === INVESTMENTS.length - 1;
                 const isIncomplete = row.enabled && (!row.years || !row.transactions || !row.knowledge);
                 return (
-                  <div key={key} style={{ display: "grid", gridTemplateColumns: "180px 1fr 1fr 1fr", borderBottom: isLast ? "none" : "1px solid #dde3e9", padding: "14px 16px", alignItems: "flex-start", background: isIncomplete && error ? "#fffbfb" : "transparent" }}>
+                  <div key={key} className="hidden lg:grid" style={{ gridTemplateColumns: "180px 1fr 1fr 1fr", borderBottom: isLast ? "none" : "1px solid #dde3e9", padding: "14px 16px", alignItems: "flex-start", background: isIncomplete && error ? "#fffbfb" : "transparent" }}>
                     <label className="flex items-center gap-2 cursor-pointer" style={{ paddingTop: "1px" }}>
                       <input type="checkbox" checked={row.enabled} onChange={() => toggle(key)} style={{ width: "14px", height: "14px", accentColor: "#3a7bd5", flexShrink: 0 }} />
                       <span style={{ fontSize: "13px", color: "#444", fontWeight: 500 }}>{label}</span>
@@ -118,6 +118,37 @@ export default function InvestmentExperience() {
                   </div>
                 );
               })}
+              <div className="lg:hidden">
+                {INVESTMENTS.map(({ key, label }, idx) => {
+                  const row = data[key];
+                  const isLast = idx === INVESTMENTS.length - 1;
+                  const isIncomplete = row.enabled && (!row.years || !row.transactions || !row.knowledge);
+                  return (
+                    <div key={key} className="p-4" style={{ borderBottom: isLast ? "none" : "1px solid #dde3e9", background: isIncomplete && error ? "#fffbfb" : "transparent" }}>
+                      <label className="flex items-center gap-2 cursor-pointer mb-3">
+                        <input type="checkbox" checked={row.enabled} onChange={() => toggle(key)} style={{ width: "14px", height: "14px", accentColor: "#3a7bd5", flexShrink: 0 }} />
+                        <span style={{ fontSize: "13px", color: "#444", fontWeight: 600 }}>{label}</span>
+                      </label>
+                      {row.enabled && (
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pl-6">
+                          <div>
+                            <p style={{ fontSize: "11px", fontWeight: 700, color: "#555", marginBottom: "6px" }}>Year(s) Of Experience</p>
+                            <RadioGroup name={`years-${key}`} options={YEARS_OPTIONS} value={row.years} onChange={(v) => set(key, "years", v)} disabled={false} />
+                          </div>
+                          <div>
+                            <p style={{ fontSize: "11px", fontWeight: 700, color: "#555", marginBottom: "6px" }}>Transaction(s) Per Year</p>
+                            <RadioGroup name={`tx-${key}`} options={TRANSACTIONS_OPTIONS} value={row.transactions} onChange={(v) => set(key, "transactions", v)} disabled={false} />
+                          </div>
+                          <div>
+                            <p style={{ fontSize: "11px", fontWeight: 700, color: "#555", marginBottom: "6px" }}>Knowledge</p>
+                            <RadioGroup name={`know-${key}`} options={KNOWLEDGE_OPTIONS} value={row.knowledge} onChange={(v) => set(key, "knowledge", v)} disabled={false} />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="flex gap-3 mt-6">

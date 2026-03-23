@@ -56,11 +56,11 @@ export default function FinancialSituation() {
     <OnboardingShell currentStep={6}>
       <div className="bg-white" style={{ borderRadius: "2px", boxShadow: "0 1px 6px rgba(0,0,0,0.10)", border: "1px solid #dde3e9", borderLeft: "4px solid #3a7bd5" }}>
 
-        <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
+        <div className="px-4 sm:px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
           <h1 className="font-bold uppercase" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>Financial Situation</h1>
         </div>
 
-        <div className="px-8 py-6">
+        <div className="px-4 sm:px-8 py-6">
           <p className="mb-5" style={{ fontSize: "12px", color: "#777" }}>Financial Situation and Needs, Liquidity Considerations and Tax Status</p>
 
           {globalError && (
@@ -68,13 +68,13 @@ export default function FinancialSituation() {
           )}
 
           <form onSubmit={handleSubmit} noValidate>
-            <div className="flex gap-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
               <SelectList label="Annual Expenses" options={ANNUAL_EXPENSE_OPTIONS} selected={annualExpense} onSelect={(v) => { setAnnualExpense(v); setErrors((p) => ({ ...p, annualExpense: "" })); }} error={errors.annualExpense} />
               <SelectList label="SPECIAL EXPENSES (future & non-recurring)" options={SPECIAL_EXPENSE_OPTIONS} selected={specialExpense} onSelect={(v) => { setSpecialExpense(v); setErrors((p) => ({ ...p, specialExpense: "" })); }} error={errors.specialExpense} />
               <SelectList label="Liquidity Needs" options={LIQUIDITY_OPTIONS} selected={liquidity} onSelect={(v) => { setLiquidity(v); setErrors((p) => ({ ...p, liquidity: "" })); }} error={errors.liquidity} />
             </div>
 
-            <div className="mb-7" style={{ maxWidth: "360px" }}>
+            <div className="mb-7 sm:max-w-[360px]">
               <p className="mb-2" style={{ fontSize: "13px", color: "#444", fontWeight: 500 }}>The expected period you plan to achieve your financial goal(s)</p>
               <SelectList label="" options={TIME_HORIZON_OPTIONS} selected={timeHorizon} onSelect={(v) => { setTimeHorizon(v); setErrors((p) => ({ ...p, timeHorizon: "" })); }} error={errors.timeHorizon} />
             </div>

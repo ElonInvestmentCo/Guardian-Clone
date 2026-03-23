@@ -196,14 +196,14 @@ export default function IdInformation() {
     <OnboardingShell currentStep={3}>
       <div className="bg-white" style={{ borderRadius: "2px", boxShadow: "0 1px 6px rgba(0,0,0,0.10)", border: "1px solid #dde3e9", borderLeft: "4px solid #3a7bd5" }}>
 
-        <div className="px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
+        <div className="px-4 sm:px-8 pt-6 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
           <h1 className="font-bold uppercase mb-1" style={{ color: "#3a7bd5", fontSize: "18px", letterSpacing: "0.04em" }}>ID Information</h1>
           <p className="font-semibold uppercase" style={{ color: "#3a7bd5", fontSize: "10px", letterSpacing: "0.05em" }}>
             Important Information About Procedures For Opening A New Account USA Patriot Act Information
           </p>
         </div>
 
-        <div className="px-8 py-6">
+        <div className="px-4 sm:px-8 py-6">
           <p className="mb-5 leading-relaxed" style={{ fontSize: "12px", color: "#666" }}>
             To help the government fight the funding of terrorism and money-laundering activities, Federal law requires that Guardian verify your identity by obtaining your name, date of birth, address, and a government-issued identification number before opening your account.
           </p>
@@ -215,7 +215,7 @@ export default function IdInformation() {
           )}
 
           <form onSubmit={handleSubmit} noValidate>
-            <div className="grid grid-cols-4 gap-5 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-4">
               <div>
                 <FieldLabel req>Country of Tax Residence</FieldLabel>
                 <SearchableSelect
@@ -255,7 +255,7 @@ export default function IdInformation() {
                 {showError("dateOfBirth") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.dateOfBirth}</p>}
               </div>
             </div>
-            <div className="mb-5" style={{ maxWidth: "25%" }}>
+            <div className="mb-5 sm:max-w-[50%] lg:max-w-[25%]">
               <FieldLabel req>Tax ID (SS# / EIN / Foreign ID)</FieldLabel>
               <input style={showError("taxId") ? errorFieldStyle : fieldStyle} className="focus:outline-none" value={form.taxId} onChange={(e) => { set("taxId")(e.target.value); if (touched.taxId) setTimeout(() => validateField("taxId"), 0); }} onBlur={() => markTouched("taxId")} placeholder={form.taxIdType === "SSN" ? "123-45-6789" : form.taxIdType === "EIN" ? "12-3456789" : ""} />
               {showError("taxId") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.taxId}</p>}
@@ -263,7 +263,7 @@ export default function IdInformation() {
 
             <p className="mb-4 font-semibold" style={{ fontSize: "13px", color: "#444" }}>Valid Government Issued Photo ID</p>
 
-            <div className="grid grid-cols-4 gap-5 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-4">
               <div>
                 <FieldLabel req>ID Type</FieldLabel>
                 <div className="relative">
@@ -310,7 +310,7 @@ export default function IdInformation() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-5 mb-6" style={{ maxWidth: "50%" }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6 lg:max-w-[50%]">
               <div>
                 <FieldLabel req>Issue Date</FieldLabel>
                 <MaskedDateInput
