@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import { useTheme } from "@/context/ThemeContext";
+import AiAssistant from "@/components/AiAssistant";
 
 const NAV = [
   { icon: LayoutDashboard, label: "Dashboard",  href: "/dashboard"  },
@@ -217,6 +218,8 @@ export default function DashboardLayout({ children }: Props) {
         }}>
           {children}
         </div>
+
+        <AiAssistant />
 
         <nav className="flex md:hidden flex-shrink-0" style={{
           borderTop: `1px solid ${colors.topBarBorder}`,

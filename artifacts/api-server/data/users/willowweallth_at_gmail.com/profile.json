@@ -4,7 +4,7 @@
   "credentials": {
     "passwordHash": "enc:3e4bf09d8e013319dc36619d366da415:ac63aa4a02282f7f93daec96b9e805da:63413c8a18a0e37a"
   },
-  "updatedAt": "2026-03-23T05:39:03.687Z",
+  "updatedAt": "2026-03-23T06:13:10.799Z",
   "income": {
     "annualIncome": "over $500,000",
     "netWorth": "$500,001 - $1,000,000",
@@ -151,6 +151,12 @@
       "field": "backUploaded",
       "newValue": true,
       "timestamp": "2026-03-23T05:39:03.687Z"
+    },
+    {
+      "actionType": "ADMIN_APPROVE",
+      "actor": "admin",
+      "note": null,
+      "timestamp": "2026-03-23T06:13:10.799Z"
     }
   ],
   "riskTolerance": {
@@ -208,5 +214,6 @@
     "backFile": "data/users/willowweallth_at_gmail.com/documents/id_back.jpeg",
     "frontUploaded": true,
     "backUploaded": true
-  }
+  },
+  "status": "approved"
 }

@@ -1,0 +1,67 @@
+Build an AI Trading Assistant system that replicates the behavior, intelligence, and UX of Grok, even if the actual Grok API is not available.
+
+If Grok API access becomes available, structure the system so it can be easily swapped in later.
+
+CORE REQUIREMENTS:
+
+1. AI ENGINE
+- Use a real AI backend (OpenAI or similar) to power responses
+- Design an abstraction layer (aiService) so the provider can be switched to Grok in the future without rewriting the system
+
+2. GROK-LIKE BEHAVIOR
+- Fast, conversational, intelligent responses
+- Market-aware trading insights
+- Portfolio-aware suggestions
+- Clear, confident tone (not generic chatbot responses)
+
+3. DASHBOARD INTEGRATION
+- Add a floating AI assistant widget in the bottom-left corner
+- Auto-open on first load (non-intrusive)
+- Allow minimize, expand, and close
+- Persist chat per user
+
+4. TRADING INTELLIGENCE
+- Analyze:
+  - User portfolio
+  - Market data (real or simulated)
+- Provide:
+  - Buy/Sell suggestions
+  - Entry/exit points
+  - Risk levels
+  - Strategy insights
+
+5. CONTROLLED AUTO-TRADING
+- Add optional Auto-Trading Mode (OFF by default)
+- Require:
+  - User activation
+  - Risk disclaimer
+  - Limits (max trade size, stop-loss)
+
+- AI can:
+  - Suggest trades
+  - Allow “Quick Execute”
+  - Execute automatically only if user enables it
+
+6. STAKING SYSTEM
+- Suggest staking opportunities
+- Show APY, lock period, risk
+- Allow manual or rule-based staking
+
+7. ALERT SYSTEM
+- Real-time alerts:
+  - Market changes
+  - Trade opportunities
+  - Risk warnings
+
+8. UI/UX
+- Premium fintech design
+- Smooth animations (chat bubble, typing effect)
+- Responsive across all devices
+
+9. LOGGING & SAFETY
+- Log all AI actions and trades
+- Allow user override at all times
+- Prevent excessive or risky behavior
+
+FINAL REQUIREMENT:
+This must function like a real AI trading assistant similar to Grok, with high intelligence, fast responses, and deep integration into the trading system, while remaining modular so Grok API can be plugged in later if available.

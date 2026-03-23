@@ -12,7 +12,7 @@
     "accountName": "SDERSDERS",
     "accountType": "Checking"
   },
-  "updatedAt": "2026-03-23T05:31:48.815Z",
+  "updatedAt": "2026-03-23T06:18:28.903Z",
   "disclosures": {
     "wantsMargin": "no",
     "initialDeposit": "",
@@ -45,7 +45,7 @@
     "signatureName": "",
     "hasSigned": true
   },
-  "status": "verified",
+  "status": "approved",
   "verifiedAt": "2026-03-20T18:06:09.033Z",
   "general": {
     "registrationType": "Individual Account",
@@ -253,6 +253,30 @@
       "field": "expirationDate",
       "newValue": "08/08/2030",
       "timestamp": "2026-03-23T05:31:48.814Z"
+    },
+    {
+      "actionType": "ADMIN_APPROVE",
+      "actor": "admin",
+      "note": null,
+      "timestamp": "2026-03-23T06:13:20.443Z"
+    },
+    {
+      "actionType": "ADMIN_APPROVE",
+      "actor": "admin",
+      "note": null,
+      "timestamp": "2026-03-23T06:14:00.119Z"
+    },
+    {
+      "actionType": "ADMIN_APPROVE",
+      "actor": "admin",
+      "note": null,
+      "timestamp": "2026-03-23T06:18:15.147Z"
+    },
+    {
+      "actionType": "ADMIN_APPROVE",
+      "actor": "admin",
+      "note": null,
+      "timestamp": "2026-03-23T06:18:28.903Z"
     }
   ],
   "professional": {
