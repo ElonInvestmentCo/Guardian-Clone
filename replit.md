@@ -223,6 +223,43 @@ Full-page detail accessed by clicking any user (from Users or Activity Logs). Ta
 
 ---
 
+## AI Trading Assistant
+
+Floating chat widget on all dashboard pages, powered by an AI service abstraction layer.
+
+### Architecture
+- **Frontend**: `AiAssistant.tsx` — floating chat widget in bottom-left of dashboard with open/minimized/expanded states, streaming SSE message display, quick prompts, auto-trading toggle with disclaimer modal
+- **Backend**: AI service abstraction layer with provider auto-selection
+  - `src/lib/ai/aiService.ts` — `AiProvider` interface with Grok (xAI) and OpenAI implementations using OpenAI SDK
+  - `src/lib/ai/tradingContext.ts` — builds system prompt with portfolio/market/staking context
+  - `src/lib/ai/chatStore.ts` — file-based conversation history per user (`data/ai-chats/{email}.json`)
+  - `src/routes/ai/index.ts` — SSE streaming chat, history, clear, portfolio, market, staking, provider endpoints
+
+### AI Provider Priority
+1. **Grok (xAI)**: Set `XAI_API_KEY` or `GROK_API_KEY` env var → uses `https://api.x.ai/v1` with `grok-3` model
+2. **OpenAI (Replit integration)**: Falls back when no Grok key → uses `AI_INTEGRATIONS_OPENAI_BASE_URL` with `gpt-4o` model
+
+### API Routes
+- `POST /api/ai/chat` — SSE streaming chat (body: `{ message, email }`)
+- `GET  /api/ai/history?email=` — conversation history
+- `POST /api/ai/clear` — clear conversation (body: `{ email }`)
+- `GET  /api/ai/portfolio` — portfolio data
+- `GET  /api/ai/market` — market data
+- `GET  /api/ai/staking` — staking data
+- `GET  /api/ai/provider` — current AI provider name
+
+### Security
+- AI output sanitized with DOMPurify (allowlist: strong, em, code, br)
+- Buffered SSE parser prevents partial-frame data loss
+- AbortController for request cancellation on widget close
+- Backend disconnect detection stops model streaming when client disconnects
+
+### Dependencies
+- `openai` (api-server) — OpenAI SDK for both Grok and OpenAI providers
+- `dompurify` (guardian-trading) — HTML sanitization for AI responses
+
+---
+
 ## Packages
 
 ### `artifacts/api-server` (`@workspace/api-server`)
