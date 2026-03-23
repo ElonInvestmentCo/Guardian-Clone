@@ -12,7 +12,7 @@ const inputStyle: React.CSSProperties = {
   borderRadius: "2px", color: "#444", background: "white", outline: "none",
 };
 
-type Fields = "sources" | "bankName" | "abaSwift" | "accountNumber" | "accountName";
+type Fields = "sources" | "bankName" | "abaSwift" | "accountNumber" | "accountName" | "accountType";
 
 export default function FundingDetails() {
   const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(9);
@@ -24,7 +24,7 @@ export default function FundingDetails() {
   const [abaSwift,      setAbaSwift]      = useState((sd.abaSwift         as string) ?? "");
   const [accountNumber, setAccountNumber] = useState((sd.accountNumber    as string) ?? "");
   const [accountName,   setAccountName]   = useState((sd.accountName      as string) ?? "");
-  const [accountType,   setAccountType]   = useState((sd.accountType      as string) ?? "Checking");
+  const [accountType,   setAccountType]   = useState((sd.accountType      as string) ?? "");
   const [errors,        setErrors]        = useState<FieldErrors<Fields>>({});
 
   const toggleSource = (src: string) => { setSources((prev) => {
@@ -42,6 +42,8 @@ export default function FundingDetails() {
     if (an) e.accountName = an;
     const acn = validateAccountNum(accountNumber);
     if (acn) e.accountNumber = acn;
+    const at = required(accountType, "Account type");
+    if (at) e.accountType = at;
     return e;
   };
 
@@ -131,13 +133,15 @@ export default function FundingDetails() {
               <div>
                 <label style={{ fontSize: "12px", color: "#555", display: "block", marginBottom: "4px" }}>Account Type <span style={{ color: "#e53e3e" }}>*</span></label>
                 <div className="relative">
-                  <select value={accountType} onChange={(e) => setAccountType(e.target.value)} style={{ ...inputStyle, appearance: "none", paddingRight: "32px", cursor: "pointer", background: "#f4f6f8" }} className="focus:outline-none">
+                  <select value={accountType} onChange={(e) => { setAccountType(e.target.value); setErrors((p) => ({ ...p, accountType: undefined })); }} style={{ ...inputStyle, appearance: "none", paddingRight: "32px", cursor: "pointer", background: "#f4f6f8", borderColor: errors.accountType ? "#e53e3e" : "#ccd3da" }} className="focus:outline-none">
+                    <option value="" disabled>Please Select</option>
                     {ACCOUNT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
                   </select>
                   <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
                   </div>
                 </div>
+                {errors.accountType && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.accountType}</p>}
               </div>
             </div>
 

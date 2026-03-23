@@ -169,7 +169,7 @@
   "willowweallth@gmail.com": {
     "email": "willowweallth@gmail.com",
     "createdAt": "2026-03-23T05:16:18.602Z",
-    "updatedAt": "2026-03-23T08:36:50.106Z",
+    "updatedAt": "2026-03-23T22:59:40.013Z",
     "credentials": {
       "passwordHash": "enc:3e4bf09d8e013319dc36619d366da415:ac63aa4a02282f7f93daec96b9e805da:63413c8a18a0e37a"
     },
@@ -240,8 +240,8 @@
   "EVRENISIK220@GMAIL.COM": {
     "email": "EVRENISIK220@GMAIL.COM",
     "createdAt": "2026-03-23T22:56:03.571Z",
-    "updatedAt": "2026-03-23T22:56:03.571Z",
-    "status": "pending",
+    "updatedAt": "2026-03-23T22:58:36.787Z",
+    "status": "approved",
     "credentials": {
       "passwordHash": "enc:a1ad3dc65a7664435531d1e99fb4d516:5c4a741ef414a7c8e2f5d8eeb0dcf7c2:a129bf9d3041efc9"
     }

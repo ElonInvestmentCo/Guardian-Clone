@@ -61,7 +61,7 @@ function FileUploadBox({ slot, role, onSlotChange, label, hasError }: {
 export default function IdProofUpload() {
   const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(8);
 
-  const [idType,    setIdType]    = useState((savedData.idType as string) ?? "Government Issued ID");
+  const [idType,    setIdType]    = useState((savedData.idType as string) ?? "");
   const [frontSlot, setFrontSlot] = useState<SlotState>({ file: null, status: "idle", savedPath: null, errorMsg: null });
   const [backSlot,  setBackSlot]  = useState<SlotState>({ file: null, status: "idle", savedPath: null, errorMsg: null });
   const [error, setError] = useState("");
@@ -69,6 +69,10 @@ export default function IdProofUpload() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!idType) {
+      setError("Please select an ID type.");
+      return;
+    }
     if (frontSlot.status !== "success") {
       setError("Please upload the front of your ID document.");
       return;
@@ -113,7 +117,8 @@ export default function IdProofUpload() {
 
           <form onSubmit={handleSubmit} noValidate>
             <div className="mb-5 relative">
-              <select value={idType} onChange={(e) => setIdType(e.target.value)} style={{ width: "100%", padding: "9px 36px 9px 12px", fontSize: "13px", color: "#444", background: "#f4f6f8", border: "1px solid #ccd3da", borderRadius: "2px", appearance: "none", cursor: "pointer" }} className="focus:outline-none focus:border-[#3a7bd5]">
+              <select value={idType} onChange={(e) => { setIdType(e.target.value); setError(""); }} style={{ width: "100%", padding: "9px 36px 9px 12px", fontSize: "13px", color: idType ? "#444" : "#999", background: "#f4f6f8", border: "1px solid #ccd3da", borderRadius: "2px", appearance: "none", cursor: "pointer" }} className="focus:outline-none focus:border-[#3a7bd5]">
+                <option value="" disabled>Please Select</option>
                 {ID_TYPES.map((t) => (<option key={t} value={t}>{t}</option>))}
               </select>
               <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">

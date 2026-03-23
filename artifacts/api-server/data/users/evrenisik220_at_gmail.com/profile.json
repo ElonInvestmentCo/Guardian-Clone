@@ -1,9 +1,28 @@
 {
   "email": "EVRENISIK220@GMAIL.COM",
   "createdAt": "2026-03-23T22:56:03.571Z",
-  "status": "pending",
+  "status": "approved",
   "credentials": {
     "passwordHash": "enc:a1ad3dc65a7664435531d1e99fb4d516:5c4a741ef414a7c8e2f5d8eeb0dcf7c2:a129bf9d3041efc9"
   },
-  "updatedAt": "2026-03-23T22:56:03.571Z"
+  "updatedAt": "2026-03-23T22:58:36.788Z",
+  "_auditLog": [
+    {
+      "actionType": "ADMIN_APPROVE",
+      "actor": "admin",
+      "note": null,
+      "timestamp": "2026-03-23T22:58:36.788Z"
+    }
+  ],
+  "_notifications": [
+    {
+      "id": "67bd8e24-e721-4853-9e88-35584eb8e5b9",
+      "type": "kyc",
+      "title": "KYC Approved",
+      "message": "Your identity verification has been approved. You now have full access to Guardian Trading.",
+      "actionUrl": "/dashboard",
+      "read": false,
+      "createdAt": "2026-03-23T22:58:36.789Z"
+    }
+  ]
 }
