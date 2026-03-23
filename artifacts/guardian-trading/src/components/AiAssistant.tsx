@@ -177,7 +177,7 @@ export default function AiAssistant() {
     return (
       <button
         onClick={() => setState("open")}
-        id="chat-widget-container"
+        id="guardian-ai-widget"
         style={{
           position: "fixed",
           bottom: "24px",
@@ -212,7 +212,7 @@ export default function AiAssistant() {
   if (state === "minimized") {
     return (
       <div
-        id="chat-widget-container"
+        id="guardian-ai-widget"
         onClick={() => setState("open")}
         style={{
           position: "fixed",
@@ -309,7 +309,7 @@ export default function AiAssistant() {
       )}
 
       <div
-        id="chat-widget-container"
+        id="guardian-ai-widget"
         style={{
           position: "fixed",
           bottom: "24px",
