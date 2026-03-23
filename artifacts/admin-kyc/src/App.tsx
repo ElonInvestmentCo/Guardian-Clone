@@ -45,7 +45,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
 }
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
+  defaultOptions: { queries: { retry: 1, staleTime: 10_000, refetchInterval: 15_000, refetchOnWindowFocus: true } },
 });
 
 function AppShell() {

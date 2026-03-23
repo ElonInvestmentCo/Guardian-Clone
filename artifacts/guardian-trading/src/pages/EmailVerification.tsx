@@ -105,16 +105,33 @@ export default function EmailVerification() {
         return;
       }
 
-      // Fire-and-forget account registration — do not await so navigation is instant
       if (email && storedPassword) {
-        fetch(`${base}/api/auth/register`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password: storedPassword }),
-        }).catch(() => {});
+        let registered = false;
+        for (let attempt = 0; attempt < 3; attempt++) {
+          try {
+            const regRes = await fetch(`${base}/api/auth/register`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, password: storedPassword }),
+            });
+            if (regRes.ok) {
+              registered = true;
+              break;
+            }
+            const regData = await regRes.json().catch(() => ({})) as { error?: string };
+            console.error(`[Registration] Attempt ${attempt + 1} failed:`, regData.error);
+          } catch (regErr) {
+            console.error(`[Registration] Attempt ${attempt + 1} network error:`, regErr);
+          }
+          if (attempt < 2) await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+        }
+        if (!registered) {
+          setError("Account creation failed. Please try again.");
+          setVerifying(false);
+          return;
+        }
       }
 
-      // Clean up session and navigate immediately
       sessionStorage.setItem("signupEmail", email);
       sessionStorage.removeItem("verificationEmail");
       sessionStorage.removeItem("verificationPassword");

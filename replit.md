@@ -202,7 +202,7 @@ All dashboard pages are fully responsive with mobile-first breakpoints (optimize
 
 ## Admin KYC Dashboard
 
-Separate web artifact at `/admin-kyc/`. JWT Bearer token authentication (8h session).
+Separate web artifact at `/admin-kyc/`. JWT Bearer token authentication (8h session). Auto-polling every 15 seconds for real-time user detection (refetchInterval: 15_000, refetchOnWindowFocus: true).
 
 ### Views (5 total)
 1. **KYC Queue** — Sortable table of all applicants with risk score, status badges, side panel with profile/risk/audit tabs and approve/reject/resubmit actions
@@ -312,7 +312,7 @@ Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` 
 #### Auth Routes (`src/routes/auth.ts`)
 - `POST /api/auth/send-verification` — sends email verification code
 - `POST /api/auth/verify-code` — verifies the code
-- `POST /api/auth/register` — registers a user (in-memory)
+- `POST /api/auth/register` — registers a user (in-memory + persisted to disk via userDataStore)
 - `POST /api/auth/login` — validates email/password, returns success
 
 #### Signup Data Storage (`src/routes/signup.ts`, `src/lib/userDataStore.ts`)
