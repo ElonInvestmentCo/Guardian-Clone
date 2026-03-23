@@ -30,19 +30,19 @@ export function Navbar() {
         style={{
           background: "#000000",
           borderBottom: "1px solid rgba(255,255,255,0.06)",
-          height: "85px",
         }}
       >
         <div
-          className="w-full h-full flex items-center justify-between"
-          style={{ padding: "0 44px 0 56px" }}
+          className="w-full flex items-center justify-between"
+          style={{ height: "65px", paddingLeft: "clamp(16px, 4vw, 56px)", paddingRight: "clamp(16px, 4vw, 44px)" }}
         >
           {/* ── Logo ─────────────────────────────────────────────────────────── */}
           <Link href="/" className="flex items-center flex-shrink-0">
             <img
               src={guardianLogo}
               alt="Guardian Trading"
-              style={{ height: "62px", width: "auto", objectFit: "contain" }}
+              className="h-[42px] sm:h-[52px]"
+              style={{ width: "auto", objectFit: "contain" }}
               data-testid="img-logo"
             />
           </Link>
@@ -149,7 +149,7 @@ export function Navbar() {
       {isOpen && (
         <div
           className="fixed inset-0 z-40 flex flex-col lg:hidden"
-          style={{ background: "#000000", paddingTop: "85px" }}
+          style={{ background: "#000000", paddingTop: "65px" }}
         >
           <div className="flex flex-col px-8 py-4 gap-0">
             {navLinks.map((link) => (

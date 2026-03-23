@@ -23,7 +23,7 @@ export default function Home() {
     <Layout>
       {/* ── NEWS / BLOG ANNOUNCEMENT BAR ── */}
       {newsBannerVisible && (
-        <div className="fixed top-[85px] left-0 right-0 z-40 bg-[#1c1c1c] border-b border-white/5">
+        <div className="fixed top-[65px] left-0 right-0 z-40 bg-[#1c1c1c] border-b border-white/5">
           <div className="max-w-[1200px] mx-auto px-4 h-[42px] flex items-center justify-between gap-4">
             <div className="flex items-center gap-2 min-w-0">
               <span className="text-primary text-sm">✦</span>
