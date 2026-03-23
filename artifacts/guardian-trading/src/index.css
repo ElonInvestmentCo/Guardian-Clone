@@ -106,3 +106,12 @@
     bottom: calc(60px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
+
+@keyframes spinner-bars-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.spinner-bars-rotate {
+  animation: spinner-bars-rotate 1s steps(12) infinite;
+}

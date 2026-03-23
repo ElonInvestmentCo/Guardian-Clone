@@ -5,6 +5,8 @@ import KycDashboard from "@/pages/KycDashboard";
 import NotFound from "@/pages/not-found";
 import AdminLoginModal from "@/components/AdminKeyModal";
 import { isAuthenticated, clearSession, getSession } from "@/lib/api";
+import { LoadingProvider } from "@/context/LoadingContext";
+import { PageLoader } from "@/components/PageLoader";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
@@ -61,9 +63,12 @@ function AppShell() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-        <AppShell />
-      </WouterRouter>
+      <LoadingProvider>
+        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+          <AppShell />
+        </WouterRouter>
+        <PageLoader />
+      </LoadingProvider>
     </QueryClientProvider>
   );
 }

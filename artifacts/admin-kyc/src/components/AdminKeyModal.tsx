@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { login } from "@/lib/api";
+import { useLoading } from "@/context/LoadingContext";
 
 export default function AdminLoginModal({ onSuccess }: { onSuccess: () => void }) {
   const [username, setUsername] = useState("");
@@ -7,6 +8,7 @@ export default function AdminLoginModal({ onSuccess }: { onSuccess: () => void }
   const [showPw, setShowPw]     = useState(false);
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState("");
+  const { startLoading, stopLoading } = useLoading();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,6 +18,7 @@ export default function AdminLoginModal({ onSuccess }: { onSuccess: () => void }
     if (!password)        { setError("Password is required"); return; }
 
     setLoading(true);
+    startLoading();
     try {
       await login(username.trim(), password);
       onSuccess();
@@ -23,6 +26,7 @@ export default function AdminLoginModal({ onSuccess }: { onSuccess: () => void }
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
       setLoading(false);
+      stopLoading();
     }
   };
 
