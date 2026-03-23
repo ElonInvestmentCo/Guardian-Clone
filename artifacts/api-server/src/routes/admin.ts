@@ -287,6 +287,7 @@ router.post("/admin/reject-user", (req: Request, res: Response): void => {
   try {
     const { email, reason, adminNote } = req.body as { email: string; reason?: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
+    if (!reason || !reason.trim()) { res.status(400).json({ error: "Reject reason is required" }); return; }
     if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
 
     setUserStatus(email, "rejected");

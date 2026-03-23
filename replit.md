@@ -189,7 +189,7 @@ Full-page detail accessed by clicking any user (from Users or Activity Logs). Ta
 - **Risk** — Risk score gauge + flagged rules
 - **Audit** — Per-user audit timeline with color-coded action types
 - **Balance** — Current balance display + Set Balance form + balance history
-- **Admin Actions** — Full control panel: approve/reject/resubmit, suspend/ban/reactivate, assign role, reset password, flag user, delete account (with confirmation)
+- **Admin Actions** — Full control panel: approve/reject/resubmit (status-aware `KycDecisionBtn` with active highlight, checkmark, disabled state, "Decision recorded" banner), suspend/ban/reactivate, assign role, reset password, flag user, delete account (with confirmation). Reject requires non-empty reason (client + server validated). Both `UserPanel.tsx` (KYC Queue sidebar) and `UserProfileView.tsx` (Actions tab) share consistent KYC button behavior.
 
 ### Backend Admin Routes (api-server)
 - `GET  /api/admin/kyc-queue` — paginated user list, sorted by risk score

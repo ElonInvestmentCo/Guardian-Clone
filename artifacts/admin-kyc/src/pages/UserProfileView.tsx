@@ -67,11 +67,12 @@ export default function UserProfileView({ email, onBack }: Props) {
     refetch();
     qc.invalidateQueries({ queryKey: ["all-users"] });
     qc.invalidateQueries({ queryKey: ["kyc-queue"] });
+    qc.invalidateQueries({ queryKey: ["global-audit"] });
   };
 
-  const approveMut   = useMutation({ mutationFn: () => approveUser(email, actionNote || undefined),                    onSuccess: () => { showMsg("ok", "User approved"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
-  const rejectMut    = useMutation({ mutationFn: () => rejectUser(email, rejectReason || undefined, actionNote || undefined), onSuccess: () => { showMsg("ok", "User rejected"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
-  const resubmitMut  = useMutation({ mutationFn: () => requestResubmission(email, undefined, actionNote || undefined), onSuccess: () => { showMsg("ok", "Resubmission requested"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
+  const approveMut   = useMutation({ mutationFn: () => approveUser(email, actionNote || undefined),                    onSuccess: () => { showMsg("ok", "User approved successfully"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
+  const rejectMut    = useMutation({ mutationFn: () => rejectUser(email, rejectReason, actionNote || undefined), onSuccess: () => { showMsg("ok", "User rejected"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
+  const resubmitMut  = useMutation({ mutationFn: () => requestResubmission(email, undefined, actionNote || undefined), onSuccess: () => { showMsg("ok", "Resubmission requested — user notified"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
   const suspendMut   = useMutation({ mutationFn: () => suspendUser(email, actionNote || undefined),                    onSuccess: () => { showMsg("ok", "User suspended"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
   const banMut       = useMutation({ mutationFn: () => banUser(email, banReason || undefined, actionNote || undefined), onSuccess: () => { showMsg("ok", "User banned"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
   const reactivateMut = useMutation({ mutationFn: () => reactivateUser(email, actionNote || undefined),                onSuccess: () => { showMsg("ok", "User reactivated"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
@@ -91,6 +92,10 @@ export default function UserProfileView({ email, onBack }: Props) {
   const currentStatus = (master.status as string) ?? (profile.status as string) ?? "pending";
   const currentRole   = (master.role   as string) ?? (profile.role   as string) ?? "user";
   const userName      = [pf("personal", "firstName"), pf("personal", "lastName")].join(" ").trim().replace(/—/g, "").trim() || email;
+
+  const kycDecisionStatuses = ["approved", "rejected", "resubmit"] as const;
+  const hasKycDecision = (kycDecisionStatuses as readonly string[]).includes(currentStatus);
+  const kycAnyPending = approveMut.isPending || rejectMut.isPending || resubmitMut.isPending;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
@@ -529,17 +534,72 @@ export default function UserProfileView({ email, onBack }: Props) {
                 </Card>
 
                 <Card title="KYC Decision">
+                  {hasKycDecision && (
+                    <div style={{
+                      marginBottom: "12px", padding: "8px 12px", borderRadius: "6px",
+                      background: currentStatus === "approved" ? "#F0FDF4" : currentStatus === "rejected" ? "#FEF2F2" : "#EFF6FF",
+                      border: `1px solid ${currentStatus === "approved" ? "#BBF7D0" : currentStatus === "rejected" ? "#FECACA" : "#BFDBFE"}`,
+                      fontSize: "12px",
+                      color: currentStatus === "approved" ? "#16A34A" : currentStatus === "rejected" ? "#DC2626" : "#2563EB",
+                      fontWeight: "600",
+                    }}>
+                      Decision recorded: <span style={{ textTransform: "capitalize" }}>{currentStatus}</span>
+                    </div>
+                  )}
                   <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                    <ActionBtn label="✓ Approve"   onClick={() => approveMut.mutate()}  loading={approveMut.isPending}  color="#16A34A" hoverColor="#15803D" />
-                    <ActionBtn label="↩ Resubmit"  onClick={() => resubmitMut.mutate()} loading={resubmitMut.isPending} color="#2563EB" hoverColor="#1D4ED8" />
+                    <KycDecisionBtn
+                      label="✓ Approve"
+                      onClick={() => approveMut.mutate()}
+                      loading={approveMut.isPending}
+                      activeColor="#16A34A" hoverColor="#15803D"
+                      isActive={currentStatus === "approved"}
+                      isDisabled={hasKycDecision && currentStatus !== "approved"}
+                      anyPending={kycAnyPending}
+                    />
+                    <KycDecisionBtn
+                      label="↩ Resubmit"
+                      onClick={() => resubmitMut.mutate()}
+                      loading={resubmitMut.isPending}
+                      activeColor="#2563EB" hoverColor="#1D4ED8"
+                      isActive={currentStatus === "resubmit"}
+                      isDisabled={hasKycDecision && currentStatus !== "resubmit"}
+                      anyPending={kycAnyPending}
+                    />
+                    <KycDecisionBtn
+                      label="✗ Reject"
+                      onClick={() => {
+                        if (!rejectReason.trim()) {
+                          showMsg("err", "Please provide a reason for rejection");
+                          return;
+                        }
+                        rejectMut.mutate();
+                      }}
+                      loading={rejectMut.isPending}
+                      activeColor="#DC2626" hoverColor="#B91C1C"
+                      isActive={currentStatus === "rejected"}
+                      isDisabled={hasKycDecision && currentStatus !== "rejected"}
+                      anyPending={kycAnyPending}
+                    />
                   </div>
-                  <div style={{ marginTop: "8px" }}>
-                    <label style={{ fontSize: "11px", color: "#9CA3AF", display: "block", marginBottom: "4px" }}>Reject reason</label>
-                    <input value={rejectReason} onChange={(e) => setRejectReason(e.target.value)}
-                      placeholder="Required when rejecting…"
-                      style={{ width: "100%", boxSizing: "border-box", padding: "7px 9px", border: "1px solid #E5E7EB", borderRadius: "4px", fontSize: "12px", marginBottom: "6px" }} />
-                    <ActionBtn label="✗ Reject" onClick={() => rejectMut.mutate()} loading={rejectMut.isPending} color="#DC2626" hoverColor="#B91C1C" fullWidth />
-                  </div>
+                  {!hasKycDecision && (
+                    <div style={{ marginTop: "8px" }}>
+                      <label style={{ fontSize: "11px", color: "#9CA3AF", display: "block", marginBottom: "4px" }}>Reject reason <span style={{ color: "#DC2626" }}>*</span></label>
+                      <input value={rejectReason} onChange={(e) => setRejectReason(e.target.value)}
+                        placeholder="Required when rejecting…"
+                        disabled={kycAnyPending}
+                        style={{ width: "100%", boxSizing: "border-box", padding: "7px 9px", border: "1px solid #E5E7EB", borderRadius: "4px", fontSize: "12px" }} />
+                    </div>
+                  )}
+                  {currentStatus === "rejected" && (
+                    <div style={{ marginTop: "8px", fontSize: "11px", color: "#6B7280" }}>
+                      <strong>Rejected</strong> — user has been notified with the reason and next steps.
+                    </div>
+                  )}
+                  {currentStatus === "resubmit" && (
+                    <div style={{ marginTop: "8px", fontSize: "11px", color: "#6B7280" }}>
+                      <strong>Resubmission requested</strong> — user has been prompted to update their documents.
+                    </div>
+                  )}
                 </Card>
 
                 <Card title="Account Controls">
@@ -721,6 +781,52 @@ function ActionBtn({ label, onClick, loading, color, hoverColor, fullWidth }: {
       }}
     >
       {loading ? "…" : label}
+    </button>
+  );
+}
+
+function KycDecisionBtn({ label, onClick, loading, activeColor, hoverColor, isActive, isDisabled, anyPending, fullWidth }: {
+  label: string;
+  onClick: () => void;
+  loading: boolean;
+  activeColor: string;
+  hoverColor: string;
+  isActive: boolean;
+  isDisabled: boolean;
+  anyPending: boolean;
+  fullWidth?: boolean;
+}) {
+  const disabled = loading || isDisabled || (anyPending && !loading);
+
+  const bg = isActive
+    ? activeColor
+    : disabled
+      ? "#E5E7EB"
+      : activeColor;
+
+  const textColor = isActive || !disabled ? "white" : "#9CA3AF";
+
+  return (
+    <button
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+      onMouseEnter={(e) => { if (!disabled && !isActive) (e.currentTarget as HTMLElement).style.background = hoverColor; }}
+      onMouseLeave={(e) => { if (!disabled && !isActive) (e.currentTarget as HTMLElement).style.background = activeColor; }}
+      style={{
+        flex: fullWidth ? 1 : undefined,
+        padding: "8px 14px",
+        borderRadius: "5px",
+        border: isActive ? `2px solid ${activeColor}` : "none",
+        background: loading ? "#9CA3AF" : bg,
+        color: textColor,
+        fontSize: "13px", fontWeight: "700",
+        cursor: disabled ? "not-allowed" : "pointer",
+        transition: "background 0.15s, opacity 0.15s",
+        whiteSpace: "nowrap",
+        opacity: isDisabled ? 0.4 : 1,
+      }}
+    >
+      {loading ? "Processing…" : isActive ? `${label} ✔` : label}
     </button>
   );
 }
