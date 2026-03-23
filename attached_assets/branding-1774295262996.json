@@ -1,0 +1,149 @@
+{
+  "colorScheme": "light",
+  "fonts": [
+    {
+      "family": "Colfax",
+      "role": "unknown"
+    },
+    {
+      "family": "Noto Sans",
+      "role": "unknown"
+    }
+  ],
+  "colors": {
+    "primary": "#EE0007",
+    "accent": "#EE0007",
+    "background": "#FFFFFF",
+    "textPrimary": "#1B1B20",
+    "link": "#0000EE"
+  },
+  "typography": {
+    "fontFamilies": {
+      "primary": "Colfax",
+      "heading": "Colfax"
+    },
+    "fontStacks": {
+      "heading": [
+        "Colfax",
+        "Noto Sans",
+        "sans-serif"
+      ],
+      "body": [
+        "Colfax",
+        "Noto Sans",
+        "sans-serif"
+      ],
+      "paragraph": [
+        "Colfax",
+        "Noto Sans",
+        "sans-serif"
+      ]
+    },
+    "fontSizes": {
+      "h1": "72px",
+      "h2": "40px",
+      "body": "12px"
+    }
+  },
+  "spacing": {
+    "baseUnit": 4,
+    "borderRadius": "8px"
+  },
+  "components": {
+    "input": {
+      "background": "#FFFFFF",
+      "textColor": "#000000",
+      "borderColor": "#0F0F10",
+      "borderRadius": "8px",
+      "borderRadiusCorners": {
+        "topLeft": "8px",
+        "topRight": "8px",
+        "bottomRight": "8px",
+        "bottomLeft": "8px"
+      },
+      "shadow": "none"
+    },
+    "buttonPrimary": {
+      "background": "#EE0007",
+      "textColor": "#FFFFFF",
+      "borderColor": "#EE0007",
+      "borderRadius": "8px",
+      "borderRadiusCorners": {
+        "topLeft": "8px",
+        "topRight": "8px",
+        "bottomRight": "8px",
+        "bottomLeft": "8px"
+      },
+      "shadow": "none"
+    },
+    "buttonSecondary": {
+      "background": "#FFFFFF",
+      "textColor": "#0F0F10",
+      "borderColor": "#0F0F10",
+      "borderRadius": "8px",
+      "borderRadiusCorners": {
+        "topLeft": "8px",
+        "topRight": "8px",
+        "bottomRight": "8px",
+        "bottomLeft": "8px"
+      },
+      "shadow": "none"
+    }
+  },
+  "images": {
+    "logo": "https://www.livechat.com/lc-powered-by-logo.59e4207fd8afaeef387d20bfdb42958c49652808777bfbc227d1d69247059393.svg",
+    "favicon": "https://www.livechat.com/favicon.ico",
+    "ogImage": "https://www.livechat.com/og-image.c0c23c8b3f4c7fe5838f696d5259554584bb8d420649997c2c89d9213bdf1513.png",
+    "logoHref": "File saved at: attached_assets/logoHref.html",
+    "logoAlt": "LiveChat logo"
+  },
+  "__llm_logo_reasoning": {
+    "selectedIndex": 19,
+    "reasoning": "Selected #0 because it is visible, medium-sized, located in the body but links to the homepage, and matches the brand name 'LiveChat' in the alt text.",
+    "confidence": 0.85,
+    "source": "llm"
+  },
+  "__llm_button_reasoning": {
+    "primary": {
+      "index": 3,
+      "text": "Sign up free",
+      "reasoning": "Button #0 is the primary CTA because it uses the brand's vibrant red color (#EE0007), which is consistent with the primary brand color, and the text 'Sign up free' is action-oriented, encouraging user engagement."
+    },
+    "secondary": {
+      "index": 7,
+      "text": "Sign up free",
+      "reasoning": "Button #3 is selected as the secondary CTA because it has a different background color (#FFFFFF) and offers a similar action ('Sign up free') but in a less prominent style, indicating a secondary action."
+    },
+    "confidence": 0.95
+  },
+  "personality": {
+    "tone": "professional",
+    "energy": "medium",
+    "targetAudience": "businesses looking for AI live chat solutions"
+  },
+  "designSystem": {
+    "framework": "custom",
+    "componentLibrary": ""
+  },
+  "confidence": {
+    "buttons": 0.95,
+    "colors": 0.9,
+    "overall": 0.925
+  },
+  "__llm_metadata": {
+    "logoSelection": {
+      "llmCalled": true,
+      "llmSucceeded": true,
+      "finalSource": "llm",
+      "rawLogoSelection": {
+        "selectedLogoIndex": 0,
+        "selectedLogoReasoning": "Selected #0 because it is visible, medium-sized, located in the body but links to the homepage, and matches the brand name 'LiveChat' in the alt text.",
+        "confidence": 0.85
+      }
+    },
+    "buttonClassification": {
+      "llmCalled": true,
+      "llmSucceeded": true
+    }
+  }
+}
