@@ -351,6 +351,29 @@ export default function Overview() {
               Send Money
             </button>
           </div>
+
+          <div
+            onClick={() => {
+              if (typeof window !== "undefined" && (window as unknown as Record<string, unknown>).LiveChatWidget) {
+                (window as unknown as Record<string, { call: (cmd: string) => void }>).LiveChatWidget.call("maximize");
+              }
+            }}
+            style={{
+              marginTop: "20px",
+              cursor: "pointer",
+              borderRadius: 0,
+            }}
+          >
+            <img
+              src={`${import.meta.env.BASE_URL}need-help-card.png`}
+              alt="Need help? Click here and start chatting with us"
+              style={{
+                width: "100%",
+                display: "block",
+                borderRadius: 0,
+              }}
+            />
+          </div>
         </aside>
       </div>
     </DashboardLayout>
