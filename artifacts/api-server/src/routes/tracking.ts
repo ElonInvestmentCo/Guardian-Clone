@@ -99,7 +99,16 @@ trackingRouter.get("/adsct", clickLimiter, async (req: Request, res: Response) =
   }
 });
 
+trackingRouter.options("/track", (_req: Request, res: Response) => {
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type");
+  res.set("Access-Control-Max-Age", "86400");
+  res.status(204).end();
+});
+
 trackingRouter.post("/track", conversionLimiter, async (req: Request, res: Response) => {
+  res.set("Access-Control-Allow-Origin", "*");
   const body = req.body as Record<string, unknown>;
 
   const eventType = sanitize(body["event_type"]) ?? "conversion";

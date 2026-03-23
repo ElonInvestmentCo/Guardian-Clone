@@ -8,6 +8,7 @@ import { NavigationLoader } from "@/components/NavigationLoader";
 import { OnboardingProvider } from "@/lib/onboarding/OnboardingContext";
 import { OnboardingGuard } from "@/lib/onboarding/OnboardingGuard";
 import { ThemeProvider } from "@/context/ThemeContext";
+import AntiScrape from "@/components/AntiScrape";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
 import Platforms from "@/pages/Platforms";
@@ -140,6 +141,7 @@ function App() {
                 <Router />
               </OnboardingProvider>
             </WouterRouter>
+            <AntiScrape />
             <PageLoader />
             <Toaster />
           </ThemeProvider>

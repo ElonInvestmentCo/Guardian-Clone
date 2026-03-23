@@ -1,0 +1,28 @@
+User-agent: *
+Disallow: /api/
+Disallow: /admin-kyc/
+Disallow: /dashboard/
+Disallow: /settings/
+Disallow: /signup/
+Disallow: /login
+Disallow: /email-verification
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+Sitemap: https://guardiiantrading.com/sitemap.xml

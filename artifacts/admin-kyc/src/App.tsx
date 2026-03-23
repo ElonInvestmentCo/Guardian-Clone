@@ -7,6 +7,7 @@ import AdminLoginModal from "@/components/AdminKeyModal";
 import { isAuthenticated, clearSession, getSession } from "@/lib/api";
 import { LoadingProvider } from "@/context/LoadingContext";
 import { PageLoader } from "@/components/PageLoader";
+import AntiScrape from "@/components/AntiScrape";
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
   constructor(props: { children: ReactNode }) {
@@ -103,6 +104,7 @@ function App() {
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
             <AppShell />
           </WouterRouter>
+          <AntiScrape />
           <PageLoader />
         </LoadingProvider>
       </QueryClientProvider>
