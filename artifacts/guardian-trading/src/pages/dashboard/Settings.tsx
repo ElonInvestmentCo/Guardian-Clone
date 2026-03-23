@@ -178,19 +178,62 @@ export default function Settings() {
     setCityOptions(getCities(state));
   }, [state]);
 
-  const handleSaveProfile = () => { setProfileSaved(true); setTimeout(() => setProfileSaved(false), 2500); };
+  const handleSaveProfile = async () => {
+    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+    try {
+      const res = await fetch(`${base}/api/user/update-profile`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, firstName, lastName, phone, country, state, city }),
+      });
+      if (!res.ok) throw new Error("Save failed");
+      setProfileSaved(true);
+      setTimeout(() => setProfileSaved(false), 2500);
+    } catch {
+      alert("Failed to save profile. Please try again.");
+    }
+  };
 
-  const handleSavePw = () => {
+  const handleSavePw = async () => {
     setPwError("");
     if (!currentPw) { setPwError("Current password is required."); return; }
     if (newPw.length < 8) { setPwError("New password must be at least 8 characters."); return; }
     if (newPw !== confirmPw) { setPwError("Passwords do not match."); return; }
-    setPwSaved(true);
-    setCurrentPw(""); setNewPw(""); setConfirmPw("");
-    setTimeout(() => setPwSaved(false), 2500);
+    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+    try {
+      const res = await fetch(`${base}/api/user/change-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, currentPassword: currentPw, newPassword: newPw }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setPwError((data as { error?: string }).error || "Password change failed.");
+        return;
+      }
+      setPwSaved(true);
+      setCurrentPw(""); setNewPw(""); setConfirmPw("");
+      setTimeout(() => setPwSaved(false), 2500);
+    } catch {
+      setPwError("Network error. Please try again.");
+    }
   };
 
-  const handleSaveNotifs = () => { setNotifSaved(true); setTimeout(() => setNotifSaved(false), 2500); };
+  const handleSaveNotifs = async () => {
+    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+    try {
+      const res = await fetch(`${base}/api/user/update-notifications`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, preferences: notifs }),
+      });
+      if (!res.ok) throw new Error("Save failed");
+      setNotifSaved(true);
+      setTimeout(() => setNotifSaved(false), 2500);
+    } catch {
+      alert("Failed to save notification preferences.");
+    }
+  };
 
   const SECTIONS: { key: Section; icon: typeof User; label: string; desc: string }[] = [
     { key: "profile",       icon: User,    label: "Profile",       desc: "Name, email, phone" },

@@ -46,17 +46,41 @@ export default function Orders() {
   const [newQty, setNewQty] = useState("100");
   const [newPrice, setNewPrice] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [orders, setOrders] = useState<Order[]>(ALL_ORDERS);
 
-  const filtered = ALL_ORDERS.filter((o) =>
+  const filtered = orders.filter((o) =>
     (activeTab === "All" || o.status === activeTab) &&
     (o.symbol.toLowerCase().includes(search.toLowerCase()) || o.id.toLowerCase().includes(search.toLowerCase()))
   );
 
-  const counts = Object.fromEntries(TABS.map((t) => [t, ALL_ORDERS.filter((o) => o.status === t).length]));
+  const counts = Object.fromEntries(TABS.map((t) => [t, orders.filter((o) => o.status === t).length]));
 
   const handleSubmitOrder = () => {
+    if (!newQty || Number(newQty) <= 0) return;
+    if ((newType === "Limit" || newType === "Stop" || newType === "Stop Limit") && !newPrice) return;
+    const newOrder: Order = {
+      id: `ORD-${Date.now().toString().slice(-4)}`,
+      symbol: newSymbol,
+      side: newSide,
+      type: newType,
+      qty: Number(newQty),
+      price: newPrice ? Number(newPrice) : null,
+      filled: 0,
+      status: newType === "Market" ? "Filled" : "Pending",
+      date: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "2-digit" }),
+      time: new Date().toLocaleTimeString("en-GB", { hour12: false }),
+    };
+    setOrders((prev) => [newOrder, ...prev]);
     setSubmitted(true);
-    setTimeout(() => { setSubmitted(false); setShowNewOrder(false); }, 2000);
+    setTimeout(() => {
+      setSubmitted(false);
+      setShowNewOrder(false);
+      setNewSymbol("AAPL");
+      setNewSide("Buy");
+      setNewType("Market");
+      setNewQty("100");
+      setNewPrice("");
+    }, 1500);
   };
 
   const statusStyle = (status: OrderStatus): { bg: string; text: string } => {

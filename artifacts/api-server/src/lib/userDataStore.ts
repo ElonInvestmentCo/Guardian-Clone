@@ -93,15 +93,34 @@ function ensureDir(dir: string): void {
 // ── Retry-capable file writer ─────────────────────────────────────────────────
 
 function writeWithRetry(filePath: string, content: string, retries = 3): void {
+  const tmpPath = filePath + ".tmp";
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      fs.writeFileSync(filePath, content, { encoding: "utf8", mode: 0o600, flag: "w" });
+      fs.writeFileSync(tmpPath, content, { encoding: "utf8", mode: 0o600, flag: "w" });
+      fs.renameSync(tmpPath, filePath);
       try { fs.chmodSync(filePath, 0o600); } catch { /* ignore */ }
       return;
     } catch (err) {
       console.error(`[UserDataStore] Write failed (attempt ${attempt}/${retries}):`, err);
+      try { if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath); } catch { /* cleanup */ }
       if (attempt === retries) throw err;
     }
+  }
+}
+
+const fileLocks = new Map<string, Promise<void>>();
+function withFileLock<T>(filePath: string, fn: () => T): T {
+  const key = path.resolve(filePath);
+  const prev = fileLocks.get(key) ?? Promise.resolve();
+  let resolve: () => void;
+  const next = new Promise<void>((r) => { resolve = r; });
+  fileLocks.set(key, next);
+  try {
+    const result = fn();
+    return result;
+  } finally {
+    resolve!();
+    if (fileLocks.get(key) === next) fileLocks.delete(key);
   }
 }
 
@@ -112,9 +131,13 @@ function readMaster(): Record<string, Record<string, unknown>> {
   if (!fs.existsSync(MASTER_FILE)) return {};
   try {
     const raw = fs.readFileSync(MASTER_FILE, "utf8");
+    if (!raw.trim()) return {};
     return JSON.parse(raw) as Record<string, Record<string, unknown>>;
-  } catch {
-    console.error("[UserDataStore] Failed to parse users.json — starting fresh");
+  } catch (err) {
+    console.error("[UserDataStore] CRITICAL: Failed to parse users.json — attempting backup recovery", err);
+    const backupPath = MASTER_FILE + ".corrupt." + Date.now();
+    try { fs.copyFileSync(MASTER_FILE, backupPath); } catch { /* ignore */ }
+    console.error(`[UserDataStore] Corrupt file backed up to: ${backupPath}`);
     return {};
   }
 }
@@ -130,9 +153,13 @@ function readProfile(email: string): Record<string, unknown> {
   const p = getUserProfilePath(email);
   if (!fs.existsSync(p)) return {};
   try {
-    return JSON.parse(fs.readFileSync(p, "utf8")) as Record<string, unknown>;
-  } catch {
-    console.error(`[UserDataStore] Failed to parse profile for ${email}`);
+    const raw = fs.readFileSync(p, "utf8");
+    if (!raw.trim()) return {};
+    return JSON.parse(raw) as Record<string, unknown>;
+  } catch (err) {
+    console.error(`[UserDataStore] CRITICAL: Failed to parse profile for ${email}`, err);
+    const backupPath = p + ".corrupt." + Date.now();
+    try { fs.copyFileSync(p, backupPath); } catch { /* ignore */ }
     return {};
   }
 }

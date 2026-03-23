@@ -1,12 +1,17 @@
-import { Router } from "express";
+import { Router, type Request, type Response, type NextFunction } from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import crypto from "crypto";
 import {
   getUserData,
   getCompletedStepNumbers,
   setProfilePicture,
   getProfilePicture,
+  getUserProfileData,
+  setUserProfileMeta,
+  getStoredPasswordHash,
+  saveUserCredentials,
 } from "../lib/userDataStore.js";
 
 const profileRouter = Router();
@@ -113,6 +118,76 @@ profileRouter.delete("/user/profile-picture", (req, res) => {
     setProfilePicture(email, "");
   }
   res.json({ success: true });
+});
+
+profileRouter.post("/user/update-profile", (req, res) => {
+  const { email, firstName, lastName, phone, country, state, city } = req.body as Record<string, string>;
+  if (!email) { res.status(400).json({ error: "email is required" }); return; }
+  const profile = getUserProfileData(email);
+  if (!profile["email"]) { res.status(404).json({ error: "User not found" }); return; }
+  const settings = (profile["_settings"] as Record<string, unknown>) ?? {};
+  if (firstName !== undefined) settings["firstName"] = firstName;
+  if (lastName !== undefined) settings["lastName"] = lastName;
+  if (phone !== undefined) settings["phone"] = phone;
+  if (country !== undefined) settings["country"] = country;
+  if (state !== undefined) settings["state"] = state;
+  if (city !== undefined) settings["city"] = city;
+  settings["updatedAt"] = new Date().toISOString();
+  setUserProfileMeta(email, "_settings", settings);
+  res.json({ success: true });
+});
+
+profileRouter.post("/user/change-password", (req, res) => {
+  const { email, currentPassword, newPassword } = req.body as Record<string, string>;
+  if (!email || !currentPassword || !newPassword) {
+    res.status(400).json({ error: "email, currentPassword, and newPassword are required" });
+    return;
+  }
+  if (newPassword.length < 8) {
+    res.status(400).json({ error: "New password must be at least 8 characters" });
+    return;
+  }
+  const storedHash = getStoredPasswordHash(email);
+  if (!storedHash) {
+    res.status(404).json({ error: "No credentials found for this user" });
+    return;
+  }
+  const currentHash = crypto.createHash("sha256").update(currentPassword).digest("hex");
+  if (currentHash !== storedHash) {
+    res.status(401).json({ error: "Current password is incorrect" });
+    return;
+  }
+  const newHash = crypto.createHash("sha256").update(newPassword).digest("hex");
+  saveUserCredentials(email, newHash);
+  res.json({ success: true });
+});
+
+profileRouter.post("/user/update-notifications", (req, res) => {
+  const { email, preferences } = req.body as { email?: string; preferences?: Record<string, boolean> };
+  if (!email) { res.status(400).json({ error: "email is required" }); return; }
+  if (!preferences) { res.status(400).json({ error: "preferences are required" }); return; }
+  setUserProfileMeta(email, "_notificationPreferences", {
+    ...preferences,
+    updatedAt: new Date().toISOString(),
+  });
+  res.json({ success: true });
+});
+
+profileRouter.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      res.status(413).json({ error: "File too large. Maximum size is 5MB." });
+      return;
+    }
+    res.status(400).json({ error: err.message });
+    return;
+  }
+  if (err.message?.includes("Only .jpg")) {
+    res.status(400).json({ error: err.message });
+    return;
+  }
+  console.error("[Profile] Unexpected error:", err);
+  res.status(500).json({ error: "Internal server error" });
 });
 
 export default profileRouter;
