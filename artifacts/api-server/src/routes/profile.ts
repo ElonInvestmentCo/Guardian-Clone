@@ -2,7 +2,6 @@ import { Router, type Request, type Response, type NextFunction } from "express"
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import crypto from "crypto";
 import {
   getUserData,
   getCompletedStepNumbers,
@@ -13,6 +12,14 @@ import {
   getStoredPasswordHash,
   saveUserCredentials,
 } from "../lib/userDataStore.js";
+
+function simpleHash(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
+  }
+  return hash.toString(16);
+}
 
 const profileRouter = Router();
 
@@ -152,12 +159,12 @@ profileRouter.post("/user/change-password", (req, res) => {
     res.status(404).json({ error: "No credentials found for this user" });
     return;
   }
-  const currentHash = crypto.createHash("sha256").update(currentPassword).digest("hex");
+  const currentHash = simpleHash(currentPassword);
   if (currentHash !== storedHash) {
     res.status(401).json({ error: "Current password is incorrect" });
     return;
   }
-  const newHash = crypto.createHash("sha256").update(newPassword).digest("hex");
+  const newHash = simpleHash(newPassword);
   saveUserCredentials(email, newHash);
   res.json({ success: true });
 });

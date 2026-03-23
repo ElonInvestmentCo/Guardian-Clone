@@ -173,7 +173,7 @@ export default function Orders() {
                 style={{ padding: "6px 14px", fontSize: "12px", fontWeight: 600, borderRadius: "6px", border: "none", cursor: "pointer", whiteSpace: "nowrap",
                   background: activeTab === "All" ? colors.filterActiveBg : "transparent",
                   color: activeTab === "All" ? colors.filterActiveText : colors.filterInactiveText }}>
-                All ({ALL_ORDERS.length})
+                All ({orders.length})
               </button>
               {TABS.map((t) => (
                 <button key={t} onClick={() => setActiveTab(t)}
