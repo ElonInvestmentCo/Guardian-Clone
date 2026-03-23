@@ -103,6 +103,6 @@
 
 @media (max-width: 767px) {
   #chat-widget-container {
-    bottom: 60px !important;
+    bottom: calc(60px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
