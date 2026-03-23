@@ -177,10 +177,11 @@ export default function AiAssistant() {
     return (
       <button
         onClick={() => setState("open")}
+        id="chat-widget-container"
         style={{
           position: "fixed",
           bottom: "24px",
-          left: "24px",
+          right: "24px",
           width: "56px",
           height: "56px",
           borderRadius: "50%",
@@ -211,11 +212,12 @@ export default function AiAssistant() {
   if (state === "minimized") {
     return (
       <div
+        id="chat-widget-container"
         onClick={() => setState("open")}
         style={{
           position: "fixed",
           bottom: "24px",
-          left: "24px",
+          right: "24px",
           display: "flex",
           alignItems: "center",
           gap: "12px",
@@ -307,10 +309,11 @@ export default function AiAssistant() {
       )}
 
       <div
+        id="chat-widget-container"
         style={{
           position: "fixed",
           bottom: "24px",
-          left: "24px",
+          right: "24px",
           width: widgetWidth,
           height: widgetHeight,
           background: "#0a0f1a",
