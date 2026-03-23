@@ -17,6 +17,11 @@ function sanitize(v: unknown, max = 512): string | null {
   return v.trim().slice(0, max) || null;
 }
 
+// Escape special LIKE pattern characters to prevent LIKE injection
+function escapeLike(str: string): string {
+  return str.replace(/[%_\\]/g, "\\$&");
+}
+
 function getRange(period: string): string {
   switch (period) {
     case "7d": return "7 days";
@@ -215,12 +220,13 @@ analyticsRouter.get("/analytics/heatmap", async (req: Request, res: Response) =>
   const pageUrl = sanitize(req.query["page_url"]) ?? "/";
   if (!projectId) { res.status(400).json({ error: "project_id required" }); return; }
 
+  // Escape LIKE pattern chars in user input to prevent LIKE injection
   const r = await query(
     `SELECT click_x, click_y, viewport_width, viewport_height
      FROM analytics_heatmap_events
-     WHERE project_id=$1 AND page_url LIKE $2
+     WHERE project_id=$1 AND page_url LIKE $2 ESCAPE '\\'
      ORDER BY timestamp DESC LIMIT 2000`,
-    [projectId, pageUrl + "%"]
+    [projectId, escapeLike(pageUrl) + "%"]
   );
   res.json(r.rows);
 });
