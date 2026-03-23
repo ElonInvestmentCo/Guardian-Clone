@@ -404,6 +404,68 @@ export function getGlobalAuditLog(): Array<{ email: string; entry: unknown }> {
 /**
  * Create a brand-new user account directly (admin-initiated, no onboarding required).
  */
+export function addNotification(
+  email: string,
+  notification: { type: string; title: string; message: string; actionUrl?: string }
+): void {
+  const profile = readProfile(email);
+  const notifications = (profile["_notifications"] as unknown[]) ?? [];
+  notifications.unshift({
+    id: crypto.randomUUID(),
+    ...notification,
+    read: false,
+    createdAt: new Date().toISOString(),
+  });
+  if (notifications.length > 100) notifications.length = 100;
+  profile["_notifications"] = notifications;
+  writeProfile(email, profile);
+}
+
+export function getNotifications(email: string): unknown[] {
+  const profile = readProfile(email);
+  return (profile["_notifications"] as unknown[]) ?? [];
+}
+
+export function markNotificationsRead(email: string, ids: string[]): void {
+  const profile = readProfile(email);
+  const notifications = (profile["_notifications"] as Array<Record<string, unknown>>) ?? [];
+  const idSet = new Set(ids);
+  for (const n of notifications) {
+    if (idSet.has(n["id"] as string)) n["read"] = true;
+  }
+  profile["_notifications"] = notifications;
+  writeProfile(email, profile);
+}
+
+export function markAllNotificationsRead(email: string): void {
+  const profile = readProfile(email);
+  const notifications = (profile["_notifications"] as Array<Record<string, unknown>>) ?? [];
+  for (const n of notifications) n["read"] = true;
+  profile["_notifications"] = notifications;
+  writeProfile(email, profile);
+}
+
+export function setProfilePicture(email: string, filename: string): void {
+  const master = readMaster();
+  if (master[email]) {
+    master[email]["profilePicture"] = filename;
+    writeMaster(master);
+  }
+  const profile = readProfile(email);
+  profile["profilePicture"] = filename;
+  writeProfile(email, profile);
+}
+
+export function getProfilePicture(email: string): string | null {
+  const profile = readProfile(email);
+  return (profile["profilePicture"] as string) ?? null;
+}
+
+export function getCompletedStepNumbers(email: string): number[] {
+  const profile = readProfile(email);
+  return (profile["_completedStepNumbers"] as number[]) ?? [];
+}
+
 export function createAdminUser(
   email: string,
   displayName: string,

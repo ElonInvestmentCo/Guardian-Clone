@@ -25,6 +25,7 @@ import {
   setUserRole,
   getGlobalAuditLog,
   createAdminUser,
+  addNotification,
 } from "../lib/userDataStore.js";
 import { evaluateRisk } from "../lib/fraud/riskEngine.js";
 
@@ -274,6 +275,12 @@ router.post("/admin/approve-user", (req: Request, res: Response): void => {
     auditLog.push({ actionType: "ADMIN_APPROVE", actor: "admin", note: adminNote ?? null, timestamp: new Date().toISOString() });
     setUserProfileMeta(email, "_auditLog", auditLog);
 
+    addNotification(email, {
+      type: "kyc",
+      title: "KYC Approved",
+      message: "Your identity verification has been approved. You now have full access to Guardian Trading.",
+      actionUrl: "/dashboard",
+    });
     console.log(`[Admin] APPROVED: ${email}`);
     res.json({ success: true, email, status: "approved" });
   } catch (err) {
@@ -296,6 +303,11 @@ router.post("/admin/reject-user", (req: Request, res: Response): void => {
     auditLog.push({ actionType: "ADMIN_REJECT", actor: "admin", reason: reason ?? null, note: adminNote ?? null, timestamp: new Date().toISOString() });
     setUserProfileMeta(email, "_auditLog", auditLog);
 
+    addNotification(email, {
+      type: "kyc",
+      title: "KYC Review Update",
+      message: `Your identity verification was not approved. Reason: ${reason}. Please contact support for more information.`,
+    });
     console.log(`[Admin] REJECTED: ${email}`);
     res.json({ success: true, email, status: "rejected" });
   } catch (err) {
@@ -318,6 +330,12 @@ router.post("/admin/request-resubmission", (req: Request, res: Response): void =
     setUserProfileMeta(email, "_auditLog", auditLog);
     setUserProfileMeta(email, "_resubmitFields", fields ?? []);
 
+    addNotification(email, {
+      type: "kyc",
+      title: "Documents Resubmission Required",
+      message: "Some of your submitted documents need to be updated. Please log in and re-upload the requested items.",
+      actionUrl: "/settings",
+    });
     console.log(`[Admin] RESUBMIT requested for: ${email}`);
     res.json({ success: true, email, status: "resubmit", fields: fields ?? [] });
   } catch (err) {

@@ -43,9 +43,49 @@ export default function Login() {
       });
       const data = await res.json().catch(() => ({}) as Record<string, string>);
       if (res.ok) {
-        sessionStorage.setItem("signupEmail", (data as { email?: string }).email || email);
-        setLoading(false);
-        navigate("/dashboard");
+        const userEmail = (data as { email?: string }).email || email;
+        sessionStorage.setItem("signupEmail", userEmail);
+        
+        try {
+          const statusRes = await fetch(`${base}/api/user/me?email=${encodeURIComponent(userEmail)}`);
+          const statusData = await statusRes.json() as { status?: string; kycComplete?: boolean; completedSteps?: number[] };
+          
+          if (statusData.status === "approved") {
+            setLoading(false);
+            navigate("/dashboard");
+          } else if (statusData.status === "verified" || statusData.status === "pending") {
+            if (statusData.kycComplete) {
+              setLoading(false);
+              navigate("/application-pending");
+            } else {
+              const completedSteps = statusData.completedSteps ?? [];
+              const nextStep = completedSteps.length;
+              const stepPaths = [
+                "/general-details", "/personal-details", "/professional-details",
+                "/id-information", "/income-details", "/risk-tolerance",
+                "/financial-situation", "/investment-experience", "/id-proof-upload",
+                "/funding-details", "/disclosures", "/signatures",
+              ];
+              setLoading(false);
+              navigate(stepPaths[nextStep] ?? "/general-details");
+            }
+          } else if (statusData.status === "rejected") {
+            setLoading(false);
+            setErrors({ submit: "Your account application has been rejected. Please contact support." });
+          } else if (statusData.status === "resubmit") {
+            setLoading(false);
+            navigate("/general-details");
+          } else if (statusData.status === "not_found") {
+            setLoading(false);
+            navigate("/general-details");
+          } else {
+            setLoading(false);
+            navigate("/general-details");
+          }
+        } catch {
+          setLoading(false);
+          setErrors({ submit: "Unable to verify account status. Please try again." });
+        }
       } else {
         setLoading(false);
         setErrors({ submit: (data as { error?: string }).error || "Invalid email or password." });

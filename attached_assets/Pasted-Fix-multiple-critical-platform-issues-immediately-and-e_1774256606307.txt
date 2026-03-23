@@ -1,0 +1,69 @@
+Fix multiple critical platform issues immediately and enforce professional, production-grade behavior across the system.
+
+1. NOTIFICATIONS SYSTEM (MISSING FEATURE)
+- Create a full Notifications page and system
+- Store notifications in the database per user
+- Show real-time notifications for:
+  - KYC status updates (approved/rejected/resubmit)
+  - Account activity
+  - System alerts
+- Add notification icon (bell) in the dashboard with unread count
+- Allow users to view, mark as read, and manage notifications
+
+2. KYC FLOW CRITICAL BUG (VERY IMPORTANT)
+Current issue:
+Users can refresh during onboarding and are incorrectly redirected to the dashboard with a “verified” account even if KYC is incomplete.
+
+Fix this STRICTLY:
+
+- Track KYC progress per user in the database (step index + completion status)
+- On page load or login:
+  - If KYC is NOT completed → redirect user to the last incomplete step
+  - DO NOT allow access to dashboard until KYC is fully completed
+- Only set account status to “verified” AFTER:
+  - All steps are completed
+  - KYC is approved (not just submitted)
+- Add route guards:
+  - Block dashboard access if KYC is incomplete or pending
+- Persist form progress so users can resume exactly where they left off
+
+3. CRYPTO MARKET DATA + LIVE CHARTS
+- Add a Markets/Trading section displaying:
+  - BTC, ETH, BNB and other major cryptocurrencies
+- Integrate live price data using :contentReference[oaicite:0]{index=0} API
+- Show:
+  - Current price
+  - 24h change
+  - Market trends
+- Implement a live broker-style chart (candlestick + timeframes)
+- Ensure charts are responsive and update dynamically
+
+4. PROFILE PICTURE UPLOAD
+- Add profile image upload feature in Settings page
+- Allow users to:
+  - Upload image (jpg/png)
+  - Preview before saving
+  - Replace or remove image
+- Store images securely and link to user profile
+- Display profile image across dashboard (navbar, profile page, etc.)
+
+5. DATA CONSISTENCY & SECURITY
+- Ensure all user data (KYC, profile, uploads) is properly saved in the database
+- No fake or default “verified” states
+- Validate all inputs on frontend and backend
+
+6. USER EXPERIENCE (PROFESSIONAL STANDARD)
+- Smooth transitions between onboarding steps
+- Clear progress indicator
+- No broken redirects or incorrect states
+- Real-time UI updates where necessary
+
+FINAL REQUIREMENT:
+This platform must behave like a real financial application:
+- No bypassing KYC
+- No incorrect account states
+- Accurate real-time data
+- Fully functional user profile system
+- Complete notification system
+
+All fixes must be enforced strictly and permanently across the entire application.

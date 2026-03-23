@@ -3,19 +3,21 @@ import { useState, useEffect } from "react";
 import {
   LayoutDashboard, Briefcase, ShoppingCart, PieChart,
   FileText, Settings, LogOut, Sun, Moon, Search, Bell,
-  TrendingUp, TrendingDown, ChevronDown,
+  TrendingUp, TrendingDown, ChevronDown, BarChart3,
 } from "lucide-react";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import { useTheme } from "@/context/ThemeContext";
 import AiAssistant from "@/components/AiAssistant";
 
 const NAV = [
-  { icon: LayoutDashboard, label: "Dashboard",  href: "/dashboard"  },
-  { icon: Briefcase,       label: "Positions",   href: "/positions"  },
-  { icon: ShoppingCart,    label: "Orders",      href: "/orders"     },
-  { icon: PieChart,        label: "Portfolio",   href: "/portfolio"  },
-  { icon: FileText,        label: "Statements",  href: "/statements" },
-  { icon: Settings,        label: "Settings",    href: "/settings"   },
+  { icon: LayoutDashboard, label: "Dashboard",     href: "/dashboard"     },
+  { icon: BarChart3,       label: "Markets",        href: "/markets"       },
+  { icon: Briefcase,       label: "Positions",      href: "/positions"     },
+  { icon: ShoppingCart,    label: "Orders",         href: "/orders"        },
+  { icon: PieChart,        label: "Portfolio",      href: "/portfolio"     },
+  { icon: FileText,        label: "Statements",     href: "/statements"    },
+  { icon: Bell,            label: "Notifications",  href: "/notifications" },
+  { icon: Settings,        label: "Settings",       href: "/settings"      },
 ];
 
 interface TickerItem {
@@ -41,6 +43,12 @@ interface Props {
   children: React.ReactNode;
 }
 
+interface UserStatus {
+  status: string;
+  kycComplete: boolean;
+  profilePicture: string | null;
+}
+
 export default function DashboardLayout({ children }: Props) {
   const [location, navigate] = useLocation();
   const { theme, colors, toggleTheme } = useTheme();
@@ -49,6 +57,52 @@ export default function DashboardLayout({ children }: Props) {
   const displayName = email ? email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Trader";
 
   const [tickers, setTickers] = useState<TickerItem[]>(INITIAL_TICKERS);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [userStatus, setUserStatus] = useState<UserStatus | null>(null);
+  const [gateChecked, setGateChecked] = useState(false);
+
+  useEffect(() => {
+    if (!email) { navigate("/login"); return; }
+    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+    fetch(`${base}/api/user/me?email=${encodeURIComponent(email)}`)
+      .then((r) => r.json())
+      .then((data: UserStatus & { completedSteps?: number[] }) => {
+        setUserStatus(data);
+        if (data.status !== "approved") {
+          if (data.status === "verified" && data.kycComplete) {
+            navigate("/application-pending");
+          } else if (data.status === "rejected") {
+            navigate("/login");
+          } else {
+            const stepPaths = [
+              "/general-details", "/personal-details", "/professional-details",
+              "/id-information", "/income-details", "/risk-tolerance",
+              "/financial-situation", "/investment-experience", "/id-proof-upload",
+              "/funding-details", "/disclosures", "/signatures",
+            ];
+            const nextStep = (data.completedSteps ?? []).length;
+            navigate(stepPaths[nextStep] ?? "/general-details");
+          }
+          return;
+        }
+        setGateChecked(true);
+      })
+      .catch(() => { navigate("/login"); });
+  }, [email]);
+
+  useEffect(() => {
+    if (!email) return;
+    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+    const fetchNotifs = () => {
+      fetch(`${base}/api/notifications?email=${encodeURIComponent(email)}`)
+        .then((r) => r.json())
+        .then((d: { unreadCount?: number }) => setUnreadCount(d.unreadCount ?? 0))
+        .catch(() => {});
+    };
+    fetchNotifs();
+    const interval = setInterval(fetchNotifs, 30000);
+    return () => clearInterval(interval);
+  }, [email]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -61,6 +115,19 @@ export default function DashboardLayout({ children }: Props) {
     }, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  if (!gateChecked) {
+    return (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: colors.bg }}>
+        <div style={{ width: "32px", height: "32px", border: "3px solid #E5E7EB", borderTopColor: "#3b82f6", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
+
+  const profilePicUrl = userStatus?.profilePicture
+    ? `${import.meta.env.BASE_URL.replace(/\/$/, "")}/api/user/profile-picture/${userStatus.profilePicture}`
+    : null;
 
   const handleLogout = () => {
     sessionStorage.clear();
@@ -107,7 +174,7 @@ export default function DashboardLayout({ children }: Props) {
             <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: "18px", height: "18px", background: colors.green }}>
               <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
-            <span style={{ fontSize: "11px", color: colors.green, fontWeight: 600 }}>Account Verified</span>
+            <span style={{ fontSize: "11px", color: colors.green, fontWeight: 600 }}>Account Approved</span>
           </div>
         </div>
 
@@ -181,17 +248,23 @@ export default function DashboardLayout({ children }: Props) {
             </button>
 
             <div className="relative">
-              <button className="flex items-center justify-center" style={{
-                width: "34px", height: "34px", borderRadius: "8px",
-                border: `1px solid ${colors.inputBorder}`,
-                background: colors.inputBg,
-                color: colors.bellColor,
-                cursor: "pointer",
-              }}>
-                <Bell size={15} />
-              </button>
-              <span className="absolute -top-1 -right-1 flex items-center justify-center rounded-full text-white"
-                style={{ width: "16px", height: "16px", background: colors.red, fontSize: "9px", fontWeight: 700 }}>3</span>
+              <Link href="/notifications">
+                <button className="flex items-center justify-center" style={{
+                  width: "34px", height: "34px", borderRadius: "8px",
+                  border: `1px solid ${colors.inputBorder}`,
+                  background: colors.inputBg,
+                  color: colors.bellColor,
+                  cursor: "pointer",
+                }}>
+                  <Bell size={15} />
+                </button>
+              </Link>
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex items-center justify-center rounded-full text-white"
+                  style={{ width: "16px", height: "16px", background: colors.red, fontSize: "9px", fontWeight: 700 }}>
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
             </div>
 
             <div className="hidden sm:flex items-center gap-2 rounded-lg cursor-pointer" style={{
@@ -199,10 +272,15 @@ export default function DashboardLayout({ children }: Props) {
               border: `1px solid ${colors.inputBorder}`,
               background: colors.inputBg,
             }}>
-              <div className="flex items-center justify-center rounded-md font-bold text-white"
-                style={{ width: "28px", height: "28px", background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", fontSize: "12px", borderRadius: "6px" }}>
-                {displayName[0]?.toUpperCase() ?? "U"}
-              </div>
+              {profilePicUrl ? (
+                <img src={profilePicUrl} alt={displayName}
+                  style={{ width: "28px", height: "28px", borderRadius: "6px", objectFit: "cover" }} />
+              ) : (
+                <div className="flex items-center justify-center rounded-md font-bold text-white"
+                  style={{ width: "28px", height: "28px", background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", fontSize: "12px", borderRadius: "6px" }}>
+                  {displayName[0]?.toUpperCase() ?? "U"}
+                </div>
+              )}
               <div className="hidden lg:block">
                 <p style={{ fontSize: "12px", fontWeight: 600, color: colors.textPrimary, lineHeight: 1.2 }}>{displayName}</p>
                 <p style={{ fontSize: "10px", color: colors.textMuted, lineHeight: 1.2 }}>Pro Account</p>

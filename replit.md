@@ -163,12 +163,40 @@ All dashboard pages are fully responsive with mobile-first breakpoints (optimize
 - **OnboardingShell** — Horizontally scrollable 11-step progress bar (`overflow-x-auto` with `min-width: 600px`), responsive footer padding
 - Tables use `overflow-x-auto` with `min-width` for horizontal scroll on constrained viewports
 
+### KYC Flow Gate
+- `Login.tsx` checks `/api/user/me` after auth — routes to correct onboarding step, `/application-pending`, or `/dashboard` based on KYC status
+- `DashboardLayout.tsx` checks user status on mount — non-approved users redirected; fetch failure redirects to `/login` (no bypass)
+- Statuses: `approved` → dashboard, `pending`/`verified` → onboarding or pending page, `rejected` → error message, `resubmit` → restart onboarding, `not_found`/unknown → onboarding
+
+### Notifications System
+- `GET /api/notifications?email=` — returns notifications array + unread count
+- `POST /api/notifications/read` — marks all as read (body: `{ email }`)
+- Auto-generated on KYC admin actions (approve/reject/resubmit)
+- `Notifications.tsx` page with unread badges, mark-read, type-colored cards
+- Bell icon in DashboardLayout with real unread count (30s polling)
+
+### Crypto Market Data
+- `GET /api/market/prices` — CoinGecko proxy for BTC, ETH, BNB, SOL, XRP, ADA, DOGE, DOT, AVAX, MATIC (60s server-side cache)
+- `GET /api/market/chart/:coinId` — OHLC chart data with timeframe parameter
+- `Markets.tsx` page with live prices table, sparklines, OHLC chart with 1D/7D/30D/90D/1Y selectors
+
+### Profile Picture Upload
+- `POST /api/user/profile-picture` — multipart upload (max 5MB, jpg/png/webp)
+- `GET /api/user/profile-picture/:filename` — serves image
+- `DELETE /api/user/profile-picture?email=` — removes image
+- `GET /api/user/me?email=` — returns user status, KYC completion, completed steps, profile picture filename
+- Settings.tsx shows upload button on avatar, preview, remove option
+- DashboardLayout shows profile pic in top bar if set
+
 ### Key Files (guardian-trading)
 - `src/lib/onboarding/OnboardingContext.tsx` — state machine + session restore
 - `src/lib/onboarding/useOnboardingStep.ts` — unified controller hook
 - `src/lib/onboarding/OnboardingGuard.tsx` — route guard
 - `src/lib/location/locationService.ts` — cascading location data
 - `src/lib/onboarding/schema.ts` — Zod schemas for all 11 steps
+- `src/pages/dashboard/Markets.tsx` — crypto market data page
+- `src/pages/dashboard/Notifications.tsx` — notifications page
+- `src/pages/dashboard/Settings.tsx` — settings with profile picture upload
 
 ---
 

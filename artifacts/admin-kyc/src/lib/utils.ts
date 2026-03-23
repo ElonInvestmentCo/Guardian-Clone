@@ -74,6 +74,7 @@ export function getProfileField(profile: Record<string, unknown>, step: string, 
 }
 
 export function actionTypeLabel(actionType: string): string {
+  if (!actionType) return "Unknown";
   return actionType
     .replace(/^ADMIN_/, "")
     .replace(/_/g, " ")
@@ -82,6 +83,7 @@ export function actionTypeLabel(actionType: string): string {
 }
 
 export function actionTypeColor(actionType: string): { dot: string; text: string } {
+  if (!actionType) return { dot: "#6B7280", text: "#6B7280" };
   if (actionType.includes("APPROVE") || actionType.includes("REACTIVATE")) return { dot: "#16A34A", text: "#16A34A" };
   if (actionType.includes("REJECT") || actionType.includes("BAN"))         return { dot: "#DC2626", text: "#DC2626" };
   if (actionType.includes("SUSPEND"))  return { dot: "#EA580C", text: "#EA580C" };

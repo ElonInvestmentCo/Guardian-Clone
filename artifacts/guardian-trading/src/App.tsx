@@ -32,10 +32,12 @@ import ApplicationSubmitted from "@/pages/ApplicationSubmitted";
 import ApplicationPending from "@/pages/ApplicationPending";
 import AccountVerified from "@/pages/AccountVerified";
 import DashboardOverview from "@/pages/dashboard/Overview";
+import DashboardMarkets from "@/pages/dashboard/Markets";
 import DashboardPositions from "@/pages/dashboard/Positions";
 import DashboardOrders from "@/pages/dashboard/Orders";
 import DashboardPortfolio from "@/pages/dashboard/Portfolio";
 import DashboardStatements from "@/pages/dashboard/Statements";
+import DashboardNotifications from "@/pages/dashboard/Notifications";
 import DashboardSettings from "@/pages/dashboard/Settings";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/analytics/Dashboard";
@@ -105,10 +107,12 @@ function Router() {
 
       {/* ── Dashboard ─────────────────────────────────────────────────── */}
       <Route path="/dashboard" component={DashboardOverview} />
+      <Route path="/markets" component={DashboardMarkets} />
       <Route path="/positions" component={DashboardPositions} />
       <Route path="/orders" component={DashboardOrders} />
       <Route path="/portfolio" component={DashboardPortfolio} />
       <Route path="/statements" component={DashboardStatements} />
+      <Route path="/notifications" component={DashboardNotifications} />
       <Route path="/settings" component={DashboardSettings} />
 
       {/* ── Analytics ─────────────────────────────────────────────────── */}

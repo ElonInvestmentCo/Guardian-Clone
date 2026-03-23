@@ -98,6 +98,53 @@ export default function Settings() {
   const [state, setState] = useState("");
   const [city, setCity] = useState("");
   const [profileSaved, setProfileSaved] = useState(false);
+  const [profilePic, setProfilePic] = useState<string | null>(null);
+  const [picPreview, setPicPreview] = useState<string | null>(null);
+  const [picUploading, setPicUploading] = useState(false);
+  const picInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!email) return;
+    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+    fetch(`${base}/api/user/me?email=${encodeURIComponent(email)}`)
+      .then((r) => r.json())
+      .then((d: { profilePicture?: string }) => {
+        if (d.profilePicture) setProfilePic(d.profilePicture);
+      })
+      .catch(() => {});
+  }, [email]);
+
+  const handlePicSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { alert("File too large. Max 5MB."); return; }
+    setPicPreview(URL.createObjectURL(file));
+    setPicUploading(true);
+    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+    const fd = new FormData();
+    fd.append("email", email);
+    fd.append("picture", file);
+    fetch(`${base}/api/user/profile-picture`, { method: "POST", body: fd })
+      .then((r) => {
+        if (!r.ok) throw new Error("Upload failed");
+        return r.json();
+      })
+      .then((d: { filename?: string }) => {
+        if (d.filename) setProfilePic(d.filename);
+        setPicUploading(false);
+      })
+      .catch(() => { setPicUploading(false); setPicPreview(null); alert("Upload failed. Please try again."); });
+  };
+
+  const handlePicRemove = () => {
+    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+    fetch(`${base}/api/user/profile-picture?email=${encodeURIComponent(email)}`, { method: "DELETE" })
+      .then(() => { setProfilePic(null); setPicPreview(null); });
+  };
+
+  const profilePicUrl = profilePic
+    ? `${import.meta.env.BASE_URL.replace(/\/$/, "")}/api/user/profile-picture/${profilePic}`
+    : null;
 
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
@@ -172,14 +219,39 @@ export default function Settings() {
         <div className="flex flex-col md:flex-row gap-5">
           <div className="flex-shrink-0 w-full md:w-[240px]">
             <div className="hidden md:flex rounded-xl p-5 mb-4 flex-col items-center" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-              <div className="flex items-center justify-center rounded-xl font-bold text-white mb-3"
-                style={{ width: "64px", height: "64px", background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", fontSize: "24px", borderRadius: "16px" }}>
-                {displayName[0]?.toUpperCase() ?? "U"}
+              <div style={{ position: "relative", marginBottom: "12px" }}>
+                {picPreview || profilePicUrl ? (
+                  <img src={picPreview || profilePicUrl!} alt={displayName}
+                    style={{ width: "64px", height: "64px", borderRadius: "16px", objectFit: "cover" }} />
+                ) : (
+                  <div className="flex items-center justify-center rounded-xl font-bold text-white"
+                    style={{ width: "64px", height: "64px", background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", fontSize: "24px", borderRadius: "16px" }}>
+                    {displayName[0]?.toUpperCase() ?? "U"}
+                  </div>
+                )}
+                <input ref={picInputRef} type="file" accept=".jpg,.jpeg,.png,.webp" onChange={handlePicSelect}
+                  style={{ display: "none" }} />
+                <button onClick={() => picInputRef.current?.click()} disabled={picUploading}
+                  style={{
+                    position: "absolute", bottom: "-4px", right: "-4px",
+                    width: "24px", height: "24px", borderRadius: "50%",
+                    background: colors.accent, color: "#fff", border: "2px solid white",
+                    cursor: "pointer", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                  {picUploading ? "..." : "+"}
+                </button>
               </div>
               <p style={{ fontSize: "14px", fontWeight: 700, color: colors.textPrimary, marginBottom: "2px" }}>{displayName}</p>
               <p style={{ fontSize: "11px", color: colors.textMuted }}>{email}</p>
+              {(profilePic || picPreview) && (
+                <button onClick={handlePicRemove} style={{
+                  marginTop: "6px", fontSize: "10px", color: colors.red ?? "#ef4444", background: "none", border: "none", cursor: "pointer", textDecoration: "underline",
+                }}>
+                  Remove photo
+                </button>
+              )}
               <span className="mt-3 px-3 py-1 rounded-md text-xs font-bold" style={{ background: colors.greenBg, color: colors.green }}>
-                Verified
+                Approved
               </span>
             </div>
 
