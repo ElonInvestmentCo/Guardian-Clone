@@ -353,14 +353,8 @@ export default function Overview() {
           </div>
 
           <div
-            onClick={() => {
-              if (typeof window !== "undefined" && (window as unknown as Record<string, unknown>).LiveChatWidget) {
-                (window as unknown as Record<string, { call: (cmd: string) => void }>).LiveChatWidget.call("maximize");
-              }
-            }}
             style={{
               marginTop: "20px",
-              cursor: "pointer",
               borderRadius: 0,
             }}
           >

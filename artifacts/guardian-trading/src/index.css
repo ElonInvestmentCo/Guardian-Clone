@@ -102,23 +102,11 @@
 }
 
 @media (max-width: 767px) {
-  #chat-widget-container {
-    bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
-    right: 16px !important;
-    left: auto !important;
-  }
-
   #guardian-ai-widget {
     bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
     max-width: calc(100vw - 32px) !important;
     right: 16px !important;
   }
-}
-
-#chat-widget-container {
-  bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
-  right: 20px !important;
-  left: auto !important;
 }
 
 @keyframes spinner-bars-rotate {
