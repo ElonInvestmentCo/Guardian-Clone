@@ -7,11 +7,11 @@
     "dateOfBirth": "enc:a424a32e7e0f908d1a0c660197e4a4f9:1be5098563b1a0375c814014a0933a08:63b7eeb37059b2902e2c",
     "taxId": "enc:46f1cd7bc4bf8bc5b97f517deefa74ab:99be6393e940ffef9e346731e58e9b26:2a2c8e99cd4200bf939ea5"
   },
-  "updatedAt": "2026-03-23T08:37:18.505Z",
+  "updatedAt": "2026-03-23T19:56:56.646Z",
   "documents": {
     "id_front": "data/users/test_at_guardiantrading.com/documents/id_front.jpg"
   },
-  "status": "resubmit",
+  "status": "approved",
   "verifiedAt": "2026-03-20T18:05:10.521Z",
   "_auditLog": [
     {
@@ -59,7 +59,35 @@
       "fields": [],
       "note": null,
       "timestamp": "2026-03-23T08:37:18.505Z"
+    },
+    {
+      "actionType": "ADMIN_REACTIVATE",
+      "actor": "admin",
+      "note": null,
+      "timestamp": "2026-03-23T19:56:31.741Z"
+    },
+    {
+      "actionType": "ADMIN_ASSIGN_ROLE",
+      "actor": "admin",
+      "note": "Role set to: vip",
+      "timestamp": "2026-03-23T19:56:41.840Z"
+    },
+    {
+      "actionType": "ADMIN_RESET_PASSWORD",
+      "actor": "admin",
+      "note": null,
+      "timestamp": "2026-03-23T19:56:50.722Z"
+    },
+    {
+      "actionType": "ADMIN_FLAG",
+      "actor": "admin",
+      "reason": null,
+      "note": null,
+      "timestamp": "2026-03-23T19:56:56.645Z"
     }
   ],
-  "_resubmitFields": []
+  "_resubmitFields": [],
+  "role": "vip",
+  "credentials": {},
+  "_flagged": true
 }

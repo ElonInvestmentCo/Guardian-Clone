@@ -152,7 +152,7 @@
   "test@guardiantrading.com": {
     "email": "test@guardiantrading.com",
     "createdAt": "2026-03-20T17:52:08.762Z",
-    "updatedAt": "2026-03-23T08:37:18.504Z",
+    "updatedAt": "2026-03-23T19:56:41.840Z",
     "personalDetails": {
       "firstName": "John",
       "lastName": "Doe",
@@ -162,8 +162,9 @@
     "documents": {
       "id_front": "data/users/test_at_guardiantrading.com/documents/id_front.jpg"
     },
-    "status": "resubmit",
-    "verifiedAt": "2026-03-20T18:05:10.521Z"
+    "status": "approved",
+    "verifiedAt": "2026-03-20T18:05:10.521Z",
+    "role": "vip"
   },
   "willowweallth@gmail.com": {
     "email": "willowweallth@gmail.com",
