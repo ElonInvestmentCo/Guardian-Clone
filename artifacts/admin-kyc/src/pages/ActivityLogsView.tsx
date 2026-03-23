@@ -39,10 +39,10 @@ export default function ActivityLogsView({ onOpenProfile }: Props) {
       const entry = item.entry;
       const matchSearch = !q
         || item.email.toLowerCase().includes(q)
-        || entry.actionType.toLowerCase().includes(q)
+        || (entry.actionType ?? "").toLowerCase().includes(q)
         || (entry.note ?? "").toLowerCase().includes(q)
         || (entry.reason ?? "").toLowerCase().includes(q);
-      const matchAction = !actionFilter || entry.actionType.includes(actionFilter);
+      const matchAction = !actionFilter || (entry.actionType ?? "").includes(actionFilter);
       return matchSearch && matchAction;
     });
   }, [data?.entries, search, actionFilter]);
@@ -146,7 +146,7 @@ export default function ActivityLogsView({ onOpenProfile }: Props) {
                 <tbody>
                   {filtered.map((item, i) => {
                     const entry = item.entry;
-                    const colors = actionTypeColor(entry.actionType);
+                    const colors = actionTypeColor(entry.actionType ?? "");
                     return (
                       <tr
                         key={i}
@@ -172,7 +172,7 @@ export default function ActivityLogsView({ onOpenProfile }: Props) {
                           <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                             <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: colors.dot, flexShrink: 0 }} />
                             <span style={{ fontSize: "12px", fontWeight: "600", color: colors.text, whiteSpace: "nowrap" }}>
-                              {actionTypeLabel(entry.actionType)}
+                              {actionTypeLabel(entry.actionType ?? "")}
                             </span>
                           </div>
                           <div style={{ fontSize: "11px", color: "#9CA3AF", marginTop: "2px", paddingLeft: "13px" }}>by {entry.actor}</div>
@@ -225,7 +225,7 @@ export default function ActivityLogsView({ onOpenProfile }: Props) {
             <div className="block sm:hidden p-4 space-y-3">
               {filtered.map((item, i) => {
                 const entry = item.entry;
-                const colors = actionTypeColor(entry.actionType);
+                const colors = actionTypeColor(entry.actionType ?? "");
                 return (
                   <div key={i} style={{
                     background: "white", border: "1px solid #E5E7EB",
@@ -235,7 +235,7 @@ export default function ActivityLogsView({ onOpenProfile }: Props) {
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                         <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: colors.dot }} />
                         <span style={{ fontSize: "12px", fontWeight: "700", color: colors.text }}>
-                          {actionTypeLabel(entry.actionType)}
+                          {actionTypeLabel(entry.actionType ?? "")}
                         </span>
                       </div>
                       <span style={{ fontSize: "11px", color: "#9CA3AF" }}>{formatDate(entry.timestamp)}</span>

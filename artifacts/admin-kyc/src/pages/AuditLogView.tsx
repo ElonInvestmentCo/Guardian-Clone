@@ -39,9 +39,9 @@ export default function AuditLogView() {
     const q    = search.trim().toLowerCase();
     const type = actionType.toUpperCase();
     return allEntries.filter((e) => {
-      const matchType   = !type || e.actionType.includes(type);
+      const matchType   = !type || (e.actionType ?? "").includes(type);
       const matchSearch = !q
-        || e.actionType.toLowerCase().includes(q)
+        || (e.actionType ?? "").toLowerCase().includes(q)
         || (e.actor ?? "").toLowerCase().includes(q)
         || (e._userEmail ?? "").toLowerCase().includes(q)
         || (e.note  ?? "").toLowerCase().includes(q)
@@ -159,7 +159,7 @@ export default function AuditLogView() {
                 { key: "SUSPEND",  label: "Suspended", color: "#EA580C" },
                 { key: "BAN",      label: "Banned",    color: "#9333EA" },
               ].map(({ key, label, color }) => {
-                const count = allEntries.filter((e) => e.actionType.includes(key)).length;
+                const count = allEntries.filter((e) => (e.actionType ?? "").includes(key)).length;
                 return (
                   <div key={key} style={{ display: "flex", alignItems: "center", gap: "5px", padding: "3px 10px", borderRadius: "20px", background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
                     <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: color, flexShrink: 0 }} />
@@ -190,7 +190,7 @@ export default function AuditLogView() {
 // ── Audit row component ────────────────────────────────────────────────────────
 function AuditRow({ entry, userEmail }: { entry: AuditEntry; userEmail: string }) {
   const [expanded, setExpanded] = useState(false);
-  const c = actionTypeColor(entry.actionType);
+  const c = actionTypeColor(entry.actionType ?? "");
   const hasExtra = !!(entry.note || entry.reason || (entry.fields && entry.fields.length > 0) || entry.meta);
 
   return (
@@ -217,7 +217,7 @@ function AuditRow({ entry, userEmail }: { entry: AuditEntry; userEmail: string }
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
               <span style={{ fontWeight: "700", fontSize: "12px", color: c.text }}>
-                {actionTypeLabel(entry.actionType)}
+                {actionTypeLabel(entry.actionType ?? "")}
               </span>
               <span style={{ fontSize: "11px", color: "#6B7280", fontFamily: "monospace" }}>
                 {userEmail}

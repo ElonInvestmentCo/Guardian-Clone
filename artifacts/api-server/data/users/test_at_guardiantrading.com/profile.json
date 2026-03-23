@@ -7,7 +7,7 @@
     "dateOfBirth": "enc:a424a32e7e0f908d1a0c660197e4a4f9:1be5098563b1a0375c814014a0933a08:63b7eeb37059b2902e2c",
     "taxId": "enc:46f1cd7bc4bf8bc5b97f517deefa74ab:99be6393e940ffef9e346731e58e9b26:2a2c8e99cd4200bf939ea5"
   },
-  "updatedAt": "2026-03-23T06:19:09.401Z",
+  "updatedAt": "2026-03-23T08:37:18.505Z",
   "documents": {
     "id_front": "data/users/test_at_guardiantrading.com/documents/id_front.jpg"
   },
@@ -38,6 +38,27 @@
       "fields": [],
       "note": null,
       "timestamp": "2026-03-23T06:19:09.401Z"
+    },
+    {
+      "actionType": "ADMIN_REQUEST_RESUBMIT",
+      "actor": "admin",
+      "fields": [],
+      "note": null,
+      "timestamp": "2026-03-23T08:36:54.169Z"
+    },
+    {
+      "actionType": "ADMIN_REQUEST_RESUBMIT",
+      "actor": "admin",
+      "fields": [],
+      "note": null,
+      "timestamp": "2026-03-23T08:37:14.118Z"
+    },
+    {
+      "actionType": "ADMIN_REQUEST_RESUBMIT",
+      "actor": "admin",
+      "fields": [],
+      "note": null,
+      "timestamp": "2026-03-23T08:37:18.505Z"
     }
   ],
   "_resubmitFields": []

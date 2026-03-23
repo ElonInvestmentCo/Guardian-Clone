@@ -2,7 +2,7 @@
   "Emailmy488@gmail.com": {
     "email": "Emailmy488@gmail.com",
     "createdAt": "2026-03-20T16:30:58.865Z",
-    "updatedAt": "2026-03-23T06:18:28.901Z",
+    "updatedAt": "2026-03-23T08:36:57.632Z",
     "general": {
       "registrationType": "Individual Account",
       "product": "Stocks",
@@ -152,7 +152,7 @@
   "test@guardiantrading.com": {
     "email": "test@guardiantrading.com",
     "createdAt": "2026-03-20T17:52:08.762Z",
-    "updatedAt": "2026-03-23T06:19:09.400Z",
+    "updatedAt": "2026-03-23T08:37:18.504Z",
     "personalDetails": {
       "firstName": "John",
       "lastName": "Doe",
@@ -168,7 +168,7 @@
   "willowweallth@gmail.com": {
     "email": "willowweallth@gmail.com",
     "createdAt": "2026-03-23T05:16:18.602Z",
-    "updatedAt": "2026-03-23T06:13:10.798Z",
+    "updatedAt": "2026-03-23T08:36:50.106Z",
     "credentials": {
       "passwordHash": "enc:3e4bf09d8e013319dc36619d366da415:ac63aa4a02282f7f93daec96b9e805da:63413c8a18a0e37a"
     },
