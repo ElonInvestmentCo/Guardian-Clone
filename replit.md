@@ -314,6 +314,14 @@ Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` 
 - Encryption key is read from env var `USER_DATA_KEY` (falls back to dev key with a warning)
 - All save-step calls are audit-logged: `[Audit][timestamp] action=SAVE_STEP step=X email=Y`
 - Steps saved: `general`, `personal`, `professional`, `idInformation`, `income`, `riskTolerance`, `financialSituation`, `investmentExperience`, `idProofUpload`, `fundingDetails`, `disclosures`, `signatures`
+- **Data integrity**: Atomic file writes (write-to-temp-then-rename), corrupt file backup on parse failure, empty file guard
+- **Password hashing**: Uses `simpleHash` (consistent across auth.ts, profile.ts) — `hash * 31 + charCode >>> 0` to hex
+
+#### User Settings Routes (`src/routes/profile.ts`)
+- `POST /api/user/update-profile` — saves profile settings (firstName, lastName, phone, location)
+- `POST /api/user/change-password` — validates current password, sets new (uses simpleHash matching auth.ts)
+- `POST /api/user/update-notifications` — saves notification preferences
+- Multer error middleware handles file size/type errors with structured JSON responses
 - `pnpm --filter @workspace/api-server run dev` — run the dev server
 - `pnpm --filter @workspace/api-server run build` — production esbuild bundle (`dist/index.cjs`)
 - Build bundles an allowlist of deps (express, cors, pg, drizzle-orm, zod, etc.) and externalizes the rest
