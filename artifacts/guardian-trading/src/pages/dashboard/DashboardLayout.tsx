@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { useLocation, Link } from "wouter";
 import {
   LayoutDashboard, CreditCard, Send, BarChart2,
-  ArrowLeftRight, Settings, LogOut, Sun, Moon,
+  ArrowLeftRight, Settings, LogOut, Sun, Moon, Menu, X,
 } from "lucide-react";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import { useTheme } from "@/context/ThemeContext";
@@ -22,85 +23,66 @@ interface Props {
 export default function DashboardLayout({ children }: Props) {
   const [location, navigate] = useLocation();
   const { theme, colors, toggleTheme } = useTheme();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = () => {
     sessionStorage.clear();
     navigate("/login");
   };
 
+  const handleNav = () => {
+    setMobileOpen(false);
+  };
+
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: colors.bg, fontFamily: "system-ui, -apple-system, sans-serif" }}>
 
-      {/* ── Sidebar ── */}
-      <aside className="flex flex-col flex-shrink-0" style={{ width: "220px", background: "#1c2e3e", padding: "0" }}>
-        {/* Logo */}
-        <div style={{ padding: "22px 18px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-          <Link href="/dashboard">
-            <img src={guardianLogo} alt="Guardian Trading" style={{ height: "34px", width: "auto", cursor: "pointer" }} />
-          </Link>
-        </div>
-
-        {/* Nav */}
-        <nav className="flex flex-col gap-0.5" style={{ padding: "14px 10px", flex: 1 }}>
-          {NAV.map(({ icon: Icon, label, href }) => {
-            const isActive = location === href || (href !== "/dashboard" && location.startsWith(href));
-            return (
-              <Link key={label} href={href}>
-                <div
-                  className="flex items-center gap-3 rounded-lg cursor-pointer transition-all"
-                  style={{
-                    padding: "9px 12px",
-                    background: isActive ? "#3a7bd5" : "transparent",
-                    color: isActive ? "#fff" : "rgba(255,255,255,0.65)",
-                  }}
-                  onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.07)"; }}
-                  onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
-                >
-                  <Icon size={16} />
-                  <span style={{ fontSize: "13.5px", fontWeight: isActive ? 600 : 400 }}>{label}</span>
-                </div>
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Verified badge */}
-        <div style={{ padding: "0 10px 10px" }}>
-          <div className="flex items-center gap-2 rounded-lg" style={{ padding: "8px 12px", background: "rgba(40,167,69,0.15)", border: "1px solid rgba(40,167,69,0.3)" }}>
-            <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: "18px", height: "18px", background: "#28a745" }}>
-              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <span style={{ fontSize: "11px", color: "#4fc86a", fontWeight: 600 }}>Account Verified</span>
-          </div>
-        </div>
-
-        {/* Log out */}
-        <div style={{ padding: "0 10px 18px", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "12px", marginTop: "4px" }}>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 w-full rounded-lg"
-            style={{ padding: "9px 12px", background: "transparent", border: "none", color: "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: "13.5px" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#fff"; (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.07)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.5)"; (e.currentTarget as HTMLElement).style.background = "transparent"; }}
-          >
-            <LogOut size={16} />
-            Log out
-          </button>
-        </div>
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex flex-col flex-shrink-0" style={{ width: "220px", background: "#1c2e3e", padding: "0" }}>
+        <SidebarContent location={location} colors={colors} theme={theme} toggleTheme={toggleTheme} handleLogout={handleLogout} />
       </aside>
 
-      {/* ── Main area ── */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      {/* Mobile Overlay Drawer */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setMobileOpen(false)}
+          />
+          <aside className="relative z-10 flex flex-col flex-shrink-0" style={{ width: "260px", background: "#1c2e3e" }}>
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="absolute top-4 right-4 text-white/60 hover:text-white p-1"
+              style={{ background: "none", border: "none", cursor: "pointer" }}
+            >
+              <X size={20} />
+            </button>
+            <SidebarContent location={location} colors={colors} theme={theme} toggleTheme={toggleTheme} handleLogout={handleLogout} onNav={handleNav} />
+          </aside>
+        </div>
+      )}
 
-        {/* ── Header bar ── */}
-        <div className="flex items-center justify-end flex-shrink-0" style={{
-          padding: "10px 24px",
+      {/* Main area */}
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+
+        {/* Header bar */}
+        <div className="flex items-center justify-between flex-shrink-0" style={{
+          padding: "10px 16px",
           borderBottom: `1px solid ${colors.cardBorder}`,
           background: colors.card,
         }}>
           <button
+            onClick={() => setMobileOpen(true)}
+            className="md:hidden flex items-center justify-center"
+            style={{ background: "none", border: "none", cursor: "pointer", color: colors.textSub, padding: "4px" }}
+            aria-label="Open menu"
+          >
+            <Menu size={22} />
+          </button>
+          <div className="hidden md:block" />
+          <button
             onClick={toggleTheme}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 ml-auto"
             title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
             style={{
               padding: "6px 14px",
@@ -121,11 +103,94 @@ export default function DashboardLayout({ children }: Props) {
           </button>
         </div>
 
-        {/* ── Page content ── */}
+        {/* Page content */}
         <div className="flex-1 overflow-y-auto">
           {children}
         </div>
+
+        {/* Mobile Bottom Nav */}
+        <nav className="flex md:hidden flex-shrink-0 border-t bg-white" style={{ borderColor: colors.cardBorder, background: colors.card }}>
+          {NAV.map(({ icon: Icon, label, href }) => {
+            const isActive = location === href || (href !== "/dashboard" && location.startsWith(href));
+            return (
+              <Link key={label} href={href} onClick={handleNav}
+                className="flex flex-1 flex-col items-center gap-0.5 py-2"
+                style={{ color: isActive ? "#3a7bd5" : colors.textMuted, textDecoration: "none", background: "none" }}>
+                <Icon size={18} />
+                <span style={{ fontSize: "9px", fontWeight: isActive ? 700 : 400 }}>{label}</span>
+              </Link>
+            );
+          })}
+        </nav>
       </div>
     </div>
+  );
+}
+
+function SidebarContent({ location, colors, theme, toggleTheme, handleLogout, onNav }: {
+  location: string;
+  colors: Record<string, string>;
+  theme: string;
+  toggleTheme: () => void;
+  handleLogout: () => void;
+  onNav?: () => void;
+}) {
+  return (
+    <>
+      {/* Logo */}
+      <div style={{ padding: "22px 18px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+        <Link href="/dashboard" onClick={onNav}>
+          <img src={guardianLogo} alt="Guardian Trading" style={{ height: "34px", width: "auto", cursor: "pointer" }} />
+        </Link>
+      </div>
+
+      {/* Nav */}
+      <nav className="flex flex-col gap-0.5" style={{ padding: "14px 10px", flex: 1 }}>
+        {NAV.map(({ icon: Icon, label, href }) => {
+          const isActive = location === href || (href !== "/dashboard" && location.startsWith(href));
+          return (
+            <Link key={label} href={href} onClick={onNav}>
+              <div
+                className="flex items-center gap-3 rounded-lg cursor-pointer transition-all"
+                style={{
+                  padding: "9px 12px",
+                  background: isActive ? "#3a7bd5" : "transparent",
+                  color: isActive ? "#fff" : "rgba(255,255,255,0.65)",
+                }}
+                onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.07)"; }}
+                onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+              >
+                <Icon size={16} />
+                <span style={{ fontSize: "13.5px", fontWeight: isActive ? 600 : 400 }}>{label}</span>
+              </div>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Verified badge */}
+      <div style={{ padding: "0 10px 10px" }}>
+        <div className="flex items-center gap-2 rounded-lg" style={{ padding: "8px 12px", background: "rgba(40,167,69,0.15)", border: "1px solid rgba(40,167,69,0.3)" }}>
+          <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: "18px", height: "18px", background: "#28a745" }}>
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span style={{ fontSize: "11px", color: "#4fc86a", fontWeight: 600 }}>Account Verified</span>
+        </div>
+      </div>
+
+      {/* Log out */}
+      <div style={{ padding: "0 10px 18px", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "12px", marginTop: "4px" }}>
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 w-full rounded-lg"
+          style={{ padding: "9px 12px", background: "transparent", border: "none", color: "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: "13.5px" }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#fff"; (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.07)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.5)"; (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+        >
+          <LogOut size={16} />
+          Log out
+        </button>
+      </div>
+    </>
   );
 }

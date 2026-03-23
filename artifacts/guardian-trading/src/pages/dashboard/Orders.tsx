@@ -70,15 +70,14 @@ export default function Orders() {
 
   return (
     <DashboardLayout>
-      <div style={{ padding: "28px" }}>
-        {/* Header */}
+      <div style={{ padding: "20px 16px" }}>
         <div className="flex items-center justify-between mb-6">
           <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary }}>Orders</h1>
           <div className="flex items-center gap-3">
             <button onClick={() => setShowNewOrder(true)}
               className="flex items-center gap-2"
               style={{ padding: "8px 18px", fontSize: "13px", fontWeight: 600, background: "#3a7bd5", color: "#fff", border: "none", borderRadius: "8px", cursor: "pointer" }}>
-              <Plus size={15} /> New Order
+              <Plus size={15} /> <span className="hidden sm:inline">New Order</span>
             </button>
             <div className="relative">
               <Bell size={20} color={colors.bellColor} style={{ cursor: "pointer" }} />
@@ -90,22 +89,21 @@ export default function Orders() {
                 style={{ width: "32px", height: "32px", background: "#3a7bd5", fontSize: "13px" }}>
                 {displayName[0]?.toUpperCase() ?? "U"}
               </div>
-              <span style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{displayName}</span>
+              <span className="hidden sm:inline" style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{displayName}</span>
             </div>
           </div>
         </div>
 
-        {/* New Order modal */}
         {showNewOrder && (
-          <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: "rgba(0,0,0,0.45)" }}>
-            <div className="rounded-2xl" style={{ background: colors.card, padding: "28px", width: "360px", boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}>
+          <div className="fixed inset-0 flex items-center justify-center z-50 p-4" style={{ background: "rgba(0,0,0,0.45)" }}>
+            <div className="rounded-2xl w-full" style={{ background: colors.card, padding: "28px", maxWidth: "360px", boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}>
               <div className="flex items-center justify-between mb-5">
                 <h2 style={{ fontSize: "16px", fontWeight: 700, color: colors.textPrimary }}>Place New Order</h2>
-                <button onClick={() => setShowNewOrder(false)} style={{ background: "none", border: "none", cursor: "pointer", color: colors.textMuted, fontSize: "20px" }}>×</button>
+                <button onClick={() => setShowNewOrder(false)} style={{ background: "none", border: "none", cursor: "pointer", color: colors.textMuted, fontSize: "20px" }}>x</button>
               </div>
               {submitted ? (
                 <div className="py-6 text-center">
-                  <div style={{ fontSize: "36px", marginBottom: "10px" }}>✓</div>
+                  <div style={{ fontSize: "36px", marginBottom: "10px" }}>&#10003;</div>
                   <p style={{ fontSize: "14px", fontWeight: 600, color: "#28a745" }}>Order submitted!</p>
                 </div>
               ) : (
@@ -134,7 +132,7 @@ export default function Orders() {
                   <button onClick={handleSubmitOrder}
                     style={{ width: "100%", marginTop: "8px", padding: "11px", fontSize: "14px", fontWeight: 700, borderRadius: "10px", border: "none", cursor: "pointer",
                       background: newSide === "Buy" ? "#28a745" : "#dc3545", color: "#fff" }}>
-                    {newSide} {newSymbol || "—"}
+                    {newSide} {newSymbol || "---"}
                   </button>
                 </>
               )}
@@ -142,37 +140,37 @@ export default function Orders() {
           </div>
         )}
 
-        {/* Tabs + search */}
-        <div className="flex items-center gap-3 mb-5">
-          <div className="flex gap-1 p-1 rounded-lg" style={{ background: colors.filterBar }}>
-            <button onClick={() => setActiveTab("All")}
-              style={{ padding: "5px 14px", fontSize: "12px", fontWeight: 600, borderRadius: "6px", border: "none", cursor: "pointer",
-                background: activeTab === "All" ? colors.filterActiveBg : "transparent",
-                color: activeTab === "All" ? colors.filterActiveText : colors.filterInactiveText,
-                boxShadow: activeTab === "All" ? "0 1px 3px rgba(0,0,0,0.1)" : "none" }}>
-              All ({ALL_ORDERS.length})
-            </button>
-            {TABS.map((t) => (
-              <button key={t} onClick={() => setActiveTab(t)}
-                style={{ padding: "5px 14px", fontSize: "12px", fontWeight: 600, borderRadius: "6px", border: "none", cursor: "pointer",
-                  background: activeTab === t ? colors.filterActiveBg : "transparent",
-                  color: activeTab === t ? colors.filterActiveText : colors.filterInactiveText,
-                  boxShadow: activeTab === t ? "0 1px 3px rgba(0,0,0,0.1)" : "none" }}>
-                {t} ({counts[t]})
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-5">
+          <div className="overflow-x-auto">
+            <div className="flex gap-1 p-1 rounded-lg" style={{ background: colors.filterBar }}>
+              <button onClick={() => setActiveTab("All")}
+                style={{ padding: "5px 14px", fontSize: "12px", fontWeight: 600, borderRadius: "6px", border: "none", cursor: "pointer", whiteSpace: "nowrap",
+                  background: activeTab === "All" ? colors.filterActiveBg : "transparent",
+                  color: activeTab === "All" ? colors.filterActiveText : colors.filterInactiveText,
+                  boxShadow: activeTab === "All" ? "0 1px 3px rgba(0,0,0,0.1)" : "none" }}>
+                All ({ALL_ORDERS.length})
               </button>
-            ))}
+              {TABS.map((t) => (
+                <button key={t} onClick={() => setActiveTab(t)}
+                  style={{ padding: "5px 14px", fontSize: "12px", fontWeight: 600, borderRadius: "6px", border: "none", cursor: "pointer", whiteSpace: "nowrap",
+                    background: activeTab === t ? colors.filterActiveBg : "transparent",
+                    color: activeTab === t ? colors.filterActiveText : colors.filterInactiveText,
+                    boxShadow: activeTab === t ? "0 1px 3px rgba(0,0,0,0.1)" : "none" }}>
+                  {t} ({counts[t]})
+                </button>
+              ))}
+            </div>
           </div>
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search orders…"
-            style={{ padding: "8px 14px", fontSize: "13px", border: `1.5px solid ${colors.inputBorder}`, borderRadius: "8px", outline: "none", color: colors.inputText, background: colors.inputBg, minWidth: "200px" }} />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search orders..."
+            style={{ padding: "8px 14px", fontSize: "13px", border: `1.5px solid ${colors.inputBorder}`, borderRadius: "8px", outline: "none", color: colors.inputText, background: colors.inputBg, minWidth: "0" }} />
         </div>
 
-        {/* Table */}
-        <div className="rounded-xl" style={{ background: colors.card, overflow: "hidden" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <div className="hidden sm:block rounded-xl overflow-x-auto" style={{ background: colors.card }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "800px" }}>
             <thead>
               <tr style={{ background: colors.tableHead }}>
                 {["Order ID", "Symbol", "Side", "Type", "Qty", "Price", "Filled", "Status", "Date", "Time"].map((h) => (
-                  <th key={h} style={{ textAlign: "left", fontSize: "11px", color: colors.tableHeaderText, fontWeight: 600, padding: "12px 14px", borderBottom: `1px solid ${colors.cardBorder}` }}>{h}</th>
+                  <th key={h} style={{ textAlign: "left", fontSize: "11px", color: colors.tableHeaderText, fontWeight: 600, padding: "12px 14px", borderBottom: `1px solid ${colors.cardBorder}`, whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -206,6 +204,47 @@ export default function Orders() {
               ))}
             </tbody>
           </table>
+          {filtered.length === 0 && (
+            <div className="py-12 text-center" style={{ color: colors.textMuted, fontSize: "14px" }}>No orders found.</div>
+          )}
+        </div>
+
+        <div className="block sm:hidden space-y-3">
+          {filtered.map((o, i) => (
+            <div key={i} className="rounded-xl p-4" style={{ background: colors.card }}>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span style={{ fontSize: "14px", fontWeight: 700, color: colors.textPrimary }}>{o.symbol}</span>
+                  <span style={{ fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "20px",
+                    background: o.side === "Buy" ? "#e8f5e9" : "#fdecea", color: o.side === "Buy" ? "#28a745" : "#dc3545" }}>
+                    {o.side}
+                  </span>
+                </div>
+                <span style={{ ...STATUS_STYLE[o.status], fontSize: "11px", padding: "3px 10px", borderRadius: "20px", fontWeight: 600 }}>
+                  {o.status}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <span style={{ fontSize: "10px", color: colors.textMuted, textTransform: "uppercase" }}>Type</span>
+                  <p style={{ fontSize: "12px", color: colors.textSub }}>{o.type}</p>
+                </div>
+                <div>
+                  <span style={{ fontSize: "10px", color: colors.textMuted, textTransform: "uppercase" }}>Price</span>
+                  <p style={{ fontSize: "12px", color: colors.textSub }}>{o.price ? `$${o.price.toFixed(2)}` : "Market"}</p>
+                </div>
+                <div>
+                  <span style={{ fontSize: "10px", color: colors.textMuted, textTransform: "uppercase" }}>Qty</span>
+                  <p style={{ fontSize: "12px", color: colors.textSub }}>{o.filled}/{o.qty}</p>
+                </div>
+                <div>
+                  <span style={{ fontSize: "10px", color: colors.textMuted, textTransform: "uppercase" }}>Date</span>
+                  <p style={{ fontSize: "12px", color: colors.textSub }}>{o.date} {o.time}</p>
+                </div>
+              </div>
+              <p style={{ fontSize: "11px", color: "#3a7bd5", fontWeight: 600, marginTop: "6px" }}>{o.id}</p>
+            </div>
+          ))}
           {filtered.length === 0 && (
             <div className="py-12 text-center" style={{ color: colors.textMuted, fontSize: "14px" }}>No orders found.</div>
           )}

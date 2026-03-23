@@ -50,10 +50,8 @@ export default function Overview() {
 
   return (
     <DashboardLayout>
-      <div className="flex h-full">
-        {/* Main content */}
-        <div className="flex-1 overflow-y-auto" style={{ padding: "28px 24px" }}>
-          {/* Header */}
+      <div className="flex flex-col lg:flex-row h-full">
+        <div className="flex-1 overflow-y-auto" style={{ padding: "20px 16px" }}>
           <div className="flex items-center justify-between mb-6">
             <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary }}>Dashboard</h1>
             <div className="flex items-center gap-4">
@@ -67,14 +65,13 @@ export default function Overview() {
                   style={{ width: "32px", height: "32px", background: "#3a7bd5", fontSize: "13px" }}>
                   {displayName[0]?.toUpperCase() ?? "U"}
                 </div>
-                <span style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{displayName}</span>
+                <span className="hidden sm:inline" style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{displayName}</span>
               </div>
             </div>
           </div>
 
-          {/* Stat cards */}
-          <div className="flex gap-4 mb-5">
-            <div className="flex-1 rounded-xl p-5" style={{ background: colors.statPortfolio }}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+            <div className="rounded-xl p-5" style={{ background: colors.statPortfolio }}>
               <p style={{ fontSize: "12px", color: colors.textSub, marginBottom: "8px" }}>Portfolio Value</p>
               <p style={{ fontSize: "22px", fontWeight: 800, color: colors.textPrimary, marginBottom: "10px" }}>$127,450</p>
               <div className="flex items-center justify-between">
@@ -82,7 +79,7 @@ export default function Overview() {
                 <span style={{ fontSize: "12px", fontWeight: 700, color: "#28a745" }}>+2.3%</span>
               </div>
             </div>
-            <div className="flex-1 rounded-xl p-5" style={{ background: colors.statPnl }}>
+            <div className="rounded-xl p-5" style={{ background: colors.statPnl }}>
               <p style={{ fontSize: "12px", color: colors.textSub, marginBottom: "8px" }}>Today's P&L</p>
               <p style={{ fontSize: "22px", fontWeight: 800, color: colors.textPrimary, marginBottom: "10px" }}>+$2,340</p>
               <div className="flex items-center justify-between">
@@ -90,7 +87,7 @@ export default function Overview() {
                 <span style={{ fontSize: "12px", fontWeight: 700, color: "#28a745" }}>+1.8%</span>
               </div>
             </div>
-            <div className="flex-1 rounded-xl p-5" style={{ background: colors.statActivity }}>
+            <div className="rounded-xl p-5" style={{ background: colors.statActivity }}>
               <div className="flex items-start justify-between mb-1">
                 <p style={{ fontSize: "12px", color: colors.textSub }}>Activity</p>
                 <span className="px-1.5 py-0.5 rounded text-white font-bold" style={{ fontSize: "9px", background: "#28a745" }}>+%</span>
@@ -107,8 +104,7 @@ export default function Overview() {
             </div>
           </div>
 
-          {/* Overview Chart */}
-          <div className="rounded-xl mb-5" style={{ background: colors.card, padding: "20px 22px" }}>
+          <div className="rounded-xl mb-5" style={{ background: colors.card, padding: "20px 16px" }}>
             <div className="flex items-center justify-between mb-4">
               <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary }}>Portfolio Overview</p>
             </div>
@@ -126,55 +122,79 @@ export default function Overview() {
             </ResponsiveContainer>
           </div>
 
-          {/* Transactions */}
-          <div className="rounded-xl" style={{ background: colors.card, padding: "20px 22px" }}>
+          <div className="rounded-xl" style={{ background: colors.card, padding: "20px 16px" }}>
             <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary, marginBottom: "16px" }}>Recent Trades</p>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead>
-                <tr>
-                  {["Symbol", "Trade ID", "P&L", "Status", "Date", "Account"].map((h) => (
-                    <th key={h} style={{ textAlign: "left", fontSize: "11px", color: colors.textMuted, fontWeight: 600, paddingBottom: "10px", borderBottom: `1px solid ${colors.divider}` }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {trades.map((t, i) => (
-                  <tr key={i} style={{ borderBottom: `1px solid ${colors.tableRowBorder}` }}>
-                    <td style={{ padding: "10px 0" }}>
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center justify-center rounded-full font-bold text-white flex-shrink-0"
-                          style={{ width: "28px", height: "28px", background: "#1c2e3e", fontSize: "10px" }}>
-                          {t.symbol[0]}
-                        </div>
-                        <span style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{t.symbol}</span>
-                      </div>
-                    </td>
-                    <td style={{ fontSize: "12px", color: colors.textMuted }}>{t.id}</td>
-                    <td style={{ fontSize: "13px", fontWeight: 600, color: t.dir === "+" ? "#28a745" : "#dc3545" }}>{t.amount}</td>
-                    <td>
-                      <span className="inline-block px-2.5 py-1 rounded" style={{ ...statusStyle[t.status], fontSize: "11px" }}>
-                        {t.status}
-                      </span>
-                    </td>
-                    <td style={{ fontSize: "12px", color: colors.textMuted }}>{t.date}</td>
-                    <td>
-                      <div className="flex items-center gap-1.5">
-                        <div className="flex items-center">
-                          <div style={{ width: "16px", height: "16px", borderRadius: "50%", background: "#e00" }} />
-                          <div style={{ width: "16px", height: "16px", borderRadius: "50%", background: "#f90", marginLeft: "-5px" }} />
-                        </div>
-                        <span style={{ fontSize: "11px", color: colors.textMuted }}>**** {t.acct}</span>
-                      </div>
-                    </td>
+
+            <div className="hidden sm:block overflow-x-auto">
+              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "600px" }}>
+                <thead>
+                  <tr>
+                    {["Symbol", "Trade ID", "P&L", "Status", "Date", "Account"].map((h) => (
+                      <th key={h} style={{ textAlign: "left", fontSize: "11px", color: colors.textMuted, fontWeight: 600, paddingBottom: "10px", borderBottom: `1px solid ${colors.divider}` }}>{h}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {trades.map((t, i) => (
+                    <tr key={i} style={{ borderBottom: `1px solid ${colors.tableRowBorder}` }}>
+                      <td style={{ padding: "10px 0" }}>
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-center rounded-full font-bold text-white flex-shrink-0"
+                            style={{ width: "28px", height: "28px", background: "#1c2e3e", fontSize: "10px" }}>
+                            {t.symbol[0]}
+                          </div>
+                          <span style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{t.symbol}</span>
+                        </div>
+                      </td>
+                      <td style={{ fontSize: "12px", color: colors.textMuted }}>{t.id}</td>
+                      <td style={{ fontSize: "13px", fontWeight: 600, color: t.dir === "+" ? "#28a745" : "#dc3545" }}>{t.amount}</td>
+                      <td>
+                        <span className="inline-block px-2.5 py-1 rounded" style={{ ...statusStyle[t.status], fontSize: "11px" }}>
+                          {t.status}
+                        </span>
+                      </td>
+                      <td style={{ fontSize: "12px", color: colors.textMuted }}>{t.date}</td>
+                      <td>
+                        <div className="flex items-center gap-1.5">
+                          <div className="flex items-center">
+                            <div style={{ width: "16px", height: "16px", borderRadius: "50%", background: "#e00" }} />
+                            <div style={{ width: "16px", height: "16px", borderRadius: "50%", background: "#f90", marginLeft: "-5px" }} />
+                          </div>
+                          <span style={{ fontSize: "11px", color: colors.textMuted }}>**** {t.acct}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="block sm:hidden space-y-3">
+              {trades.map((t, i) => (
+                <div key={i} className="rounded-lg p-3" style={{ border: `1px solid ${colors.divider}` }}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-center rounded-full font-bold text-white flex-shrink-0"
+                        style={{ width: "28px", height: "28px", background: "#1c2e3e", fontSize: "10px" }}>
+                        {t.symbol[0]}
+                      </div>
+                      <span style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{t.symbol}</span>
+                    </div>
+                    <span className="inline-block px-2.5 py-1 rounded" style={{ ...statusStyle[t.status], fontSize: "11px" }}>
+                      {t.status}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span style={{ fontSize: "13px", fontWeight: 600, color: t.dir === "+" ? "#28a745" : "#dc3545" }}>{t.amount}</span>
+                    <span style={{ fontSize: "12px", color: colors.textMuted }}>{t.date}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Right Panel */}
-        <aside className="flex flex-col flex-shrink-0 overflow-y-auto" style={{ width: "270px", background: colors.rightPanel, borderLeft: `1px solid ${colors.rightPanelBorder}`, padding: "28px 20px" }}>
+        <aside className="hidden lg:flex flex-col flex-shrink-0 overflow-y-auto" style={{ width: "270px", background: colors.rightPanel, borderLeft: `1px solid ${colors.rightPanelBorder}`, padding: "28px 20px" }}>
           <div className="mb-5">
             <p style={{ fontSize: "12px", color: colors.textMuted, marginBottom: "4px" }}>Account Equity</p>
             <p style={{ fontSize: "26px", fontWeight: 800, color: colors.textPrimary, letterSpacing: "-0.02em" }}>$127,450</p>
