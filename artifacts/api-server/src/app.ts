@@ -1,3 +1,4 @@
+import path from "path";
 import express, { type Express } from "express";
 import cors from "cors";
 import router from "./routes/index.js";
@@ -65,5 +66,25 @@ app.get("/api/users.json", honeytrapRoute);
 app.get("/api/data.json", honeytrapRoute);
 
 app.use("/api", router);
+
+if (process.env.NODE_ENV === "production") {
+  const adminDir = path.resolve(process.cwd(), "artifacts/admin-kyc/dist/public");
+  app.use(
+    "/admin-kyc",
+    express.static(adminDir, { maxAge: "1y", immutable: true }),
+  );
+  app.get("/admin-kyc/{*splat}", (_req, res) => {
+    res.sendFile(path.join(adminDir, "index.html"));
+  });
+
+  const frontendDir = path.resolve(
+    process.cwd(),
+    "artifacts/guardian-trading/dist/public",
+  );
+  app.use(express.static(frontendDir, { maxAge: "1y", immutable: true }));
+  app.get("{*splat}", (_req, res) => {
+    res.sendFile(path.join(frontendDir, "index.html"));
+  });
+}
 
 export default app;

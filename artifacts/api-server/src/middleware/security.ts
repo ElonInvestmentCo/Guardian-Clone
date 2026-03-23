@@ -175,7 +175,7 @@ export function hotlinkProtection(req: Request, res: Response, next: NextFunctio
   }
 
   try {
-    const refUrl = new URL(referer);
+    const refUrl = new URL(Array.isArray(referer) ? referer[0] : referer);
     const allowed = [
       "guardiiantrading.com",
       "www.guardiiantrading.com",

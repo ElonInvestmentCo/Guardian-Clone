@@ -335,6 +335,15 @@ Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` 
 - `pnpm --filter @workspace/api-server run dev` — run the dev server
 - `pnpm --filter @workspace/api-server run build` — production esbuild bundle (`dist/index.cjs`)
 - Build bundles an allowlist of deps (express, cors, pg, drizzle-orm, zod, etc.) and externalizes the rest
+- In production, the API server also serves static files for guardian-trading (`/`) and admin-kyc (`/admin-kyc/`) with SPA fallbacks
+
+## Deployment
+
+- **Target**: Autoscale (Replit)
+- **Build**: `bash scripts/build-production.sh` — builds shared libs, guardian-trading (BASE_PATH=/), admin-kyc (BASE_PATH=/admin-kyc/), and api-server
+- **Run**: `node artifacts/api-server/dist/index.cjs` — single process serves API + both frontends
+- **Static paths**: resolved via `process.cwd()` in `app.ts` (CJS-safe, no `import.meta.url`)
+- **Route precedence**: `/api/*` → API routes, `/admin-kyc/*` → admin SPA, `/*` → guardian-trading SPA
 
 ### `lib/db` (`@workspace/db`)
 
