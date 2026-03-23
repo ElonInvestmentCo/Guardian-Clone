@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
-import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
+import guardianTextLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
+import guardianShieldLogo from "@assets/logo_1774306961902.png";
 import clientPortalBtn from "@assets/Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443.png";
 import createAccountBtn from "@assets/Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345.png";
 
@@ -37,11 +38,17 @@ export function Navbar() {
           style={{ height: "65px", paddingLeft: "clamp(16px, 4vw, 56px)", paddingRight: "clamp(16px, 4vw, 44px)" }}
         >
           {/* ── Logo ─────────────────────────────────────────────────────────── */}
-          <Link href="/" className="flex items-center flex-shrink-0">
+          <Link href="/" className="flex items-center flex-shrink-0" style={{ gap: "10px" }}>
             <img
-              src={guardianLogo}
+              src={guardianShieldLogo}
               alt="Guardian Trading"
-              className="h-[42px] sm:h-[52px]"
+              style={{ height: "36px", width: "auto", objectFit: "contain", flexShrink: 0 }}
+              data-testid="img-logo-shield"
+            />
+            <img
+              src={guardianTextLogo}
+              alt="Guardian Trading"
+              className="h-[38px] sm:h-[46px]"
               style={{ width: "auto", objectFit: "contain" }}
               data-testid="img-logo"
             />
