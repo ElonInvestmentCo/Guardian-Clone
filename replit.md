@@ -114,6 +114,16 @@ Multi-step onboarding platform at `/` (guardian-trading artifact).
 - All 12 step components have strict real-time field-level validation with error messages
 - Backend `signup.ts` has matching format validation: phone regex, SSN/EIN format, date parsing, ABA/SWIFT format, name character checks, conditional employer fields, investment experience rows, disclosure questions, signature consents
 
+### Responsive Design (Mobile-First)
+All dashboard pages are fully responsive with mobile-first breakpoints (optimized for iPhone 16 Pro Max / 430px):
+- **DashboardLayout** — Desktop sidebar (220px, hidden on mobile), hamburger + slide-in drawer on mobile, bottom navigation bar on mobile (`md:` breakpoint)
+- **Overview** — Stat cards stack on mobile (`grid-cols-1 sm:grid-cols-3`), right aside panel hidden on mobile (`hidden lg:flex`), mobile card view for trades table
+- **Positions/Orders/Statements** — Mobile card views for data (`hidden sm:block` table / `block sm:hidden` cards), responsive summary grids, horizontally scrollable filter tabs
+- **Portfolio** — 2-col mobile / 4-col desktop summary cards, chart + allocation stack on mobile (`flex-col lg:flex-row`), mobile card view for holdings
+- **Settings** — Horizontal scrollable section tabs on mobile, stacked form layout, avatar hidden on mobile
+- **OnboardingShell** — Horizontally scrollable 11-step progress bar (`overflow-x-auto` with `min-width: 600px`), responsive footer padding
+- Tables use `overflow-x-auto` with `min-width` for horizontal scroll on constrained viewports
+
 ### Key Files (guardian-trading)
 - `src/lib/onboarding/OnboardingContext.tsx` — state machine + session restore
 - `src/lib/onboarding/useOnboardingStep.ts` — unified controller hook
