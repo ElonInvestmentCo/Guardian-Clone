@@ -77,8 +77,8 @@ export default function AuditLogView() {
         </button>
       </div>
 
-      {/* Search + filter bar */}
-      <div style={{ padding: "12px 20px", background: "white", borderBottom: "1px solid #E5E7EB", display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center", flexShrink: 0 }}>
+      {/* Search + filter bar (responsive) */}
+      <div style={{ padding: "12px 20px", background: "white", borderBottom: "1px solid #E5E7EB", display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center", flexShrink: 0, overflowX: "auto" }}>
         <div style={{ position: "relative", flex: "1 1 220px" }}>
           <svg
             width="14" height="14" fill="none" stroke="#9CA3AF" strokeWidth="2" viewBox="0 0 24 24"

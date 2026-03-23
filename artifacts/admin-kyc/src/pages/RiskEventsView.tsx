@@ -94,8 +94,8 @@ export default function RiskEventsView() {
       {/* Scrollable body */}
       <div style={{ flex: 1, overflow: "auto", padding: "20px" }}>
 
-        {/* Stat cards */}
-        <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "20px" }}>
+        {/* Stat cards (responsive grid on mobile) */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3" style={{ marginBottom: "20px" }}>
           <StatCard label="Critical Risk" value={counts.critical} color="#DC2626" bg="#FEF2F2" border="#FECACA"
             active={levelFilter === "critical"} onClick={() => setLevelFilter(levelFilter === "critical" ? "" : "critical")} />
           <StatCard label="High Risk" value={counts.high} color="#EA580C" bg="#FFF7ED" border="#FED7AA"

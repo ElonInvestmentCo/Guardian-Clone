@@ -85,13 +85,13 @@ export default function KycQueueView() {
         </button>
       </div>
 
-      {/* ── Filters ────────────────────────────────────────────────────────── */}
+      {/* ── Filters (horizontally scrollable on mobile) ─────────────────── */}
       <div style={{
         padding: "10px 20px", background: "white", borderBottom: "1px solid #E5E7EB",
         display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap",
-        flexShrink: 0,
+        flexShrink: 0, overflowX: "auto",
       }}>
-        <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
           {STATUS_FILTERS.map(({ value, label }) => (
             <button
               key={value}

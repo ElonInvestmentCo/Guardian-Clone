@@ -86,7 +86,7 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
   return (
     <div className="flex h-screen overflow-hidden bg-[#F0F4F8]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
 
-      {/* ── Desktop sidebar ──────────────────────────────────────────────── */}
+      {/* ── Desktop sidebar (hidden on mobile, visible at md+) ─────────── */}
       <aside className="hidden md:flex flex-col w-[220px] bg-[#1E3A5F] flex-shrink-0">
         <SidebarContent activeView={activeView} onNav={handleNav} onLogout={handleLogout} />
       </aside>
@@ -142,8 +142,11 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
           {children}
         </main>
 
-        {/* Mobile bottom nav */}
-        <nav className="flex md:hidden flex-shrink-0 border-t border-gray-200 bg-white">
+        {/* Mobile bottom nav (safe-area aware for notched devices) */}
+        <nav
+          className="flex md:hidden flex-shrink-0 border-t border-gray-200 bg-white"
+          style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+        >
           {NAV.map(({ id, shortLabel, icon }) => (
             <button
               key={id}

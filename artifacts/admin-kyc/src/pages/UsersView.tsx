@@ -145,23 +145,24 @@ export default function UsersView({ onOpenProfile }: Props) {
         </div>
       </div>
 
-      {/* ── Search + Filters ────────────────────────────────────────────── */}
+      {/* ── Search + Filters (responsive) ─────────────────────────────── */}
       <div style={{
         padding: "10px 20px", background: "white", borderBottom: "1px solid #E5E7EB",
         display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap",
-        flexShrink: 0,
+        flexShrink: 0, overflowX: "auto",
       }}>
         <input
           type="text"
           placeholder="Search by name or email…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          className="w-full sm:w-[220px]"
           style={{
             padding: "6px 10px", borderRadius: "5px", border: "1px solid #E5E7EB",
-            fontSize: "12px", color: "#374151", outline: "none", width: "220px",
+            fontSize: "12px", color: "#374151", outline: "none",
           }}
         />
-        <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
           {STATUS_FILTERS.map(({ value, label }) => (
             <button
               key={value}

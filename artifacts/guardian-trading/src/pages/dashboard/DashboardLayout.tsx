@@ -108,8 +108,8 @@ export default function DashboardLayout({ children }: Props) {
           {children}
         </div>
 
-        {/* Mobile Bottom Nav */}
-        <nav className="flex md:hidden flex-shrink-0 border-t bg-white" style={{ borderColor: colors.cardBorder, background: colors.card }}>
+        {/* Mobile Bottom Nav (safe-area aware for notched devices) */}
+        <nav className="flex md:hidden flex-shrink-0 border-t bg-white" style={{ borderColor: colors.cardBorder, background: colors.card, paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
           {NAV.map(({ icon: Icon, label, href }) => {
             const isActive = location === href || (href !== "/dashboard" && location.startsWith(href));
             return (

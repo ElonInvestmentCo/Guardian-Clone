@@ -78,23 +78,24 @@ export default function ActivityLogsView({ onOpenProfile }: Props) {
         </button>
       </div>
 
-      {/* ── Filters ─────────────────────────────────────────────────────── */}
+      {/* ── Filters (responsive) ──────────────────────────────────────── */}
       <div style={{
         padding: "10px 20px", background: "white", borderBottom: "1px solid #E5E7EB",
         display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap",
-        flexShrink: 0,
+        flexShrink: 0, overflowX: "auto",
       }}>
         <input
           type="text"
           placeholder="Search by email, action, note…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          className="w-full sm:w-[240px]"
           style={{
             padding: "6px 10px", borderRadius: "5px", border: "1px solid #E5E7EB",
-            fontSize: "12px", color: "#374151", outline: "none", width: "240px",
+            fontSize: "12px", color: "#374151", outline: "none",
           }}
         />
-        <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
           {ACTION_FILTERS.map(({ value, label }) => (
             <button
               key={value}
