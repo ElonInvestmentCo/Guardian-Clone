@@ -118,17 +118,17 @@ export default function Settings() {
               </span>
             </div>
 
-            <div className="flex md:flex-col gap-2 md:gap-0 overflow-x-auto md:overflow-visible rounded-xl md:rounded-xl" style={{ background: colors.card }}>
+            <div className="flex md:flex-col gap-1.5 md:gap-0 overflow-x-auto md:overflow-visible rounded-xl md:rounded-xl" style={{ background: colors.card }}>
               {SECTIONS.map(({ key, icon: Icon, label, desc }) => (
                 <button key={key} onClick={() => setSection(key)}
-                  className="flex items-center gap-3 text-left flex-shrink-0 md:flex-shrink md:w-full"
-                  style={{ padding: "13px 16px", border: "none", cursor: "pointer",
+                  className="flex items-center gap-2 md:gap-3 text-left flex-shrink-0 md:flex-shrink md:w-full"
+                  style={{ padding: "10px 12px", border: "none", cursor: "pointer",
                     borderBottom: `1px solid ${colors.divider}`,
                     background: section === key ? colors.settingsSectionActiveBg : colors.card,
-                    minWidth: "140px" }}>
+                    minWidth: "0" }}>
                   <div className="flex items-center justify-center rounded-lg flex-shrink-0"
-                    style={{ width: "34px", height: "34px", background: section === key ? "#3a7bd5" : colors.filterBar }}>
-                    <Icon size={16} color={section === key ? "#fff" : colors.textMuted} />
+                    style={{ width: "30px", height: "30px", background: section === key ? "#3a7bd5" : colors.filterBar }}>
+                    <Icon size={14} color={section === key ? "#fff" : colors.textMuted} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p style={{ fontSize: "13px", fontWeight: 600, color: section === key ? "#3a7bd5" : colors.textSub, marginBottom: "1px" }}>{label}</p>

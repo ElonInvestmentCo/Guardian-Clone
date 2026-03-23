@@ -157,7 +157,7 @@ export default function UserProfileView({ email, onBack }: Props) {
 
             {/* ── Profile tab ─────────────────────────────────────────── */}
             {tab === "profile" && (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 340px), 1fr))", gap: "16px" }}>
                 <Card title="Personal Information" headerAction={
                   editMode ? null : (
                     <button onClick={() => {
@@ -350,7 +350,7 @@ export default function UserProfileView({ email, onBack }: Props) {
 
                 <Card title="Set Balance">
                   <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 140px), 1fr))", gap: "8px" }}>
                       <div>
                         <label style={{ fontSize: "11px", color: "#9CA3AF", display: "block", marginBottom: "4px" }}>New Balance ($)</label>
                         <input type="number" value={newBalance} onChange={(e) => setNewBalance(e.target.value)}
@@ -559,9 +559,9 @@ function Card({ title, children, headerAction, borderColor }: {
 
 function Field({ label, value }: { label: string; value: string }) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", borderBottom: "1px solid #F9FAFB" }}>
-      <span style={{ fontSize: "11px", color: "#9CA3AF" }}>{label}</span>
-      <span style={{ fontSize: "11px", color: "#374151", fontWeight: value === "—" ? "400" : "500", textAlign: "right", maxWidth: "240px", wordBreak: "break-word" }}>
+    <div style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", borderBottom: "1px solid #F9FAFB", gap: "8px" }}>
+      <span style={{ fontSize: "11px", color: "#9CA3AF", flexShrink: 0 }}>{label}</span>
+      <span style={{ fontSize: "11px", color: "#374151", fontWeight: value === "—" ? "400" : "500", textAlign: "right", maxWidth: "60%", wordBreak: "break-word", overflowWrap: "break-word" }}>
         {value}
       </span>
     </div>
