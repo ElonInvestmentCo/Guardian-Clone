@@ -85,8 +85,7 @@ export default function Settings() {
 
   return (
     <DashboardLayout>
-      <div style={{ padding: "28px" }}>
-        {/* Header */}
+      <div style={{ padding: "20px 16px" }}>
         <div className="flex items-center justify-between mb-6">
           <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary }}>Settings</h1>
           <div className="flex items-center gap-3">
@@ -100,16 +99,14 @@ export default function Settings() {
                 style={{ width: "32px", height: "32px", background: "#3a7bd5", fontSize: "13px" }}>
                 {displayName[0]?.toUpperCase() ?? "U"}
               </div>
-              <span style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{displayName}</span>
+              <span className="hidden sm:inline" style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{displayName}</span>
             </div>
           </div>
         </div>
 
-        <div className="flex gap-5">
-          {/* Left nav */}
-          <div className="flex-shrink-0" style={{ width: "220px" }}>
-            {/* Avatar */}
-            <div className="rounded-xl p-5 mb-4 flex flex-col items-center" style={{ background: colors.card }}>
+        <div className="flex flex-col md:flex-row gap-5">
+          <div className="flex-shrink-0 w-full md:w-[220px]">
+            <div className="hidden md:flex rounded-xl p-5 mb-4 flex-col items-center" style={{ background: colors.card }}>
               <div className="flex items-center justify-center rounded-full font-bold text-white mb-3"
                 style={{ width: "64px", height: "64px", background: "#3a7bd5", fontSize: "24px" }}>
                 {displayName[0]?.toUpperCase() ?? "U"}
@@ -117,36 +114,33 @@ export default function Settings() {
               <p style={{ fontSize: "14px", fontWeight: 700, color: colors.textPrimary, marginBottom: "2px" }}>{displayName}</p>
               <p style={{ fontSize: "11px", color: colors.textMuted }}>{email}</p>
               <span className="mt-3 px-3 py-1 rounded-full text-xs font-bold" style={{ background: "#e8f5e9", color: "#28a745" }}>
-                ✓ Verified
+                Verified
               </span>
             </div>
 
-            {/* Section nav */}
-            <div className="rounded-xl overflow-hidden" style={{ background: colors.card }}>
+            <div className="flex md:flex-col gap-2 md:gap-0 overflow-x-auto md:overflow-visible rounded-xl md:rounded-xl" style={{ background: colors.card }}>
               {SECTIONS.map(({ key, icon: Icon, label, desc }) => (
                 <button key={key} onClick={() => setSection(key)}
-                  className="flex items-center gap-3 w-full text-left"
+                  className="flex items-center gap-3 text-left flex-shrink-0 md:flex-shrink md:w-full"
                   style={{ padding: "13px 16px", border: "none", cursor: "pointer",
                     borderBottom: `1px solid ${colors.divider}`,
-                    background: section === key ? colors.settingsSectionActiveBg : colors.card }}>
+                    background: section === key ? colors.settingsSectionActiveBg : colors.card,
+                    minWidth: "140px" }}>
                   <div className="flex items-center justify-center rounded-lg flex-shrink-0"
                     style={{ width: "34px", height: "34px", background: section === key ? "#3a7bd5" : colors.filterBar }}>
                     <Icon size={16} color={section === key ? "#fff" : colors.textMuted} />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <p style={{ fontSize: "13px", fontWeight: 600, color: section === key ? "#3a7bd5" : colors.textSub, marginBottom: "1px" }}>{label}</p>
-                    <p style={{ fontSize: "10px", color: colors.textMuted }}>{desc}</p>
+                    <p className="hidden md:block" style={{ fontSize: "10px", color: colors.textMuted }}>{desc}</p>
                   </div>
-                  <ChevronRight size={14} color={colors.textMuted} />
+                  <ChevronRight size={14} color={colors.textMuted} className="hidden md:block" />
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Content area */}
-          <div className="flex-1">
-
-            {/* ── Profile ── */}
+          <div className="flex-1 min-w-0">
             {section === "profile" && (
               <div className="rounded-xl" style={{ background: colors.card, padding: "24px" }}>
                 <div className="flex items-center justify-between mb-5">
@@ -161,7 +155,7 @@ export default function Settings() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                   {[
                     { label: "First Name", val: firstName, set: setFirstName },
                     { label: "Last Name",  val: lastName,  set: setLastName  },
@@ -200,10 +194,8 @@ export default function Settings() {
               </div>
             )}
 
-            {/* ── Security ── */}
             {section === "security" && (
               <div className="flex flex-col gap-4">
-                {/* Password */}
                 <div className="rounded-xl" style={{ background: colors.card, padding: "24px" }}>
                   <div className="flex items-center justify-between mb-5">
                     <div>
@@ -254,7 +246,6 @@ export default function Settings() {
                   </button>
                 </div>
 
-                {/* 2FA */}
                 <div className="rounded-xl" style={{ background: colors.card, padding: "24px" }}>
                   <h2 style={{ fontSize: "16px", fontWeight: 700, color: colors.textPrimary, marginBottom: "4px" }}>Two-Factor Authentication</h2>
                   <p style={{ fontSize: "12px", color: colors.textMuted, marginBottom: "20px" }}>Add an extra layer of security to your account</p>
@@ -267,7 +258,7 @@ export default function Settings() {
                   </div>
                   {twoFA && (
                     <div className="mt-4 p-4 rounded-xl" style={{ background: "#f0f5ff", border: "1px solid #c5d8f5" }}>
-                      <p style={{ fontSize: "13px", color: "#3a7bd5", fontWeight: 600 }}>2FA is enabled ✓</p>
+                      <p style={{ fontSize: "13px", color: "#3a7bd5", fontWeight: 600 }}>2FA is enabled</p>
                       <p style={{ fontSize: "12px", color: "#666", marginTop: "4px" }}>Your account is protected with two-factor authentication.</p>
                     </div>
                   )}
@@ -275,7 +266,6 @@ export default function Settings() {
               </div>
             )}
 
-            {/* ── Notifications ── */}
             {section === "notifications" && (
               <div className="rounded-xl" style={{ background: colors.card, padding: "24px" }}>
                 <div className="flex items-center justify-between mb-5">

@@ -34,7 +34,6 @@ export default function OnboardingShell({ currentStep, children }: OnboardingShe
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#f4f4f4" }}>
 
-      {/* Top bar */}
       <div className="flex items-center justify-end px-6 py-1.5" style={{ background: "#5baad4" }}>
         <a href="tel:8449631512" className="flex items-center gap-1.5 text-white font-semibold" style={{ fontSize: "13px" }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="white">
@@ -44,9 +43,8 @@ export default function OnboardingShell({ currentStep, children }: OnboardingShe
         </a>
       </div>
 
-      {/* Navbar */}
       <nav style={{ background: "#1c2e3e" }}>
-        <div className="flex items-center justify-between px-6 h-[54px]">
+        <div className="flex items-center justify-between px-4 sm:px-6 h-[54px]">
           <Link href="/" className="flex items-center flex-shrink-0">
             <img src={guardianLogo} alt="Guardian Trading" style={{ height: "38px", width: "auto", objectFit: "contain" }} />
           </Link>
@@ -76,10 +74,9 @@ export default function OnboardingShell({ currentStep, children }: OnboardingShe
         </div>
       </nav>
 
-      {/* Step progress bar */}
       {currentStep !== undefined && (
-        <div className="bg-white px-6 py-5" style={{ borderBottom: "1px solid #dde3e9" }}>
-          <div className="flex items-start justify-between">
+        <div className="bg-white px-3 sm:px-6 py-4 sm:py-5 overflow-x-auto" style={{ borderBottom: "1px solid #dde3e9" }}>
+          <div className="flex items-start justify-between" style={{ minWidth: "600px" }}>
             {STEPS.map((step, i) => {
               const active = step.n === currentStep;
               const done   = step.n < currentStep;
@@ -113,14 +110,12 @@ export default function OnboardingShell({ currentStep, children }: OnboardingShe
         </div>
       )}
 
-      {/* Main content */}
-      <main className="flex-1 px-6 py-6">
+      <main className="flex-1 px-4 sm:px-6 py-6">
         {children}
       </main>
 
-      {/* Footer */}
       <footer style={{ background: "#111" }}>
-        <div className="px-10 pt-12 pb-10" style={{ borderBottom: "1px solid #2a2a2a" }}>
+        <div className="px-4 sm:px-10 pt-12 pb-10" style={{ borderBottom: "1px solid #2a2a2a" }}>
           <div className="flex flex-col lg:flex-row gap-10">
             <div className="flex-shrink-0 lg:w-[200px]">
               <Link href="/">
@@ -159,8 +154,8 @@ export default function OnboardingShell({ currentStep, children }: OnboardingShe
             </div>
           </div>
         </div>
-        <div className="px-10 py-8 text-center">
-          <p className="text-[13px] mb-1" style={{ color: "#aaa" }}>Guardian Trading – A Division of Velocity Clearing, LLC ("Velocity"). Member FINRA/ SIPC.</p>
+        <div className="px-4 sm:px-10 py-8 text-center">
+          <p className="text-[13px] mb-1" style={{ color: "#aaa" }}>Guardian Trading - A Division of Velocity Clearing, LLC ("Velocity"). Member FINRA/ SIPC.</p>
           <p className="text-[13px] mb-6" style={{ color: "#aaa" }}>All securities and transactions are handled through Velocity.</p>
           <p className="text-[11px] uppercase leading-relaxed mb-5" style={{ color: "#666", maxWidth: "900px", margin: "0 auto 20px" }}>
             @2023 VELOCITY CLEARING, LLC IS REGISTERED WITH THE SEC AND A MEMBER OF{" "}
