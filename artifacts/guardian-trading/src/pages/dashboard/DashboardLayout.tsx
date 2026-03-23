@@ -1,8 +1,7 @@
-import { useState } from "react";
 import { useLocation, Link } from "wouter";
 import {
   LayoutDashboard, CreditCard, Send, BarChart2,
-  ArrowLeftRight, Settings, LogOut, Sun, Moon, Menu, X,
+  ArrowLeftRight, Settings, LogOut, Sun, Moon,
 } from "lucide-react";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import { useTheme } from "@/context/ThemeContext";
@@ -23,44 +22,19 @@ interface Props {
 export default function DashboardLayout({ children }: Props) {
   const [location, navigate] = useLocation();
   const { theme, colors, toggleTheme } = useTheme();
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = () => {
     sessionStorage.clear();
     navigate("/login");
   };
 
-  const handleNav = () => {
-    setMobileOpen(false);
-  };
-
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: colors.bg, fontFamily: "system-ui, -apple-system, sans-serif" }}>
 
-      {/* Desktop Sidebar */}
+      {/* Desktop Sidebar — hidden on mobile, visible at md+ */}
       <aside className="hidden md:flex flex-col flex-shrink-0" style={{ width: "220px", background: "#1c2e3e", padding: "0" }}>
         <SidebarContent location={location} colors={colors} theme={theme} toggleTheme={toggleTheme} handleLogout={handleLogout} />
       </aside>
-
-      {/* Mobile Overlay Drawer */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 md:hidden flex">
-          <div
-            className="absolute inset-0 bg-black/60"
-            onClick={() => setMobileOpen(false)}
-          />
-          <aside className="relative z-10 flex flex-col flex-shrink-0" style={{ width: "260px", background: "#1c2e3e" }}>
-            <button
-              onClick={() => setMobileOpen(false)}
-              className="absolute top-4 right-4 text-white/60 hover:text-white p-1"
-              style={{ background: "none", border: "none", cursor: "pointer" }}
-            >
-              <X size={20} />
-            </button>
-            <SidebarContent location={location} colors={colors} theme={theme} toggleTheme={toggleTheme} handleLogout={handleLogout} onNav={handleNav} />
-          </aside>
-        </div>
-      )}
 
       {/* Main area */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
@@ -71,14 +45,6 @@ export default function DashboardLayout({ children }: Props) {
           borderBottom: `1px solid ${colors.cardBorder}`,
           background: colors.card,
         }}>
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="md:hidden flex items-center justify-center"
-            style={{ background: "none", border: "none", cursor: "pointer", color: colors.textSub, padding: "4px" }}
-            aria-label="Open menu"
-          >
-            <Menu size={22} />
-          </button>
           <div className="hidden md:block" />
           <button
             onClick={toggleTheme}
@@ -113,7 +79,7 @@ export default function DashboardLayout({ children }: Props) {
           {NAV.map(({ icon: Icon, label, href }) => {
             const isActive = location === href || (href !== "/dashboard" && location.startsWith(href));
             return (
-              <Link key={label} href={href} onClick={handleNav}
+              <Link key={label} href={href}
                 className="flex flex-1 flex-col items-center gap-0.5 py-2"
                 style={{ color: isActive ? "#3a7bd5" : colors.textMuted, textDecoration: "none", background: "none" }}>
                 <Icon size={18} />
@@ -127,19 +93,18 @@ export default function DashboardLayout({ children }: Props) {
   );
 }
 
-function SidebarContent({ location, colors, theme, toggleTheme, handleLogout, onNav }: {
+function SidebarContent({ location, colors, theme, toggleTheme, handleLogout }: {
   location: string;
   colors: Record<string, string>;
   theme: string;
   toggleTheme: () => void;
   handleLogout: () => void;
-  onNav?: () => void;
 }) {
   return (
     <>
       {/* Logo */}
       <div style={{ padding: "22px 18px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-        <Link href="/dashboard" onClick={onNav}>
+        <Link href="/dashboard">
           <img src={guardianLogo} alt="Guardian Trading" style={{ height: "34px", width: "auto", cursor: "pointer" }} />
         </Link>
       </div>
@@ -149,7 +114,7 @@ function SidebarContent({ location, colors, theme, toggleTheme, handleLogout, on
         {NAV.map(({ icon: Icon, label, href }) => {
           const isActive = location === href || (href !== "/dashboard" && location.startsWith(href));
           return (
-            <Link key={label} href={href} onClick={onNav}>
+            <Link key={label} href={href}>
               <div
                 className="flex items-center gap-3 rounded-lg cursor-pointer transition-all"
                 style={{

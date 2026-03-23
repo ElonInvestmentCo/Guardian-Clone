@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { clearSession } from "@/lib/api";
 
 export type View = "kyc" | "risk" | "audit" | "users" | "activity";
@@ -71,8 +70,6 @@ interface Props {
 }
 
 export default function AdminLayout({ activeView, setActiveView, children }: Props) {
-  const [mobileOpen, setMobileOpen] = useState(false);
-
   const handleLogout = () => {
     clearSession();
     window.dispatchEvent(new CustomEvent("admin:session-expired"));
@@ -80,69 +77,25 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
 
   const handleNav = (v: View) => {
     setActiveView(v);
-    setMobileOpen(false);
   };
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#F0F4F8]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
 
-      {/* ── Desktop sidebar (hidden on mobile, visible at md+) ─────────── */}
+      {/* Desktop sidebar — hidden on mobile, visible at md+ */}
       <aside className="hidden md:flex flex-col w-[220px] bg-[#1E3A5F] flex-shrink-0">
         <SidebarContent activeView={activeView} onNav={handleNav} onLogout={handleLogout} />
       </aside>
 
-      {/* ── Mobile overlay drawer ─────────────────────────────────────────── */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 md:hidden flex">
-          <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={() => setMobileOpen(false)}
-          />
-          <aside className="relative z-10 w-[260px] flex flex-col bg-[#1E3A5F] shadow-2xl">
-            <button
-              onClick={() => setMobileOpen(false)}
-              className="absolute top-4 right-4 text-white/60 hover:text-white text-xl leading-none p-1"
-            >
-              ✕
-            </button>
-            <SidebarContent activeView={activeView} onNav={handleNav} onLogout={handleLogout} />
-          </aside>
-        </div>
-      )}
-
-      {/* ── Main column ───────────────────────────────────────────────────── */}
+      {/* Main column */}
       <div className="flex flex-col flex-1 overflow-hidden min-w-0">
-
-        {/* Mobile top bar */}
-        <header className="flex md:hidden items-center justify-between px-4 py-3 bg-[#1E3A5F] flex-shrink-0">
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="text-white p-1.5 rounded hover:bg-white/10 transition-colors"
-            aria-label="Open menu"
-          >
-            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-white/15 flex items-center justify-center">
-              <svg width="13" height="13" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-            </div>
-            <span className="text-white font-bold text-[13px] tracking-wide">Guardian Admin</span>
-          </div>
-          <div className="w-8" />
-        </header>
 
         {/* Content area */}
         <main className="flex-1 overflow-hidden">
           {children}
         </main>
 
-        {/* Mobile bottom nav (safe-area aware for notched devices) */}
+        {/* Mobile bottom nav — visible on mobile only, safe-area aware */}
         <nav
           className="flex md:hidden flex-shrink-0 border-t border-gray-200 bg-white"
           style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
