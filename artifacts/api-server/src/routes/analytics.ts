@@ -83,35 +83,35 @@ analyticsRouter.get("/analytics/overview", async (req: Request, res: Response) =
   const [visitors, pageviews, sessions, bounce, devices, browsers] = await Promise.all([
     query(
       `SELECT COUNT(DISTINCT visitor_id) AS count FROM analytics_events
-       WHERE project_id=$1 AND event_type='pageview' AND is_bot=false AND timestamp > NOW() - INTERVAL '${period}'`,
-      [projectId]
+       WHERE project_id=$1 AND event_type='pageview' AND is_bot=false AND timestamp > NOW() - $2::interval`,
+      [projectId, period]
     ),
     query(
       `SELECT COUNT(*) AS count FROM analytics_events
-       WHERE project_id=$1 AND event_type='pageview' AND is_bot=false AND timestamp > NOW() - INTERVAL '${period}'`,
-      [projectId]
+       WHERE project_id=$1 AND event_type='pageview' AND is_bot=false AND timestamp > NOW() - $2::interval`,
+      [projectId, period]
     ),
     query(
       `SELECT COUNT(DISTINCT session_id) AS count FROM analytics_events
-       WHERE project_id=$1 AND is_bot=false AND timestamp > NOW() - INTERVAL '${period}'`,
-      [projectId]
+       WHERE project_id=$1 AND is_bot=false AND timestamp > NOW() - $2::interval`,
+      [projectId, period]
     ),
     query(
       `SELECT ROUND(COUNT(*) FILTER(WHERE is_bounce)::numeric / NULLIF(COUNT(*),0) * 100,1) AS rate
-       FROM analytics_sessions WHERE project_id=$1 AND start_time > NOW() - INTERVAL '${period}'`,
-      [projectId]
+       FROM analytics_sessions WHERE project_id=$1 AND start_time > NOW() - $2::interval`,
+      [projectId, period]
     ),
     query(
       `SELECT device_type, COUNT(*) AS count FROM analytics_events
-       WHERE project_id=$1 AND is_bot=false AND device_type IS NOT NULL AND timestamp > NOW() - INTERVAL '${period}'
+       WHERE project_id=$1 AND is_bot=false AND device_type IS NOT NULL AND timestamp > NOW() - $2::interval
        GROUP BY device_type ORDER BY count DESC`,
-      [projectId]
+      [projectId, period]
     ),
     query(
       `SELECT browser, COUNT(*) AS count FROM analytics_events
-       WHERE project_id=$1 AND is_bot=false AND browser IS NOT NULL AND timestamp > NOW() - INTERVAL '${period}'
+       WHERE project_id=$1 AND is_bot=false AND browser IS NOT NULL AND timestamp > NOW() - $2::interval
        GROUP BY browser ORDER BY count DESC LIMIT 6`,
-      [projectId]
+      [projectId, period]
     ),
   ]);
 
@@ -135,9 +135,9 @@ analyticsRouter.get("/analytics/timeseries", async (req: Request, res: Response)
             COUNT(*) FILTER(WHERE event_type='pageview') AS pageviews,
             COUNT(DISTINCT visitor_id) AS visitors
      FROM analytics_events
-     WHERE project_id=$1 AND is_bot=false AND timestamp > NOW() - INTERVAL '${period}'
+     WHERE project_id=$1 AND is_bot=false AND timestamp > NOW() - $2::interval
      GROUP BY day ORDER BY day ASC`,
-    [projectId]
+    [projectId, period]
   );
   res.json(r.rows);
 });
@@ -153,9 +153,9 @@ analyticsRouter.get("/analytics/pages", async (req: Request, res: Response) => {
             COUNT(DISTINCT visitor_id) AS unique_visitors,
             AVG(scroll_depth) AS avg_scroll
      FROM analytics_events
-     WHERE project_id=$1 AND event_type='pageview' AND is_bot=false AND timestamp > NOW() - INTERVAL '${period}'
+     WHERE project_id=$1 AND event_type='pageview' AND is_bot=false AND timestamp > NOW() - $2::interval
      GROUP BY page_url ORDER BY views DESC LIMIT 20`,
-    [projectId]
+    [projectId, period]
   );
   res.json(r.rows);
 });
@@ -180,9 +180,9 @@ analyticsRouter.get("/analytics/sources", async (req: Request, res: Response) =>
        COUNT(*) AS visits,
        COUNT(DISTINCT visitor_id) AS unique_visitors
      FROM analytics_events
-     WHERE project_id=$1 AND event_type='pageview' AND is_bot=false AND timestamp > NOW() - INTERVAL '${period}'
+     WHERE project_id=$1 AND event_type='pageview' AND is_bot=false AND timestamp > NOW() - $2::interval
      GROUP BY source ORDER BY visits DESC LIMIT 10`,
-    [projectId]
+    [projectId, period]
   );
   res.json(r.rows);
 });
@@ -202,10 +202,10 @@ analyticsRouter.get("/analytics/campaigns", async (req: Request, res: Response) 
        COUNT(*) FILTER(WHERE event_type='pageview') AS pageviews,
        COUNT(*) FILTER(WHERE event_type='form_submit') AS conversions
      FROM analytics_events
-     WHERE project_id=$1 AND is_bot=false AND timestamp > NOW() - INTERVAL '${period}'
+     WHERE project_id=$1 AND is_bot=false AND timestamp > NOW() - $2::interval
      GROUP BY campaign, source, medium
      ORDER BY sessions DESC LIMIT 50`,
-    [projectId]
+    [projectId, period]
   );
   res.json(r.rows);
 });
@@ -249,9 +249,9 @@ analyticsRouter.get("/analytics/sessions", async (req: Request, res: Response) =
             s.page_count, s.is_bounce, s.entry_page, s.exit_page,
             s.device_type, s.browser, s.utm_campaign, s.utm_source, s.country
      FROM analytics_sessions s
-     WHERE s.project_id=$1 AND s.start_time > NOW() - INTERVAL '${period}'
+     WHERE s.project_id=$1 AND s.start_time > NOW() - $2::interval
      ORDER BY s.start_time DESC LIMIT 100`,
-    [projectId]
+    [projectId, period]
   );
   res.json(r.rows);
 });
@@ -306,9 +306,9 @@ analyticsRouter.get("/analytics/geo", async (req: Request, res: Response) => {
   const countries = await query(
     `SELECT country, COUNT(*) AS sessions, COUNT(DISTINCT visitor_id) AS visitors
      FROM analytics_sessions
-     WHERE project_id=$1 AND country IS NOT NULL AND start_time > NOW() - INTERVAL '${period}'
+     WHERE project_id=$1 AND country IS NOT NULL AND start_time > NOW() - $2::interval
      GROUP BY country ORDER BY visitors DESC LIMIT 20`,
-    [projectId]
+    [projectId, period]
   );
 
   res.json({
