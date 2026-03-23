@@ -4,14 +4,25 @@ export type Theme = "light" | "dark";
 
 export interface ThemeColors {
   bg: string;
+  sidebar: string;
+  sidebarBorder: string;
+  sidebarItemHover: string;
+  sidebarItemActive: string;
+  sidebarItemActiveBg: string;
+  sidebarText: string;
+  sidebarTextMuted: string;
+  topBar: string;
+  topBarBorder: string;
   card: string;
   cardBorder: string;
+  cardHover: string;
   textPrimary: string;
   textSub: string;
   textMuted: string;
   inputBg: string;
   inputBorder: string;
   inputText: string;
+  inputFocusBorder: string;
   tableHead: string;
   tableRowBorder: string;
   tableHeaderText: string;
@@ -21,9 +32,16 @@ export interface ThemeColors {
   filterActiveText: string;
   filterInactiveText: string;
   divider: string;
-  statPortfolio: string;
-  statPnl: string;
-  statActivity: string;
+  accent: string;
+  accentHover: string;
+  green: string;
+  greenBg: string;
+  red: string;
+  redBg: string;
+  yellow: string;
+  yellowBg: string;
+  purple: string;
+  purpleBg: string;
   rightPanel: string;
   rightPanelBorder: string;
   btnBg: string;
@@ -31,68 +49,110 @@ export interface ThemeColors {
   btnText: string;
   settingsSectionActiveBg: string;
   bellColor: string;
+  scrollbar: string;
+  scrollbarHover: string;
 }
 
-export const LIGHT_COLORS: ThemeColors = {
-  bg: "#f0f2f5",
-  card: "#ffffff",
-  cardBorder: "#f0f0f0",
-  textPrimary: "#111111",
-  textSub: "#555555",
-  textMuted: "#aaaaaa",
-  inputBg: "#ffffff",
-  inputBorder: "#e8e8e8",
-  inputText: "#333333",
-  tableHead: "#f9fafc",
-  tableRowBorder: "#f9f9f9",
-  tableHeaderText: "#aaaaaa",
-  tableRowHoverBg: "#fafbfc",
-  filterBar: "#f0f2f5",
-  filterActiveBg: "#ffffff",
-  filterActiveText: "#1c2e3e",
-  filterInactiveText: "#888888",
-  divider: "#f5f5f5",
-  statPortfolio: "#e8f5f5",
-  statPnl: "#fff0f0",
-  statActivity: "#fffbeb",
-  rightPanel: "#ffffff",
-  rightPanelBorder: "#f0f0f0",
-  btnBg: "#ffffff",
-  btnBorder: "#dddddd",
-  btnText: "#555555",
-  settingsSectionActiveBg: "#f0f5ff",
-  bellColor: "#555555",
+export const DARK_COLORS: ThemeColors = {
+  bg: "#060b14",
+  sidebar: "#0a1122",
+  sidebarBorder: "#141f35",
+  sidebarItemHover: "rgba(255,255,255,0.04)",
+  sidebarItemActive: "#3b82f6",
+  sidebarItemActiveBg: "rgba(59,130,246,0.12)",
+  sidebarText: "rgba(255,255,255,0.7)",
+  sidebarTextMuted: "rgba(255,255,255,0.35)",
+  topBar: "#0a1122",
+  topBarBorder: "#141f35",
+  card: "#0d1526",
+  cardBorder: "#161f35",
+  cardHover: "#111c30",
+  textPrimary: "#e2e8f0",
+  textSub: "#94a3b8",
+  textMuted: "#4a5568",
+  inputBg: "#0a1020",
+  inputBorder: "#1e293b",
+  inputText: "#cbd5e1",
+  inputFocusBorder: "#3b82f6",
+  tableHead: "#0a1020",
+  tableRowBorder: "#131c30",
+  tableHeaderText: "#4a5568",
+  tableRowHoverBg: "#111a2e",
+  filterBar: "#0a1020",
+  filterActiveBg: "#1e293b",
+  filterActiveText: "#e2e8f0",
+  filterInactiveText: "#4a5568",
+  divider: "#141f35",
+  accent: "#3b82f6",
+  accentHover: "#2563eb",
+  green: "#0ecb81",
+  greenBg: "rgba(14,203,129,0.1)",
+  red: "#f6465d",
+  redBg: "rgba(246,70,93,0.1)",
+  yellow: "#f0b90b",
+  yellowBg: "rgba(240,185,11,0.1)",
+  purple: "#a78bfa",
+  purpleBg: "rgba(167,139,250,0.1)",
+  rightPanel: "#0a1122",
+  rightPanelBorder: "#141f35",
+  btnBg: "#0d1526",
+  btnBorder: "#1e293b",
+  btnText: "#94a3b8",
+  settingsSectionActiveBg: "#111c30",
+  bellColor: "#94a3b8",
+  scrollbar: "#1e293b",
+  scrollbarHover: "#334155",
 };
 
-export const DARK_COLORS: ThemeColors = {
-  bg: "#0e1623",
-  card: "#1a2537",
-  cardBorder: "#263347",
-  textPrimary: "#e8f0f8",
-  textSub: "#8aa0b8",
-  textMuted: "#5a7080",
-  inputBg: "#111d2a",
-  inputBorder: "#263347",
-  inputText: "#c8daf0",
-  tableHead: "#14202e",
-  tableRowBorder: "#1a2d3e",
-  tableHeaderText: "#5a7080",
-  tableRowHoverBg: "#1e2d40",
-  filterBar: "#0a1320",
-  filterActiveBg: "#1a2537",
-  filterActiveText: "#e8f0f8",
-  filterInactiveText: "#5a7080",
-  divider: "#1a2d3e",
-  statPortfolio: "#0d2135",
-  statPnl: "#250f1a",
-  statActivity: "#221d0a",
-  rightPanel: "#111d2a",
-  rightPanelBorder: "#1e2f40",
-  btnBg: "#1a2537",
-  btnBorder: "#263347",
-  btnText: "#8aa0b8",
-  settingsSectionActiveBg: "#18253a",
-  bellColor: "#8aa0b8",
+export const LIGHT_COLORS: ThemeColors = {
+  bg: "#f1f5f9",
+  sidebar: "#ffffff",
+  sidebarBorder: "#e2e8f0",
+  sidebarItemHover: "#f8fafc",
+  sidebarItemActive: "#3b82f6",
+  sidebarItemActiveBg: "#eff6ff",
+  sidebarText: "#334155",
+  sidebarTextMuted: "#94a3b8",
+  topBar: "#ffffff",
+  topBarBorder: "#e2e8f0",
+  card: "#ffffff",
+  cardBorder: "#e2e8f0",
+  cardHover: "#f8fafc",
+  textPrimary: "#0f172a",
+  textSub: "#475569",
+  textMuted: "#94a3b8",
+  inputBg: "#ffffff",
+  inputBorder: "#e2e8f0",
+  inputText: "#334155",
+  inputFocusBorder: "#3b82f6",
+  tableHead: "#f8fafc",
+  tableRowBorder: "#f1f5f9",
+  tableHeaderText: "#94a3b8",
+  tableRowHoverBg: "#f8fafc",
+  filterBar: "#f1f5f9",
+  filterActiveBg: "#ffffff",
+  filterActiveText: "#0f172a",
+  filterInactiveText: "#94a3b8",
+  divider: "#e2e8f0",
+  accent: "#3b82f6",
+  accentHover: "#2563eb",
+  green: "#16a34a",
+  greenBg: "#f0fdf4",
+  red: "#dc2626",
+  redBg: "#fef2f2",
+  yellow: "#d97706",
+  yellowBg: "#fffbeb",
+  purple: "#7c3aed",
+  purpleBg: "#f5f3ff",
+  rightPanel: "#ffffff",
+  rightPanelBorder: "#e2e8f0",
+  btnBg: "#ffffff",
+  btnBorder: "#e2e8f0",
+  btnText: "#475569",
+  settingsSectionActiveBg: "#eff6ff",
+  bellColor: "#475569",
+  scrollbar: "#e2e8f0",
+  scrollbarHover: "#cbd5e1",
 };
 
 interface ThemeContextValue {
@@ -102,17 +162,17 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: "light",
-  colors: LIGHT_COLORS,
+  theme: "dark",
+  colors: DARK_COLORS,
   toggleTheme: () => {},
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     try {
-      return (localStorage.getItem("guardianTheme") as Theme) || "light";
+      return (localStorage.getItem("guardianTheme") as Theme) || "dark";
     } catch {
-      return "light";
+      return "dark";
     }
   });
 

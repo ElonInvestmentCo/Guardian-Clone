@@ -114,10 +114,37 @@ Multi-step onboarding platform at `/` (guardian-trading artifact).
 - All 12 step components have strict real-time field-level validation with error messages
 - Backend `signup.ts` has matching format validation: phone regex, SSN/EIN format, date parsing, ABA/SWIFT format, name character checks, conditional employer fields, investment experience rows, disclosure questions, signature consents
 
+### Dashboard UI Design System
+Production-grade dark fintech dashboard (Robinhood/SoFi quality). Default theme is dark.
+
+#### Color Palette (Dark Theme)
+- Background: `#060b14`, Sidebar: `#0a1122`, Cards: `#0d1526`
+- Accent: `#3b82f6` (blue), Green: `#0ecb81`, Red: `#f6465d`, Yellow: `#f0b90b`, Purple: `#a78bfa`
+- Text: Primary `#e2e8f0`, Sub `#94a3b8`, Muted `#4a5568`
+- Borders: `#141f35` / `#161f35` / `#1e293b`
+
+#### ThemeContext (`src/context/ThemeContext.tsx`)
+- Extended color interface with 45+ tokens (sidebar, topBar, card, green/red/yellow/purple + Bg variants, scrollbar)
+- Light theme also available via toggle
+
+#### DashboardLayout
+- **Desktop**: 240px sidebar with gradient logo, nav items (active = blue highlight with dot indicator), verified badge, hover-to-red logout
+- **Market Ticker Bar**: Auto-scrolling live prices for 10 symbols (AAPL, TSLA, NVDA, AMD, MSFT, META, AMZN, GOOG, SPY, QQQ) with green/red change indicators, updates every 3s
+- **Top Bar**: Search input, theme toggle (sun/moon icon button), notification bell with red badge, user avatar with gradient background + "Pro Account" label
+- **Mobile**: Bottom nav bar with 6 tabs, no sidebar, safe-area padding
+
+#### Page Designs
+- **Overview**: 4 stat cards (gradient icon badges), Portfolio Performance area chart (1D/1W/1M/1Y tabs, LIVE indicator), Asset Allocation (horizontal stacked bar + list), Recent Trades table/cards, right sidebar with equity, credit card, Quick Transfer
+- **Positions**: 3 stat cards, search + Long/Short filter + refresh, responsive data table with color-coded side badges
+- **Orders**: Tab filter (All/Active/Pending/Filled/Cancelled with counts), New Order modal (blur backdrop, gradient icon, buy/sell toggle), search
+- **Portfolio**: Live multi-ticker chart (AAPL/TSLA/NVDA/AMD selector, pause/resume), donut allocation chart, holdings table
+- **Statements**: Credits/Debits/Balance summary, type filter tabs, CSV download, transaction table
+- **Settings**: Profile card with gradient avatar, Profile/Security/Notifications sections, password strength meter, 2FA toggle
+
 ### Responsive Design (Mobile-First)
 All dashboard pages are fully responsive with mobile-first breakpoints (optimized for iPhone 16 Pro Max / 430px):
-- **DashboardLayout** — Desktop sidebar (220px, hidden on mobile), hamburger + slide-in drawer on mobile, bottom navigation bar on mobile (`md:` breakpoint)
-- **Overview** — Stat cards stack on mobile (`grid-cols-1 sm:grid-cols-3`), right aside panel hidden on mobile (`hidden lg:flex`), mobile card view for trades table
+- **DashboardLayout** — Desktop sidebar (240px, hidden on mobile), bottom navigation bar on mobile (`md:` breakpoint), no hamburger/drawer
+- **Overview** — Stat cards stack on mobile (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`), right aside panel hidden on mobile (`hidden xl:flex`), mobile card view for trades table
 - **Positions/Orders/Statements** — Mobile card views for data (`hidden sm:block` table / `block sm:hidden` cards), responsive summary grids, horizontally scrollable filter tabs
 - **Portfolio** — 2-col mobile / 4-col desktop summary cards, chart + allocation stack on mobile (`flex-col lg:flex-row`), mobile card view for holdings
 - **Settings** — Horizontal scrollable section tabs on mobile, stacked form layout, avatar hidden on mobile

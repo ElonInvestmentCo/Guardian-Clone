@@ -1,10 +1,13 @@
-import { useState } from "react";
-import { Bell } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps } from "recharts";
+import { useState, useEffect, useRef } from "react";
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, TooltipProps, AreaChart, Area,
+} from "recharts";
+import { ArrowUpRight, ArrowDownRight, Wallet, TrendingUp, BarChart3, ArrowRightLeft } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
 
-const chartData = [
+const portfolioHistory = [
   { month: "Jan", value: 88000 }, { month: "Feb", value: 76000 },
   { month: "Mar", value: 83000 }, { month: "Apr", value: 79000 },
   { month: "May", value: 86000 }, { month: "Jun", value: 91000 },
@@ -13,244 +16,341 @@ const chartData = [
   { month: "Nov", value: 130000 }, { month: "Dec", value: 127000 },
 ];
 
-const sparkData = [
-  { v: 420 }, { v: 380 }, { v: 450 }, { v: 420 }, { v: 470 },
-  { v: 440 }, { v: 490 }, { v: 460 }, { v: 510 }, { v: 490 },
+const trades = [
+  { symbol: "AAPL", name: "Apple Inc.",     amount: "+$3,430", status: "Open",      date: "22/03/26", dir: "+", color: "#3b82f6" },
+  { symbol: "TSLA", name: "Tesla, Inc.",    amount: "+$200",   status: "Closed",    date: "19/03/26", dir: "+", color: "#ef4444" },
+  { symbol: "NVDA", name: "NVIDIA Corp.",   amount: "-$41",    status: "Cancelled", date: "15/03/26", dir: "-", color: "#10b981" },
+  { symbol: "AMD",  name: "Advanced Micro", amount: "+$1,200", status: "Closed",    date: "12/03/26", dir: "+", color: "#f59e0b" },
+  { symbol: "MSFT", name: "Microsoft",      amount: "+$890",   status: "Open",      date: "10/03/26", dir: "+", color: "#8b5cf6" },
 ];
 
-const trades = [
-  { symbol: "AAPL", id: "323133", amount: "+$3,430", status: "Open",      date: "22/03/26", acct: "3010", dir: "+" },
-  { symbol: "TSLA", id: "134325", amount: "+$200",   status: "Closed",    date: "19/03/26", acct: "4026", dir: "+" },
-  { symbol: "NVDA", id: "433229", amount: "-$41",    status: "Cancelled", date: "15/03/26", acct: "5400", dir: "-" },
-  { symbol: "AMD",  id: "632132", amount: "+$1,200", status: "Closed",    date: "12/03/26", acct: "4322", dir: "+" },
+const topAssets = [
+  { symbol: "NVDA", name: "NVIDIA",   pct: 27.5, value: "$35,004", change: "+6.72%", color: "#10b981", barColor: "#10b981" },
+  { symbol: "AAPL", name: "Apple",    pct: 22.1, value: "$28,125", change: "+2.65%", color: "#3b82f6", barColor: "#3b82f6" },
+  { symbol: "TSLA", name: "Tesla",    pct: 15.6, value: "$19,880", change: "+3.50%", color: "#ef4444", barColor: "#ef4444" },
+  { symbol: "AMD",  name: "AMD",      pct: 15.3, value: "$19,536", change: "+5.52%", color: "#f59e0b", barColor: "#f59e0b" },
+  { symbol: "Cash", name: "Reserves", pct: 19.5, value: "$24,905", change: "---",    color: "#6b7280", barColor: "#6b7280" },
 ];
+
+function generateLiveData(base: number, count = 40): { time: string; price: number }[] {
+  const arr: { time: string; price: number }[] = [];
+  let price = base * (0.98 + Math.random() * 0.02);
+  const now = Date.now();
+  for (let i = count - 1; i >= 0; i--) {
+    const ts = new Date(now - i * 3000);
+    price += (Math.random() - 0.49) * price * 0.002;
+    arr.push({ time: ts.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), price: parseFloat(price.toFixed(2)) });
+  }
+  return arr;
+}
 
 function ChartTooltip({ active, payload }: TooltipProps<number, string>) {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: "#1c2e3e", color: "#fff", borderRadius: "10px", padding: "5px 12px", fontSize: "13px", fontWeight: 700 }}>
-      ${((payload[0].value as number) / 1000).toFixed(0)}K
+    <div style={{ background: "#1e293b", color: "#e2e8f0", borderRadius: "8px", padding: "6px 12px", fontSize: "12px", fontWeight: 600, border: "1px solid #334155" }}>
+      ${((payload[0].value as number)).toLocaleString()}
+    </div>
+  );
+}
+
+function PortfolioTooltip({ active, payload }: TooltipProps<number, string>) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{ background: "#1e293b", color: "#e2e8f0", borderRadius: "8px", padding: "6px 12px", fontSize: "12px", fontWeight: 600, border: "1px solid #334155" }}>
+      ${((payload[0].value as number) / 1000).toFixed(1)}K
     </div>
   );
 }
 
 export default function Overview() {
   const { colors } = useTheme();
-  const email = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("signupEmail") ?? "" : "";
-  const displayName = email ? email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Trader";
 
   const [recipientName, setRecipientName] = useState("Royal Pervej");
   const [amount, setAmount] = useState("140.00");
+  const [liveData, setLiveData] = useState(() => generateLiveData(127450));
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [timeRange, setTimeRange] = useState<"1D" | "1W" | "1M" | "1Y">("1M");
 
-  const statusStyle: Record<string, React.CSSProperties> = {
-    Open:      { background: "#fff8e1", color: "#f59e0b", border: "1px solid #fde68a" },
-    Closed:    { background: "#e8f5e9", color: "#28a745", border: "1px solid #c3e6cb" },
-    Cancelled: { background: "#fdecea", color: "#dc3545", border: "1px solid #f5c6cb" },
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      setLiveData(prev => {
+        const arr = [...prev];
+        const last = arr[arr.length - 1];
+        const delta = (Math.random() - 0.49) * last.price * 0.001;
+        arr.push({
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          price: parseFloat((last.price + delta).toFixed(2)),
+        });
+        if (arr.length > 60) arr.shift();
+        return arr;
+      });
+    }, 3000);
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, []);
+
+  const currentVal = liveData[liveData.length - 1]?.price ?? 127450;
+  const prevVal = liveData[0]?.price ?? 127450;
+  const pChange = currentVal - prevVal;
+  const pPct = (pChange / prevVal) * 100;
+
+  const statusColors: Record<string, { bg: string; text: string }> = {
+    Open:      { bg: colors.greenBg, text: colors.green },
+    Closed:    { bg: colors.purpleBg, text: colors.purple },
+    Cancelled: { bg: colors.redBg, text: colors.red },
   };
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col lg:flex-row h-full">
-        <div className="flex-1 overflow-y-auto" style={{ padding: "20px 16px" }}>
-          <div className="flex items-center justify-between mb-6">
-            <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary }}>Dashboard</h1>
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <Bell size={20} color={colors.bellColor} style={{ cursor: "pointer" }} />
-                <span className="absolute -top-1 -right-1 flex items-center justify-center rounded-full text-white"
-                  style={{ width: "14px", height: "14px", background: "#3a7bd5", fontSize: "8px", fontWeight: 700 }}>3</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center justify-center rounded-full font-bold text-white"
-                  style={{ width: "32px", height: "32px", background: "#3a7bd5", fontSize: "13px" }}>
-                  {displayName[0]?.toUpperCase() ?? "U"}
-                </div>
-                <span className="hidden sm:inline" style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{displayName}</span>
-              </div>
-            </div>
-          </div>
+      <div className="flex flex-col xl:flex-row" style={{ minHeight: "100%" }}>
+        <div className="flex-1 overflow-y-auto" style={{ padding: "24px 20px" }}>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
-            <div className="rounded-xl p-5" style={{ background: colors.statPortfolio }}>
-              <p style={{ fontSize: "12px", color: colors.textSub, marginBottom: "8px" }}>Portfolio Value</p>
-              <p style={{ fontSize: "22px", fontWeight: 800, color: colors.textPrimary, marginBottom: "10px" }}>$127,450</p>
-              <div className="flex items-center justify-between">
-                <p style={{ fontSize: "12px", color: colors.textSub }}>24 Positions</p>
-                <span style={{ fontSize: "12px", fontWeight: 700, color: "#28a745" }}>+2.3%</span>
-              </div>
-            </div>
-            <div className="rounded-xl p-5" style={{ background: colors.statPnl }}>
-              <p style={{ fontSize: "12px", color: colors.textSub, marginBottom: "8px" }}>Today's P&L</p>
-              <p style={{ fontSize: "22px", fontWeight: 800, color: colors.textPrimary, marginBottom: "10px" }}>+$2,340</p>
-              <div className="flex items-center justify-between">
-                <p style={{ fontSize: "12px", color: colors.textSub }}>8 Trades</p>
-                <span style={{ fontSize: "12px", fontWeight: 700, color: "#28a745" }}>+1.8%</span>
-              </div>
-            </div>
-            <div className="rounded-xl p-5" style={{ background: colors.statActivity }}>
-              <div className="flex items-start justify-between mb-1">
-                <p style={{ fontSize: "12px", color: colors.textSub }}>Activity</p>
-                <span className="px-1.5 py-0.5 rounded text-white font-bold" style={{ fontSize: "9px", background: "#28a745" }}>+%</span>
-              </div>
-              <div style={{ height: "40px", marginBottom: "6px" }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={sparkData} margin={{ top: 2, right: 0, bottom: 2, left: 0 }}>
-                    <Line type="monotone" dataKey="v" stroke="#1c2e3e" strokeWidth={1.5} dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-              <p style={{ fontSize: "10px", color: colors.textMuted, marginBottom: "1px" }}>Buying Power</p>
-              <p style={{ fontSize: "13px", fontWeight: 700, color: colors.textSub }}>$45,200</p>
-            </div>
-          </div>
-
-          <div className="rounded-xl mb-5" style={{ background: colors.card, padding: "20px 16px" }}>
-            <div className="flex items-center justify-between mb-4">
-              <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary }}>Portfolio Overview</p>
-            </div>
-            <ResponsiveContainer width="100%" height={180}>
-              <LineChart data={chartData} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={colors.divider} vertical={false} />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: colors.textMuted }} axisLine={false} tickLine={false} />
-                <YAxis tickFormatter={(v: number) => `${v / 1000}k`} tick={{ fontSize: 11, fill: colors.textMuted }}
-                  axisLine={false} tickLine={false} domain={[0, 140000]}
-                  ticks={[0, 20000, 40000, 60000, 80000, 100000, 120000, 140000]} width={36} />
-                <Tooltip content={<ChartTooltip />} cursor={{ stroke: colors.divider, strokeWidth: 1 }} />
-                <Line type="monotone" dataKey="value" stroke="#3a7bd5" strokeWidth={2} dot={false}
-                  activeDot={{ r: 5, fill: "#3a7bd5", stroke: "#fff", strokeWidth: 2 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="rounded-xl" style={{ background: colors.card, padding: "20px 16px" }}>
-            <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary, marginBottom: "16px" }}>Recent Trades</p>
-
-            <div className="hidden sm:block overflow-x-auto">
-              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "600px" }}>
-                <thead>
-                  <tr>
-                    {["Symbol", "Trade ID", "P&L", "Status", "Date", "Account"].map((h) => (
-                      <th key={h} style={{ textAlign: "left", fontSize: "11px", color: colors.textMuted, fontWeight: 600, paddingBottom: "10px", borderBottom: `1px solid ${colors.divider}` }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {trades.map((t, i) => (
-                    <tr key={i} style={{ borderBottom: `1px solid ${colors.tableRowBorder}` }}>
-                      <td style={{ padding: "10px 0" }}>
-                        <div className="flex items-center gap-2">
-                          <div className="flex items-center justify-center rounded-full font-bold text-white flex-shrink-0"
-                            style={{ width: "28px", height: "28px", background: "#1c2e3e", fontSize: "10px" }}>
-                            {t.symbol[0]}
-                          </div>
-                          <span style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{t.symbol}</span>
-                        </div>
-                      </td>
-                      <td style={{ fontSize: "12px", color: colors.textMuted }}>{t.id}</td>
-                      <td style={{ fontSize: "13px", fontWeight: 600, color: t.dir === "+" ? "#28a745" : "#dc3545" }}>{t.amount}</td>
-                      <td>
-                        <span className="inline-block px-2.5 py-1 rounded" style={{ ...statusStyle[t.status], fontSize: "11px" }}>
-                          {t.status}
-                        </span>
-                      </td>
-                      <td style={{ fontSize: "12px", color: colors.textMuted }}>{t.date}</td>
-                      <td>
-                        <div className="flex items-center gap-1.5">
-                          <div className="flex items-center">
-                            <div style={{ width: "16px", height: "16px", borderRadius: "50%", background: "#e00" }} />
-                            <div style={{ width: "16px", height: "16px", borderRadius: "50%", background: "#f90", marginLeft: "-5px" }} />
-                          </div>
-                          <span style={{ fontSize: "11px", color: colors.textMuted }}>**** {t.acct}</span>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="block sm:hidden space-y-3">
-              {trades.map((t, i) => (
-                <div key={i} className="rounded-lg p-3" style={{ border: `1px solid ${colors.divider}` }}>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center justify-center rounded-full font-bold text-white flex-shrink-0"
-                        style={{ width: "28px", height: "28px", background: "#1c2e3e", fontSize: "10px" }}>
-                        {t.symbol[0]}
-                      </div>
-                      <span style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{t.symbol}</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {[
+              { icon: Wallet, label: "Portfolio Value", value: `$${currentVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, sub: `${pChange >= 0 ? "+" : ""}${pPct.toFixed(2)}% today`, positive: pChange >= 0, gradient: "linear-gradient(135deg, #3b82f6, #1d4ed8)" },
+              { icon: TrendingUp, label: "Today's P&L", value: "+$2,340", sub: "+1.84% return", positive: true, gradient: "linear-gradient(135deg, #10b981, #059669)" },
+              { icon: BarChart3, label: "Buying Power", value: "$45,200", sub: "Available margin", positive: true, gradient: "linear-gradient(135deg, #8b5cf6, #6d28d9)" },
+              { icon: ArrowRightLeft, label: "Open Trades", value: "8", sub: "4 symbols active", positive: true, gradient: "linear-gradient(135deg, #f59e0b, #d97706)" },
+            ].map((c) => (
+              <div key={c.label} className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, overflow: "hidden" }}>
+                <div style={{ padding: "16px 18px" }}>
+                  <div className="flex items-center justify-between mb-3">
+                    <p style={{ fontSize: "12px", color: colors.textMuted, fontWeight: 500 }}>{c.label}</p>
+                    <div className="flex items-center justify-center rounded-lg" style={{ width: "32px", height: "32px", background: c.gradient }}>
+                      <c.icon size={16} color="#fff" />
                     </div>
-                    <span className="inline-block px-2.5 py-1 rounded" style={{ ...statusStyle[t.status], fontSize: "11px" }}>
-                      {t.status}
-                    </span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span style={{ fontSize: "13px", fontWeight: 600, color: t.dir === "+" ? "#28a745" : "#dc3545" }}>{t.amount}</span>
-                    <span style={{ fontSize: "12px", color: colors.textMuted }}>{t.date}</span>
+                  <p style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary, letterSpacing: "-0.02em", marginBottom: "4px" }}>{c.value}</p>
+                  <div className="flex items-center gap-1">
+                    {c.positive ? <ArrowUpRight size={12} color={colors.green} /> : <ArrowDownRight size={12} color={colors.red} />}
+                    <span style={{ fontSize: "11px", fontWeight: 600, color: c.positive ? colors.green : colors.red }}>{c.sub}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 mb-6">
+            <div className="lg:col-span-3 rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "20px" }}>
+              <div className="flex items-center justify-between mb-1">
+                <div>
+                  <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary }}>Portfolio Performance</p>
+                  <p style={{ fontSize: "11px", color: colors.textMuted, marginTop: "2px" }}>Equity curve over time</p>
+                </div>
+                <div className="flex gap-1 p-0.5 rounded-lg" style={{ background: colors.filterBar }}>
+                  {(["1D", "1W", "1M", "1Y"] as const).map(r => (
+                    <button key={r} onClick={() => setTimeRange(r)} style={{
+                      padding: "4px 10px", fontSize: "11px", fontWeight: 600, borderRadius: "5px",
+                      border: "none", cursor: "pointer",
+                      background: timeRange === r ? colors.accent : "transparent",
+                      color: timeRange === r ? "#fff" : colors.filterInactiveText,
+                    }}>{r}</button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-baseline gap-3 mb-4 mt-3">
+                <span style={{ fontSize: "28px", fontWeight: 800, color: colors.textPrimary, letterSpacing: "-0.03em" }}>
+                  ${currentVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                </span>
+                <span className="flex items-center gap-1" style={{ fontSize: "13px", fontWeight: 600, color: pChange >= 0 ? colors.green : colors.red }}>
+                  {pChange >= 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+                  {pChange >= 0 ? "+" : ""}${Math.abs(pChange).toFixed(0)} ({pChange >= 0 ? "+" : ""}{pPct.toFixed(2)}%)
+                </span>
+                <span className="flex items-center gap-1 ml-auto" style={{ fontSize: "11px", color: colors.green, fontWeight: 600 }}>
+                  <span className="inline-block rounded-full" style={{ width: "6px", height: "6px", background: colors.green, animation: "pulse 1.5s infinite" }} />
+                  LIVE
+                </span>
+              </div>
+              <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}`}</style>
+
+              <ResponsiveContainer width="100%" height={200}>
+                <AreaChart data={timeRange === "1M" || timeRange === "1Y" ? portfolioHistory : liveData} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
+                  <defs>
+                    <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={colors.accent} stopOpacity={0.2} />
+                      <stop offset="100%" stopColor={colors.accent} stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke={colors.divider} vertical={false} />
+                  <XAxis dataKey={timeRange === "1M" || timeRange === "1Y" ? "month" : "time"} tick={{ fontSize: 10, fill: colors.textMuted }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: colors.textMuted }} axisLine={false} tickLine={false}
+                    domain={["auto", "auto"]} width={50}
+                    tickFormatter={(v: number) => v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v.toFixed(0)}`} />
+                  <Tooltip content={timeRange === "1M" || timeRange === "1Y" ? <PortfolioTooltip /> : <ChartTooltip />} cursor={{ stroke: colors.divider, strokeWidth: 1 }} />
+                  <Area type="monotone" dataKey={timeRange === "1M" || timeRange === "1Y" ? "value" : "price"} stroke={colors.accent} strokeWidth={2}
+                    fill="url(#areaGrad)" dot={false}
+                    activeDot={{ r: 4, fill: colors.accent, stroke: colors.card, strokeWidth: 2 }} isAnimationActive={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="lg:col-span-2 rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "20px" }}>
+              <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary, marginBottom: "4px" }}>Asset Allocation</p>
+              <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "16px" }}>Portfolio breakdown</p>
+
+              <div className="flex gap-1 rounded-full overflow-hidden mb-5" style={{ height: "8px" }}>
+                {topAssets.map(a => (
+                  <div key={a.symbol} style={{ width: `${a.pct}%`, background: a.barColor, borderRadius: "4px" }} />
+                ))}
+              </div>
+
+              {topAssets.map((a) => (
+                <div key={a.symbol} className="flex items-center justify-between py-2.5" style={{ borderBottom: `1px solid ${colors.divider}` }}>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center rounded-lg font-bold text-white"
+                      style={{ width: "32px", height: "32px", background: a.color, fontSize: "11px", borderRadius: "8px" }}>
+                      {a.symbol[0]}
+                    </div>
+                    <div>
+                      <p style={{ fontSize: "13px", fontWeight: 600, color: colors.textPrimary }}>{a.symbol}</p>
+                      <p style={{ fontSize: "10px", color: colors.textMuted }}>{a.name}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p style={{ fontSize: "13px", fontWeight: 600, color: colors.textPrimary }}>{a.value}</p>
+                    <p style={{ fontSize: "10px", fontWeight: 600, color: a.change.startsWith("+") ? colors.green : colors.textMuted }}>{a.change}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
+
+          <div className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "20px" }}>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary }}>Recent Trades</p>
+                <p style={{ fontSize: "11px", color: colors.textMuted, marginTop: "2px" }}>Latest market activity</p>
+              </div>
+            </div>
+
+            <div className="hidden sm:block overflow-x-auto">
+              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "600px" }}>
+                <thead>
+                  <tr>
+                    {["Asset", "P&L", "Status", "Date"].map((h) => (
+                      <th key={h} style={{ textAlign: "left", fontSize: "11px", color: colors.tableHeaderText, fontWeight: 600, paddingBottom: "12px", borderBottom: `1px solid ${colors.divider}`, textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {trades.map((t, i) => {
+                    const sc = statusColors[t.status] ?? statusColors.Open;
+                    return (
+                      <tr key={i} style={{ borderBottom: `1px solid ${colors.tableRowBorder}` }}
+                        onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.background = colors.tableRowHoverBg}
+                        onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.background = ""}>
+                        <td style={{ padding: "12px 0" }}>
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center justify-center rounded-lg font-bold text-white"
+                              style={{ width: "32px", height: "32px", background: t.color, fontSize: "11px", borderRadius: "8px" }}>
+                              {t.symbol[0]}
+                            </div>
+                            <div>
+                              <span style={{ fontSize: "13px", fontWeight: 600, color: colors.textPrimary, display: "block" }}>{t.symbol}</span>
+                              <span style={{ fontSize: "10px", color: colors.textMuted }}>{t.name}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{ fontSize: "13px", fontWeight: 600, color: t.dir === "+" ? colors.green : colors.red }}>{t.amount}</td>
+                        <td>
+                          <span className="inline-block px-2.5 py-1 rounded-md" style={{ background: sc.bg, color: sc.text, fontSize: "11px", fontWeight: 600 }}>
+                            {t.status}
+                          </span>
+                        </td>
+                        <td style={{ fontSize: "12px", color: colors.textMuted }}>{t.date}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="block sm:hidden space-y-3">
+              {trades.map((t, i) => {
+                const sc = statusColors[t.status] ?? statusColors.Open;
+                return (
+                  <div key={i} className="flex items-center justify-between p-3 rounded-lg" style={{ border: `1px solid ${colors.divider}` }}>
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center rounded-lg font-bold text-white"
+                        style={{ width: "32px", height: "32px", background: t.color, fontSize: "11px", borderRadius: "8px" }}>
+                        {t.symbol[0]}
+                      </div>
+                      <div>
+                        <span style={{ fontSize: "13px", fontWeight: 600, color: colors.textPrimary, display: "block" }}>{t.symbol}</span>
+                        <span style={{ fontSize: "10px", color: colors.textMuted }}>{t.date}</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span style={{ fontSize: "13px", fontWeight: 600, color: t.dir === "+" ? colors.green : colors.red, display: "block" }}>{t.amount}</span>
+                      <span className="inline-block px-2 py-0.5 rounded-md mt-1" style={{ background: sc.bg, color: sc.text, fontSize: "10px", fontWeight: 600 }}>
+                        {t.status}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
-        <aside className="hidden lg:flex flex-col flex-shrink-0 overflow-y-auto" style={{ width: "270px", background: colors.rightPanel, borderLeft: `1px solid ${colors.rightPanelBorder}`, padding: "28px 20px" }}>
+        <aside className="hidden xl:flex flex-col flex-shrink-0 overflow-y-auto" style={{
+          width: "300px", background: colors.rightPanel, borderLeft: `1px solid ${colors.rightPanelBorder}`, padding: "24px 20px",
+        }}>
           <div className="mb-5">
-            <p style={{ fontSize: "12px", color: colors.textMuted, marginBottom: "4px" }}>Account Equity</p>
-            <p style={{ fontSize: "26px", fontWeight: 800, color: colors.textPrimary, letterSpacing: "-0.02em" }}>$127,450</p>
-          </div>
-          <div className="flex gap-2 mb-6">
-            <button style={{ flex: 1, padding: "9px", fontSize: "13px", fontWeight: 600, border: `1.5px solid ${colors.btnBorder}`, borderRadius: "8px", background: colors.btnBg, cursor: "pointer", color: colors.textSub }}>Deposit</button>
-            <button style={{ flex: 1, padding: "9px", fontSize: "13px", fontWeight: 600, border: `1.5px solid ${colors.btnBorder}`, borderRadius: "8px", background: colors.btnBg, cursor: "pointer", color: colors.textSub }}>Withdraw</button>
+            <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 500 }}>Account Equity</p>
+            <p style={{ fontSize: "28px", fontWeight: 800, color: colors.textPrimary, letterSpacing: "-0.03em" }}>$127,450</p>
+            <div className="flex items-center gap-1 mt-1">
+              <ArrowUpRight size={12} color={colors.green} />
+              <span style={{ fontSize: "12px", fontWeight: 600, color: colors.green }}>+$2,340 (1.84%)</span>
+            </div>
           </div>
 
-          <div className="flex items-center justify-between mb-3">
-            <p style={{ fontSize: "13px", fontWeight: 600, color: colors.textPrimary }}>Linked Accounts</p>
+          <div className="flex gap-2 mb-6">
+            <button style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, border: "none", borderRadius: "10px", background: colors.accent, color: "#fff", cursor: "pointer" }}>Deposit</button>
+            <button style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, border: `1px solid ${colors.btnBorder}`, borderRadius: "10px", background: colors.btnBg, color: colors.textSub, cursor: "pointer" }}>Withdraw</button>
           </div>
-          <div className="rounded-xl mb-3 p-4" style={{ background: "#1c2e3e", color: "#fff" }}>
-            <div className="flex items-center justify-between mb-5">
+
+          <div className="rounded-xl mb-5 p-4" style={{ background: "linear-gradient(135deg, #1e293b, #0f172a)", border: `1px solid ${colors.divider}` }}>
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
-                <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: "#e00", opacity: 0.9 }} />
-                <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: "#f90", opacity: 0.9, marginLeft: "-7px" }} />
+                <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: "#ef4444", opacity: 0.9 }} />
+                <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: "#f59e0b", opacity: 0.9, marginLeft: "-7px" }} />
               </div>
-              <div style={{ width: "20px", height: "20px", borderRadius: "50%", border: "2px solid #fff", opacity: 0.6 }} />
+              <div style={{ width: "20px", height: "20px", borderRadius: "50%", border: "2px solid rgba(255,255,255,0.3)" }} />
             </div>
-            <p style={{ fontSize: "13px", letterSpacing: "0.12em", marginBottom: "14px", opacity: 0.85 }}>6375 8456 9825 6775</p>
+            <p style={{ fontSize: "13px", letterSpacing: "0.14em", marginBottom: "14px", color: "rgba(255,255,255,0.85)" }}>6375 8456 9825 6775</p>
             <div className="flex items-end justify-between">
               <div>
-                <p style={{ fontSize: "9px", opacity: 0.5, marginBottom: "2px" }}>Name</p>
-                <p style={{ fontSize: "12px", fontWeight: 600 }}>{displayName}</p>
+                <p style={{ fontSize: "9px", color: "rgba(255,255,255,0.4)", marginBottom: "2px" }}>NAME</p>
+                <p style={{ fontSize: "12px", fontWeight: 600, color: "#fff" }}>Trader</p>
               </div>
               <div>
-                <p style={{ fontSize: "9px", opacity: 0.5, marginBottom: "2px" }}>Exp Date</p>
-                <p style={{ fontSize: "12px", fontWeight: 600 }}>08/28</p>
+                <p style={{ fontSize: "9px", color: "rgba(255,255,255,0.4)", marginBottom: "2px" }}>EXP</p>
+                <p style={{ fontSize: "12px", fontWeight: 600, color: "#fff" }}>08/28</p>
               </div>
               <div style={{ width: "28px", height: "20px", background: "#c0a060", borderRadius: "3px" }} />
             </div>
           </div>
-          <div className="flex items-center gap-2 mb-5 p-3 rounded-lg" style={{ border: `1px solid ${colors.rightPanelBorder}` }}>
-            <div className="flex items-center">
-              <div style={{ width: "16px", height: "16px", borderRadius: "50%", background: "#e00" }} />
-              <div style={{ width: "16px", height: "16px", borderRadius: "50%", background: "#f90", marginLeft: "-5px" }} />
-            </div>
-            <span style={{ fontSize: "12px", color: colors.textSub }}>1234 2345 6789</span>
-          </div>
 
-          <p style={{ fontSize: "12px", color: colors.textMuted, marginBottom: "8px" }}>Recipient Name</p>
-          <input value={recipientName} onChange={(e) => setRecipientName(e.target.value)}
-            style={{ width: "100%", padding: "9px 12px", fontSize: "13px", border: `1.5px solid ${colors.inputBorder}`, borderRadius: "8px", marginBottom: "12px", boxSizing: "border-box", color: colors.inputText, background: colors.inputBg, outline: "none" }} />
+          <div style={{ borderTop: `1px solid ${colors.divider}`, paddingTop: "16px" }}>
+            <p style={{ fontSize: "13px", fontWeight: 600, color: colors.textPrimary, marginBottom: "16px" }}>Quick Transfer</p>
 
-          <p style={{ fontSize: "12px", color: colors.textMuted, marginBottom: "8px" }}>Amount</p>
-          <div className="flex gap-2 mb-5">
-            <div className="flex items-center gap-1 px-3 py-2 rounded-lg flex-shrink-0" style={{ border: `1.5px solid ${colors.inputBorder}`, fontSize: "13px", color: colors.textSub, background: colors.inputBg }}>
-              USD <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "6px", fontWeight: 500 }}>Recipient Name</p>
+            <input value={recipientName} onChange={(e) => setRecipientName(e.target.value)}
+              style={{ width: "100%", padding: "10px 14px", fontSize: "13px", border: `1px solid ${colors.inputBorder}`, borderRadius: "10px", marginBottom: "14px", boxSizing: "border-box", color: colors.inputText, background: colors.inputBg, outline: "none" }} />
+
+            <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "6px", fontWeight: 500 }}>Amount</p>
+            <div className="flex gap-2 mb-5">
+              <div className="flex items-center gap-1 px-3 py-2.5 rounded-lg flex-shrink-0" style={{ border: `1px solid ${colors.inputBorder}`, fontSize: "12px", fontWeight: 600, color: colors.textSub, background: colors.inputBg }}>
+                USD <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <input value={amount} onChange={(e) => setAmount(e.target.value)}
+                style={{ flex: 1, padding: "10px 14px", fontSize: "13px", border: `1px solid ${colors.inputBorder}`, borderRadius: "10px", color: colors.inputText, background: colors.inputBg, outline: "none", boxSizing: "border-box" }} />
             </div>
-            <input value={amount} onChange={(e) => setAmount(e.target.value)}
-              style={{ flex: 1, padding: "9px 12px", fontSize: "13px", border: `1.5px solid ${colors.inputBorder}`, borderRadius: "8px", color: colors.inputText, background: colors.inputBg, outline: "none", boxSizing: "border-box" }} />
+            <button style={{ width: "100%", padding: "12px", fontSize: "14px", fontWeight: 700, background: colors.accent, color: "#fff", border: "none", borderRadius: "10px", cursor: "pointer" }}>
+              Send Money
+            </button>
           </div>
-          <button style={{ width: "100%", padding: "12px", fontSize: "14px", fontWeight: 700, background: "#1c2e3e", color: "#fff", border: "none", borderRadius: "10px", cursor: "pointer" }}>
-            Send Money
-          </button>
         </aside>
       </div>
     </DashboardLayout>

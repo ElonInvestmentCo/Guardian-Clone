@@ -1,18 +1,39 @@
 import { useLocation, Link } from "wouter";
+import { useState, useEffect } from "react";
 import {
-  LayoutDashboard, CreditCard, Send, BarChart2,
-  ArrowLeftRight, Settings, LogOut, Sun, Moon,
+  LayoutDashboard, Briefcase, ShoppingCart, PieChart,
+  FileText, Settings, LogOut, Sun, Moon, Search, Bell,
+  TrendingUp, TrendingDown, ChevronDown,
 } from "lucide-react";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import { useTheme } from "@/context/ThemeContext";
 
 const NAV = [
-  { icon: LayoutDashboard, label: "Dashboard",  href: "/dashboard"   },
-  { icon: CreditCard,      label: "Positions",   href: "/positions"   },
-  { icon: Send,            label: "Orders",      href: "/orders"      },
-  { icon: BarChart2,       label: "Portfolio",   href: "/portfolio"   },
-  { icon: ArrowLeftRight,  label: "Statements",  href: "/statements"  },
-  { icon: Settings,        label: "Settings",    href: "/settings"    },
+  { icon: LayoutDashboard, label: "Dashboard",  href: "/dashboard"  },
+  { icon: Briefcase,       label: "Positions",   href: "/positions"  },
+  { icon: ShoppingCart,    label: "Orders",      href: "/orders"     },
+  { icon: PieChart,        label: "Portfolio",   href: "/portfolio"  },
+  { icon: FileText,        label: "Statements",  href: "/statements" },
+  { icon: Settings,        label: "Settings",    href: "/settings"   },
+];
+
+interface TickerItem {
+  symbol: string;
+  price: number;
+  change: number;
+}
+
+const INITIAL_TICKERS: TickerItem[] = [
+  { symbol: "AAPL", price: 187.24, change: 1.42 },
+  { symbol: "TSLA", price: 248.50, change: -0.83 },
+  { symbol: "NVDA", price: 875.10, change: 3.21 },
+  { symbol: "AMD",  price: 162.80, change: -1.15 },
+  { symbol: "MSFT", price: 418.20, change: 0.67 },
+  { symbol: "META", price: 528.40, change: 2.14 },
+  { symbol: "AMZN", price: 184.20, change: -0.42 },
+  { symbol: "GOOG", price: 168.90, change: 0.89 },
+  { symbol: "SPY",  price: 521.40, change: 0.34 },
+  { symbol: "QQQ",  price: 447.80, change: 0.56 },
 ];
 
 interface Props {
@@ -23,66 +44,192 @@ export default function DashboardLayout({ children }: Props) {
   const [location, navigate] = useLocation();
   const { theme, colors, toggleTheme } = useTheme();
 
+  const email = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("signupEmail") ?? "" : "";
+  const displayName = email ? email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Trader";
+
+  const [tickers, setTickers] = useState<TickerItem[]>(INITIAL_TICKERS);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTickers(prev => prev.map(t => {
+        const delta = (Math.random() - 0.48) * t.price * 0.001;
+        const newPrice = parseFloat((t.price + delta).toFixed(2));
+        const newChange = parseFloat((t.change + (Math.random() - 0.5) * 0.1).toFixed(2));
+        return { ...t, price: newPrice, change: newChange };
+      }));
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   const handleLogout = () => {
     sessionStorage.clear();
     navigate("/login");
   };
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: colors.bg, fontFamily: "system-ui, -apple-system, sans-serif" }}>
+    <div className="flex h-screen overflow-hidden" style={{ background: colors.bg, fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
 
-      {/* Desktop Sidebar — hidden on mobile, visible at md+ */}
-      <aside className="hidden md:flex flex-col flex-shrink-0" style={{ width: "220px", background: "#1c2e3e", padding: "0" }}>
-        <SidebarContent location={location} colors={colors} theme={theme} toggleTheme={toggleTheme} handleLogout={handleLogout} />
-      </aside>
-
-      {/* Main area */}
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-
-        {/* Header bar */}
-        <div className="flex items-center justify-between flex-shrink-0" style={{
-          padding: "10px 16px",
-          borderBottom: `1px solid ${colors.cardBorder}`,
-          background: colors.card,
-        }}>
-          <div className="hidden md:block" />
-          <button
-            onClick={toggleTheme}
-            className="flex items-center gap-2 ml-auto"
-            title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
-            style={{
-              padding: "6px 14px",
-              borderRadius: "8px",
-              border: `1.5px solid ${colors.inputBorder}`,
-              background: colors.inputBg,
-              color: colors.textSub,
-              cursor: "pointer",
-              fontSize: "12px",
-              fontWeight: 600,
-              transition: "all 0.15s",
-            }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "#3a7bd5"; (e.currentTarget as HTMLElement).style.color = "#3a7bd5"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = colors.inputBorder; (e.currentTarget as HTMLElement).style.color = colors.textSub; }}
-          >
-            {theme === "light" ? <Moon size={14} /> : <Sun size={14} />}
-            {theme === "light" ? "Dark Mode" : "Light Mode"}
-          </button>
+      <aside className="hidden md:flex flex-col flex-shrink-0" style={{ width: "240px", background: colors.sidebar, borderRight: `1px solid ${colors.sidebarBorder}` }}>
+        <div style={{ padding: "20px 20px 16px" }}>
+          <Link href="/dashboard">
+            <img src={guardianLogo} alt="Guardian Trading" style={{ height: "30px", width: "auto", cursor: "pointer", opacity: 0.95 }} />
+          </Link>
         </div>
 
-        {/* Page content */}
-        <div className="flex-1 overflow-y-auto">
+        <nav className="flex flex-col gap-0.5 flex-1" style={{ padding: "8px 12px" }}>
+          {NAV.map(({ icon: Icon, label, href }) => {
+            const isActive = location === href || (href !== "/dashboard" && location.startsWith(href));
+            return (
+              <Link key={label} href={href}>
+                <div
+                  className="flex items-center gap-3 rounded-lg cursor-pointer"
+                  style={{
+                    padding: "10px 12px",
+                    background: isActive ? colors.sidebarItemActiveBg : "transparent",
+                    color: isActive ? colors.sidebarItemActive : colors.sidebarText,
+                    transition: "all 0.15s ease",
+                  }}
+                  onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = colors.sidebarItemHover; }}
+                  onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+                >
+                  <Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />
+                  <span style={{ fontSize: "13.5px", fontWeight: isActive ? 600 : 400, letterSpacing: "-0.01em" }}>{label}</span>
+                  {isActive && <div style={{ marginLeft: "auto", width: "4px", height: "4px", borderRadius: "50%", background: colors.sidebarItemActive }} />}
+                </div>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div style={{ padding: "0 12px 8px" }}>
+          <div className="flex items-center gap-2 rounded-lg" style={{ padding: "10px 12px", background: colors.greenBg, border: `1px solid rgba(14,203,129,0.2)` }}>
+            <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: "18px", height: "18px", background: colors.green }}>
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <span style={{ fontSize: "11px", color: colors.green, fontWeight: 600 }}>Account Verified</span>
+          </div>
+        </div>
+
+        <div style={{ padding: "8px 12px 16px", borderTop: `1px solid ${colors.sidebarBorder}` }}>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 w-full rounded-lg"
+            style={{ padding: "10px 12px", background: "transparent", border: "none", color: colors.sidebarTextMuted, cursor: "pointer", fontSize: "13px" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = colors.red; (e.currentTarget as HTMLElement).style.background = colors.redBg; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = colors.sidebarTextMuted; (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+          >
+            <LogOut size={16} />
+            Log out
+          </button>
+        </div>
+      </aside>
+
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+
+        <div className="hidden md:block overflow-hidden flex-shrink-0" style={{ background: colors.topBar, borderBottom: `1px solid ${colors.topBarBorder}` }}>
+          <div className="flex items-center" style={{ padding: "0 8px", height: "32px" }}>
+            <div className="flex items-center gap-6 overflow-hidden" style={{ animation: "tickerScroll 30s linear infinite" }}>
+              {[...tickers, ...tickers].map((t, i) => (
+                <div key={i} className="flex items-center gap-1.5 flex-shrink-0">
+                  <span style={{ fontSize: "11px", fontWeight: 600, color: colors.textSub }}>{t.symbol}</span>
+                  <span style={{ fontSize: "11px", color: colors.textPrimary, fontWeight: 500 }}>${t.price.toFixed(2)}</span>
+                  <span className="flex items-center gap-0.5" style={{ fontSize: "10px", fontWeight: 600, color: t.change >= 0 ? colors.green : colors.red }}>
+                    {t.change >= 0 ? <TrendingUp size={9} /> : <TrendingDown size={9} />}
+                    {t.change >= 0 ? "+" : ""}{t.change.toFixed(2)}%
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <style>{`@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}`}</style>
+        </div>
+
+        <div className="flex items-center justify-between flex-shrink-0" style={{
+          padding: "12px 20px",
+          borderBottom: `1px solid ${colors.topBarBorder}`,
+          background: colors.topBar,
+        }}>
+          <div className="hidden md:flex items-center flex-1 max-w-md">
+            <div className="flex items-center gap-2 w-full rounded-lg" style={{
+              padding: "7px 14px",
+              background: colors.inputBg,
+              border: `1px solid ${colors.inputBorder}`,
+            }}>
+              <Search size={14} color={colors.textMuted} />
+              <input placeholder="Search markets, assets..." style={{
+                flex: 1, border: "none", outline: "none", fontSize: "12.5px",
+                color: colors.inputText, background: "transparent",
+              }} />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 ml-auto">
+            <button
+              onClick={toggleTheme}
+              className="flex items-center justify-center"
+              title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+              style={{
+                width: "34px", height: "34px", borderRadius: "8px",
+                border: `1px solid ${colors.inputBorder}`,
+                background: colors.inputBg,
+                color: colors.textSub,
+                cursor: "pointer",
+              }}
+            >
+              {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
+            </button>
+
+            <div className="relative">
+              <button className="flex items-center justify-center" style={{
+                width: "34px", height: "34px", borderRadius: "8px",
+                border: `1px solid ${colors.inputBorder}`,
+                background: colors.inputBg,
+                color: colors.bellColor,
+                cursor: "pointer",
+              }}>
+                <Bell size={15} />
+              </button>
+              <span className="absolute -top-1 -right-1 flex items-center justify-center rounded-full text-white"
+                style={{ width: "16px", height: "16px", background: colors.red, fontSize: "9px", fontWeight: 700 }}>3</span>
+            </div>
+
+            <div className="hidden sm:flex items-center gap-2 rounded-lg cursor-pointer" style={{
+              padding: "5px 12px 5px 5px",
+              border: `1px solid ${colors.inputBorder}`,
+              background: colors.inputBg,
+            }}>
+              <div className="flex items-center justify-center rounded-md font-bold text-white"
+                style={{ width: "28px", height: "28px", background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", fontSize: "12px", borderRadius: "6px" }}>
+                {displayName[0]?.toUpperCase() ?? "U"}
+              </div>
+              <div className="hidden lg:block">
+                <p style={{ fontSize: "12px", fontWeight: 600, color: colors.textPrimary, lineHeight: 1.2 }}>{displayName}</p>
+                <p style={{ fontSize: "10px", color: colors.textMuted, lineHeight: 1.2 }}>Pro Account</p>
+              </div>
+              <ChevronDown size={12} color={colors.textMuted} className="hidden lg:block" />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto" style={{
+          scrollbarWidth: "thin",
+          scrollbarColor: `${colors.scrollbar} transparent`,
+        }}>
           {children}
         </div>
 
-        {/* Mobile Bottom Nav (safe-area aware for notched devices) */}
-        <nav className="flex md:hidden flex-shrink-0 border-t bg-white" style={{ borderColor: colors.cardBorder, background: colors.card, paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
+        <nav className="flex md:hidden flex-shrink-0" style={{
+          borderTop: `1px solid ${colors.topBarBorder}`,
+          background: colors.sidebar,
+          paddingBottom: "env(safe-area-inset-bottom, 0px)",
+        }}>
           {NAV.map(({ icon: Icon, label, href }) => {
             const isActive = location === href || (href !== "/dashboard" && location.startsWith(href));
             return (
               <Link key={label} href={href}
                 className="flex flex-1 flex-col items-center gap-0.5 py-2"
-                style={{ color: isActive ? "#3a7bd5" : colors.textMuted, textDecoration: "none", background: "none" }}>
-                <Icon size={18} />
+                style={{ color: isActive ? colors.accent : colors.textMuted, textDecoration: "none", background: "none" }}>
+                <Icon size={18} strokeWidth={isActive ? 2.2 : 1.5} />
                 <span style={{ fontSize: "9px", fontWeight: isActive ? 700 : 400 }}>{label}</span>
               </Link>
             );
@@ -90,72 +237,5 @@ export default function DashboardLayout({ children }: Props) {
         </nav>
       </div>
     </div>
-  );
-}
-
-function SidebarContent({ location, colors, theme, toggleTheme, handleLogout }: {
-  location: string;
-  colors: Record<string, string>;
-  theme: string;
-  toggleTheme: () => void;
-  handleLogout: () => void;
-}) {
-  return (
-    <>
-      {/* Logo */}
-      <div style={{ padding: "22px 18px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-        <Link href="/dashboard">
-          <img src={guardianLogo} alt="Guardian Trading" style={{ height: "34px", width: "auto", cursor: "pointer" }} />
-        </Link>
-      </div>
-
-      {/* Nav */}
-      <nav className="flex flex-col gap-0.5" style={{ padding: "14px 10px", flex: 1 }}>
-        {NAV.map(({ icon: Icon, label, href }) => {
-          const isActive = location === href || (href !== "/dashboard" && location.startsWith(href));
-          return (
-            <Link key={label} href={href}>
-              <div
-                className="flex items-center gap-3 rounded-lg cursor-pointer transition-all"
-                style={{
-                  padding: "9px 12px",
-                  background: isActive ? "#3a7bd5" : "transparent",
-                  color: isActive ? "#fff" : "rgba(255,255,255,0.65)",
-                }}
-                onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.07)"; }}
-                onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
-              >
-                <Icon size={16} />
-                <span style={{ fontSize: "13.5px", fontWeight: isActive ? 600 : 400 }}>{label}</span>
-              </div>
-            </Link>
-          );
-        })}
-      </nav>
-
-      {/* Verified badge */}
-      <div style={{ padding: "0 10px 10px" }}>
-        <div className="flex items-center gap-2 rounded-lg" style={{ padding: "8px 12px", background: "rgba(40,167,69,0.15)", border: "1px solid rgba(40,167,69,0.3)" }}>
-          <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: "18px", height: "18px", background: "#28a745" }}>
-            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <span style={{ fontSize: "11px", color: "#4fc86a", fontWeight: 600 }}>Account Verified</span>
-        </div>
-      </div>
-
-      {/* Log out */}
-      <div style={{ padding: "0 10px 18px", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "12px", marginTop: "4px" }}>
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-3 w-full rounded-lg"
-          style={{ padding: "9px 12px", background: "transparent", border: "none", color: "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: "13.5px" }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#fff"; (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.07)"; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.5)"; (e.currentTarget as HTMLElement).style.background = "transparent"; }}
-        >
-          <LogOut size={16} />
-          Log out
-        </button>
-      </div>
-    </>
   );
 }

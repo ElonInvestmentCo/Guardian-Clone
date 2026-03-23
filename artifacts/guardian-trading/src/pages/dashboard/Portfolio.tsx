@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { Bell } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, TooltipProps, PieChart, Pie, Cell, Legend,
+  ResponsiveContainer, TooltipProps, PieChart, Pie, Cell,
 } from "recharts";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
@@ -16,9 +16,9 @@ interface TickerConfig {
 }
 
 const TICKERS: TickerConfig[] = [
-  { symbol: "AAPL", name: "Apple Inc.",         basePrice: 187.24, color: "#3a7bd5", quantity: 150 },
-  { symbol: "TSLA", name: "Tesla, Inc.",         basePrice: 248.50, color: "#e63946", quantity: 80  },
-  { symbol: "NVDA", name: "NVIDIA Corporation",  basePrice: 875.10, color: "#28a745", quantity: 40  },
+  { symbol: "AAPL", name: "Apple Inc.",         basePrice: 187.24, color: "#3b82f6", quantity: 150 },
+  { symbol: "TSLA", name: "Tesla, Inc.",         basePrice: 248.50, color: "#ef4444", quantity: 80  },
+  { symbol: "NVDA", name: "NVIDIA Corporation",  basePrice: 875.10, color: "#10b981", quantity: 40  },
   { symbol: "AMD",  name: "Advanced Micro Dev.", basePrice: 162.80, color: "#f59e0b", quantity: 120 },
 ];
 
@@ -30,7 +30,7 @@ const ALLOCATION_DATA = [
   { name: "Cash", value: 24905, pct: 19.5 },
 ];
 
-const ALLOC_COLORS = ["#3a7bd5", "#e63946", "#28a745", "#f59e0b", "#adb5bd"];
+const ALLOC_COLORS = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#6b7280"];
 
 function generateHistory(base: number, count = 60): { time: string; price: number }[] {
   const arr: { time: string; price: number }[] = [];
@@ -47,7 +47,7 @@ function generateHistory(base: number, count = 60): { time: string; price: numbe
 function LiveTooltip({ active, payload }: TooltipProps<number, string>) {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: "#1c2e3e", color: "#fff", borderRadius: "10px", padding: "6px 14px", fontSize: "13px", fontWeight: 700, whiteSpace: "nowrap" }}>
+    <div style={{ background: "#1e293b", color: "#e2e8f0", borderRadius: "8px", padding: "6px 12px", fontSize: "12px", fontWeight: 600, border: "1px solid #334155" }}>
       ${(payload[0].value as number).toFixed(2)}
     </div>
   );
@@ -57,7 +57,7 @@ function AllocTooltip({ active, payload }: TooltipProps<number, string>) {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload as { name: string; value: number; pct: number };
   return (
-    <div style={{ background: "#1c2e3e", color: "#fff", borderRadius: "8px", padding: "6px 12px", fontSize: "12px" }}>
+    <div style={{ background: "#1e293b", color: "#e2e8f0", borderRadius: "8px", padding: "6px 12px", fontSize: "12px", border: "1px solid #334155" }}>
       <b>{d.name}</b>: ${d.value.toLocaleString()} ({d.pct}%)
     </div>
   );
@@ -65,8 +65,6 @@ function AllocTooltip({ active, payload }: TooltipProps<number, string>) {
 
 export default function Portfolio() {
   const { colors } = useTheme();
-  const email = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("signupEmail") ?? "" : "";
-  const displayName = email ? email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Trader";
 
   const [selectedIdx, setSelectedIdx] = useState(0);
   const ticker = TICKERS[selectedIdx];
@@ -103,51 +101,40 @@ export default function Portfolio() {
   const pctChange = (priceChange / openPrice) * 100;
   const isPositive = priceChange >= 0;
 
-  const totalValue = 127450;
-
   return (
     <DashboardLayout>
-      <div style={{ padding: "20px 16px" }}>
+      <div style={{ padding: "24px 20px" }}>
         <div className="flex items-center justify-between mb-6">
-          <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary }}>Portfolio</h1>
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <Bell size={20} color={colors.bellColor} style={{ cursor: "pointer" }} />
-              <span className="absolute -top-1 -right-1 flex items-center justify-center rounded-full text-white"
-                style={{ width: "14px", height: "14px", background: "#3a7bd5", fontSize: "8px", fontWeight: 700 }}>3</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center rounded-full font-bold text-white"
-                style={{ width: "32px", height: "32px", background: "#3a7bd5", fontSize: "13px" }}>
-                {displayName[0]?.toUpperCase() ?? "U"}
-              </div>
-              <span className="hidden sm:inline" style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{displayName}</span>
-            </div>
+          <div>
+            <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary }}>Portfolio</h1>
+            <p style={{ fontSize: "12px", color: colors.textMuted, marginTop: "2px" }}>Investment overview & analytics</p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Total Portfolio", value: `$${totalValue.toLocaleString()}`, sub: "+2.3% today",  color: "#28a745" },
-            { label: "Today's P&L",     value: "+$2,340",  sub: "8 trades today",    color: "#28a745" },
-            { label: "Buying Power",    value: "$45,200",  sub: "Available margin",   color: "#3a7bd5" },
-            { label: "Open Positions",  value: "24",       sub: "Across 4 symbols",   color: "#f59e0b" },
+            { label: "Total Portfolio", value: "$127,450", sub: "+2.3% today",  color: colors.green, gradient: "linear-gradient(135deg, #3b82f6, #1d4ed8)" },
+            { label: "Today's P&L",     value: "+$2,340",  sub: "8 trades today",    color: colors.green, gradient: "linear-gradient(135deg, #10b981, #059669)" },
+            { label: "Buying Power",    value: "$45,200",  sub: "Available margin",   color: colors.accent, gradient: "linear-gradient(135deg, #8b5cf6, #6d28d9)" },
+            { label: "Open Positions",  value: "24",       sub: "Across 4 symbols",   color: colors.yellow, gradient: "linear-gradient(135deg, #f59e0b, #d97706)" },
           ].map((c) => (
-            <div key={c.label} className="rounded-xl p-4 sm:p-5" style={{ background: colors.card }}>
-              <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>{c.label}</p>
-              <p style={{ fontSize: "18px", fontWeight: 800, color: colors.textPrimary, marginBottom: "4px" }}>{c.value}</p>
+            <div key={c.label} className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "16px 18px" }}>
+              <div className="flex items-center justify-between mb-3">
+                <p style={{ fontSize: "11px", color: colors.textMuted, textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 500 }}>{c.label}</p>
+              </div>
+              <p style={{ fontSize: "20px", fontWeight: 700, color: colors.textPrimary, marginBottom: "4px", letterSpacing: "-0.02em" }}>{c.value}</p>
               <p style={{ fontSize: "11px", color: c.color, fontWeight: 600 }}>{c.sub}</p>
             </div>
           ))}
         </div>
 
         <div className="flex flex-col lg:flex-row gap-5 mb-6">
-          <div className="flex-1 rounded-xl" style={{ background: colors.card, padding: "20px 16px" }}>
+          <div className="flex-1 rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "20px" }}>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
               <div className="flex gap-2 flex-wrap">
                 {TICKERS.map((t, i) => (
                   <button key={t.symbol} onClick={() => setSelectedIdx(i)}
-                    style={{ padding: "5px 14px", fontSize: "12px", fontWeight: 600, borderRadius: "6px", border: "1.5px solid", cursor: "pointer",
+                    style={{ padding: "6px 16px", fontSize: "12px", fontWeight: 600, borderRadius: "8px", border: "1.5px solid", cursor: "pointer",
                       background: i === selectedIdx ? t.color : "transparent",
                       color: i === selectedIdx ? "#fff" : t.color,
                       borderColor: t.color }}>
@@ -156,23 +143,25 @@ export default function Portfolio() {
                 ))}
               </div>
               <button onClick={() => setIsPaused((p) => !p)}
-                style={{ fontSize: "11px", padding: "4px 12px", borderRadius: "6px", border: "1.5px solid", background: isPaused ? "#fdecea" : "#e8f5e9", color: isPaused ? "#dc3545" : "#28a745", borderColor: isPaused ? "#f5c6cb" : "#c3e6cb", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap" }}>
+                style={{ fontSize: "11px", padding: "5px 14px", borderRadius: "6px", border: "none", cursor: "pointer", fontWeight: 600,
+                  background: isPaused ? colors.redBg : colors.greenBg,
+                  color: isPaused ? colors.red : colors.green }}>
                 {isPaused ? "Resume" : "Pause"}
               </button>
             </div>
 
             <div className="flex flex-wrap items-baseline gap-3 mb-4">
-              <span style={{ fontSize: "28px", fontWeight: 800, color: colors.textPrimary }}>${currentPrice.toFixed(2)}</span>
-              <span style={{ fontSize: "14px", fontWeight: 700, color: isPositive ? "#28a745" : "#dc3545" }}>
+              <span style={{ fontSize: "28px", fontWeight: 800, color: colors.textPrimary, letterSpacing: "-0.03em" }}>${currentPrice.toFixed(2)}</span>
+              <span className="flex items-center gap-1" style={{ fontSize: "13px", fontWeight: 600, color: isPositive ? colors.green : colors.red }}>
+                {isPositive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
                 {isPositive ? "+" : ""}{priceChange.toFixed(2)} ({isPositive ? "+" : ""}{pctChange.toFixed(2)}%)
               </span>
               <span className="hidden sm:inline" style={{ fontSize: "12px", color: colors.textMuted }}>{ticker.name}</span>
-              <span className="sm:ml-auto flex items-center gap-1.5" style={{ fontSize: "11px", color: "#28a745", fontWeight: 600 }}>
-                <span className="inline-block rounded-full" style={{ width: "7px", height: "7px", background: "#28a745", animation: "pulse 1.5s infinite" }} />
+              <span className="sm:ml-auto flex items-center gap-1.5" style={{ fontSize: "11px", color: colors.green, fontWeight: 600 }}>
+                <span className="inline-block rounded-full" style={{ width: "6px", height: "6px", background: colors.green, animation: "pulse 1.5s infinite" }} />
                 LIVE
               </span>
             </div>
-
             <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}`}</style>
 
             <ResponsiveContainer width="100%" height={200}>
@@ -185,13 +174,14 @@ export default function Portfolio() {
                   tickFormatter={(v: number) => `$${v.toFixed(0)}`} />
                 <Tooltip content={<LiveTooltip />} cursor={{ stroke: colors.divider, strokeWidth: 1 }} />
                 <Line type="monotone" dataKey="price" stroke={ticker.color} strokeWidth={2}
-                  dot={false} activeDot={{ r: 4, fill: ticker.color, stroke: "#fff", strokeWidth: 2 }} isAnimationActive={false} />
+                  dot={false} activeDot={{ r: 4, fill: ticker.color, stroke: colors.card, strokeWidth: 2 }} isAnimationActive={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="rounded-xl flex-shrink-0 w-full lg:w-[280px]" style={{ background: colors.card, padding: "20px 16px" }}>
-            <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary, marginBottom: "16px" }}>Allocation</p>
+          <div className="rounded-xl flex-shrink-0 w-full lg:w-[300px]" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "20px" }}>
+            <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary, marginBottom: "4px" }}>Allocation</p>
+            <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "16px" }}>Portfolio distribution</p>
             <ResponsiveContainer width="100%" height={180}>
               <PieChart>
                 <Pie data={ALLOCATION_DATA} cx="50%" cy="50%" innerRadius={55} outerRadius={80}
@@ -199,14 +189,13 @@ export default function Portfolio() {
                   {ALLOCATION_DATA.map((_, i) => <Cell key={i} fill={ALLOC_COLORS[i]} />)}
                 </Pie>
                 <Tooltip content={<AllocTooltip />} />
-                <Legend formatter={(v) => <span style={{ fontSize: "11px", color: colors.textSub }}>{v}</span>} />
               </PieChart>
             </ResponsiveContainer>
             <div className="mt-2">
               {ALLOCATION_DATA.map((d, i) => (
-                <div key={d.name} className="flex items-center justify-between py-1" style={{ borderBottom: `1px solid ${colors.divider}` }}>
+                <div key={d.name} className="flex items-center justify-between py-2" style={{ borderBottom: `1px solid ${colors.divider}` }}>
                   <div className="flex items-center gap-2">
-                    <div style={{ width: "10px", height: "10px", borderRadius: "2px", background: ALLOC_COLORS[i], flexShrink: 0 }} />
+                    <div style={{ width: "10px", height: "10px", borderRadius: "3px", background: ALLOC_COLORS[i], flexShrink: 0 }} />
                     <span style={{ fontSize: "12px", color: colors.textSub }}>{d.name}</span>
                   </div>
                   <span style={{ fontSize: "12px", fontWeight: 600, color: colors.textSub }}>{d.pct}%</span>
@@ -216,15 +205,18 @@ export default function Portfolio() {
           </div>
         </div>
 
-        <div className="rounded-xl" style={{ background: colors.card, padding: "20px 16px" }}>
-          <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary, marginBottom: "16px" }}>Holdings</p>
+        <div className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "20px" }}>
+          <div className="mb-4">
+            <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary }}>Holdings</p>
+            <p style={{ fontSize: "11px", color: colors.textMuted, marginTop: "2px" }}>Current stock positions</p>
+          </div>
 
           <div className="hidden sm:block overflow-x-auto">
             <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "700px" }}>
               <thead>
                 <tr>
                   {["Symbol", "Name", "Qty", "Avg Cost", "Current Price", "Market Value", "P&L", "% Alloc"].map((h) => (
-                    <th key={h} style={{ textAlign: "left", fontSize: "11px", color: colors.tableHeaderText, fontWeight: 600, paddingBottom: "10px", borderBottom: `1px solid ${colors.divider}`, whiteSpace: "nowrap" }}>{h}</th>
+                    <th key={h} style={{ textAlign: "left", fontSize: "11px", color: colors.tableHeaderText, fontWeight: 600, paddingBottom: "12px", borderBottom: `1px solid ${colors.divider}`, whiteSpace: "nowrap", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -238,11 +230,13 @@ export default function Portfolio() {
                   const mktVal = cur * t.quantity;
                   const alloc = ALLOCATION_DATA[i];
                   return (
-                    <tr key={t.symbol} style={{ borderBottom: `1px solid ${colors.tableRowBorder}` }}>
+                    <tr key={t.symbol} style={{ borderBottom: `1px solid ${colors.tableRowBorder}` }}
+                      onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.background = colors.tableRowHoverBg}
+                      onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.background = ""}>
                       <td style={{ padding: "12px 0" }}>
-                        <div className="flex items-center gap-2">
-                          <div className="flex items-center justify-center rounded-full text-white font-bold"
-                            style={{ width: "28px", height: "28px", background: ALLOC_COLORS[i], fontSize: "10px" }}>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center justify-center rounded-lg text-white font-bold"
+                            style={{ width: "32px", height: "32px", background: ALLOC_COLORS[i], fontSize: "11px", borderRadius: "8px" }}>
                             {t.symbol[0]}
                           </div>
                           <span style={{ fontSize: "13px", fontWeight: 700, color: colors.textPrimary }}>{t.symbol}</span>
@@ -252,9 +246,9 @@ export default function Portfolio() {
                       <td style={{ fontSize: "13px", color: colors.textSub }}>{t.quantity}</td>
                       <td style={{ fontSize: "13px", color: colors.textSub }}>${avgCost.toFixed(2)}</td>
                       <td style={{ fontSize: "13px", fontWeight: 600, color: colors.textPrimary }}>${cur.toFixed(2)}</td>
-                      <td style={{ fontSize: "13px", color: colors.textSub }}>${mktVal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
-                      <td style={{ fontSize: "13px", fontWeight: 600, color: pos ? "#28a745" : "#dc3545" }}>
-                        {pos ? "+" : ""}${pnl.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      <td style={{ fontSize: "13px", color: colors.textSub }}>${mktVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                      <td style={{ fontSize: "13px", fontWeight: 600, color: pos ? colors.green : colors.red }}>
+                        {pos ? "+" : ""}${pnl.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                       </td>
                       <td style={{ fontSize: "12px", color: colors.textMuted }}>{alloc.pct}%</td>
                     </tr>
@@ -274,17 +268,17 @@ export default function Portfolio() {
               const alloc = ALLOCATION_DATA[i];
               return (
                 <div key={t.symbol} className="rounded-lg p-3" style={{ border: `1px solid ${colors.divider}` }}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="flex items-center justify-center rounded-full text-white font-bold"
-                      style={{ width: "28px", height: "28px", background: ALLOC_COLORS[i], fontSize: "10px" }}>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center justify-center rounded-lg text-white font-bold"
+                      style={{ width: "32px", height: "32px", background: ALLOC_COLORS[i], fontSize: "11px", borderRadius: "8px" }}>
                       {t.symbol[0]}
                     </div>
                     <div className="flex-1">
                       <span style={{ fontSize: "13px", fontWeight: 700, color: colors.textPrimary }}>{t.symbol}</span>
                       <span style={{ fontSize: "11px", color: colors.textMuted, marginLeft: "6px" }}>{t.name}</span>
                     </div>
-                    <span style={{ fontSize: "12px", fontWeight: 600, color: pos ? "#28a745" : "#dc3545" }}>
-                      {pos ? "+" : ""}${pnl.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                    <span style={{ fontSize: "12px", fontWeight: 600, color: pos ? colors.green : colors.red }}>
+                      {pos ? "+" : ""}${pnl.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     </span>
                   </div>
                   <div className="grid grid-cols-3 gap-2">

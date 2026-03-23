@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bell, TrendingUp, TrendingDown, RefreshCw } from "lucide-react";
+import { TrendingUp, TrendingDown, RefreshCw, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -15,23 +15,17 @@ const POSITIONS = [
 ];
 
 const COLORS: Record<string, string> = {
-  AAPL: "#3a7bd5", TSLA: "#e63946", NVDA: "#28a745", AMD: "#f59e0b",
-  MSFT: "#6f42c1", AMZN: "#fd7e14", META: "#0d6efd", GOOG: "#20c997",
+  AAPL: "#3b82f6", TSLA: "#ef4444", NVDA: "#10b981", AMD: "#f59e0b",
+  MSFT: "#8b5cf6", AMZN: "#f97316", META: "#06b6d4", GOOG: "#14b8a6",
 };
 
 export default function Positions() {
   const { colors } = useTheme();
-  const email = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("signupEmail") ?? "" : "";
-  const displayName = email ? email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Trader";
-
   const [search, setSearch] = useState("");
   const [sideFilter, setSideFilter] = useState<"All" | "Long" | "Short">("All");
   const [refreshing, setRefreshing] = useState(false);
 
-  const handleRefresh = () => {
-    setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1000);
-  };
+  const handleRefresh = () => { setRefreshing(true); setTimeout(() => setRefreshing(false), 1000); };
 
   const filtered = POSITIONS.filter((p) =>
     (sideFilter === "All" || p.side === sideFilter) &&
@@ -43,75 +37,63 @@ export default function Positions() {
 
   return (
     <DashboardLayout>
-      <div style={{ padding: "20px 16px" }}>
+      <div style={{ padding: "24px 20px" }}>
         <div className="flex items-center justify-between mb-6">
-          <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary }}>Positions</h1>
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <Bell size={20} color={colors.bellColor} style={{ cursor: "pointer" }} />
-              <span className="absolute -top-1 -right-1 flex items-center justify-center rounded-full text-white"
-                style={{ width: "14px", height: "14px", background: "#3a7bd5", fontSize: "8px", fontWeight: 700 }}>3</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center rounded-full font-bold text-white"
-                style={{ width: "32px", height: "32px", background: "#3a7bd5", fontSize: "13px" }}>
-                {displayName[0]?.toUpperCase() ?? "U"}
-              </div>
-              <span className="hidden sm:inline" style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{displayName}</span>
-            </div>
+          <div>
+            <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary }}>Positions</h1>
+            <p style={{ fontSize: "12px", color: colors.textMuted, marginTop: "2px" }}>Active market positions</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <div className="rounded-xl p-5" style={{ background: colors.card }}>
-            <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>Total Positions</p>
-            <p style={{ fontSize: "24px", fontWeight: 800, color: colors.textPrimary }}>{POSITIONS.length}</p>
-            <p style={{ fontSize: "11px", color: "#3a7bd5", fontWeight: 600, marginTop: "4px" }}>All Open</p>
-          </div>
-          <div className="rounded-xl p-5" style={{ background: colors.card }}>
-            <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>Market Value</p>
-            <p style={{ fontSize: "24px", fontWeight: 800, color: colors.textPrimary }}>${totalValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
-            <p style={{ fontSize: "11px", color: colors.textSub, fontWeight: 600, marginTop: "4px" }}>Across all positions</p>
-          </div>
-          <div className="rounded-xl p-5" style={{ background: colors.card }}>
-            <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>Unrealised P&L</p>
-            <p style={{ fontSize: "24px", fontWeight: 800, color: totalPnl >= 0 ? "#28a745" : "#dc3545" }}>
-              {totalPnl >= 0 ? "+" : ""}${totalPnl.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </p>
-            <p style={{ fontSize: "11px", color: totalPnl >= 0 ? "#28a745" : "#dc3545", fontWeight: 600, marginTop: "4px" }}>
-              {totalPnl >= 0 ? "Up" : "Down"} today
-            </p>
-          </div>
+          {[
+            { label: "Total Positions", value: String(POSITIONS.length), sub: "All Open", subColor: colors.accent, icon: BarChart3Icon, gradient: "linear-gradient(135deg, #3b82f6, #1d4ed8)" },
+            { label: "Market Value", value: `$${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, sub: "Across all positions", subColor: colors.textMuted, icon: TrendingUp, gradient: "linear-gradient(135deg, #8b5cf6, #6d28d9)" },
+            { label: "Unrealised P&L", value: `${totalPnl >= 0 ? "+" : ""}$${totalPnl.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, sub: totalPnl >= 0 ? "Up today" : "Down today", subColor: totalPnl >= 0 ? colors.green : colors.red, icon: totalPnl >= 0 ? ArrowUpRight : ArrowDownRight, gradient: totalPnl >= 0 ? "linear-gradient(135deg, #10b981, #059669)" : "linear-gradient(135deg, #ef4444, #dc2626)" },
+          ].map((c) => (
+            <div key={c.label} className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "18px" }}>
+              <div className="flex items-center justify-between mb-3">
+                <p style={{ fontSize: "11px", color: colors.textMuted, textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 500 }}>{c.label}</p>
+                <div className="flex items-center justify-center rounded-lg" style={{ width: "28px", height: "28px", background: c.gradient }}>
+                  <c.icon size={14} color="#fff" />
+                </div>
+              </div>
+              <p style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary, letterSpacing: "-0.02em" }}>{c.value}</p>
+              <p style={{ fontSize: "11px", color: c.subColor, fontWeight: 600, marginTop: "4px" }}>{c.sub}</p>
+            </div>
+          ))}
         </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-4">
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search symbol or name..."
-            style={{ flex: 1, maxWidth: "300px", padding: "8px 14px", fontSize: "13px", border: `1.5px solid ${colors.inputBorder}`, borderRadius: "8px", outline: "none", color: colors.inputText, background: colors.inputBg }} />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-5">
+          <div className="flex items-center gap-2 flex-1 max-w-sm rounded-lg" style={{ padding: "8px 14px", background: colors.inputBg, border: `1px solid ${colors.inputBorder}` }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.textMuted} strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search symbol or name..."
+              style={{ flex: 1, border: "none", outline: "none", fontSize: "13px", color: colors.inputText, background: "transparent" }} />
+          </div>
           <div className="flex gap-1 p-1 rounded-lg" style={{ background: colors.filterBar }}>
             {(["All", "Long", "Short"] as const).map((s) => (
               <button key={s} onClick={() => setSideFilter(s)}
-                style={{ padding: "5px 14px", fontSize: "12px", fontWeight: 600, borderRadius: "6px", border: "none", cursor: "pointer",
+                style={{ padding: "6px 16px", fontSize: "12px", fontWeight: 600, borderRadius: "6px", border: "none", cursor: "pointer",
                   background: sideFilter === s ? colors.filterActiveBg : "transparent",
-                  color: sideFilter === s ? colors.filterActiveText : colors.filterInactiveText,
-                  boxShadow: sideFilter === s ? "0 1px 3px rgba(0,0,0,0.1)" : "none" }}>
+                  color: sideFilter === s ? colors.filterActiveText : colors.filterInactiveText }}>
                 {s}
               </button>
             ))}
           </div>
           <button onClick={handleRefresh}
-            style={{ padding: "7px 14px", fontSize: "12px", border: `1.5px solid ${colors.btnBorder}`, borderRadius: "8px", background: colors.btnBg, color: colors.btnText, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", justifyContent: "center" }}>
+            style={{ padding: "8px 16px", fontSize: "12px", border: `1px solid ${colors.btnBorder}`, borderRadius: "8px", background: colors.btnBg, color: colors.btnText, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", justifyContent: "center", fontWeight: 600 }}>
             <RefreshCw size={13} style={{ animation: refreshing ? "spin 1s linear infinite" : "none" }} />
             Refresh
           </button>
           <style>{`@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}`}</style>
         </div>
 
-        <div className="hidden sm:block rounded-xl overflow-x-auto" style={{ background: colors.card }}>
+        <div className="hidden sm:block rounded-xl overflow-x-auto" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
           <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "900px" }}>
             <thead>
               <tr style={{ background: colors.tableHead }}>
                 {["Symbol", "Company", "Side", "Quantity", "Entry Price", "Current Price", "Market Value", "Unrealised P&L", "Change %", "Status"].map((h) => (
-                  <th key={h} style={{ textAlign: "left", fontSize: "11px", color: colors.tableHeaderText, fontWeight: 600, padding: "12px 14px", borderBottom: `1px solid ${colors.cardBorder}`, whiteSpace: "nowrap" }}>{h}</th>
+                  <th key={h} style={{ textAlign: "left", fontSize: "11px", color: colors.tableHeaderText, fontWeight: 600, padding: "12px 14px", borderBottom: `1px solid ${colors.divider}`, whiteSpace: "nowrap", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -121,9 +103,9 @@ export default function Positions() {
                   onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.background = colors.tableRowHoverBg}
                   onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.background = ""}>
                   <td style={{ padding: "12px 14px" }}>
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center justify-center rounded-full text-white font-bold"
-                        style={{ width: "28px", height: "28px", background: COLORS[p.symbol] ?? "#3a7bd5", fontSize: "10px" }}>
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center rounded-lg text-white font-bold"
+                        style={{ width: "32px", height: "32px", background: COLORS[p.symbol] ?? "#3b82f6", fontSize: "11px", borderRadius: "8px" }}>
                         {p.symbol[0]}
                       </div>
                       <span style={{ fontSize: "13px", fontWeight: 700, color: colors.textPrimary }}>{p.symbol}</span>
@@ -131,24 +113,24 @@ export default function Positions() {
                   </td>
                   <td style={{ fontSize: "12px", color: colors.textSub, padding: "12px 14px", whiteSpace: "nowrap" }}>{p.name}</td>
                   <td style={{ padding: "12px 14px" }}>
-                    <span style={{ fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "20px",
-                      background: p.side === "Long" ? "#e8f5e9" : "#fdecea", color: p.side === "Long" ? "#28a745" : "#dc3545" }}>
-                      {p.side === "Long" ? <TrendingUp size={10} style={{ display: "inline", marginRight: "3px" }} /> : <TrendingDown size={10} style={{ display: "inline", marginRight: "3px" }} />}
+                    <span className="inline-flex items-center gap-1" style={{ fontSize: "11px", fontWeight: 600, padding: "3px 10px", borderRadius: "6px",
+                      background: p.side === "Long" ? colors.greenBg : colors.redBg, color: p.side === "Long" ? colors.green : colors.red }}>
+                      {p.side === "Long" ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
                       {p.side}
                     </span>
                   </td>
                   <td style={{ fontSize: "13px", color: colors.textSub, padding: "12px 14px" }}>{p.qty}</td>
                   <td style={{ fontSize: "13px", color: colors.textSub, padding: "12px 14px" }}>${p.entry.toFixed(2)}</td>
                   <td style={{ fontSize: "13px", fontWeight: 600, color: colors.textPrimary, padding: "12px 14px" }}>${p.current.toFixed(2)}</td>
-                  <td style={{ fontSize: "13px", color: colors.textSub, padding: "12px 14px" }}>${(p.current * p.qty).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
-                  <td style={{ fontSize: "13px", fontWeight: 700, color: p.pnl >= 0 ? "#28a745" : "#dc3545", padding: "12px 14px" }}>
-                    {p.pnl >= 0 ? "+" : ""}${Math.abs(p.pnl).toFixed(2)}
+                  <td style={{ fontSize: "13px", color: colors.textSub, padding: "12px 14px" }}>${(p.current * p.qty).toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                  <td style={{ fontSize: "13px", fontWeight: 700, color: p.pnl >= 0 ? colors.green : colors.red, padding: "12px 14px" }}>
+                    {p.pnl >= 0 ? "+" : "-"}${Math.abs(p.pnl).toFixed(2)}
                   </td>
-                  <td style={{ fontSize: "13px", fontWeight: 600, color: p.pnlPct >= 0 ? "#28a745" : "#dc3545", padding: "12px 14px" }}>
+                  <td style={{ fontSize: "13px", fontWeight: 600, color: p.pnlPct >= 0 ? colors.green : colors.red, padding: "12px 14px" }}>
                     {p.pnlPct >= 0 ? "+" : ""}{p.pnlPct.toFixed(2)}%
                   </td>
                   <td style={{ padding: "12px 14px" }}>
-                    <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", background: "#e8f5e9", color: "#28a745", fontWeight: 600 }}>
+                    <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "6px", background: colors.greenBg, color: colors.green, fontWeight: 600 }}>
                       {p.status}
                     </span>
                   </td>
@@ -163,11 +145,11 @@ export default function Positions() {
 
         <div className="block sm:hidden space-y-3">
           {filtered.map((p, i) => (
-            <div key={i} className="rounded-xl p-4" style={{ background: colors.card }}>
+            <div key={i} className="rounded-xl p-4" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
               <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center rounded-full text-white font-bold"
-                    style={{ width: "32px", height: "32px", background: COLORS[p.symbol] ?? "#3a7bd5", fontSize: "11px" }}>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center rounded-lg text-white font-bold"
+                    style={{ width: "36px", height: "36px", background: COLORS[p.symbol] ?? "#3b82f6", fontSize: "12px", borderRadius: "8px" }}>
                     {p.symbol[0]}
                   </div>
                   <div>
@@ -175,30 +157,23 @@ export default function Positions() {
                     <span style={{ fontSize: "11px", color: colors.textMuted }}>{p.name}</span>
                   </div>
                 </div>
-                <span style={{ fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "20px",
-                  background: p.side === "Long" ? "#e8f5e9" : "#fdecea", color: p.side === "Long" ? "#28a745" : "#dc3545" }}>
+                <span style={{ fontSize: "11px", fontWeight: 600, padding: "3px 10px", borderRadius: "6px",
+                  background: p.side === "Long" ? colors.greenBg : colors.redBg, color: p.side === "Long" ? colors.green : colors.red }}>
                   {p.side}
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <span style={{ fontSize: "10px", color: colors.textMuted, textTransform: "uppercase" }}>Entry</span>
-                  <p style={{ fontSize: "13px", color: colors.textSub }}>${p.entry.toFixed(2)}</p>
-                </div>
-                <div>
-                  <span style={{ fontSize: "10px", color: colors.textMuted, textTransform: "uppercase" }}>Current</span>
-                  <p style={{ fontSize: "13px", fontWeight: 600, color: colors.textPrimary }}>${p.current.toFixed(2)}</p>
-                </div>
-                <div>
-                  <span style={{ fontSize: "10px", color: colors.textMuted, textTransform: "uppercase" }}>P&L</span>
-                  <p style={{ fontSize: "13px", fontWeight: 700, color: p.pnl >= 0 ? "#28a745" : "#dc3545" }}>
-                    {p.pnl >= 0 ? "+" : ""}${Math.abs(p.pnl).toFixed(2)}
-                  </p>
-                </div>
-                <div>
-                  <span style={{ fontSize: "10px", color: colors.textMuted, textTransform: "uppercase" }}>Qty</span>
-                  <p style={{ fontSize: "13px", color: colors.textSub }}>{p.qty}</p>
-                </div>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: "Entry", value: `$${p.entry.toFixed(2)}` },
+                  { label: "Current", value: `$${p.current.toFixed(2)}`, bold: true },
+                  { label: "P&L", value: `${p.pnl >= 0 ? "+" : "-"}$${Math.abs(p.pnl).toFixed(2)}`, color: p.pnl >= 0 ? colors.green : colors.red },
+                  { label: "Qty", value: String(p.qty) },
+                ].map(item => (
+                  <div key={item.label}>
+                    <span style={{ fontSize: "10px", color: colors.textMuted, textTransform: "uppercase" }}>{item.label}</span>
+                    <p style={{ fontSize: "13px", color: item.color ?? colors.textSub, fontWeight: item.bold ? 600 : 400 }}>{item.value}</p>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
@@ -209,4 +184,8 @@ export default function Positions() {
       </div>
     </DashboardLayout>
   );
+}
+
+function BarChart3Icon(props: { size: number; color: string }) {
+  return <svg width={props.size} height={props.size} viewBox="0 0 24 24" fill="none" stroke={props.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>;
 }

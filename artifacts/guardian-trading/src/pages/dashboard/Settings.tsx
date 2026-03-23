@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { Bell, User, Lock, BellRing, ChevronRight, Eye, EyeOff, Check } from "lucide-react";
+import { User, Lock, BellRing, ChevronRight, Eye, EyeOff, Check } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
 
 type Section = "profile" | "security" | "notifications";
 
-function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+function Toggle({ on, onToggle, colors }: { on: boolean; onToggle: () => void; colors: { accent: string; inputBorder: string } }) {
   return (
     <button onClick={onToggle}
       style={{ width: "44px", height: "24px", borderRadius: "12px", border: "none", cursor: "pointer", padding: "2px",
-        background: on ? "#3a7bd5" : "#ddd", transition: "background 0.2s", position: "relative", flexShrink: 0 }}>
+        background: on ? colors.accent : colors.inputBorder, transition: "background 0.2s", position: "relative", flexShrink: 0 }}>
       <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: "#fff", transition: "transform 0.2s",
-        transform: on ? "translateX(20px)" : "translateX(0)", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
+        transform: on ? "translateX(20px)" : "translateX(0)", boxShadow: "0 1px 3px rgba(0,0,0,0.3)" }} />
     </button>
   );
 }
@@ -39,22 +39,12 @@ export default function Settings() {
   const [pwError, setPwError] = useState("");
 
   const [notifs, setNotifs] = useState({
-    tradeConfirmations: true,
-    priceAlerts: true,
-    orderFills: true,
-    marketOpen: false,
-    marketClose: false,
-    weeklyReport: true,
-    promotions: false,
-    securityAlerts: true,
+    tradeConfirmations: true, priceAlerts: true, orderFills: true, marketOpen: false,
+    marketClose: false, weeklyReport: true, promotions: false, securityAlerts: true,
   });
-
   const [notifSaved, setNotifSaved] = useState(false);
 
-  const handleSaveProfile = () => {
-    setProfileSaved(true);
-    setTimeout(() => setProfileSaved(false), 2500);
-  };
+  const handleSaveProfile = () => { setProfileSaved(true); setTimeout(() => setProfileSaved(false), 2500); };
 
   const handleSavePw = () => {
     setPwError("");
@@ -66,10 +56,7 @@ export default function Settings() {
     setTimeout(() => setPwSaved(false), 2500);
   };
 
-  const handleSaveNotifs = () => {
-    setNotifSaved(true);
-    setTimeout(() => setNotifSaved(false), 2500);
-  };
+  const handleSaveNotifs = () => { setNotifSaved(true); setTimeout(() => setNotifSaved(false), 2500); };
 
   const SECTIONS: { key: Section; icon: typeof User; label: string; desc: string }[] = [
     { key: "profile",       icon: User,    label: "Profile",       desc: "Name, email, phone" },
@@ -78,47 +65,36 @@ export default function Settings() {
   ];
 
   const inputStyle: React.CSSProperties = {
-    width: "100%", padding: "9px 13px", fontSize: "13px",
-    border: `1.5px solid ${colors.inputBorder}`, borderRadius: "8px",
+    width: "100%", padding: "10px 14px", fontSize: "13px",
+    border: `1px solid ${colors.inputBorder}`, borderRadius: "10px",
     color: colors.inputText, background: colors.inputBg, outline: "none", boxSizing: "border-box",
   };
 
   return (
     <DashboardLayout>
-      <div style={{ padding: "20px 16px" }}>
+      <div style={{ padding: "24px 20px" }}>
         <div className="flex items-center justify-between mb-6">
-          <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary }}>Settings</h1>
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <Bell size={20} color={colors.bellColor} style={{ cursor: "pointer" }} />
-              <span className="absolute -top-1 -right-1 flex items-center justify-center rounded-full text-white"
-                style={{ width: "14px", height: "14px", background: "#3a7bd5", fontSize: "8px", fontWeight: 700 }}>3</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center rounded-full font-bold text-white"
-                style={{ width: "32px", height: "32px", background: "#3a7bd5", fontSize: "13px" }}>
-                {displayName[0]?.toUpperCase() ?? "U"}
-              </div>
-              <span className="hidden sm:inline" style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub }}>{displayName}</span>
-            </div>
+          <div>
+            <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary }}>Settings</h1>
+            <p style={{ fontSize: "12px", color: colors.textMuted, marginTop: "2px" }}>Manage your account preferences</p>
           </div>
         </div>
 
         <div className="flex flex-col md:flex-row gap-5">
-          <div className="flex-shrink-0 w-full md:w-[220px]">
-            <div className="hidden md:flex rounded-xl p-5 mb-4 flex-col items-center" style={{ background: colors.card }}>
-              <div className="flex items-center justify-center rounded-full font-bold text-white mb-3"
-                style={{ width: "64px", height: "64px", background: "#3a7bd5", fontSize: "24px" }}>
+          <div className="flex-shrink-0 w-full md:w-[240px]">
+            <div className="hidden md:flex rounded-xl p-5 mb-4 flex-col items-center" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
+              <div className="flex items-center justify-center rounded-xl font-bold text-white mb-3"
+                style={{ width: "64px", height: "64px", background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", fontSize: "24px", borderRadius: "16px" }}>
                 {displayName[0]?.toUpperCase() ?? "U"}
               </div>
               <p style={{ fontSize: "14px", fontWeight: 700, color: colors.textPrimary, marginBottom: "2px" }}>{displayName}</p>
               <p style={{ fontSize: "11px", color: colors.textMuted }}>{email}</p>
-              <span className="mt-3 px-3 py-1 rounded-full text-xs font-bold" style={{ background: "#e8f5e9", color: "#28a745" }}>
+              <span className="mt-3 px-3 py-1 rounded-md text-xs font-bold" style={{ background: colors.greenBg, color: colors.green }}>
                 Verified
               </span>
             </div>
 
-            <div className="flex md:flex-col gap-1.5 md:gap-0 overflow-x-auto md:overflow-visible rounded-xl md:rounded-xl" style={{ background: colors.card }}>
+            <div className="flex md:flex-col gap-1.5 md:gap-0 overflow-x-auto md:overflow-visible rounded-xl md:rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
               {SECTIONS.map(({ key, icon: Icon, label, desc }) => (
                 <button key={key} onClick={() => setSection(key)}
                   className="flex items-center gap-2 md:gap-3 text-left flex-shrink-0 md:flex-shrink md:w-full"
@@ -127,11 +103,11 @@ export default function Settings() {
                     background: section === key ? colors.settingsSectionActiveBg : colors.card,
                     minWidth: "0" }}>
                   <div className="flex items-center justify-center rounded-lg flex-shrink-0"
-                    style={{ width: "30px", height: "30px", background: section === key ? "#3a7bd5" : colors.filterBar }}>
+                    style={{ width: "30px", height: "30px", background: section === key ? colors.accent : colors.filterBar }}>
                     <Icon size={14} color={section === key ? "#fff" : colors.textMuted} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p style={{ fontSize: "13px", fontWeight: 600, color: section === key ? "#3a7bd5" : colors.textSub, marginBottom: "1px" }}>{label}</p>
+                    <p style={{ fontSize: "13px", fontWeight: 600, color: section === key ? colors.accent : colors.textSub, marginBottom: "1px" }}>{label}</p>
                     <p className="hidden md:block" style={{ fontSize: "10px", color: colors.textMuted }}>{desc}</p>
                   </div>
                   <ChevronRight size={14} color={colors.textMuted} className="hidden md:block" />
@@ -142,14 +118,14 @@ export default function Settings() {
 
           <div className="flex-1 min-w-0">
             {section === "profile" && (
-              <div className="rounded-xl" style={{ background: colors.card, padding: "24px" }}>
+              <div className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "24px" }}>
                 <div className="flex items-center justify-between mb-5">
                   <div>
                     <h2 style={{ fontSize: "16px", fontWeight: 700, color: colors.textPrimary }}>Profile Information</h2>
                     <p style={{ fontSize: "12px", color: colors.textMuted, marginTop: "2px" }}>Update your personal information</p>
                   </div>
                   {profileSaved && (
-                    <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg" style={{ background: "#e8f5e9", color: "#28a745", fontSize: "12px", fontWeight: 600 }}>
+                    <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg" style={{ background: colors.greenBg, color: colors.green, fontSize: "12px", fontWeight: 600 }}>
                       <Check size={13} /> Saved
                     </span>
                   )}
@@ -161,7 +137,7 @@ export default function Settings() {
                     { label: "Last Name",  val: lastName,  set: setLastName  },
                   ].map(({ label, val, set }) => (
                     <div key={label}>
-                      <label style={{ display: "block", fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</label>
+                      <label style={{ display: "block", fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 500 }}>{label}</label>
                       <input value={val} onChange={(e) => set(e.target.value)} style={inputStyle} />
                     </div>
                   ))}
@@ -172,15 +148,15 @@ export default function Settings() {
                   { label: "Phone Number",  val: phone, readOnly: false, set: setPhone },
                 ].map(({ label, val, readOnly, set }) => (
                   <div key={label} className="mb-4">
-                    <label style={{ display: "block", fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</label>
+                    <label style={{ display: "block", fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 500 }}>{label}</label>
                     <input value={val} readOnly={readOnly} onChange={set ? (e) => set(e.target.value) : undefined}
                       style={{ ...inputStyle, color: readOnly ? colors.textMuted : colors.inputText, background: readOnly ? colors.filterBar : colors.inputBg }} />
                   </div>
                 ))}
 
                 <div className="mb-5">
-                  <label style={{ display: "block", fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>Country</label>
-                  <select style={{ ...inputStyle }}>
+                  <label style={{ display: "block", fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 500 }}>Country</label>
+                  <select style={inputStyle}>
                     <option>United States</option>
                     <option>United Kingdom</option>
                     <option>Canada</option>
@@ -188,7 +164,7 @@ export default function Settings() {
                 </div>
 
                 <button onClick={handleSaveProfile}
-                  style={{ padding: "10px 28px", fontSize: "13px", fontWeight: 700, background: "#3a7bd5", color: "#fff", border: "none", borderRadius: "8px", cursor: "pointer" }}>
+                  style={{ padding: "10px 28px", fontSize: "13px", fontWeight: 700, background: colors.accent, color: "#fff", border: "none", borderRadius: "10px", cursor: "pointer" }}>
                   Save Changes
                 </button>
               </div>
@@ -196,19 +172,19 @@ export default function Settings() {
 
             {section === "security" && (
               <div className="flex flex-col gap-4">
-                <div className="rounded-xl" style={{ background: colors.card, padding: "24px" }}>
+                <div className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "24px" }}>
                   <div className="flex items-center justify-between mb-5">
                     <div>
                       <h2 style={{ fontSize: "16px", fontWeight: 700, color: colors.textPrimary }}>Change Password</h2>
                       <p style={{ fontSize: "12px", color: colors.textMuted, marginTop: "2px" }}>Use a strong, unique password</p>
                     </div>
                     {pwSaved && (
-                      <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg" style={{ background: "#e8f5e9", color: "#28a745", fontSize: "12px", fontWeight: 600 }}>
+                      <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg" style={{ background: colors.greenBg, color: colors.green, fontSize: "12px", fontWeight: 600 }}>
                         <Check size={13} /> Password updated
                       </span>
                     )}
                   </div>
-                  {pwError && <div className="mb-4 px-4 py-2 rounded-lg" style={{ background: "#fdecea", color: "#dc3545", fontSize: "13px" }}>{pwError}</div>}
+                  {pwError && <div className="mb-4 px-4 py-2.5 rounded-lg" style={{ background: colors.redBg, color: colors.red, fontSize: "13px" }}>{pwError}</div>}
 
                   {[
                     { label: "Current Password", val: currentPw, set: setCurrentPw, show: showCurrent, toggle: () => setShowCurrent((p) => !p) },
@@ -216,10 +192,10 @@ export default function Settings() {
                     { label: "Confirm New Password", val: confirmPw, set: setConfirmPw, show: showNew, toggle: () => setShowNew((p) => !p)     },
                   ].map(({ label, val, set, show, toggle }) => (
                     <div key={label} className="mb-4">
-                      <label style={{ display: "block", fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</label>
+                      <label style={{ display: "block", fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 500 }}>{label}</label>
                       <div className="relative">
                         <input type={show ? "text" : "password"} value={val} onChange={(e) => set(e.target.value)}
-                          style={{ ...inputStyle, padding: "9px 40px 9px 13px" }} />
+                          style={{ ...inputStyle, padding: "10px 42px 10px 14px" }} />
                         <button type="button" onClick={toggle} style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: colors.textMuted, padding: 0 }}>
                           {show ? <EyeOff size={15} /> : <Eye size={15} />}
                         </button>
@@ -229,11 +205,11 @@ export default function Settings() {
 
                   {newPw && (
                     <div className="mb-4">
-                      <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "4px" }}>Password strength</p>
+                      <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "6px" }}>Password strength</p>
                       <div className="flex gap-1">
                         {[0, 1, 2, 3].map((i) => {
                           const strength = Math.min(4, Math.floor(newPw.length / 3));
-                          const strengthColors = ["#dc3545", "#f59e0b", "#3a7bd5", "#28a745"];
+                          const strengthColors = [colors.red, colors.yellow, colors.accent, colors.green];
                           return <div key={i} style={{ flex: 1, height: "4px", borderRadius: "2px", background: i < strength ? strengthColors[strength - 1] : colors.filterBar }} />;
                         })}
                       </div>
@@ -241,25 +217,25 @@ export default function Settings() {
                   )}
 
                   <button onClick={handleSavePw}
-                    style={{ padding: "10px 28px", fontSize: "13px", fontWeight: 700, background: "#3a7bd5", color: "#fff", border: "none", borderRadius: "8px", cursor: "pointer" }}>
+                    style={{ padding: "10px 28px", fontSize: "13px", fontWeight: 700, background: colors.accent, color: "#fff", border: "none", borderRadius: "10px", cursor: "pointer" }}>
                     Update Password
                   </button>
                 </div>
 
-                <div className="rounded-xl" style={{ background: colors.card, padding: "24px" }}>
+                <div className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "24px" }}>
                   <h2 style={{ fontSize: "16px", fontWeight: 700, color: colors.textPrimary, marginBottom: "4px" }}>Two-Factor Authentication</h2>
-                  <p style={{ fontSize: "12px", color: colors.textMuted, marginBottom: "20px" }}>Add an extra layer of security to your account</p>
-                  <div className="flex items-center justify-between p-4 rounded-xl" style={{ border: `1.5px solid ${colors.cardBorder}` }}>
+                  <p style={{ fontSize: "12px", color: colors.textMuted, marginBottom: "20px" }}>Add an extra layer of security</p>
+                  <div className="flex items-center justify-between p-4 rounded-xl" style={{ border: `1px solid ${colors.cardBorder}` }}>
                     <div>
                       <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary, marginBottom: "2px" }}>Authenticator App (TOTP)</p>
                       <p style={{ fontSize: "12px", color: colors.textMuted }}>Use Google Authenticator or Authy</p>
                     </div>
-                    <Toggle on={twoFA} onToggle={() => setTwoFA((p) => !p)} />
+                    <Toggle on={twoFA} onToggle={() => setTwoFA((p) => !p)} colors={colors} />
                   </div>
                   {twoFA && (
-                    <div className="mt-4 p-4 rounded-xl" style={{ background: "#f0f5ff", border: "1px solid #c5d8f5" }}>
-                      <p style={{ fontSize: "13px", color: "#3a7bd5", fontWeight: 600 }}>2FA is enabled</p>
-                      <p style={{ fontSize: "12px", color: "#666", marginTop: "4px" }}>Your account is protected with two-factor authentication.</p>
+                    <div className="mt-4 p-4 rounded-xl" style={{ background: colors.greenBg, border: `1px solid rgba(14,203,129,0.2)` }}>
+                      <p style={{ fontSize: "13px", color: colors.green, fontWeight: 600 }}>2FA is enabled</p>
+                      <p style={{ fontSize: "12px", color: colors.textMuted, marginTop: "4px" }}>Your account is protected with two-factor authentication.</p>
                     </div>
                   )}
                 </div>
@@ -267,14 +243,14 @@ export default function Settings() {
             )}
 
             {section === "notifications" && (
-              <div className="rounded-xl" style={{ background: colors.card, padding: "24px" }}>
+              <div className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "24px" }}>
                 <div className="flex items-center justify-between mb-5">
                   <div>
                     <h2 style={{ fontSize: "16px", fontWeight: 700, color: colors.textPrimary }}>Notification Preferences</h2>
                     <p style={{ fontSize: "12px", color: colors.textMuted, marginTop: "2px" }}>Choose what alerts you receive</p>
                   </div>
                   {notifSaved && (
-                    <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg" style={{ background: "#e8f5e9", color: "#28a745", fontSize: "12px", fontWeight: 600 }}>
+                    <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg" style={{ background: colors.greenBg, color: colors.green, fontSize: "12px", fontWeight: 600 }}>
                       <Check size={13} /> Saved
                     </span>
                   )}
@@ -295,12 +271,12 @@ export default function Settings() {
                       <p style={{ fontSize: "13px", fontWeight: 600, color: colors.textSub, marginBottom: "2px" }}>{label}</p>
                       <p style={{ fontSize: "11px", color: colors.textMuted }}>{desc}</p>
                     </div>
-                    <Toggle on={notifs[key as keyof typeof notifs]} onToggle={() => setNotifs((p) => ({ ...p, [key]: !p[key as keyof typeof notifs] }))} />
+                    <Toggle on={notifs[key as keyof typeof notifs]} onToggle={() => setNotifs((p) => ({ ...p, [key]: !p[key as keyof typeof notifs] }))} colors={colors} />
                   </div>
                 ))}
 
                 <button onClick={handleSaveNotifs} className="mt-5"
-                  style={{ padding: "10px 28px", fontSize: "13px", fontWeight: 700, background: "#3a7bd5", color: "#fff", border: "none", borderRadius: "8px", cursor: "pointer" }}>
+                  style={{ padding: "10px 28px", fontSize: "13px", fontWeight: 700, background: colors.accent, color: "#fff", border: "none", borderRadius: "10px", cursor: "pointer" }}>
                   Save Preferences
                 </button>
               </div>
