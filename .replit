@@ -32,5 +32,3 @@ channel = "stable-25_05"
 [userenv]
 
 [userenv.shared]
-ADMIN_USERNAME = "no-reply"
-ADMIN_PASSWORD_HASH = "$2b$12$wFo09p6fsb19Eu1RtWLWIOZLhPo5SXxc9g9mkrR1pryR5EAxw83pm"
