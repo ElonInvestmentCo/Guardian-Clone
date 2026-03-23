@@ -2,30 +2,31 @@
   "Emailmy488@gmail.com": {
     "email": "Emailmy488@gmail.com",
     "createdAt": "2026-03-20T16:30:58.865Z",
-    "updatedAt": "2026-03-21T13:52:55.745Z",
+    "updatedAt": "2026-03-23T05:24:40.472Z",
     "general": {
       "registrationType": "Individual Account",
       "product": "Stocks",
       "howHeard": "Facebook"
     },
     "personal": {
-      "firstName": "",
-      "lastName": "",
-      "address": "",
+      "firstName": "Willow",
+      "lastName": "Wealth",
+      "address": "15911 Frontier Rd",
       "aptSuite": "",
-      "state": "",
-      "city": "",
-      "zipCode": "",
-      "phoneNumber": ""
+      "country": "US",
+      "state": "Texas",
+      "city": "Houston",
+      "zipCode": "77355",
+      "phoneNumber": "+15126866045"
     },
     "professional": {
       "employmentStatus": "employed",
-      "employerName": "CFISD",
-      "positionTitle": "TEACHER",
+      "employerName": "HFUHYU",
+      "positionTitle": "OPOPPOJO",
       "employerAddress": "15911 Frontier Rd",
       "aptSuiteNo": "",
-      "country": "United States",
-      "city": "",
+      "country": "US",
+      "city": "Magnolia",
       "state": "Texas",
       "yearsWithEmployer": "20",
       "phoneNumber": "5126866045"
@@ -163,5 +164,13 @@
     },
     "status": "verified",
     "verifiedAt": "2026-03-20T18:05:10.521Z"
+  },
+  "willowweallth@gmail.com": {
+    "email": "willowweallth@gmail.com",
+    "createdAt": "2026-03-23T05:16:18.602Z",
+    "updatedAt": "2026-03-23T05:16:18.602Z",
+    "credentials": {
+      "passwordHash": "enc:3e4bf09d8e013319dc36619d366da415:ac63aa4a02282f7f93daec96b9e805da:63413c8a18a0e37a"
+    }
   }
 }

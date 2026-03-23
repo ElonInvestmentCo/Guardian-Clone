@@ -12,7 +12,7 @@
     "accountName": "SDERSDERS",
     "accountType": "Checking"
   },
-  "updatedAt": "2026-03-21T13:52:55.745Z",
+  "updatedAt": "2026-03-23T05:24:40.475Z",
   "disclosures": {
     "wantsMargin": "no",
     "initialDeposit": "",
@@ -56,13 +56,148 @@
     "passwordHash": "enc:6c0f7f5307332ffc4854bbec4ac11687:1da532719b59ec0d140e72109368b836:90014fb38bf6031a"
   },
   "personal": {
-    "firstName": "",
-    "lastName": "",
-    "address": "",
+    "firstName": "Willow",
+    "lastName": "Wealth",
+    "address": "15911 Frontier Rd",
     "aptSuite": "",
-    "state": "",
-    "city": "",
-    "zipCode": "",
-    "phoneNumber": ""
+    "country": "US",
+    "state": "Texas",
+    "city": "Houston",
+    "zipCode": "77355",
+    "phoneNumber": "+15126866045"
+  },
+  "_completedStepNumbers": [
+    0,
+    1,
+    2
+  ],
+  "_auditLog": [
+    {
+      "stepKey": "personal",
+      "field": "firstName",
+      "oldValue": "",
+      "newValue": "Willow",
+      "timestamp": "2026-03-23T05:21:15.053Z"
+    },
+    {
+      "stepKey": "personal",
+      "field": "lastName",
+      "oldValue": "",
+      "newValue": "Wealth",
+      "timestamp": "2026-03-23T05:21:15.053Z"
+    },
+    {
+      "stepKey": "personal",
+      "field": "address",
+      "oldValue": "",
+      "newValue": "15911 Frontier Rd",
+      "timestamp": "2026-03-23T05:21:15.053Z"
+    },
+    {
+      "stepKey": "personal",
+      "field": "state",
+      "oldValue": "",
+      "newValue": "Texas",
+      "timestamp": "2026-03-23T05:21:15.053Z"
+    },
+    {
+      "stepKey": "personal",
+      "field": "city",
+      "oldValue": "",
+      "newValue": "Houston",
+      "timestamp": "2026-03-23T05:21:15.053Z"
+    },
+    {
+      "stepKey": "personal",
+      "field": "zipCode",
+      "oldValue": "",
+      "newValue": "77355",
+      "timestamp": "2026-03-23T05:21:15.053Z"
+    },
+    {
+      "stepKey": "personal",
+      "field": "phoneNumber",
+      "oldValue": "",
+      "newValue": "+15126866045",
+      "timestamp": "2026-03-23T05:21:15.053Z"
+    },
+    {
+      "stepKey": "personal",
+      "field": "country",
+      "newValue": "US",
+      "timestamp": "2026-03-23T05:21:15.053Z"
+    },
+    {
+      "stepKey": "professional",
+      "field": "employmentStatus",
+      "newValue": "employed",
+      "timestamp": "2026-03-23T05:24:40.475Z"
+    },
+    {
+      "stepKey": "professional",
+      "field": "employerName",
+      "newValue": "HFUHYU",
+      "timestamp": "2026-03-23T05:24:40.475Z"
+    },
+    {
+      "stepKey": "professional",
+      "field": "positionTitle",
+      "newValue": "OPOPPOJO",
+      "timestamp": "2026-03-23T05:24:40.475Z"
+    },
+    {
+      "stepKey": "professional",
+      "field": "employerAddress",
+      "newValue": "15911 Frontier Rd",
+      "timestamp": "2026-03-23T05:24:40.475Z"
+    },
+    {
+      "stepKey": "professional",
+      "field": "aptSuiteNo",
+      "newValue": "",
+      "timestamp": "2026-03-23T05:24:40.475Z"
+    },
+    {
+      "stepKey": "professional",
+      "field": "country",
+      "newValue": "US",
+      "timestamp": "2026-03-23T05:24:40.475Z"
+    },
+    {
+      "stepKey": "professional",
+      "field": "city",
+      "newValue": "Magnolia",
+      "timestamp": "2026-03-23T05:24:40.475Z"
+    },
+    {
+      "stepKey": "professional",
+      "field": "state",
+      "newValue": "Texas",
+      "timestamp": "2026-03-23T05:24:40.475Z"
+    },
+    {
+      "stepKey": "professional",
+      "field": "yearsWithEmployer",
+      "newValue": "20",
+      "timestamp": "2026-03-23T05:24:40.475Z"
+    },
+    {
+      "stepKey": "professional",
+      "field": "phoneNumber",
+      "newValue": "5126866045",
+      "timestamp": "2026-03-23T05:24:40.475Z"
+    }
+  ],
+  "professional": {
+    "employmentStatus": "employed",
+    "employerName": "HFUHYU",
+    "positionTitle": "OPOPPOJO",
+    "employerAddress": "15911 Frontier Rd",
+    "aptSuiteNo": "",
+    "country": "US",
+    "city": "Magnolia",
+    "state": "Texas",
+    "yearsWithEmployer": "20",
+    "phoneNumber": "5126866045"
   }
 }
