@@ -22,6 +22,7 @@ export default function KycDashboard() {
       const t = setTimeout(() => stopLoading(), 500);
       return () => clearTimeout(t);
     }
+    return undefined;
   }, [activeView, startLoading, stopLoading]);
 
   const openProfile = (email: string, fromView: View) => {

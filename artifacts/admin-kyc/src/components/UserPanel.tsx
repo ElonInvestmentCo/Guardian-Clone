@@ -124,6 +124,13 @@ export default function UserPanel({ user, onClose, onAction }: Props) {
             {/* ── Overview tab ─────────────────────────────────────── */}
             {tab === "overview" && (
               <div>
+                <Section title="Account">
+                  <Field label="Registration"  value={profileField("general", "registrationType")} />
+                  <Field label="Product"       value={profileField("general", "product")} />
+                  <Field label="Created"       value={formatDate(data?.master.createdAt as string)} />
+                  <Field label="Last Updated"  value={formatDate(data?.master.updatedAt as string)} />
+                </Section>
+
                 <Section title="Personal">
                   <Field label="First Name"   value={profileField("personal", "firstName")} />
                   <Field label="Last Name"    value={profileField("personal", "lastName")} />
@@ -135,28 +142,34 @@ export default function UserPanel({ user, onClose, onAction }: Props) {
                   <Field label="ZIP"          value={profileField("personal", "zipCode")} />
                 </Section>
 
-                <Section title="Identity">
-                  <Field label="Citizenship"  value={profileField("idInformation", "countryOfCitizenship")} />
-                  <Field label="ID Type"      value={profileField("idInformation", "idType")} />
-                  <Field label="ID Number"    value={profileField("idInformation", "idNumber")} />
+                <Section title="Professional">
+                  <Field label="Employment"   value={profileField("professional", "employmentStatus")} />
+                  <Field label="Employer"     value={profileField("professional", "employerName")} />
+                  <Field label="Position"     value={profileField("professional", "positionTitle")} />
+                </Section>
+
+                <Section title="Identity & Tax">
+                  <Field label="Tax ID Type"   value={profileField("idInformation", "taxIdType")} />
+                  <Field label="Tax ID"        value={profileField("idInformation", "taxId")} />
                   <Field label="Date of Birth" value={profileField("idInformation", "dateOfBirth")} />
-                  <Field label="ID Expiry"    value={profileField("idInformation", "idExpiration")} />
-                  <Field label="Tax ID"       value={profileField("idInformation", "taxId")} />
+                  <Field label="ID Type"       value={profileField("idInformation", "idType")} />
+                  <Field label="ID Number"     value={profileField("idInformation", "idNumber")} />
+                  <Field label="Expiration"    value={profileField("idInformation", "expirationDate")} />
                 </Section>
 
                 <Section title="Financial">
-                  <Field label="Annual Income"  value={profileField("income", "annualIncome")} />
-                  <Field label="Net Worth"      value={profileField("income", "netWorth")} />
-                  <Field label="Tax Bracket"    value={profileField("income", "taxBracket")} />
-                  <Field label="Risk Tolerance" value={profileField("riskTolerance", "riskTolerance")} />
-                  <Field label="Objective"      value={profileField("riskTolerance", "investmentObjective")} />
+                  <Field label="Annual Income"     value={profileField("income", "annualIncome")} />
+                  <Field label="Net Worth"          value={profileField("income", "netWorth")} />
+                  <Field label="Liquid Net Worth"   value={profileField("income", "liquidNetWorth")} />
+                  <Field label="Tax Rate"           value={profileField("income", "taxRate")} />
+                  <Field label="Risk Tolerance"     value={profileField("riskTolerance", "riskTolerance")} />
                 </Section>
 
-                <Section title="Account">
-                  <Field label="Registration"  value={profileField("general", "registrationType")} />
-                  <Field label="Product"       value={profileField("general", "product")} />
-                  <Field label="Created"       value={formatDate(data?.master.createdAt as string)} />
-                  <Field label="Last Updated"  value={formatDate(data?.master.updatedAt as string)} />
+                <Section title="Funding">
+                  <Field label="Bank Name"       value={profileField("fundingDetails", "bankName")} />
+                  <Field label="ABA/SWIFT"       value={profileField("fundingDetails", "abaSwift")} />
+                  <Field label="Account Name"    value={profileField("fundingDetails", "accountName")} />
+                  <Field label="Account Number"  value={profileField("fundingDetails", "accountNumber")} />
                 </Section>
               </div>
             )}

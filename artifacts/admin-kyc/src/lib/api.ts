@@ -96,7 +96,7 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export type RiskLevel  = "low" | "medium" | "high" | "critical";
-export type UserStatus = "pending" | "approved" | "rejected" | "resubmit" | "suspended" | "banned";
+export type UserStatus = "pending" | "approved" | "rejected" | "resubmit" | "suspended" | "banned" | "verified";
 
 export interface KycUser {
   email: string;
@@ -263,4 +263,32 @@ export async function updateUser(email: string, firstName?: string, lastName?: s
 
 export async function getGlobalAudit(limit = 500): Promise<GlobalAuditResponse> {
   return request<GlobalAuditResponse>("GET", `/admin/global-audit?limit=${limit}`);
+}
+
+export interface DocumentInfo {
+  role: string;
+  path: string;
+  exists: boolean;
+  fileName: string;
+}
+
+export interface UserDocumentsResponse {
+  email: string;
+  documents: Record<string, DocumentInfo>;
+}
+
+export async function getUserDocuments(email: string): Promise<UserDocumentsResponse> {
+  return request<UserDocumentsResponse>("GET", `/admin/user-documents/${encodeURIComponent(email)}`);
+}
+
+export async function fetchDocumentBlobUrl(email: string, role: string): Promise<string> {
+  const session = getSession();
+  if (!session) throw new Error("Not authenticated");
+  const url = `${API_ROOT}/admin/user-document-file/${encodeURIComponent(email)}/${encodeURIComponent(role)}`;
+  const resp = await fetch(url, {
+    headers: { Authorization: `Bearer ${session.token}` },
+  });
+  if (!resp.ok) throw new Error("Failed to fetch document");
+  const blob = await resp.blob();
+  return URL.createObjectURL(blob);
 }

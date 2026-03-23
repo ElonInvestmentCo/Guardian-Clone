@@ -37,6 +37,7 @@ export function riskColors(level: RiskLevel): { bg: string; text: string; border
 export function statusColors(status: UserStatus): { bg: string; text: string; border: string } {
   switch (status) {
     case "approved":  return { bg: "#F0FDF4", text: "#16A34A", border: "#BBF7D0" };
+    case "verified":  return { bg: "#ECFDF5", text: "#059669", border: "#A7F3D0" };
     case "rejected":  return { bg: "#FEF2F2", text: "#DC2626", border: "#FECACA" };
     case "resubmit":  return { bg: "#EFF6FF", text: "#2563EB", border: "#BFDBFE" };
     case "pending":   return { bg: "#F9FAFB", text: "#374151", border: "#E5E7EB" };
@@ -48,6 +49,7 @@ export function statusColors(status: UserStatus): { bg: string; text: string; bo
 export function statusLabel(status: UserStatus): string {
   switch (status) {
     case "approved":  return "Approved";
+    case "verified":  return "Verified";
     case "rejected":  return "Rejected";
     case "resubmit":  return "Resubmit";
     case "pending":   return "Pending";

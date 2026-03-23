@@ -7,14 +7,16 @@
  * No development-mode bypass — auth is always enforced.
  */
 
-import { readFileSync } from "fs";
-import { join } from "path";
+import { readFileSync, existsSync } from "fs";
+import { join, resolve, extname } from "path";
 import { Router, type Request, type Response, type NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import {
   getUserData,
   getUserProfileData,
+  getUserDocDir,
+  sanitizeEmail,
   setUserStatus,
   setUserProfileMeta,
   deleteUser,
@@ -41,8 +43,8 @@ function jwtSecret(): string {
 // ── File helpers ──────────────────────────────────────────────────────────────
 function masterPath(): string {
   return process.env.USER_DATA_DIR
-    ? join(process.env.USER_DATA_DIR, "master.json")
-    : join(process.cwd(), "data", "users", "master.json");
+    ? join(process.env.USER_DATA_DIR, "users.json")
+    : join(process.cwd(), "data", "users.json");
 }
 
 function readMasterUsers(): Record<string, Record<string, unknown>> {
@@ -199,7 +201,7 @@ router.get("/admin/kyc-queue", (req: Request, res: Response): void => {
         createdAt:      u.createdAt,
         updatedAt:      u.updatedAt,
         completedSteps: completed.length,
-        totalSteps:     11,
+        totalSteps:     12,
         riskScore:      risk.score,
         riskLevel:      risk.level,
         flagCount:      risk.flags.length,
@@ -226,12 +228,27 @@ router.get("/admin/kyc-queue", (req: Request, res: Response): void => {
 // ── GET /admin/user-details/:email ────────────────────────────────────────────
 router.get("/admin/user-details/:email", (req: Request, res: Response): void => {
   try {
-    const email  = decodeURIComponent(req.params.email);
+    const email  = decodeURIComponent(String(req.params.email));
     const master = getUserData(email);
     if (!master) { res.status(404).json({ error: "User not found" }); return; }
 
     const profile   = getUserProfileData(email);
     const risk      = evaluateRisk(email);
+
+    const STEP_KEYS = [
+      "general", "personal", "professional", "idInformation",
+      "income", "riskTolerance", "financialSituation", "investmentExperience",
+      "idProofUpload", "fundingDetails", "disclosures", "signatures",
+    ];
+    for (const key of STEP_KEYS) {
+      if (!profile[key] && master[key]) {
+        profile[key] = master[key];
+      }
+    }
+    if (!profile["documents"] && master["documents"]) {
+      profile["documents"] = master["documents"];
+    }
+
     const auditLog  = (profile._auditLog as unknown[]) ?? [];
 
     const safeProfile = { ...profile };
@@ -432,7 +449,7 @@ router.post("/admin/assign-role", (req: Request, res: Response): void => {
 // ── GET /admin/user-balance/:email ────────────────────────────────────────────
 router.get("/admin/user-balance/:email", (req: Request, res: Response): void => {
   try {
-    const email = decodeURIComponent(req.params.email);
+    const email = decodeURIComponent(String(req.params.email));
     if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
     const bal = getUserBalance(email);
     res.json({ email, ...bal });
@@ -486,7 +503,7 @@ router.get("/admin/all-users", (req: Request, res: Response): void => {
         createdAt:      u.createdAt as string,
         updatedAt:      u.updatedAt as string,
         completedSteps: completed.length,
-        totalSteps:     11,
+        totalSteps:     12,
         riskScore:      risk.score,
         riskLevel:      risk.level,
         flagCount:      risk.flags.length,
@@ -543,6 +560,62 @@ router.post("/admin/reset-password", (req: Request, res: Response): void => {
     console.log(`[Admin] PASSWORD RESET: ${email}`);
     res.json({ success: true, email });
   } catch (err) { res.status(500).json({ error: "Failed to reset password" }); }
+});
+
+// ── GET /admin/user-documents/:email ─────────────────────────────────────────
+router.get("/admin/user-documents/:email", (req: Request, res: Response): void => {
+  try {
+    const email = decodeURIComponent(String(req.params.email));
+    const master = getUserData(email);
+    if (!master) { res.status(404).json({ error: "User not found" }); return; }
+    const profile = getUserProfileData(email);
+    const docs = (profile.documents as Record<string, string>)
+      ?? (master.documents as Record<string, string>)
+      ?? {};
+    const result: Record<string, { role: string; path: string; exists: boolean; fileName: string }> = {};
+    for (const [role, relPath] of Object.entries(docs)) {
+      const absPath = resolve(process.cwd(), relPath);
+      const fileName = relPath.split("/").pop() ?? role;
+      result[role] = { role, path: relPath, exists: existsSync(absPath), fileName };
+    }
+    res.json({ email, documents: result });
+  } catch (err) {
+    console.error("[Admin] user-documents error:", err);
+    res.status(500).json({ error: "Failed to load documents" });
+  }
+});
+
+// ── GET /admin/user-document-file/:email/:role ──────────────────────────────
+router.get("/admin/user-document-file/:email/:role", (req: Request, res: Response): void => {
+  try {
+    const email = decodeURIComponent(String(req.params.email));
+    const role = String(req.params.role);
+    const master = getUserData(email);
+    if (!master) { res.status(404).json({ error: "User not found" }); return; }
+    const profile = getUserProfileData(email);
+    const docs = (profile.documents as Record<string, string>)
+      ?? (master.documents as Record<string, string>)
+      ?? {};
+    const relPath = docs[role];
+    if (!relPath) { res.status(404).json({ error: "Document not found" }); return; }
+    const absPath = resolve(process.cwd(), relPath);
+    if (!absPath.startsWith(resolve(process.cwd(), "data"))) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+    if (!existsSync(absPath)) { res.status(404).json({ error: "File not found on disk" }); return; }
+    const ext = extname(absPath).toLowerCase();
+    const mimeMap: Record<string, string> = {
+      ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+      ".png": "image/png", ".pdf": "application/pdf",
+    };
+    res.setHeader("Content-Type", mimeMap[ext] ?? "application/octet-stream");
+    res.setHeader("Content-Disposition", `inline; filename="${role}${ext}"`);
+    res.send(readFileSync(absPath));
+  } catch (err) {
+    console.error("[Admin] user-document-file error:", err);
+    res.status(500).json({ error: "Failed to serve document" });
+  }
 });
 
 export default router;

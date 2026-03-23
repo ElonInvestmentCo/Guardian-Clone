@@ -194,8 +194,10 @@ Full-page detail accessed by clicking any user (from Users or Activity Logs). Ta
 ### Backend Admin Routes (api-server)
 - `GET  /api/admin/kyc-queue` — paginated user list, sorted by risk score
 - `GET  /api/admin/all-users` — all users with role, balance, last activity (searchable/filterable)
-- `GET  /api/admin/user-details/:email` — full profile + risk + audit log
+- `GET  /api/admin/user-details/:email` — full profile + risk + audit log (merges master data into profile for completeness)
 - `GET  /api/admin/user-balance/:email` — current balance + history
+- `GET  /api/admin/user-documents/:email` — lists uploaded documents with availability status
+- `GET  /api/admin/user-document-file/:email/:role` — serves document file (path-traversal protected)
 - `GET  /api/admin/global-audit` — all admin actions across all users
 - `POST /api/admin/approve-user` — KYC approval
 - `POST /api/admin/reject-user` — KYC rejection with reason
@@ -210,7 +212,8 @@ Full-page detail accessed by clicking any user (from Users or Activity Logs). Ta
 - `POST /api/admin/create-user` — admin-initiated user creation
 - `POST /api/admin/update-user` — update name fields
 - `DELETE /api/admin/delete-user` — permanent deletion
-- All routes: JWT Bearer auth, rate-limited 120 req/min, login rate-limited 5/15min per IP
+- All routes: JWT Bearer auth (header only, no query-string tokens), rate-limited 120 req/min, login rate-limited 5/15min per IP
+- Document viewing: frontend fetches via Authorization header → blob URL (no token leakage in URLs)
 
 ### Fraud Detection Engine (`src/lib/fraud/riskEngine.ts`)
 - 9 fraud rules: DOB mismatch, incomplete steps, phone reuse, rapid submission, margin+max-risk combo, missing address, high risk tolerance, upload without ID profile, internal IP flag
@@ -240,7 +243,8 @@ Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` 
 #### Signup Data Storage (`src/routes/signup.ts`, `src/lib/userDataStore.ts`)
 - `POST /api/signup/save-step` — saves a named form step for a user; body: `{ email, step, data }`
 - `GET /api/signup/get-progress?email=` — returns completed steps and step data for a user
-- Data is stored in `data/users/{sanitizeEmail}/profile.json` and `data/users.json`
+- Data is stored in `data/users/{sanitizeEmail}/profile.json` (per-user) and `data/users.json` (master index)
+- New users get `status: "pending"` on creation in both master and profile
 - Sensitive fields are AES-256-GCM encrypted before storage: `taxId`, `idNumber`, `dateOfBirth`, `password`, `passwordHash`, `foreignIdType`
 - Encryption key is read from env var `USER_DATA_KEY` (falls back to dev key with a warning)
 - All save-step calls are audit-logged: `[Audit][timestamp] action=SAVE_STEP step=X email=Y`

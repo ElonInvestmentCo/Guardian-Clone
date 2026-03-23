@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getUserDetails,
+  getUserDocuments,
+  fetchDocumentBlobUrl,
   approveUser,
   rejectUser,
   requestResubmission,
@@ -15,6 +17,7 @@ import {
   deleteUser,
   updateUser,
   type AuditEntry,
+  type DocumentInfo,
 } from "@/lib/api";
 import { formatDate, getProfileField, riskColors, actionTypeLabel, actionTypeColor } from "@/lib/utils";
 import { RiskBadge, StatusBadge, SeverityBadge } from "@/components/Badges";
@@ -48,6 +51,11 @@ export default function UserProfileView({ email, onBack }: Props) {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["user-details", email],
     queryFn: () => getUserDetails(email),
+  });
+
+  const { data: docsData } = useQuery({
+    queryKey: ["user-documents", email],
+    queryFn: () => getUserDocuments(email),
   });
 
   const showMsg = (type: "ok" | "err", text: string) => {
@@ -158,6 +166,21 @@ export default function UserProfileView({ email, onBack }: Props) {
             {/* ── Profile tab ─────────────────────────────────────────── */}
             {tab === "profile" && (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 340px), 1fr))", gap: "16px" }}>
+                <Card title="Account Status">
+                  <Field label="Status"        value={currentStatus} />
+                  <Field label="Role"          value={currentRole} />
+                  <Field label="Email"         value={email} />
+                  <Field label="Created"       value={formatDate(master.createdAt as string)} />
+                  <Field label="Last Updated"  value={formatDate(master.updatedAt as string)} />
+                  <Field label="KYC Steps"     value={`${((profile._completedStepNumbers as number[] | undefined) ?? []).length} / 12`} />
+                </Card>
+
+                <Card title="General Details">
+                  <Field label="Registration Type"  value={pf("general", "registrationType")} />
+                  <Field label="Product"             value={pf("general", "product")} />
+                  <Field label="How Heard"           value={pf("general", "howHeard")} />
+                </Card>
+
                 <Card title="Personal Information" headerAction={
                   editMode ? null : (
                     <button onClick={() => {
@@ -194,6 +217,7 @@ export default function UserProfileView({ email, onBack }: Props) {
                       <Field label="Last Name"   value={pf("personal", "lastName")} />
                       <Field label="Phone"       value={pf("personal", "phoneNumber")} />
                       <Field label="Address"     value={pf("personal", "address")} />
+                      <Field label="Apt/Suite"   value={pf("personal", "aptSuite")} />
                       <Field label="City"        value={pf("personal", "city")} />
                       <Field label="State"       value={pf("personal", "state")} />
                       <Field label="Country"     value={pf("personal", "country")} />
@@ -202,47 +226,135 @@ export default function UserProfileView({ email, onBack }: Props) {
                   )}
                 </Card>
 
-                <Card title="Identity">
-                  <Field label="Citizenship"  value={pf("idInformation", "countryOfCitizenship")} />
-                  <Field label="ID Type"      value={pf("idInformation", "idType")} />
-                  <Field label="ID Number"    value={pf("idInformation", "idNumber")} />
-                  <Field label="Date of Birth" value={pf("idInformation", "dateOfBirth")} />
-                  <Field label="ID Expiry"    value={pf("idInformation", "idExpiration")} />
-                  <Field label="Tax ID"       value={pf("idInformation", "taxId")} />
+                <Card title="Professional Details">
+                  <Field label="Employment Status"   value={pf("professional", "employmentStatus")} />
+                  <Field label="Employer Name"       value={pf("professional", "employerName")} />
+                  <Field label="Position/Title"      value={pf("professional", "positionTitle")} />
+                  <Field label="Employer Address"    value={pf("professional", "employerAddress")} />
+                  <Field label="Country"             value={pf("professional", "country")} />
+                  <Field label="City"                value={pf("professional", "city")} />
+                  <Field label="Years with Employer" value={pf("professional", "yearsWithEmployer")} />
+                  <Field label="Phone"               value={pf("professional", "phoneNumber")} />
                 </Card>
 
-                <Card title="Financial">
-                  <Field label="Annual Income"   value={pf("income", "annualIncome")} />
-                  <Field label="Net Worth"        value={pf("income", "netWorth")} />
-                  <Field label="Tax Bracket"      value={pf("income", "taxBracket")} />
-                  <Field label="Risk Tolerance"   value={pf("riskTolerance", "riskTolerance")} />
-                  <Field label="Inv. Objective"   value={pf("riskTolerance", "investmentObjective")} />
-                  <Field label="Experience"       value={pf("riskTolerance", "tradingExperience")} />
+                <Card title="Identity & Tax">
+                  <Field label="Tax Residence"    value={pf("idInformation", "taxResidenceCountry")} />
+                  <Field label="Tax ID Type"      value={pf("idInformation", "taxIdType")} />
+                  <Field label="Tax ID"           value={pf("idInformation", "taxId")} />
+                  <Field label="Date of Birth"    value={pf("idInformation", "dateOfBirth")} />
+                  <Field label="ID Type"          value={pf("idInformation", "idType")} />
+                  <Field label="ID Number"        value={pf("idInformation", "idNumber")} />
+                  <Field label="Country of Issue" value={pf("idInformation", "countryOfIssuance")} />
+                  <Field label="Issue Date"       value={pf("idInformation", "issueDate")} />
+                  <Field label="Expiration Date"  value={pf("idInformation", "expirationDate")} />
                 </Card>
 
-                <Card title="Account & Banking">
-                  <Field label="Registration"    value={pf("general", "registrationType")} />
-                  <Field label="Product"         value={pf("general", "product")} />
-                  <Field label="Employer"        value={pf("employment", "employerName")} />
-                  <Field label="Occupation"      value={pf("employment", "occupation")} />
-                  <Field label="Account Number"  value={pf("banking", "accountNumber")} />
-                  <Field label="ABA/SWIFT"       value={pf("banking", "abaSwift")} />
+                <Card title="Income">
+                  <Field label="Annual Income"    value={pf("income", "annualIncome")} />
+                  <Field label="Net Worth"         value={pf("income", "netWorth")} />
+                  <Field label="Liquid Net Worth"  value={pf("income", "liquidNetWorth")} />
+                  <Field label="Tax Rate"          value={pf("income", "taxRate")} />
                 </Card>
 
-                <Card title="Account Status">
-                  <Field label="Status"        value={currentStatus} />
-                  <Field label="Role"          value={currentRole} />
-                  <Field label="Email"         value={email} />
-                  <Field label="Created"       value={formatDate(master.createdAt as string)} />
-                  <Field label="Last Updated"  value={formatDate(master.updatedAt as string)} />
-                  <Field label="KYC Steps"     value={`${((profile._completedStepNumbers as number[] | undefined) ?? []).length} / 11`} />
+                <Card title="Risk Tolerance">
+                  <Field label="Risk Level"       value={pf("riskTolerance", "riskTolerance")} />
+                  <Field label="Financial Education" value={pf("riskTolerance", "hasFinancialEducation")} />
+                  {(() => {
+                    const priorities = (profile.riskTolerance as Record<string, unknown> | undefined)?.strategyPriorities as Record<string, string> | undefined;
+                    if (!priorities || Object.keys(priorities).length === 0) return <Field label="Strategy Priorities" value="—" />;
+                    return Object.entries(priorities).map(([strategy, priority]) => (
+                      <Field key={strategy} label={strategy} value={`Priority ${priority}`} />
+                    ));
+                  })()}
                 </Card>
 
-                <Card title="Trusted Contacts">
-                  <Field label="Contact Name"   value={pf("trustedContact", "trustedContactName")} />
-                  <Field label="Relationship"   value={pf("trustedContact", "relationship")} />
-                  <Field label="Contact Phone"  value={pf("trustedContact", "trustedContactPhone")} />
-                  <Field label="Contact Email"  value={pf("trustedContact", "trustedContactEmail")} />
+                <Card title="Financial Situation">
+                  <Field label="Annual Expenses"   value={pf("financialSituation", "annualExpense")} />
+                  <Field label="Special Expenses"  value={pf("financialSituation", "specialExpense")} />
+                  <Field label="Liquidity Needs"   value={pf("financialSituation", "liquidityNeeds")} />
+                  <Field label="Time Horizon"      value={pf("financialSituation", "investmentTimeHorizon")} />
+                </Card>
+
+                <Card title="Investment Experience">
+                  {(() => {
+                    const inv = (profile.investmentExperience as Record<string, unknown> | undefined)?.investments as Record<string, { enabled: boolean; years: string; transactions: string; knowledge: string }> | undefined;
+                    if (!inv) return <Field label="Investments" value="—" />;
+                    const enabled = Object.entries(inv).filter(([, v]) => v.enabled);
+                    if (enabled.length === 0) return <Field label="Investments" value="None selected" />;
+                    return enabled.map(([key, v]) => (
+                      <div key={key} style={{ marginBottom: "8px", padding: "6px 0", borderBottom: "1px solid #F3F4F6" }}>
+                        <div style={{ fontSize: "11px", fontWeight: "600", color: "#374151", marginBottom: "2px" }}>{key}</div>
+                        <div style={{ fontSize: "11px", color: "#6B7280" }}>
+                          Years: {v.years} | Transactions: {v.transactions} | Knowledge: {v.knowledge}
+                        </div>
+                      </div>
+                    ));
+                  })()}
+                </Card>
+
+                <Card title="Funding Details">
+                  {(() => {
+                    const sources = (profile.fundingDetails as Record<string, unknown> | undefined)?.fundingSources as string[] | undefined;
+                    return <Field label="Funding Sources" value={sources && sources.length > 0 ? sources.join(", ") : "—"} />;
+                  })()}
+                  <Field label="Bank Name"       value={pf("fundingDetails", "bankName")} />
+                  <Field label="ABA/SWIFT"       value={pf("fundingDetails", "abaSwift")} />
+                  <Field label="Account Name"    value={pf("fundingDetails", "accountName")} />
+                  <Field label="Account Number"  value={pf("fundingDetails", "accountNumber")} />
+                  <Field label="Account Type"    value={pf("fundingDetails", "accountType")} />
+                </Card>
+
+                <Card title="Disclosures">
+                  <Field label="Tax Withholding"    value={pf("disclosures", "taxWithholding")} />
+                  <Field label="Initial Deposit"    value={pf("disclosures", "initialDeposit")} />
+                  <Field label="Wants Margin"       value={pf("disclosures", "wantsMargin")} />
+                  <Field label="Partnership Check"  value={pf("disclosures", "partnershipCheck")} />
+                </Card>
+
+                <Card title="Signatures">
+                  <Field label="Trading Plan"          value={pf("signatures", "tradingPlan")} />
+                  <Field label="Electronic Delivery"   value={pf("signatures", "electronicDelivery")} />
+                  <Field label="Has Signed"            value={pf("signatures", "hasSigned")} />
+                  <Field label="Signature Name"        value={pf("signatures", "signatureName")} />
+                </Card>
+
+                <Card title="Uploaded Documents">
+                  {(() => {
+                    const docs = docsData?.documents;
+                    if (!docs || Object.keys(docs).length === 0) {
+                      return <div style={{ fontSize: "12px", color: "#9CA3AF", padding: "8px 0" }}>No documents uploaded</div>;
+                    }
+                    return Object.entries(docs).map(([role, doc]) => (
+                      <div key={role} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid #F9FAFB" }}>
+                        <div>
+                          <div style={{ fontSize: "11px", fontWeight: "600", color: "#374151" }}>{role.replace(/_/g, " ").toUpperCase()}</div>
+                          <div style={{ fontSize: "10px", color: doc.exists ? "#16A34A" : "#DC2626" }}>
+                            {doc.exists ? "File available" : "File missing"}
+                          </div>
+                        </div>
+                        {doc.exists && (
+                          <button
+                            onClick={async () => {
+                              try {
+                                const blobUrl = await fetchDocumentBlobUrl(email, role);
+                                window.open(blobUrl, "_blank");
+                              } catch {
+                                alert("Failed to load document");
+                              }
+                            }}
+                            style={{
+                              fontSize: "11px", color: "#2563EB", fontWeight: "600",
+                              cursor: "pointer", padding: "4px 8px",
+                              border: "1px solid #BFDBFE", borderRadius: "4px",
+                              background: "#EFF6FF",
+                            }}
+                          >
+                            View
+                          </button>
+                        )}
+                      </div>
+                    ));
+                  })()}
                 </Card>
               </div>
             )}
@@ -385,9 +497,9 @@ export default function UserProfileView({ email, onBack }: Props) {
                       <div key={i} style={{ borderBottom: "1px solid #F3F4F6", paddingBottom: "8px", marginBottom: "8px" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px" }}>
                           <span style={{ color: "#9CA3AF" }}>{formatDate(h.timestamp as string)}</span>
-                          <span style={{ color: "#374151", fontWeight: "600" }}>${(h.newBalance as number).toLocaleString()}</span>
+                          <span style={{ color: "#374151", fontWeight: "600" }}>${Number(h.newBalance).toLocaleString()}</span>
                         </div>
-                        {h.note && <div style={{ fontSize: "11px", color: "#6B7280" }}>Note: {h.note as string}</div>}
+                        {h.note ? <div style={{ fontSize: "11px", color: "#6B7280" }}>Note: {String(h.note)}</div> : null}
                       </div>
                     ))}
                   </Card>

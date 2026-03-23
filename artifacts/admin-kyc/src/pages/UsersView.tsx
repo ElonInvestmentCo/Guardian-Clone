@@ -16,6 +16,7 @@ const STATUS_FILTERS: { value: string; label: string }[] = [
   { value: "",          label: "All" },
   { value: "pending",   label: "Pending" },
   { value: "approved",  label: "Approved" },
+  { value: "verified",  label: "Verified" },
   { value: "rejected",  label: "Rejected" },
   { value: "suspended", label: "Suspended" },
   { value: "banned",    label: "Banned" },
@@ -318,7 +319,7 @@ function UserRow({ user, onOpenProfile, onSuspend, onBan, onReactivate }: {
   onBan: (email: string) => void;
   onReactivate: (email: string) => void;
 }) {
-  const canSuspend   = user.status === "approved" || user.status === "pending";
+  const canSuspend   = user.status === "approved" || user.status === "verified" || user.status === "pending";
   const canBan       = user.status !== "banned";
   const canReactivate = user.status === "suspended" || user.status === "banned";
 

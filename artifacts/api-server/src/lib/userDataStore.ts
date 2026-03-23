@@ -160,7 +160,7 @@ export function upsertUserStep(
   // ── 1. Master file ──
   const master = readMaster();
   if (!master[email]) {
-    master[email] = { email, createdAt: now, updatedAt: now };
+    master[email] = { email, createdAt: now, updatedAt: now, status: "pending" };
   }
   master[email][step] = sanitized;
   master[email]["updatedAt"] = now;
@@ -171,6 +171,7 @@ export function upsertUserStep(
   if (!profile["email"]) {
     profile["email"] = email;
     profile["createdAt"] = now;
+    profile["status"] = "pending";
   }
   profile[step] = sanitized;
   profile["updatedAt"] = now;
