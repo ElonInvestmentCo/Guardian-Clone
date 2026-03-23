@@ -9,19 +9,23 @@ export function cn(...inputs: ClassValue[]) {
 export function formatDate(iso?: string | null): string {
   if (!iso) return "—";
   try {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
     return new Intl.DateTimeFormat("en-US", {
       month: "short", day: "numeric", year: "numeric",
       hour: "2-digit", minute: "2-digit",
-    }).format(new Date(iso));
+    }).format(d);
   } catch { return iso; }
 }
 
 export function formatDateShort(iso?: string | null): string {
   if (!iso) return "—";
   try {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
     return new Intl.DateTimeFormat("en-US", {
       month: "short", day: "numeric", year: "numeric",
-    }).format(new Date(iso));
+    }).format(d);
   } catch { return iso; }
 }
 
@@ -31,6 +35,7 @@ export function riskColors(level: RiskLevel): { bg: string; text: string; border
     case "high":     return { bg: "#FFF7ED", text: "#EA580C", border: "#FED7AA" };
     case "medium":   return { bg: "#FEFCE8", text: "#CA8A04", border: "#FEF08A" };
     case "low":      return { bg: "#F0FDF4", text: "#16A34A", border: "#BBF7D0" };
+    default:         return { bg: "#F9FAFB", text: "#6B7280", border: "#E5E7EB" };
   }
 }
 
@@ -43,6 +48,7 @@ export function statusColors(status: UserStatus): { bg: string; text: string; bo
     case "pending":   return { bg: "#F9FAFB", text: "#374151", border: "#E5E7EB" };
     case "suspended": return { bg: "#FFF7ED", text: "#EA580C", border: "#FED7AA" };
     case "banned":    return { bg: "#FDF4FF", text: "#9333EA", border: "#E9D5FF" };
+    default:          return { bg: "#F9FAFB", text: "#6B7280", border: "#E5E7EB" };
   }
 }
 
@@ -55,6 +61,7 @@ export function statusLabel(status: UserStatus): string {
     case "pending":   return "Pending";
     case "suspended": return "Suspended";
     case "banned":    return "Banned";
+    default:          return String(status);
   }
 }
 

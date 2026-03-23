@@ -343,6 +343,7 @@ export default function UserProfileView({ email, onBack }: Props) {
                               try {
                                 const blobUrl = await fetchDocumentBlobUrl(email, role);
                                 window.open(blobUrl, "_blank");
+                                setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
                               } catch {
                                 alert("Failed to load document");
                               }

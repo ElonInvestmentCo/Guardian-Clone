@@ -19,24 +19,18 @@ export default function KycDashboard() {
     if (prevView.current !== activeView) {
       prevView.current = activeView;
       startLoading();
-      const t = setTimeout(() => stopLoading(), 500);
-      return () => clearTimeout(t);
+      requestAnimationFrame(() => stopLoading());
     }
-    return undefined;
   }, [activeView, startLoading, stopLoading]);
 
   const openProfile = (email: string, fromView: View) => {
-    startLoading();
     setProfileEmail(email);
     setProfileFromView(fromView);
-    setTimeout(() => stopLoading(), 500);
   };
 
   const closeProfile = () => {
-    startLoading();
     setProfileEmail(null);
     setActiveView(profileFromView);
-    setTimeout(() => stopLoading(), 500);
   };
 
   const handleSetView = (v: View) => {
