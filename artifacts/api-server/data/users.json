@@ -2,7 +2,7 @@
   "Emailmy488@gmail.com": {
     "email": "Emailmy488@gmail.com",
     "createdAt": "2026-03-20T16:30:58.865Z",
-    "updatedAt": "2026-03-23T05:24:40.472Z",
+    "updatedAt": "2026-03-23T05:31:48.707Z",
     "general": {
       "registrationType": "Individual Account",
       "product": "Stocks",
@@ -32,17 +32,17 @@
       "phoneNumber": "5126866045"
     },
     "idInformation": {
-      "taxResidenceCountry": "United States",
+      "taxResidenceCountry": "US",
       "foreignIdType": "",
       "taxIdType": "SSN",
-      "dateOfBirth": "enc:649e83a2a78d931353889aa1a7166957:45399cd3ab301bc2f0d2f3cfdeb140e6:8e0143086170baac597b",
-      "taxId": "enc:e5a6c5ec57c4247f88856e4dc1979d24:a67a97d859f127cf3d434e7092e1143d:d49f1e0f6aa9654a88",
+      "dateOfBirth": "enc:77118cf8ad36818a1a53eabb7f68ad44:052c6b2ac89dd785b9c5fd5130c5f17c:2aeb0c80a5ac066d48b5",
+      "taxId": "enc:076451ad95dcf685eb9154b1a9b2ad71:ceaff05ca8cd498b6ea2df28389b7e55:d23f2afb2c1d5445a8",
       "idType": "Driver's License",
-      "idNumber": "enc:f6c9b14f0c2cd8ad6a9e7f2d501312a8:440e6f155ee5eca43774572da340631e:9a872f497c2d1539c8cc",
+      "idNumber": "enc:840d5c074bac1e34757fa020f582eca8:18f701d87db76ebefb3845ef00baa813:4ceab5cd950d9183745246",
       "issuingState": "Texas",
-      "countryOfIssuance": "United States",
+      "countryOfIssuance": "US",
       "issueDate": "07/28/2025",
-      "expirationDate": "08/08/2033"
+      "expirationDate": "08/08/2030"
     },
     "income": {
       "annualIncome": "$50,001 - $100,000",
@@ -168,9 +168,71 @@
   "willowweallth@gmail.com": {
     "email": "willowweallth@gmail.com",
     "createdAt": "2026-03-23T05:16:18.602Z",
-    "updatedAt": "2026-03-23T05:16:18.602Z",
+    "updatedAt": "2026-03-23T05:39:03.685Z",
     "credentials": {
       "passwordHash": "enc:3e4bf09d8e013319dc36619d366da415:ac63aa4a02282f7f93daec96b9e805da:63413c8a18a0e37a"
+    },
+    "income": {
+      "annualIncome": "over $500,000",
+      "netWorth": "$500,001 - $1,000,000",
+      "liquidNetWorth": "$500,001 - $1,000,000",
+      "taxRate": "31 - 35"
+    },
+    "riskTolerance": {
+      "riskTolerance": "moderate",
+      "hasFinancialEducation": "yes",
+      "strategyPriorities": {
+        "income": "2",
+        "growth": "4",
+        "speculation": "1",
+        "trading": "3",
+        "capital": "5"
+      }
+    },
+    "financialSituation": {
+      "annualExpense": "$100,001 - $250,000",
+      "specialExpense": "over $500,000",
+      "liquidityNeeds": "Some what Important",
+      "investmentTimeHorizon": "6 - 10"
+    },
+    "investmentExperience": {
+      "investments": {
+        "stocks": {
+          "enabled": true,
+          "years": "5+",
+          "transactions": "6-15",
+          "knowledge": "None"
+        },
+        "fixedIncome": {
+          "enabled": true,
+          "years": "5+",
+          "transactions": "6-15",
+          "knowledge": "Extensive"
+        },
+        "options": {
+          "enabled": true,
+          "years": "5+",
+          "transactions": "6-15",
+          "knowledge": "None"
+        },
+        "futures": {
+          "enabled": true,
+          "years": "5+",
+          "transactions": "6-15",
+          "knowledge": "None"
+        }
+      }
+    },
+    "documents": {
+      "id_front": "data/users/willowweallth_at_gmail.com/documents/id_front.jpeg",
+      "id_back": "data/users/willowweallth_at_gmail.com/documents/id_back.jpeg"
+    },
+    "idProofUpload": {
+      "idType": "Driver's License",
+      "frontFile": "data/users/willowweallth_at_gmail.com/documents/id_front.jpeg",
+      "backFile": "data/users/willowweallth_at_gmail.com/documents/id_back.jpeg",
+      "frontUploaded": true,
+      "backUploaded": true
     }
   }
 }

@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
-import { getCountries, getStates, getCities, type LocationOption } from "@/lib/location/locationService";
+import { getCountries, getStates, getCities, getStateLabel, type LocationOption } from "@/lib/location/locationService";
 import OnboardingShell from "@/components/OnboardingShell";
 import { nameField, addressField, phoneFormat, zipCode as validateZip, required, type FieldErrors, hasErrors } from "@/lib/validation";
 
@@ -16,7 +16,7 @@ const fieldStyle: React.CSSProperties = {
 
 const errorBorderStyle: React.CSSProperties = {
   ...fieldStyle,
-  borderColor: "#e53e3e",
+  border: "1px solid #e53e3e",
 };
 
 function FieldLabel({ children, required: isReq }: { children: React.ReactNode; required?: boolean }) {
@@ -34,37 +34,78 @@ const ChevronDown = () => (
   </svg>
 );
 
-function SelectDropdown({
+function SearchableSelect({
   value, onChange, options, placeholder, disabled = false, hasError = false, onBlur,
 }: {
   value: string; onChange: (v: string) => void; options: LocationOption[];
   placeholder: string; disabled?: boolean; hasError?: boolean; onBlur?: () => void;
 }) {
+  const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
+
+  const filtered = search
+    ? options.filter((o) => o.label.toLowerCase().includes(search.toLowerCase()))
+    : options;
+
+  const selectedLabel = options.find((o) => o.code === value)?.label ?? "";
+
   return (
     <div className="relative">
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onBlur={onBlur}
-        disabled={disabled}
+      <div
+        className="flex items-center"
         style={{
           ...fieldStyle,
-          borderColor: hasError ? "#e53e3e" : "#ccd3da",
-          appearance: "none",
-          paddingRight: "28px",
+          border: `1px solid ${hasError ? "#e53e3e" : "#ccd3da"}`,
           cursor: disabled ? "not-allowed" : "pointer",
           opacity: disabled ? 0.5 : 1,
+          paddingRight: "28px",
+          position: "relative",
         }}
-        className="focus:outline-none"
+        onClick={() => { if (!disabled) setOpen(!open); }}
       >
-        <option value="" disabled>{placeholder}</option>
-        {options.map((o) => (
-          <option key={o.code} value={o.code}>{o.label}</option>
-        ))}
-      </select>
+        {open ? (
+          <input
+            autoFocus
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+            onBlur={() => { setTimeout(() => { setOpen(false); setSearch(""); onBlur?.(); }, 150); }}
+            placeholder={placeholder}
+            style={{ border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "13px", color: "#333", padding: 0 }}
+          />
+        ) : (
+          <span style={{ color: value ? "#333" : "#999", fontSize: "13px" }}>
+            {selectedLabel || placeholder}
+          </span>
+        )}
+      </div>
       <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
         <ChevronDown />
       </div>
+      {open && filtered.length > 0 && (
+        <div
+          className="absolute z-50 w-full bg-white border overflow-y-auto"
+          style={{ borderColor: "#ccd3da", borderRadius: "0 0 3px 3px", maxHeight: "200px", boxShadow: "0 4px 12px rgba(0,0,0,0.12)", top: "100%", left: 0 }}
+        >
+          {filtered.map((o) => (
+            <div
+              key={o.code}
+              className="cursor-pointer"
+              style={{ padding: "7px 10px", fontSize: "13px", color: "#333", background: o.code === value ? "#e8edf2" : "white" }}
+              onMouseDown={(e) => { e.preventDefault(); onChange(o.code); setOpen(false); setSearch(""); }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#f0f4f8"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = o.code === value ? "#e8edf2" : "white"; }}
+            >
+              {o.label}
+            </div>
+          ))}
+        </div>
+      )}
+      {open && filtered.length === 0 && (
+        <div className="absolute z-50 w-full bg-white border" style={{ borderColor: "#ccd3da", borderRadius: "0 0 3px 3px", top: "100%", left: 0, boxShadow: "0 4px 12px rgba(0,0,0,0.12)" }}>
+          <div style={{ padding: "7px 10px", fontSize: "12px", color: "#999" }}>No results found</div>
+        </div>
+      )}
     </div>
   );
 }
@@ -88,23 +129,26 @@ export default function PersonalDetails() {
   const [errors, setErrors] = useState<FieldErrors<Fields>>({});
   const [touched, setTouched] = useState<Partial<Record<Fields, boolean>>>({});
 
-  const [stateOptions, setStateOptions] = useState<LocationOption[]>([]);
-  const [cityOptions, setCityOptions] = useState<string[]>([]);
+  const [stateOptions, setStateOptions] = useState<LocationOption[]>(country ? getStates(country) : []);
+  const [cityOptions, setCityOptions] = useState<string[]>(state ? getCities(state) : []);
+  const isInitialMount = useRef(true);
 
   const countries = getCountries();
 
   useEffect(() => {
-    if (!country) { setStateOptions([]); setState(""); setCity(""); return; }
+    if (isInitialMount.current) { isInitialMount.current = false; return; }
+    if (!country) { setStateOptions([]); setState(""); setCity(""); setCityOptions([]); return; }
     const states = getStates(country);
     setStateOptions(states);
     setState("");
     setCity("");
+    setCityOptions([]);
   }, [country]);
 
   useEffect(() => {
-    if (!state) { setCityOptions([]); setCity(""); return; }
-    setCityOptions(getCities(state));
-    setCity("");
+    if (!state) { setCityOptions([]); return; }
+    const cities = getCities(state);
+    setCityOptions(cities);
   }, [state]);
 
   const validateAll = (): FieldErrors<Fields> => {
@@ -163,6 +207,8 @@ export default function PersonalDetails() {
 
   const showError = (field: Fields) => errors[field] && touched[field];
 
+  const cityLocationOptions: LocationOption[] = cityOptions.map((c) => ({ code: c, label: c }));
+
   return (
     <OnboardingShell currentStep={1}>
       <div
@@ -218,6 +264,7 @@ export default function PersonalDetails() {
                 placeholder="Street address"
                 style={showError("address") ? errorBorderStyle : fieldStyle}
                 className="focus:outline-none"
+                autoComplete="street-address"
               />
               {showError("address") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.address}</p>}
             </div>
@@ -236,7 +283,7 @@ export default function PersonalDetails() {
 
               <div>
                 <FieldLabel required>Country</FieldLabel>
-                <SelectDropdown
+                <SearchableSelect
                   value={country}
                   onChange={(v) => { setCountry(v); if (touched.country) setTimeout(() => validateField("country"), 0); }}
                   onBlur={() => markTouched("country")}
@@ -249,57 +296,61 @@ export default function PersonalDetails() {
 
               <div>
                 <FieldLabel required>
-                  {country === "US" ? "State" : country === "CA" ? "Province" : country === "AU" ? "State / Territory" : "State / Region"}
+                  {country ? getStateLabel(country) : "State / Region"}
                 </FieldLabel>
-                <SelectDropdown
-                  value={state}
-                  onChange={(v) => { setState(v); if (touched.state) setTimeout(() => validateField("state"), 0); }}
-                  onBlur={() => markTouched("state")}
-                  options={stateOptions}
-                  placeholder={country ? "Select state" : "Select country first"}
-                  disabled={!country || stateOptions.length === 0}
-                  hasError={!!showError("state")}
-                />
+                {stateOptions.length > 0 ? (
+                  <SearchableSelect
+                    value={state}
+                    onChange={(v) => { setState(v); if (touched.state) setTimeout(() => validateField("state"), 0); }}
+                    onBlur={() => markTouched("state")}
+                    options={stateOptions}
+                    placeholder={country ? "Select state" : "Select country first"}
+                    disabled={!country}
+                    hasError={!!showError("state")}
+                  />
+                ) : (
+                  <input
+                    value={state}
+                    onChange={(e) => handleChange("state", e.target.value, setState)}
+                    onBlur={() => markTouched("state")}
+                    placeholder={country ? "Enter state / region" : "Select country first"}
+                    disabled={!country}
+                    style={{
+                      ...fieldStyle,
+                      border: `1px solid ${showError("state") ? "#e53e3e" : "#ccd3da"}`,
+                      opacity: !country ? 0.5 : 1,
+                    }}
+                    className="focus:outline-none"
+                  />
+                )}
                 {showError("state") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.state}</p>}
                 {country && stateOptions.length === 0 && (
-                  <p className="mt-1 text-xs" style={{ color: "#888" }}>No regions available — enter city manually below</p>
+                  <p className="mt-1 text-xs" style={{ color: "#888" }}>No regions available — enter manually</p>
                 )}
               </div>
 
               <div>
                 <FieldLabel required>City</FieldLabel>
                 {cityOptions.length > 0 ? (
-                  <div className="relative">
-                    <select
-                      value={city}
-                      onChange={(e) => { setCity(e.target.value); if (touched.city) setTimeout(() => validateField("city"), 0); }}
-                      onBlur={() => markTouched("city")}
-                      disabled={!state}
-                      style={{
-                        ...fieldStyle,
-                        borderColor: showError("city") ? "#e53e3e" : "#ccd3da",
-                        appearance: "none",
-                        paddingRight: "28px",
-                        cursor: !state ? "not-allowed" : "pointer",
-                        opacity: !state ? 0.5 : 1,
-                      }}
-                      className="focus:outline-none"
-                    >
-                      <option value="" disabled>{state ? "Select city" : "Select state first"}</option>
-                      {cityOptions.map((c) => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                    <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2"><ChevronDown /></div>
-                  </div>
+                  <SearchableSelect
+                    value={city}
+                    onChange={(v) => { setCity(v); if (touched.city) setTimeout(() => validateField("city"), 0); }}
+                    onBlur={() => markTouched("city")}
+                    options={cityLocationOptions}
+                    placeholder={state ? "Select city" : "Select state first"}
+                    disabled={!state}
+                    hasError={!!showError("city")}
+                  />
                 ) : (
                   <input
                     value={city}
                     onChange={(e) => handleChange("city", e.target.value, setCity)}
                     onBlur={() => markTouched("city")}
-                    placeholder={state ? "Enter city name" : "Select state first"}
+                    placeholder={state || (country && stateOptions.length === 0) ? "Enter city name" : "Select state first"}
                     disabled={!state && stateOptions.length > 0}
                     style={{
                       ...fieldStyle,
-                      borderColor: showError("city") ? "#e53e3e" : "#ccd3da",
+                      border: `1px solid ${showError("city") ? "#e53e3e" : "#ccd3da"}`,
                       opacity: (!state && stateOptions.length > 0) ? 0.5 : 1,
                     }}
                     className="focus:outline-none"

@@ -4,5 +4,209 @@
   "credentials": {
     "passwordHash": "enc:3e4bf09d8e013319dc36619d366da415:ac63aa4a02282f7f93daec96b9e805da:63413c8a18a0e37a"
   },
-  "updatedAt": "2026-03-23T05:16:18.602Z"
+  "updatedAt": "2026-03-23T05:39:03.687Z",
+  "income": {
+    "annualIncome": "over $500,000",
+    "netWorth": "$500,001 - $1,000,000",
+    "liquidNetWorth": "$500,001 - $1,000,000",
+    "taxRate": "31 - 35"
+  },
+  "_completedStepNumbers": [
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "_auditLog": [
+    {
+      "stepKey": "income",
+      "field": "annualIncome",
+      "newValue": "over $500,000",
+      "timestamp": "2026-03-23T05:34:34.398Z"
+    },
+    {
+      "stepKey": "income",
+      "field": "netWorth",
+      "newValue": "$500,001 - $1,000,000",
+      "timestamp": "2026-03-23T05:34:34.398Z"
+    },
+    {
+      "stepKey": "income",
+      "field": "liquidNetWorth",
+      "newValue": "$500,001 - $1,000,000",
+      "timestamp": "2026-03-23T05:34:34.398Z"
+    },
+    {
+      "stepKey": "income",
+      "field": "taxRate",
+      "newValue": "31 - 35",
+      "timestamp": "2026-03-23T05:34:34.398Z"
+    },
+    {
+      "stepKey": "riskTolerance",
+      "field": "riskTolerance",
+      "newValue": "moderate",
+      "timestamp": "2026-03-23T05:35:04.072Z"
+    },
+    {
+      "stepKey": "riskTolerance",
+      "field": "hasFinancialEducation",
+      "newValue": "yes",
+      "timestamp": "2026-03-23T05:35:04.072Z"
+    },
+    {
+      "stepKey": "riskTolerance",
+      "field": "strategyPriorities",
+      "newValue": {
+        "income": "2",
+        "growth": "4",
+        "speculation": "1",
+        "trading": "3",
+        "capital": "5"
+      },
+      "timestamp": "2026-03-23T05:35:04.072Z"
+    },
+    {
+      "stepKey": "financialSituation",
+      "field": "annualExpense",
+      "newValue": "$100,001 - $250,000",
+      "timestamp": "2026-03-23T05:35:18.995Z"
+    },
+    {
+      "stepKey": "financialSituation",
+      "field": "specialExpense",
+      "newValue": "over $500,000",
+      "timestamp": "2026-03-23T05:35:18.995Z"
+    },
+    {
+      "stepKey": "financialSituation",
+      "field": "liquidityNeeds",
+      "newValue": "Some what Important",
+      "timestamp": "2026-03-23T05:35:18.995Z"
+    },
+    {
+      "stepKey": "financialSituation",
+      "field": "investmentTimeHorizon",
+      "newValue": "6 - 10",
+      "timestamp": "2026-03-23T05:35:18.995Z"
+    },
+    {
+      "stepKey": "investmentExperience",
+      "field": "investments",
+      "newValue": {
+        "stocks": {
+          "enabled": true,
+          "years": "5+",
+          "transactions": "6-15",
+          "knowledge": "None"
+        },
+        "fixedIncome": {
+          "enabled": true,
+          "years": "5+",
+          "transactions": "6-15",
+          "knowledge": "Extensive"
+        },
+        "options": {
+          "enabled": true,
+          "years": "5+",
+          "transactions": "6-15",
+          "knowledge": "None"
+        },
+        "futures": {
+          "enabled": true,
+          "years": "5+",
+          "transactions": "6-15",
+          "knowledge": "None"
+        }
+      },
+      "timestamp": "2026-03-23T05:36:54.046Z"
+    },
+    {
+      "stepKey": "idProofUpload",
+      "field": "idType",
+      "newValue": "Driver's License",
+      "timestamp": "2026-03-23T05:39:03.687Z"
+    },
+    {
+      "stepKey": "idProofUpload",
+      "field": "frontFile",
+      "newValue": "data/users/willowweallth_at_gmail.com/documents/id_front.jpeg",
+      "timestamp": "2026-03-23T05:39:03.687Z"
+    },
+    {
+      "stepKey": "idProofUpload",
+      "field": "backFile",
+      "newValue": "data/users/willowweallth_at_gmail.com/documents/id_back.jpeg",
+      "timestamp": "2026-03-23T05:39:03.687Z"
+    },
+    {
+      "stepKey": "idProofUpload",
+      "field": "frontUploaded",
+      "newValue": true,
+      "timestamp": "2026-03-23T05:39:03.687Z"
+    },
+    {
+      "stepKey": "idProofUpload",
+      "field": "backUploaded",
+      "newValue": true,
+      "timestamp": "2026-03-23T05:39:03.687Z"
+    }
+  ],
+  "riskTolerance": {
+    "riskTolerance": "moderate",
+    "hasFinancialEducation": "yes",
+    "strategyPriorities": {
+      "income": "2",
+      "growth": "4",
+      "speculation": "1",
+      "trading": "3",
+      "capital": "5"
+    }
+  },
+  "financialSituation": {
+    "annualExpense": "$100,001 - $250,000",
+    "specialExpense": "over $500,000",
+    "liquidityNeeds": "Some what Important",
+    "investmentTimeHorizon": "6 - 10"
+  },
+  "investmentExperience": {
+    "investments": {
+      "stocks": {
+        "enabled": true,
+        "years": "5+",
+        "transactions": "6-15",
+        "knowledge": "None"
+      },
+      "fixedIncome": {
+        "enabled": true,
+        "years": "5+",
+        "transactions": "6-15",
+        "knowledge": "Extensive"
+      },
+      "options": {
+        "enabled": true,
+        "years": "5+",
+        "transactions": "6-15",
+        "knowledge": "None"
+      },
+      "futures": {
+        "enabled": true,
+        "years": "5+",
+        "transactions": "6-15",
+        "knowledge": "None"
+      }
+    }
+  },
+  "documents": {
+    "id_front": "data/users/willowweallth_at_gmail.com/documents/id_front.jpeg",
+    "id_back": "data/users/willowweallth_at_gmail.com/documents/id_back.jpeg"
+  },
+  "idProofUpload": {
+    "idType": "Driver's License",
+    "frontFile": "data/users/willowweallth_at_gmail.com/documents/id_front.jpeg",
+    "backFile": "data/users/willowweallth_at_gmail.com/documents/id_back.jpeg",
+    "frontUploaded": true,
+    "backUploaded": true
+  }
 }

@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { User, Lock, BellRing, ChevronRight, Eye, EyeOff, Check } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
+import { getCountries, getStates, getCities, getStateLabel, type LocationOption } from "@/lib/location/locationService";
 
 type Section = "profile" | "security" | "notifications";
 
@@ -16,6 +17,72 @@ function Toggle({ on, onToggle, colors }: { on: boolean; onToggle: () => void; c
   );
 }
 
+function SettingsSearchableSelect({
+  value, onChange, options, placeholder, disabled = false, inputStyle, colors,
+}: {
+  value: string; onChange: (v: string) => void; options: LocationOption[];
+  placeholder: string; disabled?: boolean; inputStyle: React.CSSProperties; colors: Record<string, string>;
+}) {
+  const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
+
+  const filtered = search
+    ? options.filter((o) => o.label.toLowerCase().includes(search.toLowerCase()))
+    : options;
+
+  const selectedLabel = options.find((o) => o.code === value)?.label ?? "";
+
+  return (
+    <div className="relative">
+      <div
+        className="flex items-center"
+        style={{ ...inputStyle, cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.5 : 1, position: "relative" }}
+        onClick={() => { if (!disabled) setOpen(!open); }}
+      >
+        {open ? (
+          <input
+            autoFocus
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+            onBlur={() => { setTimeout(() => { setOpen(false); setSearch(""); }, 150); }}
+            placeholder={placeholder}
+            style={{ border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "13px", color: colors.inputText, padding: 0 }}
+          />
+        ) : (
+          <span style={{ color: value ? colors.inputText : colors.textMuted, fontSize: "13px" }}>
+            {selectedLabel || placeholder}
+          </span>
+        )}
+      </div>
+      {open && filtered.length > 0 && (
+        <div
+          className="absolute z-50 w-full overflow-y-auto"
+          style={{ background: colors.card, border: `1px solid ${colors.inputBorder}`, borderRadius: "0 0 10px 10px", maxHeight: "200px", boxShadow: "0 4px 12px rgba(0,0,0,0.2)", top: "100%", left: 0 }}
+        >
+          {filtered.map((o) => (
+            <div
+              key={o.code}
+              className="cursor-pointer"
+              style={{ padding: "8px 14px", fontSize: "13px", color: colors.textPrimary, background: o.code === value ? colors.filterBar : "transparent" }}
+              onMouseDown={(e) => { e.preventDefault(); onChange(o.code); setOpen(false); setSearch(""); }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = colors.filterBar; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = o.code === value ? colors.filterBar : "transparent"; }}
+            >
+              {o.label}
+            </div>
+          ))}
+        </div>
+      )}
+      {open && filtered.length === 0 && (
+        <div className="absolute z-50 w-full" style={{ background: colors.card, border: `1px solid ${colors.inputBorder}`, borderRadius: "0 0 10px 10px", top: "100%", left: 0, boxShadow: "0 4px 12px rgba(0,0,0,0.2)" }}>
+          <div style={{ padding: "8px 14px", fontSize: "12px", color: colors.textMuted }}>No results found</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Settings() {
   const { colors } = useTheme();
   const email = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("signupEmail") ?? "" : "";
@@ -27,6 +94,9 @@ export default function Settings() {
   const [firstName, setFirstName] = useState(nameParts[0] ?? "");
   const [lastName, setLastName] = useState(nameParts[1] ?? "");
   const [phone, setPhone] = useState("+1 (555) 000-0000");
+  const [country, setCountry] = useState("US");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
   const [profileSaved, setProfileSaved] = useState(false);
 
   const [currentPw, setCurrentPw] = useState("");
@@ -43,6 +113,23 @@ export default function Settings() {
     marketClose: false, weeklyReport: true, promotions: false, securityAlerts: true,
   });
   const [notifSaved, setNotifSaved] = useState(false);
+
+  const countries = getCountries();
+  const stateOptions = country ? getStates(country) : [];
+  const [cityOptions, setCityOptions] = useState<string[]>(state ? getCities(state) : []);
+  const isInitialMount = useRef(true);
+
+  useEffect(() => {
+    if (isInitialMount.current) { isInitialMount.current = false; return; }
+    setState("");
+    setCity("");
+    setCityOptions([]);
+  }, [country]);
+
+  useEffect(() => {
+    if (!state) { setCityOptions([]); return; }
+    setCityOptions(getCities(state));
+  }, [state]);
 
   const handleSaveProfile = () => { setProfileSaved(true); setTimeout(() => setProfileSaved(false), 2500); };
 
@@ -69,6 +156,8 @@ export default function Settings() {
     border: `1px solid ${colors.inputBorder}`, borderRadius: "10px",
     color: colors.inputText, background: colors.inputBg, outline: "none", boxSizing: "border-box",
   };
+
+  const cityLocationOptions: LocationOption[] = cityOptions.map((c) => ({ code: c, label: c }));
 
   return (
     <DashboardLayout>
@@ -154,13 +243,50 @@ export default function Settings() {
                   </div>
                 ))}
 
-                <div className="mb-5">
-                  <label style={{ display: "block", fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 500 }}>Country</label>
-                  <select style={inputStyle}>
-                    <option>United States</option>
-                    <option>United Kingdom</option>
-                    <option>Canada</option>
-                  </select>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+                  <div>
+                    <label style={{ display: "block", fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 500 }}>Country</label>
+                    <SettingsSearchableSelect
+                      value={country}
+                      onChange={setCountry}
+                      options={countries}
+                      placeholder="Select country"
+                      inputStyle={inputStyle}
+                      colors={colors}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 500 }}>
+                      {country ? getStateLabel(country) : "State / Region"}
+                    </label>
+                    {stateOptions.length > 0 ? (
+                      <SettingsSearchableSelect
+                        value={state}
+                        onChange={setState}
+                        options={stateOptions}
+                        placeholder="Select state"
+                        inputStyle={inputStyle}
+                        colors={colors}
+                      />
+                    ) : (
+                      <input value={state} onChange={(e) => setState(e.target.value)} placeholder={country ? "Enter state" : "Select country first"} disabled={!country} style={{ ...inputStyle, opacity: !country ? 0.5 : 1 }} />
+                    )}
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: "11px", color: colors.textMuted, marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 500 }}>City</label>
+                    {cityOptions.length > 0 ? (
+                      <SettingsSearchableSelect
+                        value={city}
+                        onChange={setCity}
+                        options={cityLocationOptions}
+                        placeholder="Select city"
+                        inputStyle={inputStyle}
+                        colors={colors}
+                      />
+                    ) : (
+                      <input value={city} onChange={(e) => setCity(e.target.value)} placeholder={state || (country && stateOptions.length === 0) ? "Enter city" : "Select state first"} disabled={!state && stateOptions.length > 0} style={{ ...inputStyle, opacity: (!state && stateOptions.length > 0) ? 0.5 : 1 }} />
+                    )}
+                  </div>
                 </div>
 
                 <button onClick={handleSaveProfile}

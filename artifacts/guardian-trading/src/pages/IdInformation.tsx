@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
-import { getCountries, getStates } from "@/lib/location/locationService";
+import { getCountries, getStates, type LocationOption } from "@/lib/location/locationService";
 import { required, ssnFormat, idNumber, dateOfBirth, dateFormat, idExpirationDate, type FieldErrors, hasErrors } from "@/lib/validation";
+import { useDateMask } from "@/lib/useDateMask";
 
 const TAX_ID_TYPES = ["SSN", "EIN", "Foreign ID"];
 const ID_TYPES = ["Passport", "Driver's License", "State ID", "Military ID"];
@@ -11,9 +12,8 @@ const fieldStyle: React.CSSProperties = {
   background: "#e8edf2", border: "1px solid #ccd3da", borderRadius: "3px",
   padding: "9px 10px", color: "#333", fontSize: "13px", width: "100%",
 };
-const errorFieldStyle: React.CSSProperties = { ...fieldStyle, borderColor: "#e53e3e" };
+const errorFieldStyle: React.CSSProperties = { ...fieldStyle, border: "1px solid #e53e3e" };
 const selectStyle: React.CSSProperties = { ...fieldStyle, appearance: "none" as const, paddingRight: "28px", cursor: "pointer" };
-const dateStyle: React.CSSProperties  = { ...fieldStyle, paddingRight: "36px" };
 
 function FieldLabel({ children, req }: { children: React.ReactNode; req?: boolean }) {
   return (
@@ -27,6 +27,90 @@ function ChevronDown() {
   return (
     <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+    </div>
+  );
+}
+
+function SearchableSelect({
+  value, onChange, options, placeholder, hasError = false, onBlur,
+}: {
+  value: string; onChange: (v: string) => void; options: LocationOption[];
+  placeholder: string; hasError?: boolean; onBlur?: () => void;
+}) {
+  const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
+
+  const filtered = search
+    ? options.filter((o) => o.label.toLowerCase().includes(search.toLowerCase()))
+    : options;
+
+  const selectedLabel = options.find((o) => o.code === value)?.label ?? "";
+
+  return (
+    <div className="relative">
+      <div
+        className="flex items-center"
+        style={{ ...fieldStyle, border: `1px solid ${hasError ? "#e53e3e" : "#ccd3da"}`, cursor: "pointer", paddingRight: "28px", position: "relative" }}
+        onClick={() => setOpen(!open)}
+      >
+        {open ? (
+          <input
+            autoFocus
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+            onBlur={() => { setTimeout(() => { setOpen(false); setSearch(""); onBlur?.(); }, 150); }}
+            placeholder={placeholder}
+            style={{ border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "13px", color: "#333", padding: 0 }}
+          />
+        ) : (
+          <span style={{ color: value ? "#333" : "#999", fontSize: "13px" }}>
+            {selectedLabel || placeholder}
+          </span>
+        )}
+      </div>
+      <ChevronDown />
+      {open && filtered.length > 0 && (
+        <div className="absolute z-50 w-full bg-white border overflow-y-auto" style={{ borderColor: "#ccd3da", borderRadius: "0 0 3px 3px", maxHeight: "200px", boxShadow: "0 4px 12px rgba(0,0,0,0.12)", top: "100%", left: 0 }}>
+          {filtered.map((o) => (
+            <div key={o.code} className="cursor-pointer" style={{ padding: "7px 10px", fontSize: "13px", color: "#333", background: o.code === value ? "#e8edf2" : "white" }}
+              onMouseDown={(e) => { e.preventDefault(); onChange(o.code); setOpen(false); setSearch(""); }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#f0f4f8"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = o.code === value ? "#e8edf2" : "white"; }}
+            >{o.label}</div>
+          ))}
+        </div>
+      )}
+      {open && filtered.length === 0 && (
+        <div className="absolute z-50 w-full bg-white border" style={{ borderColor: "#ccd3da", borderRadius: "0 0 3px 3px", top: "100%", left: 0, boxShadow: "0 4px 12px rgba(0,0,0,0.12)" }}>
+          <div style={{ padding: "7px 10px", fontSize: "12px", color: "#999" }}>No results found</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MaskedDateInput({
+  value, onChange, onBlur, placeholder, hasError,
+}: {
+  value: string; onChange: (v: string) => void; onBlur?: () => void; placeholder: string; hasError?: boolean;
+}) {
+  const { inputRef, handleChange } = useDateMask(value, onChange);
+  return (
+    <div className="relative">
+      <input
+        ref={inputRef}
+        type="text"
+        placeholder={placeholder}
+        value={value}
+        onChange={handleChange}
+        onBlur={onBlur}
+        style={{ ...(hasError ? errorFieldStyle : fieldStyle), paddingRight: "36px" }}
+        className="focus:outline-none"
+      />
+      <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+      </div>
     </div>
   );
 }
@@ -134,13 +218,14 @@ export default function IdInformation() {
             <div className="grid grid-cols-4 gap-5 mb-4">
               <div>
                 <FieldLabel req>Country of Tax Residence</FieldLabel>
-                <div className="relative">
-                  <select value={form.taxResidenceCountry} onChange={(e) => { set("taxResidenceCountry")(e.target.value); if (touched.taxResidenceCountry) setTimeout(() => validateField("taxResidenceCountry"), 0); }} onBlur={() => markTouched("taxResidenceCountry")} style={{ ...selectStyle, borderColor: showError("taxResidenceCountry") ? "#e53e3e" : "#ccd3da" }} className="focus:outline-none">
-                    <option value="" disabled>Please Select</option>
-                    {countries.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
-                  </select>
-                  <ChevronDown />
-                </div>
+                <SearchableSelect
+                  value={form.taxResidenceCountry}
+                  onChange={(v) => { set("taxResidenceCountry")(v); if (touched.taxResidenceCountry) setTimeout(() => validateField("taxResidenceCountry"), 0); }}
+                  onBlur={() => markTouched("taxResidenceCountry")}
+                  options={countries}
+                  placeholder="Please Select"
+                  hasError={!!showError("taxResidenceCountry")}
+                />
                 {showError("taxResidenceCountry") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.taxResidenceCountry}</p>}
               </div>
               <div>
@@ -150,7 +235,7 @@ export default function IdInformation() {
               <div>
                 <FieldLabel req>Tax ID Type</FieldLabel>
                 <div className="relative">
-                  <select value={form.taxIdType} onChange={(e) => { set("taxIdType")(e.target.value); if (touched.taxIdType) setTimeout(() => validateField("taxIdType"), 0); }} onBlur={() => markTouched("taxIdType")} style={{ ...selectStyle, borderColor: showError("taxIdType") ? "#e53e3e" : "#ccd3da" }} className="focus:outline-none">
+                  <select value={form.taxIdType} onChange={(e) => { set("taxIdType")(e.target.value); if (touched.taxIdType) setTimeout(() => validateField("taxIdType"), 0); }} onBlur={() => markTouched("taxIdType")} style={{ ...selectStyle, border: `1px solid ${showError("taxIdType") ? "#e53e3e" : "#ccd3da"}` }} className="focus:outline-none">
                     <option value="" disabled>Please Select</option>
                     {TAX_ID_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
                   </select>
@@ -160,12 +245,13 @@ export default function IdInformation() {
               </div>
               <div>
                 <FieldLabel req>Date of Birth</FieldLabel>
-                <div className="relative">
-                  <input type="text" placeholder="MM/DD/YYYY" value={form.dateOfBirth} onChange={(e) => { set("dateOfBirth")(e.target.value); if (touched.dateOfBirth) setTimeout(() => validateField("dateOfBirth"), 0); }} onBlur={() => markTouched("dateOfBirth")} style={{ ...dateStyle, borderColor: showError("dateOfBirth") ? "#e53e3e" : "#ccd3da" }} className="focus:outline-none" />
-                  <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
-                  </div>
-                </div>
+                <MaskedDateInput
+                  value={form.dateOfBirth}
+                  onChange={(v) => { set("dateOfBirth")(v); if (touched.dateOfBirth) setTimeout(() => validateField("dateOfBirth"), 0); }}
+                  onBlur={() => markTouched("dateOfBirth")}
+                  placeholder="MM/DD/YYYY"
+                  hasError={!!showError("dateOfBirth")}
+                />
                 {showError("dateOfBirth") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.dateOfBirth}</p>}
               </div>
             </div>
@@ -181,7 +267,7 @@ export default function IdInformation() {
               <div>
                 <FieldLabel req>ID Type</FieldLabel>
                 <div className="relative">
-                  <select value={form.idType} onChange={(e) => { set("idType")(e.target.value); if (touched.idType) setTimeout(() => validateField("idType"), 0); }} onBlur={() => markTouched("idType")} style={{ ...selectStyle, borderColor: showError("idType") ? "#e53e3e" : "#ccd3da" }} className="focus:outline-none">
+                  <select value={form.idType} onChange={(e) => { set("idType")(e.target.value); if (touched.idType) setTimeout(() => validateField("idType"), 0); }} onBlur={() => markTouched("idType")} style={{ ...selectStyle, border: `1px solid ${showError("idType") ? "#e53e3e" : "#ccd3da"}` }} className="focus:outline-none">
                     <option value="" disabled>Please Select</option>
                     {ID_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
                   </select>
@@ -196,24 +282,30 @@ export default function IdInformation() {
               </div>
               <div>
                 <FieldLabel req>Issuing State</FieldLabel>
-                <div className="relative">
-                  <select value={form.issuingState} onChange={(e) => { set("issuingState")(e.target.value); if (touched.issuingState) setTimeout(() => validateField("issuingState"), 0); }} onBlur={() => markTouched("issuingState")} style={{ ...selectStyle, borderColor: showError("issuingState") ? "#e53e3e" : "#ccd3da" }} className="focus:outline-none">
-                    <option value="" disabled>Please Select</option>
-                    {issuingStateOptions.map((s) => <option key={s.code} value={s.code}>{s.label}</option>)}
-                  </select>
-                  <ChevronDown />
-                </div>
+                {issuingStateOptions.length > 0 ? (
+                  <SearchableSelect
+                    value={form.issuingState}
+                    onChange={(v) => { set("issuingState")(v); if (touched.issuingState) setTimeout(() => validateField("issuingState"), 0); }}
+                    onBlur={() => markTouched("issuingState")}
+                    options={issuingStateOptions}
+                    placeholder="Please Select"
+                    hasError={!!showError("issuingState")}
+                  />
+                ) : (
+                  <input style={showError("issuingState") ? errorFieldStyle : fieldStyle} className="focus:outline-none" value={form.issuingState} onChange={(e) => { set("issuingState")(e.target.value); if (touched.issuingState) setTimeout(() => validateField("issuingState"), 0); }} onBlur={() => markTouched("issuingState")} placeholder="Enter issuing state" />
+                )}
                 {showError("issuingState") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.issuingState}</p>}
               </div>
               <div>
                 <FieldLabel req>Country of Issuance</FieldLabel>
-                <div className="relative">
-                  <select value={form.countryOfIssuance} onChange={(e) => { set("countryOfIssuance")(e.target.value); if (touched.countryOfIssuance) setTimeout(() => validateField("countryOfIssuance"), 0); }} onBlur={() => markTouched("countryOfIssuance")} style={{ ...selectStyle, borderColor: showError("countryOfIssuance") ? "#e53e3e" : "#ccd3da" }} className="focus:outline-none">
-                    <option value="" disabled>Please Select</option>
-                    {countries.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
-                  </select>
-                  <ChevronDown />
-                </div>
+                <SearchableSelect
+                  value={form.countryOfIssuance}
+                  onChange={(v) => { set("countryOfIssuance")(v); if (touched.countryOfIssuance) setTimeout(() => validateField("countryOfIssuance"), 0); }}
+                  onBlur={() => markTouched("countryOfIssuance")}
+                  options={countries}
+                  placeholder="Please Select"
+                  hasError={!!showError("countryOfIssuance")}
+                />
                 {showError("countryOfIssuance") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.countryOfIssuance}</p>}
               </div>
             </div>
@@ -221,22 +313,24 @@ export default function IdInformation() {
             <div className="grid grid-cols-2 gap-5 mb-6" style={{ maxWidth: "50%" }}>
               <div>
                 <FieldLabel req>Issue Date</FieldLabel>
-                <div className="relative">
-                  <input type="text" placeholder="MM/DD/YYYY" value={form.issueDate} onChange={(e) => { set("issueDate")(e.target.value); if (touched.issueDate) setTimeout(() => validateField("issueDate"), 0); }} onBlur={() => markTouched("issueDate")} style={{ ...dateStyle, borderColor: showError("issueDate") ? "#e53e3e" : "#ccd3da" }} className="focus:outline-none" />
-                  <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
-                  </div>
-                </div>
+                <MaskedDateInput
+                  value={form.issueDate}
+                  onChange={(v) => { set("issueDate")(v); if (touched.issueDate) setTimeout(() => validateField("issueDate"), 0); }}
+                  onBlur={() => markTouched("issueDate")}
+                  placeholder="MM/DD/YYYY"
+                  hasError={!!showError("issueDate")}
+                />
                 {showError("issueDate") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.issueDate}</p>}
               </div>
               <div>
                 <FieldLabel req>Expiration Date</FieldLabel>
-                <div className="relative">
-                  <input type="text" placeholder="MM/DD/YYYY" value={form.expirationDate} onChange={(e) => { set("expirationDate")(e.target.value); if (touched.expirationDate) setTimeout(() => validateField("expirationDate"), 0); }} onBlur={() => markTouched("expirationDate")} style={{ ...dateStyle, borderColor: showError("expirationDate") ? "#e53e3e" : "#ccd3da" }} className="focus:outline-none" />
-                  <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
-                  </div>
-                </div>
+                <MaskedDateInput
+                  value={form.expirationDate}
+                  onChange={(v) => { set("expirationDate")(v); if (touched.expirationDate) setTimeout(() => validateField("expirationDate"), 0); }}
+                  onBlur={() => markTouched("expirationDate")}
+                  placeholder="MM/DD/YYYY"
+                  hasError={!!showError("expirationDate")}
+                />
                 {showError("expirationDate") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.expirationDate}</p>}
               </div>
             </div>

@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Briefcase, User, UserCircle, Landmark, GraduationCap } from "lucide-react";
 import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
-import { getCountries, getStates } from "@/lib/location/locationService";
+import { getCountries, getStates, getCities, getStateLabel, type LocationOption } from "@/lib/location/locationService";
 import { required, nameField, addressField, phoneFormat, type FieldErrors, hasErrors } from "@/lib/validation";
 
 const EMPLOYMENT_OPTIONS = [
@@ -19,14 +19,95 @@ const fieldStyle: React.CSSProperties = {
   background: "#e8edf2", border: "1px solid #ccd3da", borderRadius: "3px",
   padding: "9px 10px", color: "#333", fontSize: "13px", width: "100%",
 };
-const errorFieldStyle: React.CSSProperties = { ...fieldStyle, borderColor: "#e53e3e" };
-const selectStyle: React.CSSProperties = { ...fieldStyle, appearance: "none" as const, paddingRight: "28px", cursor: "pointer" };
+const errorFieldStyle: React.CSSProperties = { ...fieldStyle, border: "1px solid #e53e3e" };
 
 function FieldLabel({ children, req }: { children: React.ReactNode; req?: boolean }) {
   return (
     <label className="block mb-1" style={{ fontSize: "12px", color: "#555" }}>
       {children}{req && <span style={{ color: "#e53e3e" }}> *</span>}
     </label>
+  );
+}
+
+const ChevronDown = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 9l6 6 6-6" />
+  </svg>
+);
+
+function SearchableSelect({
+  value, onChange, options, placeholder, disabled = false, hasError = false, onBlur,
+}: {
+  value: string; onChange: (v: string) => void; options: LocationOption[];
+  placeholder: string; disabled?: boolean; hasError?: boolean; onBlur?: () => void;
+}) {
+  const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
+
+  const filtered = search
+    ? options.filter((o) => o.label.toLowerCase().includes(search.toLowerCase()))
+    : options;
+
+  const selectedLabel = options.find((o) => o.code === value)?.label ?? "";
+
+  return (
+    <div className="relative">
+      <div
+        className="flex items-center"
+        style={{
+          ...fieldStyle,
+          border: `1px solid ${hasError ? "#e53e3e" : "#ccd3da"}`,
+          cursor: disabled ? "not-allowed" : "pointer",
+          opacity: disabled ? 0.5 : 1,
+          paddingRight: "28px",
+          position: "relative",
+        }}
+        onClick={() => { if (!disabled) setOpen(!open); }}
+      >
+        {open ? (
+          <input
+            autoFocus
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+            onBlur={() => { setTimeout(() => { setOpen(false); setSearch(""); onBlur?.(); }, 150); }}
+            placeholder={placeholder}
+            style={{ border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "13px", color: "#333", padding: 0 }}
+          />
+        ) : (
+          <span style={{ color: value ? "#333" : "#999", fontSize: "13px" }}>
+            {selectedLabel || placeholder}
+          </span>
+        )}
+      </div>
+      <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
+        <ChevronDown />
+      </div>
+      {open && filtered.length > 0 && (
+        <div
+          className="absolute z-50 w-full bg-white border overflow-y-auto"
+          style={{ borderColor: "#ccd3da", borderRadius: "0 0 3px 3px", maxHeight: "200px", boxShadow: "0 4px 12px rgba(0,0,0,0.12)", top: "100%", left: 0 }}
+        >
+          {filtered.map((o) => (
+            <div
+              key={o.code}
+              className="cursor-pointer"
+              style={{ padding: "7px 10px", fontSize: "13px", color: "#333", background: o.code === value ? "#e8edf2" : "white" }}
+              onMouseDown={(e) => { e.preventDefault(); onChange(o.code); setOpen(false); setSearch(""); }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#f0f4f8"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = o.code === value ? "#e8edf2" : "white"; }}
+            >
+              {o.label}
+            </div>
+          ))}
+        </div>
+      )}
+      {open && filtered.length === 0 && (
+        <div className="absolute z-50 w-full bg-white border" style={{ borderColor: "#ccd3da", borderRadius: "0 0 3px 3px", top: "100%", left: 0, boxShadow: "0 4px 12px rgba(0,0,0,0.12)" }}>
+          <div style={{ padding: "7px 10px", fontSize: "12px", color: "#999" }}>No results found</div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -57,6 +138,14 @@ export default function ProfessionalDetails() {
 
   const countries = getCountries();
   const stateOptions = form.country ? getStates(form.country) : [];
+  const [cityOptions, setCityOptions] = useState<string[]>(form.state ? getCities(form.state) : []);
+  const isInitialMount = useRef(true);
+
+  useEffect(() => {
+    if (isInitialMount.current) { isInitialMount.current = false; return; }
+    if (!form.state) { setCityOptions([]); return; }
+    setCityOptions(getCities(form.state));
+  }, [form.state]);
 
   const validateAll = (): FieldErrors<Fields> => {
     const e: FieldErrors<Fields> = {};
@@ -110,6 +199,8 @@ export default function ProfessionalDetails() {
     await submit({ employmentStatus: employment, ...form });
   };
 
+  const cityLocationOptions: LocationOption[] = cityOptions.map((c) => ({ code: c, label: c }));
+
   return (
     <OnboardingShell currentStep={2}>
       <div className="bg-white" style={{ borderRadius: "2px", boxShadow: "0 1px 6px rgba(0,0,0,0.10)", border: "1px solid #dde3e9", borderLeft: "4px solid #3a7bd5" }}>
@@ -159,7 +250,7 @@ export default function ProfessionalDetails() {
                 <div className="grid grid-cols-2 gap-5 mb-4">
                   <div>
                     <FieldLabel req>Address Of Employer</FieldLabel>
-                    <input style={showError("employerAddress") ? errorFieldStyle : fieldStyle} className="focus:outline-none" value={form.employerAddress} onChange={(e) => { set("employerAddress")(e.target.value); if (touched.employerAddress) setTimeout(() => validateField("employerAddress"), 0); }} onBlur={() => markTouched("employerAddress")} />
+                    <input style={showError("employerAddress") ? errorFieldStyle : fieldStyle} className="focus:outline-none" value={form.employerAddress} onChange={(e) => { set("employerAddress")(e.target.value); if (touched.employerAddress) setTimeout(() => validateField("employerAddress"), 0); }} onBlur={() => markTouched("employerAddress")} autoComplete="street-address" />
                     {showError("employerAddress") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.employerAddress}</p>}
                   </div>
                   <div>
@@ -170,34 +261,49 @@ export default function ProfessionalDetails() {
                 <div className="grid grid-cols-3 gap-5 mb-4">
                   <div>
                     <FieldLabel req>Country</FieldLabel>
-                    <div className="relative">
-                      <select value={form.country} onChange={(e) => { set("country")(e.target.value); set("state")(""); set("city")(""); if (touched.country) setTimeout(() => validateField("country"), 0); }} onBlur={() => markTouched("country")} style={{ ...selectStyle, borderColor: showError("country") ? "#e53e3e" : "#ccd3da" }} className="focus:outline-none">
-                        <option value="" disabled>Please Select</option>
-                        {countries.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
-                      </select>
-                      <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg></div>
-                    </div>
+                    <SearchableSelect
+                      value={form.country}
+                      onChange={(v) => { set("country")(v); set("state")(""); set("city")(""); if (touched.country) setTimeout(() => validateField("country"), 0); }}
+                      onBlur={() => markTouched("country")}
+                      options={countries}
+                      placeholder="Select country"
+                      hasError={!!showError("country")}
+                    />
                     {showError("country") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.country}</p>}
                   </div>
                   <div>
-                    <FieldLabel req>City</FieldLabel>
-                    <input style={showError("city") ? errorFieldStyle : fieldStyle} className="focus:outline-none" value={form.city} onChange={(e) => { set("city")(e.target.value); if (touched.city) setTimeout(() => validateField("city"), 0); }} onBlur={() => markTouched("city")} placeholder="Enter city" />
-                    {showError("city") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.city}</p>}
-                  </div>
-                  <div>
-                    <FieldLabel req={stateOptions.length > 0}>State/Province</FieldLabel>
+                    <FieldLabel req={stateOptions.length > 0}>
+                      {form.country ? getStateLabel(form.country) : "State/Province"}
+                    </FieldLabel>
                     {stateOptions.length > 0 ? (
-                      <div className="relative">
-                        <select value={form.state} onChange={(e) => { set("state")(e.target.value); if (touched.state) setTimeout(() => validateField("state"), 0); }} onBlur={() => markTouched("state")} style={{ ...selectStyle, borderColor: showError("state") ? "#e53e3e" : "#ccd3da" }} className="focus:outline-none">
-                          <option value="" disabled>Please Select</option>
-                          {stateOptions.map((s) => <option key={s.code} value={s.code}>{s.label}</option>)}
-                        </select>
-                        <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg></div>
-                      </div>
+                      <SearchableSelect
+                        value={form.state}
+                        onChange={(v) => { set("state")(v); set("city")(""); if (touched.state) setTimeout(() => validateField("state"), 0); }}
+                        onBlur={() => markTouched("state")}
+                        options={stateOptions}
+                        placeholder="Select state"
+                        hasError={!!showError("state")}
+                      />
                     ) : (
                       <input style={fieldStyle} className="focus:outline-none" value={form.state} onChange={(e) => set("state")(e.target.value)} placeholder={form.country ? "Enter state" : "Select country first"} />
                     )}
                     {showError("state") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.state}</p>}
+                  </div>
+                  <div>
+                    <FieldLabel req>City</FieldLabel>
+                    {cityOptions.length > 0 ? (
+                      <SearchableSelect
+                        value={form.city}
+                        onChange={(v) => { set("city")(v); if (touched.city) setTimeout(() => validateField("city"), 0); }}
+                        onBlur={() => markTouched("city")}
+                        options={cityLocationOptions}
+                        placeholder="Select city"
+                        hasError={!!showError("city")}
+                      />
+                    ) : (
+                      <input style={showError("city") ? errorFieldStyle : fieldStyle} className="focus:outline-none" value={form.city} onChange={(e) => { set("city")(e.target.value); if (touched.city) setTimeout(() => validateField("city"), 0); }} onBlur={() => markTouched("city")} placeholder="Enter city" />
+                    )}
+                    {showError("city") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.city}</p>}
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-5 mb-1">

@@ -12,7 +12,7 @@
     "accountName": "SDERSDERS",
     "accountType": "Checking"
   },
-  "updatedAt": "2026-03-23T05:24:40.475Z",
+  "updatedAt": "2026-03-23T05:31:48.815Z",
   "disclosures": {
     "wantsMargin": "no",
     "initialDeposit": "",
@@ -69,7 +69,8 @@
   "_completedStepNumbers": [
     0,
     1,
-    2
+    2,
+    3
   ],
   "_auditLog": [
     {
@@ -186,6 +187,72 @@
       "field": "phoneNumber",
       "newValue": "5126866045",
       "timestamp": "2026-03-23T05:24:40.475Z"
+    },
+    {
+      "stepKey": "idInformation",
+      "field": "taxResidenceCountry",
+      "newValue": "US",
+      "timestamp": "2026-03-23T05:31:48.814Z"
+    },
+    {
+      "stepKey": "idInformation",
+      "field": "foreignIdType",
+      "newValue": "",
+      "timestamp": "2026-03-23T05:31:48.814Z"
+    },
+    {
+      "stepKey": "idInformation",
+      "field": "taxIdType",
+      "newValue": "SSN",
+      "timestamp": "2026-03-23T05:31:48.814Z"
+    },
+    {
+      "stepKey": "idInformation",
+      "field": "dateOfBirth",
+      "newValue": "07/28/1963",
+      "timestamp": "2026-03-23T05:31:48.814Z"
+    },
+    {
+      "stepKey": "idInformation",
+      "field": "taxId",
+      "newValue": "465393800",
+      "timestamp": "2026-03-23T05:31:48.814Z"
+    },
+    {
+      "stepKey": "idInformation",
+      "field": "idType",
+      "newValue": "Driver's License",
+      "timestamp": "2026-03-23T05:31:48.814Z"
+    },
+    {
+      "stepKey": "idInformation",
+      "field": "idNumber",
+      "newValue": "67675678575",
+      "timestamp": "2026-03-23T05:31:48.814Z"
+    },
+    {
+      "stepKey": "idInformation",
+      "field": "issuingState",
+      "newValue": "Texas",
+      "timestamp": "2026-03-23T05:31:48.814Z"
+    },
+    {
+      "stepKey": "idInformation",
+      "field": "countryOfIssuance",
+      "newValue": "US",
+      "timestamp": "2026-03-23T05:31:48.814Z"
+    },
+    {
+      "stepKey": "idInformation",
+      "field": "issueDate",
+      "newValue": "07/28/2025",
+      "timestamp": "2026-03-23T05:31:48.814Z"
+    },
+    {
+      "stepKey": "idInformation",
+      "field": "expirationDate",
+      "newValue": "08/08/2030",
+      "timestamp": "2026-03-23T05:31:48.814Z"
     }
   ],
   "professional": {
@@ -199,5 +266,18 @@
     "state": "Texas",
     "yearsWithEmployer": "20",
     "phoneNumber": "5126866045"
+  },
+  "idInformation": {
+    "taxResidenceCountry": "US",
+    "foreignIdType": "",
+    "taxIdType": "SSN",
+    "dateOfBirth": "enc:77118cf8ad36818a1a53eabb7f68ad44:052c6b2ac89dd785b9c5fd5130c5f17c:2aeb0c80a5ac066d48b5",
+    "taxId": "enc:076451ad95dcf685eb9154b1a9b2ad71:ceaff05ca8cd498b6ea2df28389b7e55:d23f2afb2c1d5445a8",
+    "idType": "Driver's License",
+    "idNumber": "enc:840d5c074bac1e34757fa020f582eca8:18f701d87db76ebefb3845ef00baa813:4ceab5cd950d9183745246",
+    "issuingState": "Texas",
+    "countryOfIssuance": "US",
+    "issueDate": "07/28/2025",
+    "expirationDate": "08/08/2030"
   }
 }

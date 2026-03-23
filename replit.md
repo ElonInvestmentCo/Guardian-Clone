@@ -103,10 +103,22 @@ Multi-step onboarding platform at `/` (guardian-trading artifact).
 - 0: GeneralDetails (no progress bar)
 - 1–11: Personal → Professional → ID Info → Income → Risk → Financial → Experience → ID Upload → Funding → Disclosures → Signatures
 
-### PersonalDetails (Step 1)
-- Country → State → City cascading dropdowns (pure `useState`, no react-hook-form)
-- `locationService.ts` in `src/lib/location/` — 60+ countries, states for US/CA/GB/AU/DE/FR/IN/JP/MX/BR/IT/ES/NL/CH/AE/ZA/KR/CN/NG/PH/TR/PL/CO/AR/NZ/SA/IL/SE/NO/DK/IE/SG/HK with cities
+### Location System (Global)
+- Country → State → City cascading `SearchableSelect` dropdowns (type-to-filter, no native `<select>`)
+- `locationService.ts` in `src/lib/location/` — ~195 countries (alphabetically sorted), states/provinces for 50+ countries, cities for all mapped states
+- `getStateLabel(countryCode)` returns context-aware label (State/Province/Canton/Prefecture/Bundesland/Estado)
 - City falls back to text input when no dropdown data exists for a region
+- Used on: PersonalDetails (Step 1), ProfessionalDetails (Step 2), IdInformation (Step 3), Settings
+- Architecture: all data in `locationService.ts` — ready for Google Places API swap without form changes
+- Initial mount protection via `useRef` — saved data preserved when revisiting steps
+
+### Date Auto-Format (MM/DD/YYYY)
+- `useDateMask` hook in `src/lib/useDateMask.ts` — auto-inserts "/" at positions 2 and 4
+- `MaskedDateInput` component wraps the hook with calendar icon
+- Applied to: IdInformation (Date of Birth, Issue Date, Expiration Date)
+- Handles backspace at slash boundaries correctly
+
+### PersonalDetails (Step 1)
 - Country-aware ZIP/postal code validation
 
 ### Validation
