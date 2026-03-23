@@ -44,7 +44,7 @@ function decryptValue(ciphertext: string): string {
   const iv = Buffer.from(parts[1]!, "hex");
   const authTag = Buffer.from(parts[2]!, "hex");
   const encrypted = Buffer.from(parts[3]!, "hex");
-  const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+  const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv, { authTagLength: 16 });
   decipher.setAuthTag(authTag);
   return Buffer.concat([decipher.update(encrypted), decipher.final()]).toString("utf8");
 }
