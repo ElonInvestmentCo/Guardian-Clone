@@ -10,7 +10,7 @@ export function NavigationLoader() {
   useEffect(() => {
     if (prevLocation.current === null) {
       prevLocation.current = location;
-      return;
+      return undefined;
     }
 
     if (prevLocation.current !== location) {
@@ -19,6 +19,7 @@ export function NavigationLoader() {
       const timer = setTimeout(() => stopLoading(), 500);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [location, startLoading, stopLoading]);
 
   return null;

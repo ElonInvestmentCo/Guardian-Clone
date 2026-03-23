@@ -84,6 +84,7 @@ export default function AiAssistant() {
       }, 2000);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, []);
 
   const sendMessage = async () => {

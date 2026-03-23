@@ -117,7 +117,7 @@ export default function NotificationsPage() {
                   key={n.id}
                   style={{
                     padding: "16px", borderRadius: "10px",
-                    background: n.read ? colors.cardBg ?? "#fff" : tc.bg,
+                    background: n.read ? colors.card ?? "#fff" : tc.bg,
                     border: `1px solid ${n.read ? colors.inputBorder : tc.border}`,
                     opacity: n.read ? 0.7 : 1,
                     transition: "all 0.2s",

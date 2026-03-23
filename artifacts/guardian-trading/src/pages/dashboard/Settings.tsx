@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { User, Lock, BellRing, ChevronRight, Eye, EyeOff, Check } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme, type ThemeColors } from "@/context/ThemeContext";
 import { getCountries, getStates, getCities, getStateLabel, type LocationOption } from "@/lib/location/locationService";
 
 type Section = "profile" | "security" | "notifications";
@@ -21,7 +21,7 @@ function SettingsSearchableSelect({
   value, onChange, options, placeholder, disabled = false, inputStyle, colors,
 }: {
   value: string; onChange: (v: string) => void; options: LocationOption[];
-  placeholder: string; disabled?: boolean; inputStyle: React.CSSProperties; colors: Record<string, string>;
+  placeholder: string; disabled?: boolean; inputStyle: React.CSSProperties; colors: ThemeColors;
 }) {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);

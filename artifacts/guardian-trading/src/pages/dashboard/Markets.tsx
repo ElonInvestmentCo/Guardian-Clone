@@ -162,7 +162,7 @@ export default function Markets() {
 
         {selectedCoin && (
           <div style={{
-            background: colors.cardBg ?? "#fff", border: `1px solid ${colors.inputBorder}`,
+            background: colors.card ?? "#fff", border: `1px solid ${colors.inputBorder}`,
             borderRadius: "12px", padding: "20px", marginBottom: "20px",
           }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
@@ -211,7 +211,7 @@ export default function Markets() {
                     tickFormatter={(v: number) => `$${v >= 1000 ? (v / 1000).toFixed(1) + "k" : v.toFixed(0)}`} />
                   <Tooltip
                     contentStyle={{
-                      background: colors.cardBg ?? "#fff", border: `1px solid ${colors.inputBorder}`,
+                      background: colors.card ?? "#fff", border: `1px solid ${colors.inputBorder}`,
                       borderRadius: "8px", fontSize: "12px",
                     }}
                     formatter={(value: number, name: string) => [`$${formatPrice(value)}`, name.charAt(0).toUpperCase() + name.slice(1)]}
@@ -238,7 +238,7 @@ export default function Markets() {
           </div>
         ) : (
           <div style={{
-            background: colors.cardBg ?? "#fff", border: `1px solid ${colors.inputBorder}`,
+            background: colors.card ?? "#fff", border: `1px solid ${colors.inputBorder}`,
             borderRadius: "12px", overflow: "hidden",
           }}>
             <div style={{ overflowX: "auto" }}>
