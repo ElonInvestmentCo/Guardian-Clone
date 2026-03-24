@@ -9,7 +9,7 @@ import { OnboardingProvider } from "@/lib/onboarding/OnboardingContext";
 import { OnboardingGuard } from "@/lib/onboarding/OnboardingGuard";
 import { ThemeProvider } from "@/context/ThemeContext";
 import AntiScrape from "@/components/AntiScrape";
-import { LiveChatWidget } from "@livechat/widget-react";
+import LiveChatBubble from "@/components/LiveChatBubble";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
 import Platforms from "@/pages/Platforms";
@@ -145,7 +145,7 @@ function App() {
             <AntiScrape />
             <PageLoader />
             <Toaster />
-            <LiveChatWidget license="19606329" visibility="minimized" />
+            <LiveChatBubble />
           </ThemeProvider>
         </LoadingProvider>
       </TooltipProvider>
