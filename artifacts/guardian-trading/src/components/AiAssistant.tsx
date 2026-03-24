@@ -68,7 +68,7 @@ export default function AiAssistant() {
         .then((data) => {
           if (data.messages) setMessages(data.messages);
         })
-        .catch(() => {});
+        .catch((err: unknown) => console.error("[AiAssistant] Failed to load chat history:", err));
     }
   }, [state, email]);
 

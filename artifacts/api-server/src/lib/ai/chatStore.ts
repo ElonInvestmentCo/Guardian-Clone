@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { join } from "path";
+import { getDataDir } from "../userDataStore.js";
 
 interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -15,7 +16,7 @@ interface Conversation {
   updatedAt: string;
 }
 
-const DATA_DIR = join(process.cwd(), "data", "ai-chats");
+const DATA_DIR = join(getDataDir(), "ai-chats");
 
 function ensureDir(): void {
   if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
@@ -30,7 +31,11 @@ export function getConversation(email: string): Conversation {
   ensureDir();
   const fp = filePath(email);
   if (existsSync(fp)) {
-    return JSON.parse(readFileSync(fp, "utf8"));
+    try {
+      return JSON.parse(readFileSync(fp, "utf8"));
+    } catch {
+      console.error(`[ChatStore] Failed to parse conversation for ${email}, creating new`);
+    }
   }
   const conv: Conversation = {
     id: `conv_${Date.now()}`,

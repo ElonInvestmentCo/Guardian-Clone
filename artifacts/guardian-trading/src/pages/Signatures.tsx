@@ -96,7 +96,7 @@ export default function Signatures() {
 
   const handleSubmitConfirm = async () => {
     setShowSubmitModal(false);
-    await submit({ consents, tradingPlan, electronicDelivery, signatureName, hasSigned: !!signatureDataUrl });
+    await submit({ consents, tradingPlan, electronicDelivery, signatureName, hasSigned: !!signatureDataUrl, signatureImage: signatureDataUrl ?? "" });
   };
 
   return (

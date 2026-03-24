@@ -64,33 +64,58 @@ router.post("/ai/chat", async (req: Request, res: Response): Promise<void> => {
 });
 
 router.get("/ai/history", (req: Request, res: Response): void => {
-  const email = req.query.email as string;
-  if (!email) { res.status(400).json({ error: "email is required" }); return; }
+  try {
+    const email = req.query.email as string;
+    if (!email) { res.status(400).json({ error: "email is required" }); return; }
 
-  const conv = getConversation(email);
-  res.json({
-    id: conv.id,
-    messages: conv.messages.filter((m) => m.role !== "system"),
-  });
+    const conv = getConversation(email);
+    res.json({
+      id: conv.id,
+      messages: conv.messages.filter((m) => m.role !== "system"),
+    });
+  } catch (err) {
+    console.error("[AI] History error:", err);
+    res.status(500).json({ error: "Failed to load chat history" });
+  }
 });
 
 router.post("/ai/clear", (req: Request, res: Response): void => {
-  const { email } = req.body as { email?: string };
-  if (!email) { res.status(400).json({ error: "email is required" }); return; }
-  clearConversation(email);
-  res.json({ success: true });
+  try {
+    const { email } = req.body as { email?: string };
+    if (!email) { res.status(400).json({ error: "email is required" }); return; }
+    clearConversation(email);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("[AI] Clear error:", err);
+    res.status(500).json({ error: "Failed to clear conversation" });
+  }
 });
 
 router.get("/ai/portfolio", (_req: Request, res: Response): void => {
-  res.json(getPortfolioData());
+  try {
+    res.json(getPortfolioData());
+  } catch (err) {
+    console.error("[AI] Portfolio error:", err);
+    res.status(500).json({ error: "Failed to load portfolio data" });
+  }
 });
 
 router.get("/ai/market", (_req: Request, res: Response): void => {
-  res.json(getMarketData());
+  try {
+    res.json(getMarketData());
+  } catch (err) {
+    console.error("[AI] Market error:", err);
+    res.status(500).json({ error: "Failed to load market data" });
+  }
 });
 
 router.get("/ai/staking", (_req: Request, res: Response): void => {
-  res.json(getStakingData());
+  try {
+    res.json(getStakingData());
+  } catch (err) {
+    console.error("[AI] Staking error:", err);
+    res.status(500).json({ error: "Failed to load staking data" });
+  }
 });
 
 router.get("/ai/provider", (_req: Request, res: Response): void => {

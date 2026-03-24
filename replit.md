@@ -286,6 +286,7 @@ Floating chat widget on all dashboard pages, powered by an AI service abstractio
 - **Security headers**: CSP (allows LiveChat `cdn.livechatinc.com`, `*.lc.chat`), X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Resource-Policy, X-DNS-Prefetch-Control, X-Download-Options, X-Permitted-Cross-Domain-Policies
 - **Global error handler**: Express catch-all error middleware in `app.ts` — logs stack traces and returns 500 JSON, prevents process crashes from unhandled errors
 - **Bot detection**: Known bot/scraper user-agent blocking (50+ patterns), headless browser detection, suspicious behavior scoring with temporary IP bans
+- **Error handling**: Every backend route handler (auth, profile, AI, signup, admin) wrapped in try/catch with structured error logging and 500 JSON responses — no unhandled exceptions can crash the server
 - **Rate limiting**: Global 100 req/min, all auth endpoints (login/register/verify/reset) use sensitiveEndpointLimit 30 req/15min, admin login 5/15min per IP, anomaly detection (30 req/10s rapid-fire block)
 - **CORS**: Restricted to guardiiantrading.com, Replit domains, and dev localhost (no wildcard in production)
 - **Hotlink protection**: Referer-based blocking for media files (images, videos, PDFs)

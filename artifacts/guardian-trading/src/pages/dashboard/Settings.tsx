@@ -111,7 +111,7 @@ export default function Settings() {
       .then((d: { profilePicture?: string }) => {
         if (d.profilePicture) setProfilePic(d.profilePicture);
       })
-      .catch(() => {});
+      .catch((err: unknown) => console.error("[Settings] Failed to load profile:", err));
   }, [email]);
 
   const handlePicSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,7 +139,8 @@ export default function Settings() {
   const handlePicRemove = () => {
     const base = import.meta.env.BASE_URL.replace(/\/$/, "");
     fetch(`${base}/api/user/profile-picture?email=${encodeURIComponent(email)}`, { method: "DELETE" })
-      .then(() => { setProfilePic(null); setPicPreview(null); });
+      .then((r) => { if (!r.ok) throw new Error("Delete failed"); setProfilePic(null); setPicPreview(null); })
+      .catch(() => alert("Failed to remove profile picture. Please try again."));
   };
 
   const profilePicUrl = profilePic

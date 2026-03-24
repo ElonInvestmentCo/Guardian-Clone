@@ -401,18 +401,18 @@ signupRouter.post("/signup/complete-step", (req, res) => {
     return;
   }
 
-  // 1. Server-side field validation
-  const errors = validateStep(stepKey, data);
-  if (Object.keys(errors).length > 0) {
-    auditLog(email, stepKey, "VALIDATE_FAIL", {
-      stepNumber,
-      errorFields: Object.keys(errors),
-    });
-    res.status(422).json({ success: false, errors });
-    return;
-  }
-
   try {
+    // 1. Server-side field validation
+    const errors = validateStep(stepKey, data);
+    if (Object.keys(errors).length > 0) {
+      auditLog(email, stepKey, "VALIDATE_FAIL", {
+        stepNumber,
+        errorFields: Object.keys(errors),
+      });
+      res.status(422).json({ success: false, errors });
+      return;
+    }
+
     const profile = getUserProfileData(email);
     const oldStepData =
       (profile[stepKey] as Record<string, unknown>) ?? {};

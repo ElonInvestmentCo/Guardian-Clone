@@ -196,7 +196,10 @@ export default function ProfessionalDetails() {
       setErrors(newErrors);
       if (hasErrors(newErrors)) return;
     }
-    await submit({ employmentStatus: employment, ...form });
+    const payload = needsEmployer
+      ? { employmentStatus: employment, ...form }
+      : { employmentStatus: employment };
+    await submit(payload);
   };
 
   const cityLocationOptions: LocationOption[] = cityOptions.map((c) => ({ code: c, label: c }));

@@ -45,25 +45,36 @@ export default function Projects() {
   async function createProject() {
     if (!form.name || !form.domain) { toast({ title: "Fill in all fields", variant: "destructive" }); return; }
     setCreating(true);
-    const r = await fetch(`${API}/analytics/projects`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: form.name, domain: form.domain, ownerEmail: OWNER_EMAIL }),
-    });
-    if (r.ok) {
-      setForm({ name: "", domain: "" });
-      setShowForm(false);
-      await loadProjects();
-      toast({ title: "Project created!" });
+    try {
+      const r = await fetch(`${API}/analytics/projects`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: form.name, domain: form.domain, ownerEmail: OWNER_EMAIL }),
+      });
+      if (r.ok) {
+        setForm({ name: "", domain: "" });
+        setShowForm(false);
+        await loadProjects();
+        toast({ title: "Project created!" });
+      } else {
+        toast({ title: "Failed to create project", variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Network error. Please try again.", variant: "destructive" });
     }
     setCreating(false);
   }
 
   async function deleteProject(id: string) {
     if (!confirm("Delete this project and all its data?")) return;
-    await fetch(`${API}/analytics/projects/${id}`, { method: "DELETE" });
-    await loadProjects();
-    toast({ title: "Project deleted" });
+    try {
+      const r = await fetch(`${API}/analytics/projects/${id}`, { method: "DELETE" });
+      if (!r.ok) { toast({ title: "Failed to delete project", variant: "destructive" }); return; }
+      await loadProjects();
+      toast({ title: "Project deleted" });
+    } catch {
+      toast({ title: "Network error. Please try again.", variant: "destructive" });
+    }
   }
 
   function copySnippet(key: string) {

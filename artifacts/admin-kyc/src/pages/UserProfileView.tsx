@@ -177,7 +177,7 @@ export default function UserProfileView({ email, onBack }: Props) {
                   <Field label="Email"         value={email} />
                   <Field label="Created"       value={formatDate(master.createdAt as string)} />
                   <Field label="Last Updated"  value={formatDate(master.updatedAt as string)} />
-                  <Field label="KYC Steps"     value={`${((profile._completedStepNumbers as number[] | undefined) ?? []).length} / 12`} />
+                  <Field label="KYC Steps"     value={`${((profile._completedStepNumbers as number[] | undefined) ?? []).length} / ${(profile.totalSteps as number | undefined) ?? 12}`} />
                 </Card>
 
                 <Card title="General Details">
@@ -345,7 +345,7 @@ export default function UserProfileView({ email, onBack }: Props) {
                                 window.open(blobUrl, "_blank");
                                 setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
                               } catch {
-                                alert("Failed to load document");
+                                showMsg("err", "Failed to load document");
                               }
                             }}
                             style={{

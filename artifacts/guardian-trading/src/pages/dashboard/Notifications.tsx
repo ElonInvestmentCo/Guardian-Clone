@@ -43,7 +43,10 @@ export default function NotificationsPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, ids }),
-    }).then(() => fetchNotifications());
+    })
+      .then((r) => { if (!r.ok) console.error("Failed to mark notification read"); })
+      .then(() => fetchNotifications())
+      .catch(() => console.error("Failed to mark notification read"));
   };
 
   const markAllRead = () => {
@@ -51,7 +54,10 @@ export default function NotificationsPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
-    }).then(() => fetchNotifications());
+    })
+      .then((r) => { if (!r.ok) console.error("Failed to mark all read"); })
+      .then(() => fetchNotifications())
+      .catch(() => console.error("Failed to mark all read"));
   };
 
   const unreadCount = notifications.filter((n) => !n.read).length;
