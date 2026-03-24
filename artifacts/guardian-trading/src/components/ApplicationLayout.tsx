@@ -106,8 +106,8 @@ export function ApplicationLayout({ children }: { children: React.ReactNode }) {
             <h4 className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-3">Contact</h4>
             <div className="flex flex-col gap-1.5">
               <a href="tel:8886020092" className="text-gray-400 text-sm hover:text-white">888-602-0092</a>
-              <a href="mailto:info@guardiantrading.com" className="text-gray-400 text-sm hover:text-white">
-                info@guardiantrading.com
+              <a href="mailto:info@guardiiantrading.com" className="text-gray-400 text-sm hover:text-white">
+                info@guardiiantrading.com
               </a>
               <p className="text-gray-400 text-sm">1301 Route 36 Suite 109 Hazlet, NJ 07730</p>
             </div>

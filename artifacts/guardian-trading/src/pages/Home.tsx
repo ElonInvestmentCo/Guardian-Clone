@@ -29,7 +29,7 @@ export default function Home() {
               <span className="text-primary text-sm">✦</span>
               <span className="text-[#aaa] text-xs whitespace-nowrap">New on the blog</span>
               <a
-                href="https://www.guardiantrading.com/how-to-prepare-your-das-trader-pro-for-advanced-hotkeys-scripting/"
+                href="https://www.guardiiantrading.com/how-to-prepare-your-das-trader-pro-for-advanced-hotkeys-scripting/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary text-xs hover:underline truncate"
@@ -112,7 +112,7 @@ export default function Home() {
       <section className="bg-[#151515] py-8 px-4">
         <div className="max-w-[1100px] mx-auto">
           <a
-            href="https://guardian.vaccountopening.com/register/Benzinga"
+            href="https://www.guardiiantrading.com/"
             target="_blank"
             rel="noopener noreferrer"
             className="block"

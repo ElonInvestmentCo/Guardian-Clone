@@ -97,7 +97,7 @@ export async function sendAccountVerifiedEmail(
                 </tr>
               </table>
               <p style="margin:0 0 12px;font-size:14px;color:#666;line-height:1.6;">
-                You can now log in to the Guardian Trading portal and begin trading. If you have any questions, contact our support team at <a href="mailto:info@guardiantrading.com" style="color:#3a7bd5;">info@guardiantrading.com</a> or call <a href="tel:8886020092" style="color:#3a7bd5;">888-602-0092</a>.
+                You can now log in to the Guardian Trading portal and begin trading. If you have any questions, contact our support team at <a href="mailto:info@guardiiantrading.com" style="color:#3a7bd5;">info@guardiiantrading.com</a> or call <a href="tel:8886020092" style="color:#3a7bd5;">888-602-0092</a>.
               </p>
             </td>
           </tr>

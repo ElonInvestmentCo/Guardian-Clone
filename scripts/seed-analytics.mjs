@@ -70,7 +70,7 @@ async function simulateSession({ ua, page, referrer, campaign, isNew }) {
   const base = {
     visitor_id: visitorId,
     session_id: sessionId,
-    page_url: `https://app.guardiantrading.com${page}`,
+    page_url: `https://app.guardiiantrading.com${page}`,
     referrer,
     screen_width,
     screen_height,
@@ -90,7 +90,7 @@ async function simulateSession({ ua, page, referrer, campaign, isNew }) {
       ...base,
       event_type: "pageview",
       event_name: "pageview",
-      page_url: `https://app.guardiantrading.com${nextPage}`,
+      page_url: `https://app.guardiiantrading.com${nextPage}`,
       is_new_session: false,
       scroll_depth: randInt(20, 95),
     }, ua);

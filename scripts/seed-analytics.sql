@@ -6,16 +6,16 @@ DECLARE
   project_id UUID := '350bc6fc-93a6-498c-959d-bbcd34d53a6c';
 
   pages TEXT[] := ARRAY[
-    'https://app.guardiantrading.com/',
-    'https://app.guardiantrading.com/dashboard',
-    'https://app.guardiantrading.com/trading',
-    'https://app.guardiantrading.com/portfolio',
-    'https://app.guardiantrading.com/markets',
-    'https://app.guardiantrading.com/signals',
-    'https://app.guardiantrading.com/pricing',
-    'https://app.guardiantrading.com/docs',
-    'https://app.guardiantrading.com/blog',
-    'https://app.guardiantrading.com/about'
+    'https://app.guardiiantrading.com/',
+    'https://app.guardiiantrading.com/dashboard',
+    'https://app.guardiiantrading.com/trading',
+    'https://app.guardiiantrading.com/portfolio',
+    'https://app.guardiiantrading.com/markets',
+    'https://app.guardiiantrading.com/signals',
+    'https://app.guardiiantrading.com/pricing',
+    'https://app.guardiiantrading.com/docs',
+    'https://app.guardiiantrading.com/blog',
+    'https://app.guardiiantrading.com/about'
   ];
 
   referrers TEXT[] := ARRAY[

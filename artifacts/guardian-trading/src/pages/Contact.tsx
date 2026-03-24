@@ -78,8 +78,8 @@ export default function Contact() {
                   <div>
                     <h4 className="font-bold text-lg mb-1">Email</h4>
                     <p className="text-muted-foreground">We usually respond within 2 hours.</p>
-                    <a href="mailto:support@guardiantrading.com" className="text-white hover:text-primary mt-2 inline-block font-medium">
-                      support@guardiantrading.com
+                    <a href="mailto:support@guardiiantrading.com" className="text-white hover:text-primary mt-2 inline-block font-medium">
+                      support@guardiiantrading.com
                     </a>
                   </div>
                 </div>

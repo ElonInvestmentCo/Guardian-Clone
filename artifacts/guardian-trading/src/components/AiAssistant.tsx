@@ -54,8 +54,8 @@ export default function AiAssistant() {
   const abortRef = useRef<AbortController | null>(null);
 
   const email = typeof sessionStorage !== "undefined"
-    ? sessionStorage.getItem("signupEmail") ?? "trader@guardiantrading.com"
-    : "trader@guardiantrading.com";
+    ? sessionStorage.getItem("signupEmail") ?? "trader@guardiiantrading.com"
+    : "trader@guardiiantrading.com";
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

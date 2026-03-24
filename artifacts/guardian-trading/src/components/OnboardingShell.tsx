@@ -147,7 +147,7 @@ export default function OnboardingShell({ currentStep, children }: OnboardingShe
                 <h4 className="text-[11px] font-bold uppercase tracking-widest mb-3 sm:mb-4" style={{ color: "#aaa" }}>Contact</h4>
                 <div className="flex flex-col gap-2">
                   <a href="tel:8886020092" className="text-[13px] hover:text-white transition-colors" style={{ color: "#bbb" }}>888-602-0092</a>
-                  <a href="mailto:info@guardiantrading.com" className="text-[13px] hover:text-white transition-colors" style={{ color: "#bbb" }}>info@guardiantrading.com</a>
+                  <a href="mailto:info@guardiiantrading.com" className="text-[13px] hover:text-white transition-colors" style={{ color: "#bbb" }}>info@guardiiantrading.com</a>
                   <p className="text-[13px]" style={{ color: "#bbb" }}>1301 Route 36 Suite 109 Hazlet, NJ 07730</p>
                 </div>
               </div>
@@ -169,7 +169,7 @@ export default function OnboardingShell({ currentStep, children }: OnboardingShe
             OPTIONS INVOLVE RISK AND ARE NOT SUITABLE FOR ALL INVESTORS. FOR MORE INFORMATION READ THE{" "}
             <a href="#" style={{ color: "#5baad4" }}>CHARACTERISTICS AND RISKS OF STANDARDIZED OPTIONS</a>,
             {" "}ALSO KNOWN AS THE OPTIONS DISCLOSURE DOCUMENT (ODD). ALTERNATIVELY, PLEASE CONTACT{" "}
-            <a href="mailto:info@guardiantrading.com" style={{ color: "#5baad4" }}>INFO@GUARDIANTRADING.COM</a>
+            <a href="mailto:info@guardiiantrading.com" style={{ color: "#5baad4" }}>INFO@GUARDIIANTRADING.COM</a>
             {" "}TO RECEIVE A COPY OF THE ODD.
           </p>
         </div>
