@@ -329,11 +329,13 @@ Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` 
 - All save-step calls are audit-logged: `[Audit][timestamp] action=SAVE_STEP step=X email=Y`
 - Steps saved: `general`, `personal`, `professional`, `idInformation`, `income`, `riskTolerance`, `financialSituation`, `investmentExperience`, `idProofUpload`, `fundingDetails`, `disclosures`, `signatures`
 - **Data integrity**: Atomic file writes (write-to-temp-then-rename), corrupt file backup on parse failure, empty file guard
-- **Password hashing**: Uses `simpleHash` (consistent across auth.ts, profile.ts) — `hash * 31 + charCode >>> 0` to hex
+- **Password hashing**: Uses bcrypt (12 rounds) in auth.ts and profile.ts; legacy `simpleHash` passwords are auto-migrated to bcrypt on successful login
+- **File locking**: All data store mutations (upsertUserStep, addDocumentRef, setUserStatus, deleteUser, setUserBalance, setUserRole, setUserProfileMeta, addNotification, markNotificationsRead, markAllNotificationsRead, setProfilePicture, createAdminUser) use `withFileLock` to prevent race conditions
+- **Endpoint security**: `/api/signup/verify` requires admin JWT or internal API key; `/api/fraud/risk-score` and `/api/fraud/risk-events` require admin JWT or admin secret key
 
 #### User Settings Routes (`src/routes/profile.ts`)
 - `POST /api/user/update-profile` — saves profile settings (firstName, lastName, phone, location)
-- `POST /api/user/change-password` — validates current password, sets new (uses simpleHash matching auth.ts)
+- `POST /api/user/change-password` — validates current password, sets new (uses bcrypt matching auth.ts)
 - `POST /api/user/update-notifications` — saves notification preferences
 - Multer error middleware handles file size/type errors with structured JSON responses
 - `pnpm --filter @workspace/api-server run dev` — run the dev server

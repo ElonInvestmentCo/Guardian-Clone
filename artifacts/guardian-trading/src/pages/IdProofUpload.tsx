@@ -45,7 +45,7 @@ function FileUploadBox({ slot, role, onSlotChange, label, hasError }: {
         <span style={{ fontSize: "12px", flex: 1 }}>
           {slot.status === "idle"      && <span style={{ color: "#aaa" }}>No file chosen</span>}
           {slot.status === "uploading" && <span style={{ color: "#5baad4" }}>Uploading {slot.file?.name}…</span>}
-          {slot.status === "success"   && <span style={{ color: "#28a745", display: "flex", alignItems: "center", gap: "5px" }}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#28a745" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{slot.file?.name}</span>}
+          {slot.status === "success"   && <span style={{ color: "#28a745", display: "flex", alignItems: "center", gap: "5px" }}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#28a745" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{slot.file?.name ?? slot.savedPath ?? "Previously uploaded"}</span>}
           {slot.status === "error"     && <span style={{ color: "#dc3545" }}>{slot.errorMsg ?? "Upload failed"}</span>}
         </span>
         {slot.status === "error" && (
@@ -62,8 +62,18 @@ export default function IdProofUpload() {
   const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(8);
 
   const [idType,    setIdType]    = useState((savedData.idType as string) ?? "");
-  const [frontSlot, setFrontSlot] = useState<SlotState>({ file: null, status: "idle", savedPath: null, errorMsg: null });
-  const [backSlot,  setBackSlot]  = useState<SlotState>({ file: null, status: "idle", savedPath: null, errorMsg: null });
+  const [frontSlot, setFrontSlot] = useState<SlotState>(() => {
+    if (savedData.frontUploaded && savedData.frontFile) {
+      return { file: null, status: "success", savedPath: savedData.frontFile as string, errorMsg: null };
+    }
+    return { file: null, status: "idle", savedPath: null, errorMsg: null };
+  });
+  const [backSlot,  setBackSlot]  = useState<SlotState>(() => {
+    if (savedData.backUploaded && savedData.backFile) {
+      return { file: null, status: "success", savedPath: savedData.backFile as string, errorMsg: null };
+    }
+    return { file: null, status: "idle", savedPath: null, errorMsg: null };
+  });
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {

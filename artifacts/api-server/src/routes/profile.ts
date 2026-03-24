@@ -2,6 +2,7 @@ import { Router, type Request, type Response, type NextFunction } from "express"
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import bcrypt from "bcryptjs";
 import {
   getUserData,
   getCompletedStepNumbers,
@@ -14,12 +15,21 @@ import {
   getDataDir,
 } from "../lib/userDataStore.js";
 
-function simpleHash(str: string): string {
+const BCRYPT_ROUNDS = 12;
+
+function legacySimpleHash(str: string): string {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
   }
   return hash.toString(16);
+}
+
+async function verifyPassword(password: string, storedHash: string): Promise<boolean> {
+  if (storedHash.startsWith("$2")) {
+    return bcrypt.compare(password, storedHash);
+  }
+  return legacySimpleHash(password) === storedHash;
 }
 
 const profileRouter = Router();
@@ -171,7 +181,7 @@ profileRouter.post("/user/update-profile", (req, res) => {
   }
 });
 
-profileRouter.post("/user/change-password", (req, res) => {
+profileRouter.post("/user/change-password", async (req, res) => {
   try {
     const { email, currentPassword, newPassword } = req.body as Record<string, string>;
     if (!email || !currentPassword || !newPassword) {
@@ -187,12 +197,12 @@ profileRouter.post("/user/change-password", (req, res) => {
       res.status(404).json({ error: "No credentials found for this user" });
       return;
     }
-    const currentHash = simpleHash(currentPassword);
-    if (currentHash !== storedHash) {
+    const valid = await verifyPassword(currentPassword, storedHash);
+    if (!valid) {
       res.status(401).json({ error: "Current password is incorrect" });
       return;
     }
-    const newHash = simpleHash(newPassword);
+    const newHash = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
     saveUserCredentials(email, newHash);
     res.json({ success: true });
   } catch (err) {

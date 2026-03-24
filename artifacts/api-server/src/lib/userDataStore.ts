@@ -26,6 +26,7 @@ console.log(`[UserDataStore] DATA_DIR resolved to: ${DATA_DIR}`);
 
 const SENSITIVE_FIELDS = new Set([
   "taxId",
+  "ssn",
   "idNumber",
   "dateOfBirth",
   "password",
@@ -33,16 +34,26 @@ const SENSITIVE_FIELDS = new Set([
   "foreignIdType",
   "accountNumber",
   "abaSwift",
+  "bankAccountNumber",
+  "routingNumber",
 ]);
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
+let _encKeyCache: Buffer | null = null;
 function getEncryptionKey(): Buffer {
-  const passphrase = process.env["USER_DATA_KEY"] ?? "guardian-trading-dev-fallback-key-v1";
-  if (!process.env["USER_DATA_KEY"]) {
+  if (_encKeyCache) return _encKeyCache;
+  const passphrase = process.env["USER_DATA_KEY"];
+  if (!passphrase) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("[UserDataStore] USER_DATA_KEY is required in production");
+    }
     console.warn("[UserDataStore] USER_DATA_KEY not set — using development fallback key");
   }
-  return crypto.scryptSync(passphrase, "guardian-salt-v1", 32);
+  const key = passphrase ?? "guardian-trading-dev-fallback-key-v1";
+  const salt = crypto.createHash("sha256").update("guardian-key-derivation-salt").digest().subarray(0, 16);
+  _encKeyCache = crypto.scryptSync(key, salt, 32);
+  return _encKeyCache;
 }
 
 function encryptValue(plaintext: string): string {
@@ -199,31 +210,31 @@ export function upsertUserStep(
   step: string,
   data: Record<string, unknown>
 ): void {
-  const now = new Date().toISOString();
-  const sanitized = encryptSensitive(data);
+  withFileLock(MASTER_FILE, () => {
+    const now = new Date().toISOString();
+    const sanitized = encryptSensitive(data);
 
-  // ── 1. Master file ──
-  const master = readMaster();
-  if (!master[email]) {
-    master[email] = { email, createdAt: now, updatedAt: now, status: "pending" };
-  }
-  master[email][step] = sanitized;
-  master[email]["updatedAt"] = now;
-  writeMaster(master);
+    const master = readMaster();
+    if (!master[email]) {
+      master[email] = { email, createdAt: now, updatedAt: now, status: "pending" };
+    }
+    master[email][step] = sanitized;
+    master[email]["updatedAt"] = now;
+    writeMaster(master);
 
-  // ── 2. Per-user profile ──
-  const profile = readProfile(email);
-  if (!profile["email"]) {
-    profile["email"] = email;
-    profile["createdAt"] = now;
-    profile["status"] = "pending";
-  }
-  profile[step] = sanitized;
-  profile["updatedAt"] = now;
-  writeProfile(email, profile);
+    const profile = readProfile(email);
+    if (!profile["email"]) {
+      profile["email"] = email;
+      profile["createdAt"] = now;
+      profile["status"] = "pending";
+    }
+    profile[step] = sanitized;
+    profile["updatedAt"] = now;
+    writeProfile(email, profile);
 
-  const userCount = Object.keys(readMaster()).length;
-  console.log(`[UserDataStore] Saved step "${step}" for ${email} (total users: ${userCount})`);
+    const userCount = Object.keys(master).length;
+    console.log(`[UserDataStore] Saved step "${step}" for ${email} (total users: ${userCount})`);
+  });
 }
 
 /**
@@ -235,51 +246,53 @@ export function addDocumentRef(
   role: string,
   filePath: string
 ): void {
-  const now = new Date().toISOString();
+  withFileLock(MASTER_FILE, () => {
+    const now = new Date().toISOString();
 
-  const updateRecord = (record: Record<string, unknown>) => {
-    const docs = (record["documents"] as Record<string, unknown>) ?? {};
-    docs[role] = filePath;
-    record["documents"] = docs;
-    record["updatedAt"] = now;
-    return record;
-  };
+    const updateRecord = (record: Record<string, unknown>) => {
+      const docs = (record["documents"] as Record<string, unknown>) ?? {};
+      docs[role] = filePath;
+      record["documents"] = docs;
+      record["updatedAt"] = now;
+      return record;
+    };
 
-  // Master
-  const master = readMaster();
-  if (!master[email]) master[email] = { email, createdAt: now };
-  master[email] = updateRecord(master[email]);
-  writeMaster(master);
+    const master = readMaster();
+    if (!master[email]) master[email] = { email, createdAt: now };
+    master[email] = updateRecord(master[email]);
+    writeMaster(master);
 
-  // Per-user
-  const profile = readProfile(email);
-  if (!profile["email"]) { profile["email"] = email; profile["createdAt"] = now; }
-  writeProfile(email, updateRecord(profile));
+    const profile = readProfile(email);
+    if (!profile["email"]) { profile["email"] = email; profile["createdAt"] = now; }
+    writeProfile(email, updateRecord(profile));
 
-  console.log(`[UserDataStore] Document ref saved: ${role} → ${filePath} (${email})`);
+    console.log(`[UserDataStore] Document ref saved: ${role} → ${filePath} (${email})`);
+  });
 }
 
 /**
  * Update a user's top-level status field (e.g. "pending" → "verified").
  */
 export function setUserStatus(email: string, status: string): void {
-  const now = new Date().toISOString();
+  withFileLock(MASTER_FILE, () => {
+    const now = new Date().toISOString();
 
-  const master = readMaster();
-  if (!master[email]) master[email] = { email, createdAt: now };
-  master[email]["status"] = status;
-  master[email]["updatedAt"] = now;
-  if (status === "verified") master[email]["verifiedAt"] = now;
-  writeMaster(master);
+    const master = readMaster();
+    if (!master[email]) master[email] = { email, createdAt: now };
+    master[email]["status"] = status;
+    master[email]["updatedAt"] = now;
+    if (status === "verified") master[email]["verifiedAt"] = now;
+    writeMaster(master);
 
-  const profile = readProfile(email);
-  if (!profile["email"]) { profile["email"] = email; profile["createdAt"] = now; }
-  profile["status"] = status;
-  profile["updatedAt"] = now;
-  if (status === "verified") profile["verifiedAt"] = now;
-  writeProfile(email, profile);
+    const profile = readProfile(email);
+    if (!profile["email"]) { profile["email"] = email; profile["createdAt"] = now; }
+    profile["status"] = status;
+    profile["updatedAt"] = now;
+    if (status === "verified") profile["verifiedAt"] = now;
+    writeProfile(email, profile);
 
-  console.log(`[UserDataStore] Status set to "${status}" for ${email}`);
+    console.log(`[UserDataStore] Status set to "${status}" for ${email}`);
+  });
 }
 
 export function getUserData(email: string): Record<string, unknown> | null {
@@ -328,24 +341,28 @@ export function setUserProfileMeta(
   key: string,
   value: unknown
 ): void {
-  const profile = readProfile(email);
-  profile[key] = value;
-  profile["updatedAt"] = new Date().toISOString();
-  writeProfile(email, profile);
+  withFileLock(getUserProfilePath(email), () => {
+    const profile = readProfile(email);
+    profile[key] = value;
+    profile["updatedAt"] = new Date().toISOString();
+    writeProfile(email, profile);
+  });
 }
 
 /**
  * Permanently delete a user from the master file and remove their profile directory.
  */
 export function deleteUser(email: string): void {
-  const master = readMaster();
-  delete master[email];
-  writeMaster(master);
-  const userDir = getUserDir(email);
-  if (fs.existsSync(userDir)) {
-    fs.rmSync(userDir, { recursive: true, force: true });
-  }
-  console.log(`[UserDataStore] Deleted user: ${email}`);
+  withFileLock(MASTER_FILE, () => {
+    const master = readMaster();
+    delete master[email];
+    writeMaster(master);
+    const userDir = getUserDir(email);
+    if (fs.existsSync(userDir)) {
+      fs.rmSync(userDir, { recursive: true, force: true });
+    }
+    console.log(`[UserDataStore] Deleted user: ${email}`);
+  });
 }
 
 /**
@@ -358,37 +375,39 @@ export function setUserBalance(
   adminNote: string,
   actor = "admin"
 ): void {
-  const now = new Date().toISOString();
-  const profile = readProfile(email);
-  const current = (profile["_balance"] as { balance: number; profit: number } | undefined) ?? { balance: 0, profit: 0 };
-  const history = (profile["_balanceHistory"] as unknown[]) ?? [];
+  withFileLock(getUserProfilePath(email), () => {
+    const now = new Date().toISOString();
+    const profile = readProfile(email);
+    const current = (profile["_balance"] as { balance: number; profit: number } | undefined) ?? { balance: 0, profit: 0 };
+    const history = (profile["_balanceHistory"] as unknown[]) ?? [];
 
-  history.push({
-    timestamp: now,
-    actor,
-    prevBalance: current.balance,
-    prevProfit: current.profit,
-    newBalance: balance,
-    newProfit: profit,
-    note: adminNote,
+    history.push({
+      timestamp: now,
+      actor,
+      prevBalance: current.balance,
+      prevProfit: current.profit,
+      newBalance: balance,
+      newProfit: profit,
+      note: adminNote,
+    });
+
+    profile["_balance"] = { balance, profit, updatedAt: now };
+    profile["_balanceHistory"] = history;
+    profile["updatedAt"] = now;
+
+    const auditLog = (profile["_auditLog"] as unknown[]) ?? [];
+    auditLog.push({
+      actionType: "ADMIN_SET_BALANCE",
+      actor,
+      note: adminNote || null,
+      meta: { balance, profit },
+      timestamp: now,
+    });
+    profile["_auditLog"] = auditLog;
+    writeProfile(email, profile);
+
+    console.log(`[UserDataStore] Balance set for ${email}: $${balance}, profit: $${profit}`);
   });
-
-  profile["_balance"] = { balance, profit, updatedAt: now };
-  profile["_balanceHistory"] = history;
-  profile["updatedAt"] = now;
-
-  const auditLog = (profile["_auditLog"] as unknown[]) ?? [];
-  auditLog.push({
-    actionType: "ADMIN_SET_BALANCE",
-    actor,
-    note: adminNote || null,
-    meta: { balance, profit },
-    timestamp: now,
-  });
-  profile["_auditLog"] = auditLog;
-  writeProfile(email, profile);
-
-  console.log(`[UserDataStore] Balance set for ${email}: $${balance}, profit: $${profit}`);
 }
 
 /**
@@ -409,21 +428,23 @@ export function getUserBalance(email: string): { balance: number; profit: number
  * Assign a role to a user (e.g. "user", "vip", "restricted", "admin").
  */
 export function setUserRole(email: string, role: string, actor = "admin"): void {
-  const now = new Date().toISOString();
-  const master = readMaster();
-  if (!master[email]) master[email] = { email, createdAt: now };
-  master[email]["role"] = role;
-  master[email]["updatedAt"] = now;
-  writeMaster(master);
+  withFileLock(MASTER_FILE, () => {
+    const now = new Date().toISOString();
+    const master = readMaster();
+    if (!master[email]) master[email] = { email, createdAt: now };
+    master[email]["role"] = role;
+    master[email]["updatedAt"] = now;
+    writeMaster(master);
 
-  const profile = readProfile(email);
-  profile["role"] = role;
-  profile["updatedAt"] = now;
-  const auditLog = (profile["_auditLog"] as unknown[]) ?? [];
-  auditLog.push({ actionType: "ADMIN_ASSIGN_ROLE", actor, note: `Role set to: ${role}`, timestamp: now });
-  profile["_auditLog"] = auditLog;
-  writeProfile(email, profile);
-  console.log(`[UserDataStore] Role set to "${role}" for ${email}`);
+    const profile = readProfile(email);
+    profile["role"] = role;
+    profile["updatedAt"] = now;
+    const auditLog = (profile["_auditLog"] as unknown[]) ?? [];
+    auditLog.push({ actionType: "ADMIN_ASSIGN_ROLE", actor, note: `Role set to: ${role}`, timestamp: now });
+    profile["_auditLog"] = auditLog;
+    writeProfile(email, profile);
+    console.log(`[UserDataStore] Role set to "${role}" for ${email}`);
+  });
 }
 
 /**
@@ -454,17 +475,19 @@ export function addNotification(
   email: string,
   notification: { type: string; title: string; message: string; actionUrl?: string }
 ): void {
-  const profile = readProfile(email);
-  const notifications = (profile["_notifications"] as unknown[]) ?? [];
-  notifications.unshift({
-    id: crypto.randomUUID(),
-    ...notification,
-    read: false,
-    createdAt: new Date().toISOString(),
+  withFileLock(getUserProfilePath(email), () => {
+    const profile = readProfile(email);
+    const notifications = (profile["_notifications"] as unknown[]) ?? [];
+    notifications.unshift({
+      id: crypto.randomUUID(),
+      ...notification,
+      read: false,
+      createdAt: new Date().toISOString(),
+    });
+    if (notifications.length > 100) notifications.length = 100;
+    profile["_notifications"] = notifications;
+    writeProfile(email, profile);
   });
-  if (notifications.length > 100) notifications.length = 100;
-  profile["_notifications"] = notifications;
-  writeProfile(email, profile);
 }
 
 export function getNotifications(email: string): unknown[] {
@@ -473,33 +496,39 @@ export function getNotifications(email: string): unknown[] {
 }
 
 export function markNotificationsRead(email: string, ids: string[]): void {
-  const profile = readProfile(email);
-  const notifications = (profile["_notifications"] as Array<Record<string, unknown>>) ?? [];
-  const idSet = new Set(ids);
-  for (const n of notifications) {
-    if (idSet.has(n["id"] as string)) n["read"] = true;
-  }
-  profile["_notifications"] = notifications;
-  writeProfile(email, profile);
+  withFileLock(getUserProfilePath(email), () => {
+    const profile = readProfile(email);
+    const notifications = (profile["_notifications"] as Array<Record<string, unknown>>) ?? [];
+    const idSet = new Set(ids);
+    for (const n of notifications) {
+      if (idSet.has(n["id"] as string)) n["read"] = true;
+    }
+    profile["_notifications"] = notifications;
+    writeProfile(email, profile);
+  });
 }
 
 export function markAllNotificationsRead(email: string): void {
-  const profile = readProfile(email);
-  const notifications = (profile["_notifications"] as Array<Record<string, unknown>>) ?? [];
-  for (const n of notifications) n["read"] = true;
-  profile["_notifications"] = notifications;
-  writeProfile(email, profile);
+  withFileLock(getUserProfilePath(email), () => {
+    const profile = readProfile(email);
+    const notifications = (profile["_notifications"] as Array<Record<string, unknown>>) ?? [];
+    for (const n of notifications) n["read"] = true;
+    profile["_notifications"] = notifications;
+    writeProfile(email, profile);
+  });
 }
 
 export function setProfilePicture(email: string, filename: string): void {
-  const master = readMaster();
-  if (master[email]) {
-    master[email]["profilePicture"] = filename;
-    writeMaster(master);
-  }
-  const profile = readProfile(email);
-  profile["profilePicture"] = filename;
-  writeProfile(email, profile);
+  withFileLock(MASTER_FILE, () => {
+    const master = readMaster();
+    if (master[email]) {
+      master[email]["profilePicture"] = filename;
+      writeMaster(master);
+    }
+    const profile = readProfile(email);
+    profile["profilePicture"] = filename;
+    writeProfile(email, profile);
+  });
 }
 
 export function getProfilePicture(email: string): string | null {
@@ -518,24 +547,26 @@ export function createAdminUser(
   role: string,
   actor = "admin"
 ): void {
-  const now = new Date().toISOString();
-  const master = readMaster();
-  if (master[email]) throw new Error(`User ${email} already exists`);
-  master[email] = { email, createdAt: now, updatedAt: now, status: "pending", role, createdBy: actor };
-  writeMaster(master);
+  withFileLock(MASTER_FILE, () => {
+    const now = new Date().toISOString();
+    const master = readMaster();
+    if (master[email]) throw new Error(`User ${email} already exists`);
+    master[email] = { email, createdAt: now, updatedAt: now, status: "pending", role, createdBy: actor };
+    writeMaster(master);
 
-  const profile: Record<string, unknown> = {
-    email,
-    role,
-    createdAt: now,
-    updatedAt: now,
-    status: "pending",
-    createdBy: actor,
-    personal: { firstName: displayName.split(" ")[0] ?? "", lastName: displayName.split(" ").slice(1).join(" ") ?? "" },
-    _auditLog: [{ actionType: "ADMIN_CREATE_USER", actor, note: `Account created by admin. Name: ${displayName}`, timestamp: now }],
-  };
-  ensureDir(getUserDir(email));
-  ensureDir(getUserDocDir(email));
-  writeWithRetry(getUserProfilePath(email), JSON.stringify(profile, null, 2));
-  console.log(`[UserDataStore] Admin created user: ${email}`);
+    const profile: Record<string, unknown> = {
+      email,
+      role,
+      createdAt: now,
+      updatedAt: now,
+      status: "pending",
+      createdBy: actor,
+      personal: { firstName: displayName.split(" ")[0] ?? "", lastName: displayName.split(" ").slice(1).join(" ") ?? "" },
+      _auditLog: [{ actionType: "ADMIN_CREATE_USER", actor, note: `Account created by admin. Name: ${displayName}`, timestamp: now }],
+    };
+    ensureDir(getUserDir(email));
+    ensureDir(getUserDocDir(email));
+    writeWithRetry(getUserProfilePath(email), JSON.stringify(profile, null, 2));
+    console.log(`[UserDataStore] Admin created user: ${email}`);
+  });
 }

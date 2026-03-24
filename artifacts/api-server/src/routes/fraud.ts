@@ -1,8 +1,31 @@
-import { Router, type Request, type Response } from "express";
+import { Router, type Request, type Response, type NextFunction } from "express";
+import jwt from "jsonwebtoken";
 import { evaluateRisk, type RiskScore } from "../lib/fraud/riskEngine.js";
 import { getUserProfileData, setUserProfileMeta, readMaster } from "../lib/userDataStore.js";
 
 const router = Router();
+
+function requireAuth(req: Request, res: Response, next: NextFunction): void {
+  const authHeader = req.headers["authorization"] ?? "";
+  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
+  const adminSecret = process.env.ADMIN_JWT_SECRET;
+
+  if (token && adminSecret) {
+    try {
+      jwt.verify(token, adminSecret, { issuer: "guardian-admin" });
+      next();
+      return;
+    } catch { /* fall through */ }
+  }
+
+  const secret = process.env.ADMIN_SECRET;
+  if (secret && req.headers["x-admin-key"] === secret) {
+    next();
+    return;
+  }
+
+  res.status(401).json({ error: "Authentication required" });
+}
 
 function readMasterEmails(): string[] {
   try {
@@ -12,7 +35,7 @@ function readMasterEmails(): string[] {
   }
 }
 
-router.post("/api/fraud/risk-score", (req: Request, res: Response): void => {
+router.post("/api/fraud/risk-score", requireAuth, (req: Request, res: Response): void => {
   try {
     const { email } = req.body as { email?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
@@ -33,17 +56,8 @@ router.post("/api/fraud/risk-score", (req: Request, res: Response): void => {
   }
 });
 
-router.get("/api/fraud/risk-events", (req: Request, res: Response): void => {
+router.get("/api/fraud/risk-events", requireAuth, (req: Request, res: Response): void => {
   try {
-    const authHeader = req.headers.authorization;
-    const adminSecret = process.env.ADMIN_SECRET;
-    if (adminSecret && req.headers["x-admin-key"] !== adminSecret) {
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        res.status(401).json({ error: "Unauthorized" });
-        return;
-      }
-    }
-
     const minScore = parseInt(String(req.query.minScore ?? "0"));
     const level    = req.query.level as string | undefined;
 
