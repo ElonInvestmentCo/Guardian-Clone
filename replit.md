@@ -202,14 +202,25 @@ All dashboard pages are fully responsive with mobile-first breakpoints (optimize
 
 ## Admin KYC Dashboard
 
-Separate web artifact at `/admin-kyc/`. JWT Bearer token authentication (8h session). Auto-polling every 15 seconds for real-time user detection (refetchInterval: 15_000, refetchOnWindowFocus: true).
+Separate web artifact at `/admin-kyc/`. Branded as "Guardiian Trading Admin" (double 'i'). Redesigned with Safee Bootstrap Admin Template aesthetic. JWT Bearer token authentication (8h session). Auto-polling every 15 seconds for real-time user detection (refetchInterval: 15_000, refetchOnWindowFocus: true).
 
-### Views (5 total)
-1. **KYC Queue** — Sortable table of all applicants with risk score, status badges, side panel with profile/risk/audit tabs and approve/reject/resubmit actions
-2. **Users** — Full user registry with search, status/role filters, sortable columns, per-row quick actions (suspend/ban/reactivate), "New User" modal, "View" → User Profile navigation
-3. **Risk Events** — Live fraud/risk flag monitor across all users
-4. **Activity Logs** — Global audit log with search, action-type filter, "View User →" button to open profile
-5. **Audit Log** — Timeline view of all admin actions with expand-for-detail cards
+### Design System
+- **Theme**: Safee Bootstrap Admin — Bootstrap 5 + Bootstrap Icons, Open Sans font
+- **CSS classes**: `.safee-sidebar`, `.safee-header`, `.safee-main`, `.stat-card`, `.card-safee`, `.table-safee`, `.badge-status`, `.risk-badge`, `.safee-login`
+- **Sidebar**: Dark (#1E293B), 250px width, collapsible on mobile with hamburger overlay
+- **Header**: 60px height, white background with search and logout
+- **Body background**: #F1F2F7
+- **Login**: Full-page dark gradient background with centered card, Guardian Trading logo
+- **Logos**: `public/logo-white.png` (sidebar), `public/logo.png` (login page)
+- **Layout**: `.view-wrapper` with `.with-padding` for dashboard; other views manage their own full-height scroll
+
+### Views (6 total)
+1. **Dashboard** — Stat cards (Total Users, Pending KYC, Approved, High Risk), user status distribution bar chart, KYC queue risk summary, recent activity table
+2. **KYC Queue** — Bootstrap-styled sortable table, status filter button group, risk filter, side panel (desktop only via `d-none d-lg-flex`), mobile bottom-sheet panel
+3. **Users** — Full user registry with search, status/role filters, sortable columns, Bootstrap action buttons, "New User" modal
+4. **Risk Events** — Colored stat cards for risk levels, card-based user list with risk scores, detail slide-out panel
+5. **Activity Logs** — Bootstrap table with search, action-type dropdown filter, timestamp/user/action/details columns
+6. **Audit Log** — Timeline view with colored dots, expandable detail cards, action summary badges
 
 ### User Profile View
 Full-page detail accessed by clicking any user (from Users or Activity Logs). Tabs:

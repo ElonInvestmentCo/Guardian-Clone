@@ -5,42 +5,13 @@ import { riskColors, riskLabel, formatDateShort, formatDate } from "@/lib/utils"
 import { RiskBadge, StatusBadge, SeverityBadge } from "@/components/Badges";
 
 const LEVEL_FILTERS: Array<{ value: string; label: string; color: string }> = [
-  { value: "",         label: "All",      color: "#6B7280" },
-  { value: "critical", label: "Critical", color: "#DC2626" },
-  { value: "high",     label: "High",     color: "#EA580C" },
-  { value: "medium",   label: "Medium",   color: "#CA8A04" },
-  { value: "low",      label: "Low",      color: "#16A34A" },
+  { value: "",         label: "All",      color: "#64748B" },
+  { value: "critical", label: "Critical", color: "#DC3545" },
+  { value: "high",     label: "High",     color: "#FD7E14" },
+  { value: "medium",   label: "Medium",   color: "#FFC107" },
+  { value: "low",      label: "Low",      color: "#198754" },
 ];
 
-// ── Stat card ──────────────────────────────────────────────────────────────────
-interface StatCardProps {
-  label: string; value: number;
-  color: string; bg: string; border: string;
-  onClick?: () => void; active?: boolean;
-}
-function StatCard({ label, value, color, bg, border, onClick, active }: StatCardProps) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        flex: "1 1 110px", minWidth: "90px",
-        background: active ? bg : "white",
-        border: `1.5px solid ${active ? border : "#E5E7EB"}`,
-        borderRadius: "8px", padding: "14px 16px",
-        textAlign: "left", cursor: onClick ? "pointer" : "default",
-        transition: "border-color 0.15s, background 0.15s",
-        boxShadow: active ? `0 0 0 2px ${border}` : "none",
-      }}
-      onMouseEnter={(e) => { if (onClick) (e.currentTarget as HTMLElement).style.borderColor = border; }}
-      onMouseLeave={(e) => { if (onClick && !active) (e.currentTarget as HTMLElement).style.borderColor = "#E5E7EB"; }}
-    >
-      <div style={{ fontSize: "24px", fontWeight: "800", color, lineHeight: 1 }}>{value}</div>
-      <div style={{ fontSize: "11px", color: "#6B7280", marginTop: "4px", fontWeight: "500" }}>{label}</div>
-    </button>
-  );
-}
-
-// ── Main view ──────────────────────────────────────────────────────────────────
 export default function RiskEventsView() {
   const [levelFilter, setLevelFilter] = useState("");
   const [selected,    setSelected]    = useState<KycUser | null>(null);
@@ -65,141 +36,122 @@ export default function RiskEventsView() {
   const sorted = [...filtered].sort((a, b) => b.riskScore - a.riskScore);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
-
-      {/* Top bar */}
-      <div style={{ padding: "14px 20px", background: "white", borderBottom: "1px solid #E5E7EB", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, flexWrap: "wrap", gap: "10px" }}>
-        <div>
-          <h1 style={{ margin: 0, fontSize: "17px", fontWeight: "700", color: "#111827" }}>Risk Events</h1>
-          <p style={{ margin: 0, fontSize: "12px", color: "#6B7280", marginTop: "1px" }}>
-            {isLoading ? "Loading…" : `${allUsers.length} flagged applicant${allUsers.length !== 1 ? "s" : ""}`}
-          </p>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <div style={{ padding: "16px 20px", background: "#fff", borderBottom: "1px solid #e5e7eb", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
+          <div>
+            <h5 style={{ margin: 0, fontWeight: 700, color: "#1E293B", fontSize: 16 }}>Risk Events</h5>
+            <span style={{ fontSize: 12, color: "#64748B" }}>
+              {isLoading ? "Loading…" : `${allUsers.length} flagged applicant${allUsers.length !== 1 ? "s" : ""}`}
+            </span>
+          </div>
+          <button className="btn btn-primary btn-sm" onClick={() => refetch()} disabled={isFetching}>
+            <i className="bi bi-arrow-clockwise me-1" />
+            {isFetching ? "Refreshing…" : "Refresh"}
+          </button>
         </div>
-        <button
-          onClick={() => refetch()}
-          disabled={isFetching}
-          style={{
-            padding: "7px 16px", borderRadius: "5px",
-            background: isFetching ? "#9CA3AF" : "#1E3A5F", color: "white",
-            border: "none", fontSize: "12px", fontWeight: "600",
-            cursor: isFetching ? "default" : "pointer", transition: "background 0.15s",
-          }}
-          onMouseEnter={(e) => { if (!isFetching) (e.currentTarget as HTMLElement).style.background = "#162D4A"; }}
-          onMouseLeave={(e) => { if (!isFetching) (e.currentTarget as HTMLElement).style.background = "#1E3A5F"; }}
-        >
-          {isFetching ? "Refreshing…" : "Refresh"}
-        </button>
       </div>
 
-      {/* Scrollable body */}
-      <div style={{ flex: 1, overflow: "auto", padding: "20px" }}>
-
-        {/* Stat cards (responsive grid on mobile) */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3" style={{ marginBottom: "20px" }}>
-          <StatCard label="Critical Risk" value={counts.critical} color="#DC2626" bg="#FEF2F2" border="#FECACA"
-            active={levelFilter === "critical"} onClick={() => setLevelFilter(levelFilter === "critical" ? "" : "critical")} />
-          <StatCard label="High Risk" value={counts.high} color="#EA580C" bg="#FFF7ED" border="#FED7AA"
-            active={levelFilter === "high"} onClick={() => setLevelFilter(levelFilter === "high" ? "" : "high")} />
-          <StatCard label="Medium Risk" value={counts.medium} color="#CA8A04" bg="#FEFCE8" border="#FEF08A"
-            active={levelFilter === "medium"} onClick={() => setLevelFilter(levelFilter === "medium" ? "" : "medium")} />
-          <StatCard label="Low Risk" value={counts.low} color="#16A34A" bg="#F0FDF4" border="#BBF7D0"
-            active={levelFilter === "low"} onClick={() => setLevelFilter(levelFilter === "low" ? "" : "low")} />
+      <div style={{ flex: 1, overflow: "auto", padding: 20 }}>
+        <div className="row g-3 mb-3">
+          {([
+            { key: "critical", label: "Critical Risk", color: "#DC3545", bg: "linear-gradient(135deg, #DC3545, #BB2D3B)" },
+            { key: "high", label: "High Risk", color: "#FD7E14", bg: "linear-gradient(135deg, #FD7E14, #E8590C)" },
+            { key: "medium", label: "Medium Risk", color: "#FFC107", bg: "linear-gradient(135deg, #FFC107, #FFCA2C)" },
+            { key: "low", label: "Low Risk", color: "#198754", bg: "linear-gradient(135deg, #198754, #157347)" },
+          ] as const).map(({ key, label, bg }) => (
+            <div className="col-6 col-lg-3" key={key}>
+              <button
+                onClick={() => setLevelFilter(levelFilter === key ? "" : key)}
+                className="stat-card w-100 text-start"
+                style={{
+                  background: bg,
+                  border: levelFilter === key ? "2px solid #fff" : "2px solid transparent",
+                  boxShadow: levelFilter === key ? "0 0 0 2px #0D6EFD" : undefined,
+                  cursor: "pointer",
+                }}
+              >
+                <h2 style={{ fontSize: 28 }}>{counts[key]}</h2>
+                <p>{label}</p>
+              </button>
+            </div>
+          ))}
         </div>
 
-        {/* Level filter pills */}
-        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "16px" }}>
-          {LEVEL_FILTERS.map(({ value, label, color }) => (
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 16 }}>
+          {LEVEL_FILTERS.map(({ value, label }) => (
             <button
               key={value}
+              className={`btn btn-sm ${levelFilter === value ? "btn-primary" : "btn-outline-secondary"}`}
               onClick={() => setLevelFilter(value)}
-              style={{
-                padding: "5px 14px", borderRadius: "20px",
-                border: `1.5px solid ${levelFilter === value ? color : "#E5E7EB"}`,
-                background: levelFilter === value ? `${color}18` : "white",
-                color: levelFilter === value ? color : "#6B7280",
-                fontSize: "12px", fontWeight: levelFilter === value ? "700" : "500",
-                cursor: "pointer", transition: "all 0.15s",
-              }}
+              style={{ fontSize: 12, borderRadius: 20 }}
             >
               {label}
             </button>
           ))}
         </div>
 
-        {/* Content */}
         {isLoading ? (
-          <SpinnerState label="Loading risk events…" />
+          <div style={{ textAlign: "center", padding: 60 }}>
+            <div className="spinner-border text-primary" role="status" />
+            <p style={{ color: "#64748B", fontSize: 13, marginTop: 12 }}>Loading risk events…</p>
+          </div>
         ) : isError ? (
-          <ErrorState message="Failed to load risk data." onRetry={() => refetch()} />
+          <div style={{ textAlign: "center", padding: 48 }}>
+            <i className="bi bi-exclamation-triangle text-danger" style={{ fontSize: 32 }} />
+            <p style={{ color: "#DC3545", fontSize: 13, margin: "12px 0" }}>Failed to load risk data.</p>
+            <button className="btn btn-outline-primary btn-sm" onClick={() => refetch()}>Try Again</button>
+          </div>
         ) : sorted.length === 0 ? (
-          <EmptyState
-            icon="✓"
-            title={levelFilter ? `No ${riskLabel(levelFilter as RiskLevel)} risk applicants` : "No flagged applicants"}
-            sub="All applicants are within acceptable risk thresholds."
-          />
+          <div style={{ textAlign: "center", padding: 60 }}>
+            <i className="bi bi-check-circle text-success" style={{ fontSize: 40 }} />
+            <p style={{ fontWeight: 600, fontSize: 14, margin: "12px 0 6px" }}>
+              {levelFilter ? `No ${riskLabel(levelFilter as RiskLevel)} risk applicants` : "No flagged applicants"}
+            </p>
+            <p style={{ color: "#94A3B8", fontSize: 12 }}>All applicants are within acceptable risk thresholds.</p>
+          </div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {sorted.map((user) => {
-              const c        = riskColors(user.riskLevel);
+              const c = riskColors(user.riskLevel);
               const isActive = selected?.email === user.email;
               return (
                 <button
                   key={user.email}
                   onClick={() => setSelected(isActive ? null : user)}
+                  className="card-safee"
                   style={{
-                    display: "flex", alignItems: "center", gap: "12px",
+                    display: "flex", alignItems: "center", gap: 12,
                     padding: "14px 16px",
-                    background: isActive ? "#EFF6FF" : "white",
-                    border: `1px solid ${isActive ? "#93C5FD" : "#E5E7EB"}`,
+                    background: isActive ? "#EFF6FF" : "#fff",
                     borderLeft: `4px solid ${c.text}`,
-                    borderRadius: "8px", cursor: "pointer",
-                    textAlign: "left", width: "100%",
-                    transition: "border-color 0.15s, background 0.15s",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) {
-                      const el = e.currentTarget as HTMLElement;
-                      el.style.background = "#F9FAFB";
-                      el.style.borderColor = "#D1D5DB";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) {
-                      const el = e.currentTarget as HTMLElement;
-                      el.style.background = "white";
-                      el.style.borderColor = "#E5E7EB";
-                    }
+                    cursor: "pointer", textAlign: "left", width: "100%",
                   }}
                 >
-                  {/* Score circle */}
                   <div style={{
-                    width: "48px", height: "48px", borderRadius: "50%",
+                    width: 48, height: 48, borderRadius: "50%",
                     background: c.bg, border: `2px solid ${c.border}`,
                     display: "flex", flexDirection: "column",
-                    alignItems: "center", justifyContent: "center",
-                    flexShrink: 0,
+                    alignItems: "center", justifyContent: "center", flexShrink: 0,
                   }}>
-                    <span style={{ fontSize: "15px", fontWeight: "800", color: c.text, lineHeight: 1 }}>{user.riskScore}</span>
-                    <span style={{ fontSize: "8px", color: c.text, fontWeight: "600", opacity: 0.8 }}>/ 100</span>
+                    <span style={{ fontSize: 15, fontWeight: 800, color: c.text, lineHeight: 1 }}>{user.riskScore}</span>
+                    <span style={{ fontSize: 8, color: c.text, fontWeight: 600, opacity: 0.8 }}>/ 100</span>
                   </div>
 
-                  {/* Info */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-                      <span style={{ fontWeight: "700", fontSize: "13px", color: "#111827" }}>{user.name}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                      <span style={{ fontWeight: 700, fontSize: 13, color: "#1E293B" }}>{user.name}</span>
                       <RiskBadge level={user.riskLevel} />
                       <StatusBadge status={user.status} />
                     </div>
-                    <div style={{ fontSize: "11px", color: "#9CA3AF", marginTop: "3px", display: "flex", gap: "12px", flexWrap: "wrap" }}>
-                      <span style={{ overflow: "hidden", textOverflow: "ellipsis", maxWidth: "200px" }}>{user.email}</span>
-                      {user.flagCount > 0 && (
-                        <span style={{ color: "#DC2626", fontWeight: "600" }}>⚑ {user.flagCount} flag{user.flagCount !== 1 ? "s" : ""}</span>
-                      )}
+                    <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 3, display: "flex", gap: 12, flexWrap: "wrap" }}>
+                      <span>{user.email}</span>
+                      {user.flagCount > 0 && <span style={{ color: "#DC3545", fontWeight: 600 }}>⚑ {user.flagCount} flag{user.flagCount !== 1 ? "s" : ""}</span>}
                       <span>Registered {formatDateShort(user.createdAt)}</span>
                     </div>
                   </div>
 
-                  <span style={{ fontSize: "11px", color: isActive ? "#2563EB" : "#9CA3AF", fontWeight: "600", flexShrink: 0 }}>
+                  <span style={{ fontSize: 11, color: isActive ? "#0D6EFD" : "#94A3B8", fontWeight: 600, flexShrink: 0 }}>
                     {isActive ? "Hide ←" : "Details →"}
                   </span>
                 </button>
@@ -209,15 +161,11 @@ export default function RiskEventsView() {
         )}
       </div>
 
-      {/* Detail panel — bottom sheet on mobile, overlay on desktop */}
-      {selected && (
-        <RiskDetailPanel user={selected} onClose={() => setSelected(null)} />
-      )}
+      {selected && <RiskDetailPanel user={selected} onClose={() => setSelected(null)} />}
     </div>
   );
 }
 
-// ── Risk detail panel ──────────────────────────────────────────────────────────
 function RiskDetailPanel({ user, onClose }: { user: KycUser; onClose: () => void }) {
   const { data, isLoading } = useQuery({
     queryKey: ["user-details", user.email],
@@ -225,142 +173,73 @@ function RiskDetailPanel({ user, onClose }: { user: KycUser; onClose: () => void
   });
 
   const risk = data?.risk;
-  const c    = riskColors(user.riskLevel);
+  const c = riskColors(user.riskLevel);
 
   return (
-    <>
-      {/* Mobile: bottom sheet */}
-      <div
-        className="fixed inset-0 z-40 md:hidden flex flex-col justify-end"
-        onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-      >
-        <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-        <div
-          className="relative bg-white rounded-t-2xl"
-          style={{ maxHeight: "80vh", overflow: "auto", padding: "20px" }}
-        >
-          <RiskDetailContent user={user} risk={risk} isLoading={isLoading} c={c} onClose={onClose} />
-        </div>
-      </div>
-
-      {/* Desktop: right side panel */}
-      <div
-        className="hidden md:block"
-        style={{
-          position: "fixed", top: 0, right: 0, bottom: 0,
-          width: "380px", background: "white",
-          borderLeft: "1px solid #E5E7EB",
-          overflow: "auto", padding: "20px",
-          zIndex: 30, boxShadow: "-4px 0 20px rgba(0,0,0,0.08)",
-        }}
-      >
-        <RiskDetailContent user={user} risk={risk} isLoading={isLoading} c={c} onClose={onClose} />
-      </div>
-    </>
-  );
-}
-
-function RiskDetailContent({
-  user, risk, isLoading, c, onClose,
-}: {
-  user: KycUser;
-  risk: RiskScore | undefined;
-  isLoading: boolean;
-  c: { bg: string; text: string; border: string };
-  onClose: () => void;
-}) {
-  return (
-    <>
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "16px" }}>
+    <div
+      style={{
+        position: "fixed", top: 0, right: 0, bottom: 0,
+        width: 380, background: "#fff",
+        borderLeft: "1px solid #e5e7eb",
+        overflow: "auto", padding: 20,
+        zIndex: 1040, boxShadow: "-4px 0 20px rgba(0,0,0,0.08)",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
         <div>
-          <div style={{ fontWeight: "700", fontSize: "15px", color: "#111827" }}>{user.name}</div>
-          <div style={{ fontSize: "11px", color: "#6B7280", marginTop: "2px" }}>{user.email}</div>
-          <div style={{ marginTop: "8px", display: "flex", gap: "6px", flexWrap: "wrap" }}>
+          <div style={{ fontWeight: 700, fontSize: 15, color: "#1E293B" }}>{user.name}</div>
+          <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>{user.email}</div>
+          <div style={{ marginTop: 8, display: "flex", gap: 6, flexWrap: "wrap" }}>
             <RiskBadge level={user.riskLevel} score={user.riskScore} />
             <StatusBadge status={user.status} />
           </div>
         </div>
-        <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "#9CA3AF", fontSize: "22px", lineHeight: 1, padding: "2px 6px" }}>
-          ×
-        </button>
+        <button className="btn-close" onClick={onClose} />
       </div>
 
       {isLoading ? (
-        <div style={{ textAlign: "center", padding: "40px 0", color: "#9CA3AF", fontSize: "13px" }}>Loading risk details…</div>
+        <div style={{ textAlign: "center", padding: 40, color: "#94A3B8", fontSize: 13 }}>Loading risk details…</div>
       ) : risk ? (
         <>
-          {/* Score bar */}
-          <div style={{ background: "#F9FAFB", borderRadius: "6px", padding: "12px 14px", marginBottom: "16px", border: "1px solid #E5E7EB" }}>
-            <div style={{ fontSize: "10px", color: "#6B7280", fontWeight: "600", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: "8px" }}>Risk Score</div>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <span style={{ fontSize: "36px", fontWeight: "800", color: c.text }}>{risk.score}</span>
-              <div style={{ flex: 1 }}>
-                <div style={{ height: "6px", borderRadius: "3px", background: "#E5E7EB", overflow: "hidden" }}>
-                  <div style={{ height: "100%", width: `${Math.min(100, risk.score)}%`, background: c.text, borderRadius: "3px" }} />
+          <div className="card-safee" style={{ marginBottom: 16 }}>
+            <div className="card-body">
+              <div style={{ fontSize: 10, color: "#64748B", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 8 }}>Risk Score</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span style={{ fontSize: 36, fontWeight: 800, color: c.text }}>{risk.score}</span>
+                <div style={{ flex: 1 }}>
+                  <div className="progress" style={{ height: 6 }}>
+                    <div className="progress-bar" style={{ width: `${Math.min(100, risk.score)}%`, background: c.text }} />
+                  </div>
+                  <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 4 }}>Evaluated {formatDate(risk.evaluatedAt)}</div>
                 </div>
-                <div style={{ fontSize: "10px", color: "#9CA3AF", marginTop: "4px" }}>Evaluated {formatDate(risk.evaluatedAt)}</div>
               </div>
             </div>
           </div>
 
-          {/* Flags */}
           {risk.flags.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "24px 0", color: "#6B7280", fontSize: "13px" }}>
-              ✓ No fraud flags detected
-            </div>
+            <div style={{ textAlign: "center", padding: 24, color: "#64748B", fontSize: 13 }}>✓ No fraud flags detected</div>
           ) : (
             <div>
-              <div style={{ fontSize: "11px", fontWeight: "700", color: "#374151", letterSpacing: "0.05em", marginBottom: "8px" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#3C4858", marginBottom: 8 }}>
                 {risk.flags.length} FLAG{risk.flags.length !== 1 ? "S" : ""} DETECTED
               </div>
               {risk.flags.map((flag, i) => (
-                <div key={i} style={{ border: "1px solid #E5E7EB", borderLeft: `3px solid ${c.text}`, borderRadius: "6px", padding: "10px 12px", marginBottom: "8px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
-                    <code style={{ fontSize: "11px", fontWeight: "700", color: "#374151" }}>{flag.code}</code>
-                    <SeverityBadge severity={flag.severity} />
+                <div key={i} className="card-safee" style={{ borderLeft: `3px solid ${c.text}`, marginBottom: 8 }}>
+                  <div className="card-body" style={{ padding: "10px 12px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                      <code style={{ fontSize: 11, fontWeight: 700, color: "#3C4858" }}>{flag.code}</code>
+                      <SeverityBadge severity={flag.severity} />
+                    </div>
+                    <div style={{ fontSize: 12, color: "#64748B" }}>{flag.description}</div>
                   </div>
-                  <div style={{ fontSize: "12px", color: "#6B7280" }}>{flag.description}</div>
                 </div>
               ))}
             </div>
           )}
         </>
       ) : (
-        <div style={{ textAlign: "center", padding: "40px 0", color: "#9CA3AF", fontSize: "13px" }}>No risk data available</div>
+        <div style={{ textAlign: "center", padding: 40, color: "#94A3B8", fontSize: 13 }}>No risk data available</div>
       )}
-    </>
-  );
-}
-
-// ── Shared state views ─────────────────────────────────────────────────────────
-function SpinnerState({ label }: { label: string }) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "60px 24px", gap: "12px" }}>
-      <div style={{ width: "32px", height: "32px", border: "3px solid #E5E7EB", borderTopColor: "#2563EB", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-      <p style={{ color: "#6B7280", fontSize: "13px", margin: 0 }}>{label}</p>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-    </div>
-  );
-}
-
-function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
-  return (
-    <div style={{ textAlign: "center", padding: "48px 24px" }}>
-      <div style={{ fontSize: "32px", marginBottom: "12px" }}>⚠️</div>
-      <p style={{ color: "#DC2626", fontSize: "13px", margin: "0 0 12px" }}>{message}</p>
-      <button onClick={onRetry} style={{ padding: "7px 18px", borderRadius: "5px", background: "#EFF6FF", color: "#2563EB", border: "1px solid #BFDBFE", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>
-        Try Again
-      </button>
-    </div>
-  );
-}
-
-function EmptyState({ icon, title, sub }: { icon: string; title: string; sub: string }) {
-  return (
-    <div style={{ textAlign: "center", padding: "60px 24px" }}>
-      <div style={{ fontSize: "40px", marginBottom: "12px" }}>{icon}</div>
-      <p style={{ color: "#374151", fontSize: "14px", fontWeight: "600", margin: "0 0 6px" }}>{title}</p>
-      <p style={{ color: "#9CA3AF", fontSize: "12px", margin: 0 }}>{sub}</p>
     </div>
   );
 }

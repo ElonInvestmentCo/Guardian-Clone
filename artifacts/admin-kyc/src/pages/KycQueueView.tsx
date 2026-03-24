@@ -55,82 +55,54 @@ export default function KycQueueView() {
   }, [qc]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
-
-      {/* ── Top bar ────────────────────────────────────────────────────────── */}
-      <div style={{
-        padding: "14px 20px", background: "white", borderBottom: "1px solid #E5E7EB",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        flexShrink: 0, flexWrap: "wrap", gap: "10px",
-      }}>
-        <div>
-          <h1 style={{ margin: 0, fontSize: "17px", fontWeight: "700", color: "#111827" }}>KYC Review Queue</h1>
-          <p style={{ margin: 0, fontSize: "12px", color: "#6B7280", marginTop: "1px" }}>
-            {isLoading ? "Loading…" : `${data?.total ?? 0} applicants total`}
-          </p>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <div style={{ padding: "16px 20px", background: "#fff", borderBottom: "1px solid #e5e7eb", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
+          <div>
+            <h5 style={{ margin: 0, fontWeight: 700, color: "#1E293B", fontSize: 16 }}>KYC Review Queue</h5>
+            <span style={{ fontSize: 12, color: "#64748B" }}>
+              {isLoading ? "Loading…" : `${data?.total ?? 0} applicants total`}
+            </span>
+          </div>
+          <button className="btn btn-primary btn-sm" onClick={() => refetch()} disabled={isFetching}>
+            <i className="bi bi-arrow-clockwise me-1" />
+            {isFetching ? "Refreshing…" : "Refresh"}
+          </button>
         </div>
-        <button
-          onClick={() => refetch()}
-          disabled={isFetching}
-          style={{
-            padding: "7px 16px", borderRadius: "5px",
-            background: isFetching ? "#9CA3AF" : "#1E3A5F", color: "white",
-            border: "none", fontSize: "12px", fontWeight: "600",
-            cursor: isFetching ? "default" : "pointer", transition: "background 0.15s",
-          }}
-          onMouseEnter={(e) => { if (!isFetching) (e.currentTarget as HTMLElement).style.background = "#162D4A"; }}
-          onMouseLeave={(e) => { if (!isFetching) (e.currentTarget as HTMLElement).style.background = "#1E3A5F"; }}
-        >
-          {isFetching ? "Refreshing…" : "Refresh"}
-        </button>
-      </div>
 
-      {/* ── Filters (horizontally scrollable on mobile) ─────────────────── */}
-      <div style={{
-        padding: "10px 20px", background: "white", borderBottom: "1px solid #E5E7EB",
-        display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap",
-        flexShrink: 0, overflowX: "auto",
-      }}>
-        <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
-          {STATUS_FILTERS.map(({ value, label }) => (
-            <button
-              key={value}
-              onClick={() => { setStatusFilter(value); setPage(1); }}
-              style={{
-                padding: "5px 11px", borderRadius: "4px",
-                border: `1px solid ${statusFilter === value ? "#2563EB" : "#E5E7EB"}`,
-                background: statusFilter === value ? "#EFF6FF" : "transparent",
-                color: statusFilter === value ? "#2563EB" : "#6B7280",
-                fontSize: "12px", fontWeight: statusFilter === value ? "700" : "400",
-                cursor: "pointer", transition: "all 0.12s",
-              }}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+          <div className="btn-group btn-group-sm">
+            {STATUS_FILTERS.map(({ value, label }) => (
+              <button
+                key={value}
+                className={`btn ${statusFilter === value ? "btn-primary" : "btn-outline-secondary"}`}
+                onClick={() => { setStatusFilter(value); setPage(1); }}
+                style={{ fontSize: 12 }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 6 }}>
+            <label style={{ fontSize: 11, color: "#64748B" }}>Min risk</label>
+            <select
+              className="form-select form-select-sm"
+              value={minRisk}
+              onChange={(e) => { setMinRisk(Number(e.target.value)); setPage(1); }}
+              style={{ width: 80, fontSize: 12 }}
             >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "6px" }}>
-          <label style={{ fontSize: "11px", color: "#6B7280", whiteSpace: "nowrap" }}>Min risk</label>
-          <select
-            value={minRisk}
-            onChange={(e) => { setMinRisk(Number(e.target.value)); setPage(1); }}
-            style={{ padding: "5px 8px", borderRadius: "4px", border: "1px solid #E5E7EB", fontSize: "12px", color: "#374151", cursor: "pointer" }}
-          >
-            <option value={0}>All</option>
-            <option value={25}>25+</option>
-            <option value={50}>50+</option>
-            <option value={75}>75+</option>
-          </select>
+              <option value={0}>All</option>
+              <option value={25}>25+</option>
+              <option value={50}>50+</option>
+              <option value={75}>75+</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      {/* ── Table + side panel ─────────────────────────────────────────────── */}
       <div style={{ flex: 1, overflow: "hidden", display: "flex" }}>
-
-        {/* Table scroll area */}
         <div style={{ flex: 1, overflow: "auto", minWidth: 0 }}>
-
           {isLoading ? (
             <LoadingState />
           ) : isError ? (
@@ -139,83 +111,88 @@ export default function KycQueueView() {
             <EmptyState />
           ) : (
             <>
-              {/* Desktop table */}
-              <div className="hidden sm:block">
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
-                  <thead>
-                    <tr>
-                      <Th label="Applicant"  sortable sKey="name"           sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} />
-                      <Th label="Status" />
-                      <Th label="Risk"       sortable sKey="riskScore"      sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} />
-                      <Th label="Steps"      sortable sKey="completedSteps" sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} />
-                      <Th label="Registered" sortable sKey="createdAt"      sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} />
-                      <Th label="" />
+              <table className="table-safee">
+                <thead>
+                  <tr>
+                    <ThSort label="Applicant" sKey="name" sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} />
+                    <th>Status</th>
+                    <ThSort label="Risk" sKey="riskScore" sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} />
+                    <ThSort label="Steps" sKey="completedSteps" sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} />
+                    <ThSort label="Registered" sKey="createdAt" sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} />
+                    <th style={{ width: 80 }}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sorted.map((user) => (
+                    <tr
+                      key={user.email}
+                      onClick={() => setSelected(selected?.email === user.email ? null : user)}
+                      style={{
+                        cursor: "pointer",
+                        background: selected?.email === user.email ? "#EFF6FF" : undefined,
+                      }}
+                    >
+                      <td>
+                        <div style={{ fontWeight: 600, color: "#1E293B" }}>{user.name}</div>
+                        <div style={{ fontSize: 11, color: "#94A3B8" }}>{user.email}</div>
+                      </td>
+                      <td><StatusBadge status={user.status} /></td>
+                      <td>
+                        <RiskBadge level={user.riskLevel} score={user.riskScore} />
+                        {user.flagCount > 0 && (
+                          <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 2 }}>
+                            {user.flagCount} flag{user.flagCount !== 1 ? "s" : ""}
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <div style={{ width: 60, height: 4, borderRadius: 2, background: "#E5E7EB", overflow: "hidden" }}>
+                            <div style={{ height: "100%", width: `${stepsPercent(user.completedSteps, user.totalSteps)}%`, background: "#0D6EFD", borderRadius: 2 }} />
+                          </div>
+                          <span style={{ fontSize: 11, color: "#64748B" }}>{user.completedSteps}/{user.totalSteps}</span>
+                        </div>
+                      </td>
+                      <td style={{ fontSize: 12, color: "#64748B" }}>{formatDateShort(user.createdAt)}</td>
+                      <td style={{ textAlign: "right" }}>
+                        <span style={{ fontSize: 11, color: selected?.email === user.email ? "#0D6EFD" : "#94A3B8", fontWeight: 600 }}>
+                          {selected?.email === user.email ? "Hide ←" : "Review →"}
+                        </span>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {sorted.map((user) => (
-                      <UserRow
-                        key={user.email}
-                        user={user}
-                        isActive={selected?.email === user.email}
-                        onClick={() => setSelected(selected?.email === user.email ? null : user)}
-                      />
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
 
-              {/* Mobile card list */}
-              <div className="block sm:hidden p-4 space-y-3">
-                {sorted.map((user) => (
-                  <MobileUserCard
-                    key={user.email}
-                    user={user}
-                    isActive={selected?.email === user.email}
-                    onClick={() => setSelected(selected?.email === user.email ? null : user)}
-                  />
-                ))}
-              </div>
-
-              {/* Pagination */}
               {data && data.pages > 1 && (
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", padding: "16px", borderTop: "1px solid #E5E7EB" }}>
-                  <PaginationBtn
-                    label="← Prev"
-                    disabled={page === 1}
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  />
-                  <span style={{ fontSize: "12px", color: "#6B7280" }}>Page {data.page} of {data.pages}</span>
-                  <PaginationBtn
-                    label="Next →"
-                    disabled={page === data.pages}
-                    onClick={() => setPage((p) => Math.min(data.pages, p + 1))}
-                  />
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 8, padding: 16, borderTop: "1px solid #e5e7eb" }}>
+                  <button className="btn btn-outline-secondary btn-sm" disabled={page === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+                    ← Prev
+                  </button>
+                  <span style={{ fontSize: 12, color: "#64748B" }}>Page {data.page} of {data.pages}</span>
+                  <button className="btn btn-outline-secondary btn-sm" disabled={page === data.pages} onClick={() => setPage((p) => Math.min(data.pages, p + 1))}>
+                    Next →
+                  </button>
                 </div>
               )}
             </>
           )}
         </div>
 
-        {/* Desktop side panel */}
         {selected && (
-          <div className="hidden md:flex" style={{ width: "380px", flexShrink: 0, height: "100%" }}>
+          <div className="d-none d-lg-flex" style={{ width: 380, flexShrink: 0, height: "100%" }}>
             <UserPanel user={selected} onClose={() => setSelected(null)} onAction={onAction} />
           </div>
         )}
       </div>
 
-      {/* Mobile full-screen bottom sheet */}
       {selected && (
-        <div className="fixed inset-0 z-40 md:hidden flex flex-col justify-end">
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setSelected(null)}
-          />
-          <div
-            className="relative bg-white rounded-t-2xl overflow-hidden flex flex-col"
-            style={{ maxHeight: "85vh" }}
-          >
+        <div
+          className="d-lg-none"
+          style={{ position: "fixed", inset: 0, zIndex: 1050, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}
+        >
+          <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)" }} onClick={() => setSelected(null)} />
+          <div style={{ position: "relative", background: "#fff", borderRadius: "16px 16px 0 0", maxHeight: "85vh", overflow: "hidden", display: "flex", flexDirection: "column" }}>
             <UserPanel user={selected} onClose={() => setSelected(null)} onAction={onAction} />
           </div>
         </div>
@@ -224,142 +201,23 @@ export default function KycQueueView() {
   );
 }
 
-// ── Table helpers ──────────────────────────────────────────────────────────────
-
-function Th({
-  label, sortable, sKey, sortKey, sortAsc, onSort,
-}: {
-  label: string; sortable?: boolean; sKey?: SortKey;
-  sortKey?: SortKey; sortAsc?: boolean; onSort?: (k: SortKey) => void;
+function ThSort({ label, sKey, sortKey, sortAsc, onSort }: {
+  label: string; sKey: SortKey; sortKey: SortKey; sortAsc: boolean; onSort: (k: SortKey) => void;
 }) {
-  const active = sortable && sKey && sortKey === sKey;
+  const active = sortKey === sKey;
   return (
-    <th
-      onClick={sortable && sKey && onSort ? () => onSort(sKey) : undefined}
-      style={{
-        padding: "10px 14px", textAlign: "left",
-        fontSize: "11px", fontWeight: "700", letterSpacing: "0.06em",
-        textTransform: "uppercase", color: "#6B7280",
-        background: "#F9FAFB", borderBottom: "1px solid #E5E7EB",
-        cursor: sortable ? "pointer" : "default",
-        userSelect: "none", whiteSpace: "nowrap",
-        transition: "color 0.12s",
-      }}
-      onMouseEnter={(e) => { if (sortable) (e.currentTarget as HTMLElement).style.color = "#374151"; }}
-      onMouseLeave={(e) => { if (sortable) (e.currentTarget as HTMLElement).style.color = "#6B7280"; }}
-    >
+    <th onClick={() => onSort(sKey)} style={{ cursor: "pointer" }}>
       {label}
-      {active && <span style={{ marginLeft: "4px", color: "#2563EB" }}>{sortAsc ? "↑" : "↓"}</span>}
+      {active && <span style={{ marginLeft: 4, color: "#0D6EFD" }}>{sortAsc ? "↑" : "↓"}</span>}
     </th>
   );
 }
 
-function UserRow({ user, isActive, onClick }: { user: KycUser; isActive: boolean; onClick: () => void }) {
-  return (
-    <tr
-      onClick={onClick}
-      style={{
-        borderBottom: "1px solid #E5E7EB",
-        background: isActive ? "#EFF6FF" : "white",
-        cursor: "pointer",
-      }}
-      onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "#F9FAFB"; }}
-      onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "white"; }}
-    >
-      <td style={{ padding: "12px 14px" }}>
-        <div style={{ fontWeight: "600", color: "#111827", whiteSpace: "nowrap" }}>{user.name}</div>
-        <div style={{ fontSize: "11px", color: "#9CA3AF" }}>{user.email}</div>
-      </td>
-      <td style={{ padding: "12px 14px" }}><StatusBadge status={user.status} /></td>
-      <td style={{ padding: "12px 14px" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
-          <RiskBadge level={user.riskLevel} score={user.riskScore} />
-          {user.flagCount > 0 && (
-            <span style={{ fontSize: "10px", color: "#9CA3AF" }}>{user.flagCount} flag{user.flagCount !== 1 ? "s" : ""}</span>
-          )}
-        </div>
-      </td>
-      <td style={{ padding: "12px 14px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <div style={{ width: "60px", height: "4px", borderRadius: "2px", background: "#E5E7EB", overflow: "hidden" }}>
-            <div style={{ height: "100%", width: `${stepsPercent(user.completedSteps, user.totalSteps)}%`, background: "#2563EB", borderRadius: "2px" }} />
-          </div>
-          <span style={{ fontSize: "11px", color: "#6B7280", whiteSpace: "nowrap" }}>{user.completedSteps}/{user.totalSteps}</span>
-        </div>
-      </td>
-      <td style={{ padding: "12px 14px", color: "#6B7280", fontSize: "12px", whiteSpace: "nowrap" }}>
-        {formatDateShort(user.createdAt)}
-      </td>
-      <td style={{ padding: "12px 14px", textAlign: "right" }}>
-        <span style={{ fontSize: "11px", color: isActive ? "#2563EB" : "#9CA3AF", fontWeight: "600", whiteSpace: "nowrap" }}>
-          {isActive ? "Hide ←" : "Review →"}
-        </span>
-      </td>
-    </tr>
-  );
-}
-
-function MobileUserCard({ user, isActive, onClick }: { user: KycUser; isActive: boolean; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        display: "flex", gap: "12px", alignItems: "flex-start",
-        width: "100%", padding: "14px 16px", borderRadius: "8px",
-        background: isActive ? "#EFF6FF" : "white",
-        border: `1px solid ${isActive ? "#93C5FD" : "#E5E7EB"}`,
-        cursor: "pointer", textAlign: "left", transition: "all 0.12s",
-      }}
-    >
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontWeight: "700", fontSize: "13px", color: "#111827" }}>{user.name}</div>
-        <div style={{ fontSize: "11px", color: "#9CA3AF", marginBottom: "8px" }}>{user.email}</div>
-        <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
-          <StatusBadge status={user.status} />
-          <RiskBadge level={user.riskLevel} score={user.riskScore} />
-        </div>
-        <div style={{ marginTop: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
-          <div style={{ width: "80px", height: "4px", borderRadius: "2px", background: "#E5E7EB", overflow: "hidden" }}>
-            <div style={{ height: "100%", width: `${stepsPercent(user.completedSteps, user.totalSteps)}%`, background: "#2563EB", borderRadius: "2px" }} />
-          </div>
-          <span style={{ fontSize: "10px", color: "#6B7280" }}>{user.completedSteps}/{user.totalSteps} steps</span>
-        </div>
-      </div>
-      <span style={{ fontSize: "11px", color: isActive ? "#2563EB" : "#9CA3AF", fontWeight: "600", flexShrink: 0 }}>
-        {isActive ? "Hide" : "Review →"}
-      </span>
-    </button>
-  );
-}
-
-function PaginationBtn({ label, disabled, onClick }: { label: string; disabled: boolean; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      style={{
-        padding: "5px 12px", borderRadius: "4px",
-        border: "1px solid #E5E7EB",
-        background: disabled ? "#F9FAFB" : "white",
-        color: disabled ? "#9CA3AF" : "#374151",
-        fontSize: "12px", cursor: disabled ? "not-allowed" : "pointer",
-        transition: "background 0.12s",
-      }}
-      onMouseEnter={(e) => { if (!disabled) (e.currentTarget as HTMLElement).style.background = "#F3F4F6"; }}
-      onMouseLeave={(e) => { if (!disabled) (e.currentTarget as HTMLElement).style.background = "white"; }}
-    >
-      {label}
-    </button>
-  );
-}
-
-// ── Shared state views ─────────────────────────────────────────────────────────
 function LoadingState() {
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "200px", gap: "12px" }}>
-      <div style={{ width: "32px", height: "32px", border: "3px solid #E5E7EB", borderTopColor: "#2563EB", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-      <p style={{ color: "#6B7280", fontSize: "13px", margin: 0 }}>Loading KYC queue…</p>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: 200, gap: 12 }}>
+      <div className="spinner-border text-primary" role="status"><span className="visually-hidden">Loading...</span></div>
+      <p style={{ color: "#64748B", fontSize: 13, margin: 0 }}>Loading KYC queue…</p>
     </div>
   );
 }
@@ -367,11 +225,9 @@ function LoadingState() {
 function ErrorState({ onRetry }: { onRetry: () => void }) {
   return (
     <div style={{ padding: "48px 24px", textAlign: "center" }}>
-      <div style={{ fontSize: "32px", marginBottom: "12px" }}>⚠️</div>
-      <p style={{ color: "#DC2626", fontSize: "13px", margin: "0 0 12px" }}>Failed to load KYC queue.</p>
-      <button onClick={onRetry} style={{ padding: "7px 18px", borderRadius: "5px", background: "#EFF6FF", color: "#2563EB", border: "1px solid #BFDBFE", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>
-        Try Again
-      </button>
+      <i className="bi bi-exclamation-triangle text-danger" style={{ fontSize: 32 }} />
+      <p style={{ color: "#DC3545", fontSize: 13, margin: "12px 0" }}>Failed to load KYC queue.</p>
+      <button className="btn btn-outline-primary btn-sm" onClick={onRetry}>Try Again</button>
     </div>
   );
 }
@@ -379,9 +235,9 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
 function EmptyState() {
   return (
     <div style={{ padding: "60px 24px", textAlign: "center" }}>
-      <div style={{ fontSize: "40px", marginBottom: "12px" }}>✓</div>
-      <p style={{ color: "#374151", fontSize: "14px", fontWeight: "600", margin: "0 0 6px" }}>No applicants match the current filter.</p>
-      <p style={{ color: "#9CA3AF", fontSize: "12px", margin: 0 }}>Try changing the status filter or minimum risk score.</p>
+      <i className="bi bi-check-circle text-success" style={{ fontSize: 40 }} />
+      <p style={{ fontWeight: 600, fontSize: 14, margin: "12px 0 6px" }}>No applicants match the current filter.</p>
+      <p style={{ color: "#94A3B8", fontSize: 12, margin: 0 }}>Try changing the status filter or minimum risk score.</p>
     </div>
   );
 }

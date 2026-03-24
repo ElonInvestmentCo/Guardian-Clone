@@ -1,15 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import AdminLayout, { type View } from "@/components/AdminLayout";
-import KycQueueView    from "@/pages/KycQueueView";
-import RiskEventsView  from "@/pages/RiskEventsView";
-import AuditLogView    from "@/pages/AuditLogView";
-import UsersView       from "@/pages/UsersView";
-import UserProfileView from "@/pages/UserProfileView";
-import ActivityLogsView from "@/pages/ActivityLogsView";
+import DashboardView     from "@/pages/DashboardView";
+import KycQueueView      from "@/pages/KycQueueView";
+import RiskEventsView    from "@/pages/RiskEventsView";
+import AuditLogView      from "@/pages/AuditLogView";
+import UsersView         from "@/pages/UsersView";
+import UserProfileView   from "@/pages/UserProfileView";
+import ActivityLogsView  from "@/pages/ActivityLogsView";
 import { useLoading } from "@/context/LoadingContext";
 
 export default function KycDashboard() {
-  const [activeView,       setActiveView]       = useState<View>("kyc");
+  const [activeView,       setActiveView]       = useState<View>("dashboard");
   const [profileEmail,     setProfileEmail]     = useState<string | null>(null);
   const [profileFromView,  setProfileFromView]  = useState<View>("users");
   const { startLoading, stopLoading } = useLoading();
@@ -48,6 +49,7 @@ export default function KycDashboard() {
 
   return (
     <AdminLayout activeView={activeView} setActiveView={handleSetView}>
+      {activeView === "dashboard" && <DashboardView />}
       {activeView === "kyc"      && <KycQueueView />}
       {activeView === "users"    && <UsersView onOpenProfile={(email) => openProfile(email, "users")} />}
       {activeView === "risk"     && <RiskEventsView />}

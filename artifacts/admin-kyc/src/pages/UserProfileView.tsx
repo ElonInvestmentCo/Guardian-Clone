@@ -107,19 +107,8 @@ export default function UserProfileView({ email, onBack }: Props) {
         flexShrink: 0,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
-          <button
-            onClick={onBack}
-            style={{
-              display: "flex", alignItems: "center", gap: "5px",
-              background: "none", border: "1px solid #E5E7EB",
-              borderRadius: "5px", padding: "5px 10px",
-              fontSize: "12px", color: "#6B7280", cursor: "pointer",
-              transition: "all 0.12s",
-            }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#F9FAFB"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "none"; }}
-          >
-            ← Back
+          <button onClick={onBack} className="btn btn-outline-secondary btn-sm">
+            <i className="bi bi-arrow-left me-1" />Back
           </button>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
@@ -136,16 +125,8 @@ export default function UserProfileView({ email, onBack }: Props) {
             </div>
             <div style={{ fontSize: "11px", color: "#9CA3AF", marginTop: "2px" }}>{email}</div>
           </div>
-          <button
-            onClick={() => refetch()}
-            style={{
-              padding: "5px 12px", borderRadius: "5px",
-              background: "#F3F4F6", color: "#374151",
-              border: "1px solid #E5E7EB", fontSize: "12px", fontWeight: "600",
-              cursor: "pointer",
-            }}
-          >
-            Refresh
+          <button onClick={() => refetch()} className="btn btn-primary btn-sm">
+            <i className="bi bi-arrow-clockwise me-1" />Refresh
           </button>
         </div>
 
@@ -714,15 +695,11 @@ export default function UserProfileView({ email, onBack }: Props) {
 
 function TabBtn({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
   return (
-    <button onClick={onClick} style={{
-      padding: "7px 14px", borderRadius: "5px",
-      border: "none",
-      background: active ? "#1E3A5F" : "#F3F4F6",
-      color: active ? "white" : "#6B7280",
-      fontSize: "12px", fontWeight: "600",
-      cursor: "pointer", whiteSpace: "nowrap",
-      transition: "background 0.12s",
-    }}>
+    <button
+      onClick={onClick}
+      className={`btn btn-sm ${active ? "btn-primary" : "btn-outline-secondary"}`}
+      style={{ fontSize: 12, fontWeight: 600 }}
+    >
       {label}
     </button>
   );
@@ -735,21 +712,18 @@ function Card({ title, children, headerAction, borderColor }: {
   borderColor?: string;
 }) {
   return (
-    <div style={{
-      background: "white", border: `1px solid ${borderColor ?? "#E5E7EB"}`,
-      borderRadius: "8px", overflow: "hidden",
-    }}>
-      <div style={{
+    <div className="card-safee" style={{ borderColor: borderColor ?? undefined }}>
+      <div className="card-header" style={{
         padding: "10px 14px", borderBottom: "1px solid #F3F4F6",
         background: "#FAFAFA",
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
-        <div style={{ fontSize: "11px", fontWeight: "700", letterSpacing: "0.06em", textTransform: "uppercase", color: "#9CA3AF" }}>
+        <div style={{ fontSize: "11px", fontWeight: "700", letterSpacing: "0.06em", textTransform: "uppercase", color: "#64748B" }}>
           {title}
         </div>
         {headerAction}
       </div>
-      <div style={{ padding: "12px 14px" }}>{children}</div>
+      <div className="card-body" style={{ padding: "12px 14px" }}>{children}</div>
     </div>
   );
 }

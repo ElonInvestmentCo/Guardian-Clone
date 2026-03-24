@@ -90,14 +90,11 @@ export default function UserPanel({ user, onClose, onAction }: Props) {
   const profileField = (step: string, field: string) => getProfileField(profile, step, field);
 
   const TabBtn = ({ t, label }: { t: Tab; label: string }) => (
-    <button onClick={() => setTab(t)} style={{
-      padding: "7px 14px", borderRadius: "4px",
-      border: "none",
-      background: tab === t ? "#2563EB" : "transparent",
-      color: tab === t ? "white" : "#6B7280",
-      fontSize: "12px", fontWeight: "600",
-      cursor: "pointer",
-    }}>{label}</button>
+    <button
+      onClick={() => setTab(t)}
+      className={`btn btn-sm ${tab === t ? "btn-primary" : "btn-outline-secondary"}`}
+      style={{ fontSize: 12, fontWeight: 600 }}
+    >{label}</button>
   );
 
   return (
@@ -109,21 +106,17 @@ export default function UserPanel({ user, onClose, onAction }: Props) {
       overflow: "hidden",
       height: "100%",
     }}>
-      {/* Panel header */}
-      <div style={{ padding: "16px 20px", borderBottom: "1px solid #E5E7EB", background: "#F9FAFB" }}>
+      <div style={{ padding: "16px 20px", borderBottom: "1px solid #E5E7EB", background: "#F8FAFC" }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div>
-            <div style={{ fontWeight: "700", fontSize: "15px", color: "#111827" }}>{user.name}</div>
-            <div style={{ fontSize: "11px", color: "#6B7280", marginTop: "2px" }}>{user.email}</div>
+            <div style={{ fontWeight: "700", fontSize: "15px", color: "#1E293B" }}>{user.name}</div>
+            <div style={{ fontSize: "11px", color: "#64748B", marginTop: "2px" }}>{user.email}</div>
             <div style={{ display: "flex", gap: "6px", marginTop: "8px", flexWrap: "wrap" }}>
               <StatusBadge status={currentStatus as "pending"} />
               <RiskBadge level={user.riskLevel} score={user.riskScore} />
             </div>
           </div>
-          <button onClick={onClose} style={{
-            background: "none", border: "none", cursor: "pointer",
-            color: "#9CA3AF", fontSize: "18px", lineHeight: 1, padding: "2px 4px",
-          }}>×</button>
+          <button className="btn-close" onClick={onClose} />
         </div>
 
         {/* Tabs */}
@@ -301,15 +294,9 @@ export default function UserPanel({ user, onClose, onAction }: Props) {
         )}
       </div>
 
-      {/* Action footer */}
-      <div style={{ padding: "14px 20px", borderTop: "1px solid #E5E7EB", background: "#FAFAFA", flexShrink: 0 }}>
+      <div style={{ padding: "14px 20px", borderTop: "1px solid #E5E7EB", background: "#F8FAFC", flexShrink: 0 }}>
         {actionMsg && (
-          <div style={{
-            marginBottom: "10px", padding: "8px 12px", borderRadius: "4px", fontSize: "12px",
-            background: actionMsg.type === "ok" ? "#F0FDF4" : "#FEF2F2",
-            color: actionMsg.type === "ok" ? "#16A34A" : "#DC2626",
-            border: `1px solid ${actionMsg.type === "ok" ? "#BBF7D0" : "#FECACA"}`,
-          }}>
+          <div className={`alert ${actionMsg.type === "ok" ? "alert-success" : "alert-danger"} py-2 px-3 mb-2`} style={{ fontSize: 12 }}>
             {actionMsg.text}
           </div>
         )}
@@ -320,14 +307,8 @@ export default function UserPanel({ user, onClose, onAction }: Props) {
           placeholder="Admin note (optional)…"
           rows={2}
           disabled={hasDecision || anyPending}
-          style={{
-            width: "100%", resize: "none", boxSizing: "border-box",
-            padding: "7px 10px", borderRadius: "4px",
-            border: "1px solid #E5E7EB", fontSize: "12px",
-            color: "#374151", outline: "none",
-            fontFamily: "inherit", marginBottom: "8px",
-            opacity: hasDecision ? 0.5 : 1,
-          }}
+          className="form-control form-control-sm mb-2"
+          style={{ fontSize: 12, resize: "none", opacity: hasDecision ? 0.5 : 1 }}
         />
 
         {!hasDecision && (
@@ -337,13 +318,8 @@ export default function UserPanel({ user, onClose, onAction }: Props) {
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Reject reason (required for rejections)…"
               disabled={anyPending}
-              style={{
-                width: "100%", boxSizing: "border-box",
-                padding: "7px 10px", borderRadius: "4px",
-                border: "1px solid #E5E7EB", fontSize: "12px",
-                color: "#374151", outline: "none",
-                fontFamily: "inherit", marginBottom: "8px",
-              }}
+              className="form-control form-control-sm mb-2"
+              style={{ fontSize: 12 }}
             />
             <div style={{ marginBottom: "10px" }}>
               <div style={{ fontSize: "11px", fontWeight: 600, color: "#6B7280", marginBottom: "4px" }}>
