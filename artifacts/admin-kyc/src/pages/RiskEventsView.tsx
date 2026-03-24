@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getKycQueue, getUserDetails, type KycUser, type RiskLevel, type RiskScore } from "@/lib/api";
+import { getKycQueue, getUserDetails, type KycUser, type RiskLevel } from "@/lib/api";
 import { riskColors, riskLabel, formatDateShort, formatDate } from "@/lib/utils";
 import { RiskBadge, StatusBadge, SeverityBadge } from "@/components/Badges";
 

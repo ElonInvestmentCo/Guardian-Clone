@@ -36,7 +36,7 @@ marketRouter.get("/market/prices", marketDataLimit, async (_req, res) => {
 });
 
 marketRouter.get("/market/chart/:id", marketDataLimit, async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   if (!id || !/^[a-z0-9-]+$/.test(id)) {
     res.status(400).json({ error: "Invalid coin ID" });
     return;
