@@ -68,7 +68,7 @@ export default function ApplicationSubmitted() {
 
       <div className="bg-white" style={{ borderBottom: "1px solid #dde3e9" }}>
         <div className="overflow-x-auto">
-          <div className="flex items-start px-3 sm:px-6 py-4 sm:py-5" style={{ minWidth: "600px" }}>
+          <div className="flex items-start px-3 sm:px-6 py-4 sm:py-5">
             {STEPS.map((step, i) => (
               <div key={step.n} className="flex flex-col items-center" style={{ flex: 1, minWidth: 0 }}>
                 <div className="flex items-center w-full">

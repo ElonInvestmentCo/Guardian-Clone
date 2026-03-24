@@ -98,7 +98,7 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
               width: 200,
               color: "#3C4858",
             }}
-            readOnly
+            disabled
           />
           <i className="bi bi-search" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#94A3B8", fontSize: 13 }} />
         </div>

@@ -64,7 +64,7 @@ export default function KycQueueView() {
               {isLoading ? "Loading…" : `${data?.total ?? 0} applicants total`}
             </span>
           </div>
-          <button className="btn btn-primary btn-sm" onClick={() => refetch()} disabled={isFetching}>
+          <button className="btn btn-primary btn-sm" onClick={() => { setPage(1); refetch(); }} disabled={isFetching}>
             <i className="bi bi-arrow-clockwise me-1" />
             {isFetching ? "Refreshing…" : "Refresh"}
           </button>
@@ -111,6 +111,7 @@ export default function KycQueueView() {
             <EmptyState />
           ) : (
             <>
+              <div className="table-responsive">
               <table className="table-safee">
                 <thead>
                   <tr>
@@ -163,6 +164,7 @@ export default function KycQueueView() {
                   ))}
                 </tbody>
               </table>
+              </div>
 
               {data && data.pages > 1 && (
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 8, padding: 16, borderTop: "1px solid #e5e7eb" }}>

@@ -164,6 +164,7 @@ export default function UsersView({ onOpenProfile }: Props) {
         ) : sorted.length === 0 ? (
           <EmptyState />
         ) : (
+          <div className="table-responsive">
           <table className="table-safee">
             <thead>
               <tr>
@@ -190,6 +191,7 @@ export default function UsersView({ onOpenProfile }: Props) {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 
