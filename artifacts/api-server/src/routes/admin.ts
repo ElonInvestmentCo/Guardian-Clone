@@ -8,7 +8,7 @@
  */
 
 import { readFileSync, existsSync } from "fs";
-import { join, resolve, extname } from "path";
+import { resolve, extname } from "path";
 import { Router, type Request, type Response, type NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -26,6 +26,7 @@ import {
   getGlobalAuditLog,
   createAdminUser,
   addNotification,
+  readMaster,
 } from "../lib/userDataStore.js";
 import { evaluateRisk } from "../lib/fraud/riskEngine.js";
 
@@ -41,16 +42,8 @@ function jwtSecret(): string {
   return s;
 }
 
-// ── File helpers ──────────────────────────────────────────────────────────────
-function masterPath(): string {
-  return process.env.USER_DATA_DIR
-    ? join(process.env.USER_DATA_DIR, "users.json")
-    : join(process.cwd(), "data", "users.json");
-}
-
 function readMasterUsers(): Record<string, Record<string, unknown>> {
-  try { return JSON.parse(readFileSync(masterPath(), "utf-8")); }
-  catch { return {}; }
+  return readMaster();
 }
 
 // ── Security headers ──────────────────────────────────────────────────────────

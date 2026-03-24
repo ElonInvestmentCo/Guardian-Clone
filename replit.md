@@ -319,6 +319,7 @@ Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` 
 - `POST /api/signup/save-step` — saves a named form step for a user; body: `{ email, step, data }`
 - `GET /api/signup/get-progress?email=` — returns completed steps and step data for a user
 - Data is stored in `data/users/{sanitizeEmail}/profile.json` (per-user) and `data/users.json` (master index)
+- **Data directory resolution**: `userDataStore.ts` auto-detects the correct data path — uses `CWD/data/` in dev (CWD=api-server/) and `CWD/artifacts/api-server/data/` in prod (CWD=workspace root). Override with `USER_DATA_DIR` env var. Admin routes use the same `readMaster()` from userDataStore (no duplicate file readers).
 - New users get `status: "pending"` on creation in both master and profile
 - Sensitive fields are AES-256-GCM encrypted before storage: `taxId`, `idNumber`, `dateOfBirth`, `password`, `passwordHash`, `foreignIdType`
 - Encryption key is read from env var `USER_DATA_KEY` (falls back to dev key with a warning)

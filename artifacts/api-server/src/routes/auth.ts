@@ -51,10 +51,14 @@ authRouter.post("/auth/register", (req, res) => {
     passwordHash: hash,
     createdAt: Date.now(),
   });
-  // Also persist to disk so login survives server restarts
-  saveUserCredentials(email, hash);
-  logAttempt("REGISTER", email, "success");
-  res.json({ success: true });
+  try {
+    saveUserCredentials(email, hash);
+    logAttempt("REGISTER", email, "success — credentials persisted to disk");
+    res.json({ success: true });
+  } catch (err) {
+    console.error(`[Auth] REGISTER FAILED to persist credentials for ${email}:`, err);
+    res.status(500).json({ error: "Registration failed. Please try again." });
+  }
 });
 
 authRouter.post("/auth/login", (req, res) => {

@@ -2,9 +2,23 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 
-const DATA_DIR = path.resolve(process.cwd(), "data");
+function resolveDataDir(): string {
+  if (process.env.USER_DATA_DIR) return path.resolve(process.env.USER_DATA_DIR);
+  const cwd = process.cwd();
+  const cwdData = path.join(cwd, "data");
+  if (cwd.endsWith("api-server") || cwd.endsWith("api-server/") || cwd.endsWith("api-server\\")) {
+    return cwdData;
+  }
+  const prodData = path.join(cwd, "artifacts", "api-server", "data");
+  if (fs.existsSync(prodData)) return prodData;
+  return cwdData;
+}
+
+const DATA_DIR = resolveDataDir();
 const MASTER_FILE = path.join(DATA_DIR, "users.json");
 const USERS_DIR = path.join(DATA_DIR, "users");
+
+console.log(`[UserDataStore] DATA_DIR resolved to: ${DATA_DIR}`);
 
 const SENSITIVE_FIELDS = new Set([
   "taxId",
@@ -126,7 +140,7 @@ function withFileLock<T>(filePath: string, fn: () => T): T {
 
 // ── Master users.json (all users in one file) ──────────────────────────────────
 
-function readMaster(): Record<string, Record<string, unknown>> {
+export function readMaster(): Record<string, Record<string, unknown>> {
   ensureDir(DATA_DIR);
   if (!fs.existsSync(MASTER_FILE)) return {};
   try {
@@ -204,7 +218,8 @@ export function upsertUserStep(
   profile["updatedAt"] = now;
   writeProfile(email, profile);
 
-  console.log(`[UserDataStore] Saved step "${step}" for ${email}`);
+  const userCount = Object.keys(readMaster()).length;
+  console.log(`[UserDataStore] Saved step "${step}" for ${email} (total users: ${userCount})`);
 }
 
 /**

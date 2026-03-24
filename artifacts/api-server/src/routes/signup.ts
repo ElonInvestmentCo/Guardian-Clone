@@ -360,10 +360,11 @@ signupRouter.post("/signup/save-step", (req, res) => {
   try {
     upsertUserStep(email, step, data);
     auditLog(email, step, "SAVE_STEP_DRAFT", { fields: Object.keys(data) });
+    console.log(`[Signup] Draft saved: step=${step} email=${email} fields=${Object.keys(data).length}`);
     res.json({ success: true });
   } catch (err) {
-    console.error("[signup/save-step] Error:", err);
-    res.status(500).json({ error: "Failed to save data" });
+    console.error(`[Signup] FAILED to save draft step=${step} for ${email}:`, err);
+    res.status(500).json({ error: "Failed to save data. Please try again." });
   }
 });
 
@@ -412,18 +413,14 @@ signupRouter.post("/signup/complete-step", (req, res) => {
   }
 
   try {
-    // 2. Load existing step data for audit diff
     const profile = getUserProfileData(email);
     const oldStepData =
       (profile[stepKey] as Record<string, unknown>) ?? {};
 
-    // 3. Save step data
     upsertUserStep(email, stepKey, data);
 
-    // 4. Mark step number complete
     const completedSteps = addCompletedStepNumber(email, stepNumber);
 
-    // 5. Compute and store field-level audit diff
     const diff = computeAuditDiff(stepKey, oldStepData, data);
     appendAuditLog(email, diff);
 
@@ -432,12 +429,13 @@ signupRouter.post("/signup/complete-step", (req, res) => {
       changedFields: diff.length,
       completedSteps,
     });
+    console.log(`[Signup] Step completed: step=${stepKey} (#${stepNumber}) email=${email} total=${completedSteps.length}/12`);
 
     res.json({ success: true, completedSteps });
   } catch (err) {
-    console.error("[signup/complete-step] Error:", err);
+    console.error(`[Signup] FAILED to complete step=${stepKey} (#${stepNumber}) for ${email}:`, err);
     auditLog(email, stepKey, "COMPLETE_STEP_ERROR", { error: String(err) });
-    res.status(500).json({ error: "Failed to complete step" });
+    res.status(500).json({ error: "Failed to complete step. Please try again." });
   }
 });
 
