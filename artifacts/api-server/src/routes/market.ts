@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { marketDataLimit } from "../middleware/security.js";
 
 const marketRouter = Router();
 
@@ -6,7 +7,7 @@ const CACHE_TTL = 60_000;
 let pricesCache: { data: unknown; ts: number } | null = null;
 let chartCache = new Map<string, { data: unknown; ts: number }>();
 
-marketRouter.get("/market/prices", async (_req, res) => {
+marketRouter.get("/market/prices", marketDataLimit, async (_req, res) => {
   try {
     if (pricesCache && Date.now() - pricesCache.ts < CACHE_TTL) {
       res.json(pricesCache.data);
@@ -34,7 +35,7 @@ marketRouter.get("/market/prices", async (_req, res) => {
   }
 });
 
-marketRouter.get("/market/chart/:id", async (req, res) => {
+marketRouter.get("/market/chart/:id", marketDataLimit, async (req, res) => {
   try {
     const { id } = req.params;
     const days = (req.query["days"] as string) || "1";

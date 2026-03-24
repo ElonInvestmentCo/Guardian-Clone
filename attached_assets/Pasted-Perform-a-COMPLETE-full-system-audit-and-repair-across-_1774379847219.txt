@@ -1,0 +1,114 @@
+Perform a COMPLETE full-system audit and repair across the entire Guardian Trading platform, including BOTH:
+
+- Frontend website (guardian-trading)
+- Admin dashboard (admin-kyc)
+- Backend API server (api-server)
+
+This is NOT a partial fix — scan EVERY file, EVERY component, and EVERY route, then fix all issues.
+
+SCOPE OF WORK:
+
+1. FULL CODEBASE SCAN
+- Go through ALL files in:
+  • frontend (React components, pages, hooks, styles)
+  • admin dashboard
+  • backend (routes, controllers, database logic)
+- Identify:
+  • Broken UI components
+  • Missing API connections
+  • Incorrect state handling
+  • Unused or dead code
+  • Console errors / warnings
+  • Improper responsiveness
+  • Security issues (auth, validation, storage)
+
+2. FIX ALL BROKEN FEATURES
+Ensure the following are FULLY working end-to-end:
+
+USER SIDE:
+- Signup & login
+- KYC onboarding (all 11 steps)
+- Data saving (NO data loss)
+- File uploads (IDs, documents)
+- Profile settings (including profile picture upload)
+- Dashboard navigation
+- Live crypto prices (BTC, ETH, BNB via CoinGecko)
+- Charts rendering properly
+- Notification system (CREATE if missing)
+
+ADMIN SIDE:
+- Users list (ALL users must appear)
+- Full user profiles (all submitted data visible)
+- Document viewer (preview + download)
+- KYC Queue (pending / approved / rejected)
+- Admin action buttons:
+  ✓ Approve
+  ✗ Reject
+  ↩ Resubmit
+  → Must update DB and reflect instantly on user side
+
+3. DATABASE & STORAGE VALIDATION
+- Ensure ALL user data is stored properly:
+  • Personal details
+  • KYC form steps
+  • Uploaded documents
+- Fix any missing writes or broken queries
+- Ensure proper relations between users and documents
+- Verify persistence (data remains after refresh/restart)
+
+4. API & BACKEND FIXES
+- Validate all API routes:
+  • /auth
+  • /users
+  • /kyc
+  • /documents
+- Fix:
+  • Broken endpoints
+  • Missing responses
+  • Incorrect status handling
+- Add logging for debugging failures
+
+5. RESPONSIVENESS (CRITICAL)
+Fix ALL UI issues across:
+- Mobile (<640px)
+- Tablet (640–767px)
+- Desktop (768px+)
+
+Ensure:
+- No overflow or cut-off content
+- Tables scroll properly (overflow-x-auto)
+- Forms fit perfectly on iPhone screens
+- Navigation is NOT duplicated:
+  • Mobile = bottom nav ONLY
+  • Desktop = sidebar ONLY
+
+6. KYC FLOW CORRECTION
+- Prevent skipping steps
+- Ensure strict validation
+- Ensure status logic works:
+  pending / approved / rejected / resubmit_required
+- Fix redirect bugs:
+  • DO NOT send users to dashboard unless approved
+
+7. REAL-TIME SYNC
+- Ensure admin changes reflect instantly on user side
+- Implement polling or WebSocket updates
+
+8. ERROR HANDLING & STABILITY
+- Fix all crashes, undefined states, and edge cases
+- Ensure app does NOT break on refresh
+- Add fallback UI for loading/error states
+
+FINAL REQUIREMENT:
+The entire platform must behave like a production-grade financial trading system:
+- No broken features
+- No missing data
+- No UI issues
+- Fully responsive
+- Fully connected frontend + backend + admin
+- Clean, stable, and professional
+
+After fixing:
+- Restart all services
+- Verify everything works end-to-end
+- Confirm no errors in logs or console

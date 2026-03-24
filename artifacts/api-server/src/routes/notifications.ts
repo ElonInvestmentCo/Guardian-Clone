@@ -9,8 +9,8 @@ const notificationsRouter = Router();
 
 notificationsRouter.get("/notifications", (req, res) => {
   const email = req.query["email"] as string | undefined;
-  if (!email) {
-    res.status(400).json({ error: "email is required" });
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    res.status(400).json({ error: "Valid email is required" });
     return;
   }
   const notifications = getNotifications(email);
@@ -22,8 +22,8 @@ notificationsRouter.get("/notifications", (req, res) => {
 
 notificationsRouter.post("/notifications/read", (req, res) => {
   const { email, ids } = req.body as { email?: string; ids?: string[] };
-  if (!email) {
-    res.status(400).json({ error: "email is required" });
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    res.status(400).json({ error: "Valid email is required" });
     return;
   }
   if (ids && ids.length > 0) {

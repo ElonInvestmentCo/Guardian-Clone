@@ -147,6 +147,15 @@ export const uploadLimit = rateLimit({
   validate: { xForwardedForHeader: false },
 });
 
+export const marketDataLimit = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many market data requests. Please slow down." },
+  validate: { xForwardedForHeader: false },
+});
+
 export function requestFingerprint(req: Request, res: Response, next: NextFunction): void {
   const ua = req.headers["user-agent"] ?? "";
   const accept = req.headers["accept"] ?? "";

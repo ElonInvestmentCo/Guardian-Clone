@@ -26,10 +26,18 @@ function isKycDecision(s: string): s is KycDecision {
   return (KYC_STATUSES as readonly string[]).includes(s);
 }
 
+const RESUBMIT_FIELD_OPTIONS = [
+  "Personal Details", "Professional Details", "ID Information",
+  "Income Details", "Risk Tolerance", "Financial Situation",
+  "Investment Experience", "ID Proof Upload", "Funding Details",
+  "Disclosures", "Signatures",
+];
+
 export default function UserPanel({ user, onClose, onAction }: Props) {
   const [tab, setTab] = useState<Tab>("overview");
   const [actionNote, setActionNote] = useState("");
   const [rejectReason, setRejectReason] = useState("");
+  const [resubmitFields, setResubmitFields] = useState<string[]>([]);
   const [actionMsg, setActionMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
 
   const qc = useQueryClient();
@@ -65,8 +73,8 @@ export default function UserPanel({ user, onClose, onAction }: Props) {
   });
 
   const resubmitMut = useMutation({
-    mutationFn: () => requestResubmission(user.email, undefined, actionNote || undefined),
-    onSuccess: () => { showMsg("ok", "Resubmission requested"); refresh(); },
+    mutationFn: () => requestResubmission(user.email, resubmitFields.length > 0 ? resubmitFields : undefined, actionNote || undefined),
+    onSuccess: () => { showMsg("ok", "Resubmission requested"); setResubmitFields([]); refresh(); },
     onError:   (e: Error) => showMsg("err", e.message),
   });
 
@@ -323,19 +331,46 @@ export default function UserPanel({ user, onClose, onAction }: Props) {
         />
 
         {!hasDecision && (
-          <input
-            value={rejectReason}
-            onChange={(e) => setRejectReason(e.target.value)}
-            placeholder="Reject reason (required for rejections)…"
-            disabled={anyPending}
-            style={{
-              width: "100%", boxSizing: "border-box",
-              padding: "7px 10px", borderRadius: "4px",
-              border: "1px solid #E5E7EB", fontSize: "12px",
-              color: "#374151", outline: "none",
-              fontFamily: "inherit", marginBottom: "10px",
-            }}
-          />
+          <>
+            <input
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="Reject reason (required for rejections)…"
+              disabled={anyPending}
+              style={{
+                width: "100%", boxSizing: "border-box",
+                padding: "7px 10px", borderRadius: "4px",
+                border: "1px solid #E5E7EB", fontSize: "12px",
+                color: "#374151", outline: "none",
+                fontFamily: "inherit", marginBottom: "8px",
+              }}
+            />
+            <div style={{ marginBottom: "10px" }}>
+              <div style={{ fontSize: "11px", fontWeight: 600, color: "#6B7280", marginBottom: "4px" }}>
+                Resubmit fields (select for resubmission):
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                {RESUBMIT_FIELD_OPTIONS.map((f) => {
+                  const selected = resubmitFields.includes(f);
+                  return (
+                    <button
+                      key={f}
+                      type="button"
+                      onClick={() => setResubmitFields((prev) => selected ? prev.filter((x) => x !== f) : [...prev, f])}
+                      disabled={anyPending}
+                      style={{
+                        padding: "3px 8px", borderRadius: "3px", fontSize: "10px", fontWeight: 500,
+                        border: selected ? "1px solid #2563EB" : "1px solid #D1D5DB",
+                        background: selected ? "#EFF6FF" : "white",
+                        color: selected ? "#2563EB" : "#6B7280",
+                        cursor: anyPending ? "not-allowed" : "pointer",
+                      }}
+                    >{f}</button>
+                  );
+                })}
+              </div>
+            </div>
+          </>
         )}
 
         <div style={{ display: "flex", gap: "6px" }}>

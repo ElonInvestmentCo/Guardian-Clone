@@ -35,6 +35,7 @@ export default function UserProfileView({ email, onBack }: Props) {
   const [tab,         setTab]         = useState<ProfileTab>("profile");
   const [actionNote,  setActionNote]  = useState("");
   const [rejectReason, setRejectReason] = useState("");
+  const [resubmitFields, setResubmitFields] = useState<string[]>([]);
   const [flagReason,  setFlagReason]  = useState("");
   const [banReason,   setBanReason]   = useState("");
   const [selectedRole, setSelectedRole] = useState("");
@@ -72,7 +73,7 @@ export default function UserProfileView({ email, onBack }: Props) {
 
   const approveMut   = useMutation({ mutationFn: () => approveUser(email, actionNote || undefined),                    onSuccess: () => { showMsg("ok", "User approved successfully"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
   const rejectMut    = useMutation({ mutationFn: () => rejectUser(email, rejectReason, actionNote || undefined), onSuccess: () => { showMsg("ok", "User rejected"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
-  const resubmitMut  = useMutation({ mutationFn: () => requestResubmission(email, undefined, actionNote || undefined), onSuccess: () => { showMsg("ok", "Resubmission requested — user notified"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
+  const resubmitMut  = useMutation({ mutationFn: () => requestResubmission(email, resubmitFields.length > 0 ? resubmitFields : undefined, actionNote || undefined), onSuccess: () => { showMsg("ok", "Resubmission requested — user notified"); setResubmitFields([]); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
   const suspendMut   = useMutation({ mutationFn: () => suspendUser(email, actionNote || undefined),                    onSuccess: () => { showMsg("ok", "User suspended"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
   const banMut       = useMutation({ mutationFn: () => banUser(email, banReason || undefined, actionNote || undefined), onSuccess: () => { showMsg("ok", "User banned"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
   const reactivateMut = useMutation({ mutationFn: () => reactivateUser(email, actionNote || undefined),                onSuccess: () => { showMsg("ok", "User reactivated"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
