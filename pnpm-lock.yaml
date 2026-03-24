@@ -447,6 +447,9 @@ importers:
 
   artifacts/guardian-trading:
     dependencies:
+      '@livechat/widget-react':
+        specifier: ^1.4.0
+        version: 1.4.0(react@19.1.0)
       dompurify:
         specifier: ^3.3.3
         version: 3.3.3
@@ -1040,6 +1043,14 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@livechat/widget-core@1.4.0':
+    resolution: {integrity: sha512-BJhVE5jYIw1MFNwfs/YKzxmMnd09nFDkCRJsuajodO0fE7kiRZbWXv/AH2szsAwaIocwS+CLBxUNFmEqfJQipQ==}
+
+  '@livechat/widget-react@1.4.0':
+    resolution: {integrity: sha512-ynPaq7SHkkcDCt/43w9V9vzDnF2pGsv0Lxav9x4DHG9cGuuKzDmaneJ45jx/C13WKO1AL1pj9B8eKETBZrFx8g==}
+    peerDependencies:
+      react: ^16.8 || 17 || 18 || 19
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -2837,6 +2848,9 @@ packages:
     resolution: {integrity: sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg==}
     engines: {node: '>=16 || 14 >=14.17'}
 
+  mitt@3.0.0:
+    resolution: {integrity: sha512-7dX2/10ITVyqh4aOSVI9gdape+t9l2/8QxHrFmUXu4EEUpdlxl6RudZUPZoc+zuY2hk1j7XxVroIVIan/pD/SQ==}
+
   mitt@3.0.1:
     resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
 
@@ -3758,6 +3772,15 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@livechat/widget-core@1.4.0':
+    dependencies:
+      mitt: 3.0.0
+
+  '@livechat/widget-react@1.4.0(react@19.1.0)':
+    dependencies:
+      '@livechat/widget-core': 1.4.0
+      react: 19.1.0
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -5574,6 +5597,8 @@ snapshots:
   minimatch@9.0.9:
     dependencies:
       brace-expansion: 2.0.2
+
+  mitt@3.0.0: {}
 
   mitt@3.0.1: {}
 
