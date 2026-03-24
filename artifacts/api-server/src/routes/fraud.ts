@@ -1,33 +1,17 @@
-/**
- * Fraud / Risk API routes.
- *
- * POST /api/fraud/risk-score   — evaluate and cache risk score for a user
- * GET  /api/fraud/risk-events  — list all risk evaluations (admin only)
- */
-
-import { readFileSync } from "fs";
-import { join } from "path";
 import { Router, type Request, type Response } from "express";
 import { evaluateRisk, type RiskScore } from "../lib/fraud/riskEngine.js";
-import { getUserProfileData, setUserProfileMeta } from "../lib/userDataStore.js";
+import { getUserProfileData, setUserProfileMeta, readMaster } from "../lib/userDataStore.js";
 
 const router = Router();
 
-function masterPath(): string {
-  return process.env.USER_DATA_DIR
-    ? join(process.env.USER_DATA_DIR, "master.json")
-    : join(process.cwd(), "data", "users", "master.json");
-}
-
 function readMasterEmails(): string[] {
   try {
-    return Object.keys(JSON.parse(readFileSync(masterPath(), "utf-8")));
+    return Object.keys(readMaster());
   } catch {
     return [];
   }
 }
 
-// ── POST /api/fraud/risk-score ───────────────────────────────────────────────
 router.post("/api/fraud/risk-score", (req: Request, res: Response): void => {
   try {
     const { email } = req.body as { email?: string };
@@ -49,13 +33,15 @@ router.post("/api/fraud/risk-score", (req: Request, res: Response): void => {
   }
 });
 
-// ── GET /api/fraud/risk-events ───────────────────────────────────────────────
 router.get("/api/fraud/risk-events", (req: Request, res: Response): void => {
   try {
-    const secret = process.env.ADMIN_SECRET;
-    if (secret && req.headers["x-admin-key"] !== secret) {
-      res.status(401).json({ error: "Unauthorized" });
-      return;
+    const authHeader = req.headers.authorization;
+    const adminSecret = process.env.ADMIN_SECRET;
+    if (adminSecret && req.headers["x-admin-key"] !== adminSecret) {
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+      }
     }
 
     const minScore = parseInt(String(req.query.minScore ?? "0"));

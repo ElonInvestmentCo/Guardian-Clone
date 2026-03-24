@@ -18,6 +18,10 @@ const DATA_DIR = resolveDataDir();
 const MASTER_FILE = path.join(DATA_DIR, "users.json");
 const USERS_DIR = path.join(DATA_DIR, "users");
 
+export function getDataDir(): string {
+  return DATA_DIR;
+}
+
 console.log(`[UserDataStore] DATA_DIR resolved to: ${DATA_DIR}`);
 
 const SENSITIVE_FIELDS = new Set([

@@ -11,6 +11,7 @@ import {
   setUserProfileMeta,
   getStoredPasswordHash,
   saveUserCredentials,
+  getDataDir,
 } from "../lib/userDataStore.js";
 
 function simpleHash(str: string): string {
@@ -23,7 +24,7 @@ function simpleHash(str: string): string {
 
 const profileRouter = Router();
 
-const PROFILE_PIC_DIR = path.resolve(process.cwd(), "data", "profile-pictures");
+const PROFILE_PIC_DIR = path.resolve(getDataDir(), "profile-pictures");
 if (!fs.existsSync(PROFILE_PIC_DIR)) {
   fs.mkdirSync(PROFILE_PIC_DIR, { recursive: true });
 }
@@ -100,8 +101,9 @@ profileRouter.post(
 );
 
 profileRouter.get("/user/profile-picture/:filename", (req, res) => {
-  const filePath = path.join(PROFILE_PIC_DIR, req.params["filename"]!);
-  if (!filePath.startsWith(PROFILE_PIC_DIR)) {
+  const safeName = path.basename(req.params["filename"]!);
+  const filePath = path.join(PROFILE_PIC_DIR, safeName);
+  if (!filePath.startsWith(PROFILE_PIC_DIR + path.sep) && filePath !== PROFILE_PIC_DIR) {
     res.status(403).json({ error: "Access denied" });
     return;
   }

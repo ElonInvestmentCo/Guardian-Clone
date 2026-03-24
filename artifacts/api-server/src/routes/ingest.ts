@@ -245,7 +245,7 @@ ingestRouter.post("/events", ingestLimiter, async (req: Request, res: Response) 
         safeInt(body["screen_width"]),
         safeInt(body["screen_height"]),
       ]
-    ).catch(() => {});
+    ).catch((e) => console.error("[ingest] heatmap insert error:", e));
   }
 
   if (!botFlag) {

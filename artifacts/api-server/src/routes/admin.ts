@@ -27,6 +27,7 @@ import {
   createAdminUser,
   addNotification,
   readMaster,
+  getDataDir,
 } from "../lib/userDataStore.js";
 import { evaluateRisk } from "../lib/fraud/riskEngine.js";
 
@@ -584,9 +585,10 @@ router.get("/admin/user-documents/:email", (req: Request, res: Response): void =
     const docs = (profile.documents as Record<string, string>)
       ?? (master.documents as Record<string, string>)
       ?? {};
+    const dataDir = getDataDir();
     const result: Record<string, { role: string; path: string; exists: boolean; fileName: string }> = {};
     for (const [role, relPath] of Object.entries(docs)) {
-      const absPath = resolve(process.cwd(), relPath);
+      const absPath = resolve(dataDir, relPath.replace(/^data\//, ""));
       const fileName = relPath.split("/").pop() ?? role;
       result[role] = { role, path: relPath, exists: existsSync(absPath), fileName };
     }
@@ -610,8 +612,9 @@ router.get("/admin/user-document-file/:email/:role", (req: Request, res: Respons
       ?? {};
     const relPath = docs[role];
     if (!relPath) { res.status(404).json({ error: "Document not found" }); return; }
-    const absPath = resolve(process.cwd(), relPath);
-    if (!absPath.startsWith(resolve(process.cwd(), "data"))) {
+    const dataDir = getDataDir();
+    const absPath = resolve(dataDir, relPath.replace(/^data\//, ""));
+    if (!absPath.startsWith(dataDir)) {
       res.status(403).json({ error: "Access denied" });
       return;
     }

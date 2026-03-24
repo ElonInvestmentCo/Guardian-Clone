@@ -19,8 +19,8 @@ export default function Login() {
     }
     if (!password) {
       newErrors.password = "Password is required";
-    } else if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    } else if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
     }
     return newErrors;
   };
@@ -123,6 +123,7 @@ export default function Login() {
                 <input
                   type="email"
                   placeholder="Email"
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
@@ -141,6 +142,7 @@ export default function Login() {
                   <input
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
+                    autoComplete="current-password"
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);

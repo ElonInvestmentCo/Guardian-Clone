@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { sendVerificationEmail, sendPasswordResetEmail } from "../lib/mailer.js";
 import { saveUserCredentials, getStoredPasswordHash, getUserData } from "../lib/userDataStore.js";
+import { sensitiveEndpointLimit } from "../middleware/security.js";
 
 const authRouter = Router();
 
@@ -39,7 +40,7 @@ function logAttempt(action: string, email: string, detail?: string) {
   console.log(`[Auth][${ts}] ${action} — email=${email}${detail ? ` ${detail}` : ""}`);
 }
 
-authRouter.post("/auth/register", (req, res) => {
+authRouter.post("/auth/register", sensitiveEndpointLimit, (req, res) => {
   const { email, password } = req.body as { email?: string; password?: string };
   if (!email || !password) {
     res.status(400).json({ error: "Email and password are required" });
@@ -61,7 +62,7 @@ authRouter.post("/auth/register", (req, res) => {
   }
 });
 
-authRouter.post("/auth/login", (req, res) => {
+authRouter.post("/auth/login", sensitiveEndpointLimit, (req, res) => {
   const { email, password } = req.body as { email?: string; password?: string };
 
   if (!email || !password) {
@@ -100,7 +101,7 @@ authRouter.post("/auth/login", (req, res) => {
   res.json({ success: true, email });
 });
 
-authRouter.post("/auth/send-verification", async (req, res) => {
+authRouter.post("/auth/send-verification", sensitiveEndpointLimit, async (req, res) => {
   const { email } = req.body as { email?: string };
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -132,7 +133,7 @@ authRouter.post("/auth/send-verification", async (req, res) => {
   res.json({ success: true });
 });
 
-authRouter.post("/auth/verify-code", (req, res) => {
+authRouter.post("/auth/verify-code", sensitiveEndpointLimit, (req, res) => {
   const { email, code } = req.body as { email?: string; code?: string };
 
   if (!email || !code) {
@@ -176,7 +177,7 @@ authRouter.post("/auth/verify-code", (req, res) => {
   res.json({ success: true });
 });
 
-authRouter.post("/auth/send-reset-code", async (req, res) => {
+authRouter.post("/auth/send-reset-code", sensitiveEndpointLimit, async (req, res) => {
   const { email } = req.body as { email?: string };
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -213,7 +214,7 @@ authRouter.post("/auth/send-reset-code", async (req, res) => {
   res.json({ success: true });
 });
 
-authRouter.post("/auth/reset-password", (req, res) => {
+authRouter.post("/auth/reset-password", sensitiveEndpointLimit, (req, res) => {
   const { email, code, newPassword } = req.body as { email?: string; code?: string; newPassword?: string };
 
   if (!email || !code || !newPassword) {

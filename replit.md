@@ -283,14 +283,16 @@ Floating chat widget on all dashboard pages, powered by an AI service abstractio
 - Backend disconnect detection stops model streaming when client disconnects
 
 ### Platform Security (`src/middleware/security.ts`)
-- **Security headers**: CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Resource-Policy, X-DNS-Prefetch-Control, X-Download-Options, X-Permitted-Cross-Domain-Policies
+- **Security headers**: CSP (allows LiveChat `cdn.livechatinc.com`, `*.lc.chat`), X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Resource-Policy, X-DNS-Prefetch-Control, X-Download-Options, X-Permitted-Cross-Domain-Policies
+- **Global error handler**: Express catch-all error middleware in `app.ts` — logs stack traces and returns 500 JSON, prevents process crashes from unhandled errors
 - **Bot detection**: Known bot/scraper user-agent blocking (50+ patterns), headless browser detection, suspicious behavior scoring with temporary IP bans
-- **Rate limiting**: Global 100 req/min, sensitive endpoints 30 req/15min, anomaly detection (30 req/10s rapid-fire block)
+- **Rate limiting**: Global 100 req/min, all auth endpoints (login/register/verify/reset) use sensitiveEndpointLimit 30 req/15min, admin login 5/15min per IP, anomaly detection (30 req/10s rapid-fire block)
 - **CORS**: Restricted to guardiiantrading.com, Replit domains, and dev localhost (no wildcard in production)
 - **Hotlink protection**: Referer-based blocking for media files (images, videos, PDFs)
 - **Honeytrap routes**: Fake data export endpoints (`/api/v1/export`, `/api/users.json`, etc.) that log and auto-ban scrapers
 - **robots.txt**: Disallows API, admin, dashboard, and private pages; blocks AI crawlers (GPTBot, CCBot, anthropic-ai, Google-Extended)
 - **Frontend anti-scrape**: Right-click disabled, keyboard shortcuts blocked (Ctrl+U/S/P, F12, DevTools), image drag prevention
+- **Profile picture safety**: Path traversal prevention via `path.basename()`, directory resolved via centralized `getDataDir()`
 
 ### Dependencies
 - `openai` (api-server) — OpenAI SDK for both Grok and OpenAI providers
