@@ -44,8 +44,9 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     const email = (req.body as Record<string, string>)["email"] ?? "unknown";
     const sanitized = email.replace(/[^a-zA-Z0-9]/g, "_");
+    const timestamp = Date.now();
     const ext = path.extname(file.originalname) || ".jpg";
-    cb(null, `${sanitized}${ext}`);
+    cb(null, `${sanitized}_${timestamp}${ext}`);
   },
 });
 
@@ -163,15 +164,39 @@ profileRouter.post("/user/update-profile", (req, res) => {
   try {
     const { email, firstName, lastName, phone, country, state, city } = req.body as Record<string, string>;
     if (!email) { res.status(400).json({ error: "email is required" }); return; }
+
+    const NAME_RE = /^[a-zA-Z\s'-]{1,50}$/;
+    const PHONE_RE = /^[0-9()+\-.\s]{7,20}$/;
+    const LOCATION_RE = /^[a-zA-Z0-9\s'-]{1,100}$/;
+
+    if (firstName !== undefined && firstName.length > 0 && !NAME_RE.test(firstName)) {
+      res.status(400).json({ error: "Invalid first name format" }); return;
+    }
+    if (lastName !== undefined && lastName.length > 0 && !NAME_RE.test(lastName)) {
+      res.status(400).json({ error: "Invalid last name format" }); return;
+    }
+    if (phone !== undefined && phone.length > 0 && !PHONE_RE.test(phone)) {
+      res.status(400).json({ error: "Invalid phone number format" }); return;
+    }
+    if (country !== undefined && country.length > 0 && !LOCATION_RE.test(country)) {
+      res.status(400).json({ error: "Invalid country format" }); return;
+    }
+    if (state !== undefined && state.length > 0 && !LOCATION_RE.test(state)) {
+      res.status(400).json({ error: "Invalid state format" }); return;
+    }
+    if (city !== undefined && city.length > 0 && !LOCATION_RE.test(city)) {
+      res.status(400).json({ error: "Invalid city format" }); return;
+    }
+
     const profile = getUserProfileData(email);
     if (!profile["email"]) { res.status(404).json({ error: "User not found" }); return; }
     const settings = (profile["_settings"] as Record<string, unknown>) ?? {};
-    if (firstName !== undefined) settings["firstName"] = firstName;
-    if (lastName !== undefined) settings["lastName"] = lastName;
-    if (phone !== undefined) settings["phone"] = phone;
-    if (country !== undefined) settings["country"] = country;
-    if (state !== undefined) settings["state"] = state;
-    if (city !== undefined) settings["city"] = city;
+    if (firstName !== undefined) settings["firstName"] = firstName.trim();
+    if (lastName !== undefined) settings["lastName"] = lastName.trim();
+    if (phone !== undefined) settings["phone"] = phone.trim();
+    if (country !== undefined) settings["country"] = country.trim();
+    if (state !== undefined) settings["state"] = state.trim();
+    if (city !== undefined) settings["city"] = city.trim();
     settings["updatedAt"] = new Date().toISOString();
     setUserProfileMeta(email, "_settings", settings);
     res.json({ success: true });

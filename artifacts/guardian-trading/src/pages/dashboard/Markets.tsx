@@ -88,10 +88,11 @@ export default function Markets() {
         if (!r.ok) throw new Error("Failed");
         return r.json();
       })
-      .then((data: CoinData[]) => {
-        setCoins(data);
+      .then((data: CoinData[] | { data: CoinData[]; stale: boolean }) => {
+        const coins = Array.isArray(data) ? data : data.data;
+        setCoins(coins);
         setLoading(false);
-        if (!selectedCoin && data.length > 0) setSelectedCoin(data[0]!);
+        if (!selectedCoin && coins.length > 0) setSelectedCoin(coins[0]!);
       })
       .catch(() => {
         setError("Failed to fetch market data. Please try again.");

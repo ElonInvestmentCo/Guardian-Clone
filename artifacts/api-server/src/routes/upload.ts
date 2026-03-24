@@ -7,6 +7,7 @@ import {
   getUserDocDir,
   addDocumentRef,
 } from "../lib/userDataStore.js";
+import { uploadLimit } from "../middleware/security.js";
 
 const uploadRouter = Router();
 
@@ -39,6 +40,7 @@ const upload = multer({
 
 uploadRouter.post(
   "/signup/upload-document",
+  uploadLimit,
   upload.single("file"),
   (req, res) => {
     const { email, role } = req.body as { email?: string; role?: string };
@@ -99,13 +101,14 @@ uploadRouter.post(
       }
     }
 
-    // Record reference in user data
     const relativePath = `data/users/${sanitizeEmail(email)}/documents/${fileName}`;
     try {
       addDocumentRef(email, safeRole, relativePath);
     } catch (err) {
       console.error("[upload] Failed to update document reference:", err);
-      // File is saved — don't fail the whole request
+      try { fs.unlinkSync(destPath); } catch { /* cleanup best-effort */ }
+      res.status(500).json({ error: "Failed to record document reference" });
+      return;
     }
 
     console.log(`[upload] Saved document "${fileName}" for ${email}`);

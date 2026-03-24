@@ -26,7 +26,8 @@ marketRouter.get("/market/prices", async (_req, res) => {
   } catch (err) {
     console.error("[market/prices] Error:", err);
     if (pricesCache) {
-      res.json(pricesCache.data);
+      const ageMs = Date.now() - pricesCache.ts;
+      res.json({ data: pricesCache.data, stale: true, cachedAt: new Date(pricesCache.ts).toISOString(), ageSeconds: Math.round(ageMs / 1000) });
       return;
     }
     res.status(502).json({ error: "Failed to fetch market data" });

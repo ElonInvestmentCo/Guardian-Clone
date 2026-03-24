@@ -129,6 +129,24 @@ export const sensitiveEndpointLimit = rateLimit({
   validate: { xForwardedForHeader: false },
 });
 
+export const aiChatLimit = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many AI requests. Please slow down." },
+  validate: { xForwardedForHeader: false },
+});
+
+export const uploadLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many uploads. Please try again later." },
+  validate: { xForwardedForHeader: false },
+});
+
 export function requestFingerprint(req: Request, res: Response, next: NextFunction): void {
   const ua = req.headers["user-agent"] ?? "";
   const accept = req.headers["accept"] ?? "";

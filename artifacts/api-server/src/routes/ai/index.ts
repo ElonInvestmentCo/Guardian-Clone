@@ -2,10 +2,11 @@ import { Router, type Request, type Response } from "express";
 import { getAiProvider, type AiMessage } from "../../lib/ai/aiService.js";
 import { buildSystemPrompt, getPortfolioData, getMarketData, getStakingData } from "../../lib/ai/tradingContext.js";
 import { getRecentMessages, appendMessage, clearConversation, getConversation } from "../../lib/ai/chatStore.js";
+import { aiChatLimit } from "../../middleware/security.js";
 
 const router = Router();
 
-router.post("/ai/chat", async (req: Request, res: Response): Promise<void> => {
+router.post("/ai/chat", aiChatLimit, async (req: Request, res: Response): Promise<void> => {
   try {
     const { message, email } = req.body as { message?: string; email?: string };
     if (!message || !email) {
@@ -57,8 +58,14 @@ router.post("/ai/chat", async (req: Request, res: Response): Promise<void> => {
     if (!res.headersSent) {
       res.status(500).json({ error: "AI service error" });
     } else {
-      res.write(`data: ${JSON.stringify({ error: "AI service error" })}\n\n`);
-      res.end();
+      try {
+        if (!res.writableEnded) {
+          res.write(`data: ${JSON.stringify({ error: "AI service error" })}\n\n`);
+          res.end();
+        }
+      } catch (writeErr) {
+        console.error("[AI] Failed to write error to stream:", writeErr);
+      }
     }
   }
 });

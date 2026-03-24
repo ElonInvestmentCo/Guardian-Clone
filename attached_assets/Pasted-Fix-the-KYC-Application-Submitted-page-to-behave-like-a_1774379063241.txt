@@ -1,0 +1,79 @@
+Fix the KYC Application Submitted page to behave like a real professional financial platform across ALL devices (especially iPhone).
+
+UI / RESPONSIVENESS FIX (CRITICAL):
+- The onboarding step progress bar (steps 1–11) is overflowing and breaking on mobile.
+- Make the stepper fully responsive:
+  • Use horizontal scroll (overflow-x-auto) OR compress spacing/icons for small screens
+  • Ensure text does NOT overlap or overflow
+  • Maintain clean spacing on iPhone (430px width)
+- Ensure the entire page (card, buttons, footer) fits perfectly with:
+  • No horizontal overflow
+  • Proper padding and margins
+  • Safe-area support (env(safe-area-inset-bottom))
+- The layout must look clean and centered on all breakpoints (mobile, tablet, desktop)
+
+REMOVE DEMO ELEMENT:
+- Completely remove the “Simulate Admin Approval (Demo)” button from the UI and codebase
+
+APPLICATION STATUS LOGIC (VERY IMPORTANT):
+Implement real backend-driven status behavior:
+
+1. DEFAULT STATE (after submission):
+   - Status = "PENDING"
+   - Show:
+     • “Pending Review” badge
+     • Message: “Your application is under review (1–2 business days)”
+
+2. CHECK VERIFICATION STATUS BUTTON:
+   - When clicked:
+     • Call backend endpoint (e.g. GET /kyc/status)
+     • Show loading spinner
+     • DO NOT redirect
+     • Reload the SAME page with updated status
+
+3. IF STATUS = PENDING:
+   - Stay on the same page
+   - Continue showing “Pending Review”
+   - No redirect
+
+4. IF STATUS = APPROVED:
+   - Automatically:
+     • Refresh status
+     • Redirect user to Dashboard
+     • Show success state (Account Verified)
+   - This should also happen in real-time (poll every 5–10 seconds OR use WebSocket)
+
+5. IF STATUS = REJECTED:
+   - Show professional rejection UI:
+     • Status badge: “Rejected”
+     • Clear reason (from backend)
+     • CTA button: “Fix & Resubmit Application”
+   - Redirect user back into onboarding at the correct step
+
+6. IF STATUS = RESUBMIT_REQUIRED:
+   - Show:
+     • “Action Required” badge
+     • Message explaining what needs correction
+     • Button: “Continue Application”
+   - Resume onboarding from the failed step
+
+BACKEND REQUIREMENTS:
+- Store KYC status per user in database:
+  pending | approved | rejected | resubmit_required
+- Create endpoint:
+  GET /api/kyc/status
+- Ensure admin actions (Approve / Reject / Resubmit):
+  • Update DB
+  • Immediately reflect on user side
+
+REAL-TIME SYNC:
+- Implement polling every 5–10 seconds OR WebSocket
+- Auto-update UI without refresh
+
+FINAL RESULT:
+The KYC flow must behave like a real brokerage platform:
+- No fake/demo buttons
+- No broken mobile layout
+- Status always accurate
+- Users cannot bypass review
+- Clean, responsive, professional UI on iPhone and all devices
