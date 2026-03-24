@@ -36,19 +36,19 @@ marketRouter.get("/market/prices", marketDataLimit, async (_req, res) => {
 });
 
 marketRouter.get("/market/chart/:id", marketDataLimit, async (req, res) => {
-  try {
-    const { id } = req.params;
-    if (!id || !/^[a-z0-9-]+$/.test(id)) {
-      res.status(400).json({ error: "Invalid coin ID" });
-      return;
-    }
-    const days = (req.query["days"] as string) || "1";
-    if (!/^[0-9]+$/.test(days)) {
-      res.status(400).json({ error: "Invalid days parameter" });
-      return;
-    }
-    const cacheKey = `${id}_${days}`;
+  const { id } = req.params;
+  if (!id || !/^[a-z0-9-]+$/.test(id)) {
+    res.status(400).json({ error: "Invalid coin ID" });
+    return;
+  }
+  const days = (req.query["days"] as string) || "1";
+  if (!/^[0-9]+$/.test(days)) {
+    res.status(400).json({ error: "Invalid days parameter" });
+    return;
+  }
+  const cacheKey = `${id}_${days}`;
 
+  try {
     const cached = chartCache.get(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
       res.json(cached.data);
@@ -75,6 +75,12 @@ marketRouter.get("/market/chart/:id", marketDataLimit, async (req, res) => {
     res.json(data);
   } catch (err) {
     console.error("[market/chart] Error:", err);
+    const cached = chartCache.get(cacheKey);
+    if (cached) {
+      const ageMs = Date.now() - cached.ts;
+      res.json({ data: cached.data, stale: true, cachedAt: new Date(cached.ts).toISOString(), ageSeconds: Math.round(ageMs / 1000) });
+      return;
+    }
     res.status(502).json({ error: "Failed to fetch chart data" });
   }
 });
