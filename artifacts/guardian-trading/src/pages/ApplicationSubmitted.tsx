@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";
@@ -28,11 +29,14 @@ const NAV_LINKS = [
 export default function ApplicationSubmitted() {
   const [, navigate] = useLocation();
 
-  return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#f4f4f4" }}>
+  useEffect(() => {
+    const timer = setTimeout(() => navigate("/application-pending"), 3000);
+    return () => clearTimeout(timer);
+  }, [navigate]);
 
-      {/* Top bar */}
-      <div className="flex items-center justify-end px-6 py-1.5" style={{ background: "#5baad4" }}>
+  return (
+    <div className="min-h-screen flex flex-col overflow-x-hidden" style={{ background: "#f4f4f4" }}>
+      <div className="flex items-center justify-end px-4 sm:px-6 py-1.5" style={{ background: "#5baad4" }}>
         <a href="tel:8449631512" className="flex items-center gap-1.5 text-white font-semibold" style={{ fontSize: "13px" }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="white">
             <path d="M6.62 10.79a15.49 15.49 0 0 0 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.25 1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C9.61 21 3 14.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57-.11.35-.02.74-.25 1.02l-2.2 2.2z"/>
@@ -41,10 +45,9 @@ export default function ApplicationSubmitted() {
         </a>
       </div>
 
-      {/* Navbar */}
       <nav style={{ background: "#1c2e3e" }}>
-        <div className="flex items-center justify-between px-6 h-[54px]">
-          <Link href="/"><img src={guardianLogo} alt="Guardian Trading" style={{ height: "38px", width: "auto" }} /></Link>
+        <div className="flex items-center justify-between px-4 sm:px-6 h-[54px]">
+          <Link href="/"><img src={guardianLogo} alt="Guardian Trading" style={{ height: "34px", width: "auto" }} /></Link>
           <div className="hidden md:flex items-center gap-6">
             {NAV_LINKS.map((link) => (
               <Link key={link.name} href={link.href} className="flex items-center gap-0.5 text-white hover:text-[#5baad4]" style={{ fontSize: "13px", fontWeight: 500 }}>
@@ -53,70 +56,81 @@ export default function ApplicationSubmitted() {
               </Link>
             ))}
           </div>
-          <button className="text-white font-medium px-5 py-1.5 border hover:bg-white/10" style={{ fontSize: "13px", borderColor: "#5baad4", borderRadius: "3px" }}>Logout</button>
+          <button
+            onClick={() => { sessionStorage.removeItem("signupEmail"); navigate("/login"); }}
+            className="text-white font-medium px-4 sm:px-5 py-1.5 border hover:bg-white/10"
+            style={{ fontSize: "13px", borderColor: "#5baad4", borderRadius: "3px" }}
+          >
+            Logout
+          </button>
         </div>
       </nav>
 
-      {/* Step bar — all completed */}
-      <div className="bg-white px-6 py-5" style={{ borderBottom: "1px solid #dde3e9" }}>
-        <div className="flex items-start justify-between">
-          {STEPS.map((step, i) => (
-            <div key={step.n} className="flex flex-col items-center" style={{ flex: 1 }}>
-              <div className="flex items-center w-full">
-                <div className="flex-1 h-[2px]" style={{ background: i === 0 ? "transparent" : "#3a7bd5" }} />
-                <div className="flex items-center justify-center rounded-full flex-shrink-0 font-bold"
-                  style={{ width: "28px", height: "28px", fontSize: "12px", background: "#3a7bd5", color: "white", border: "2px solid #3a7bd5" }}>
-                  {step.n}
+      <div className="bg-white" style={{ borderBottom: "1px solid #dde3e9" }}>
+        <div className="overflow-x-auto">
+          <div className="flex items-start px-3 sm:px-6 py-4 sm:py-5" style={{ minWidth: "600px" }}>
+            {STEPS.map((step, i) => (
+              <div key={step.n} className="flex flex-col items-center" style={{ flex: 1, minWidth: 0 }}>
+                <div className="flex items-center w-full">
+                  <div className="flex-1 h-[2px]" style={{ background: i === 0 ? "transparent" : "#3a7bd5" }} />
+                  <div className="flex items-center justify-center rounded-full flex-shrink-0 font-bold"
+                    style={{ width: "26px", height: "26px", fontSize: "11px", background: "#3a7bd5", color: "white" }}>
+                    {step.n}
+                  </div>
+                  <div className="flex-1 h-[2px]" style={{ background: i === STEPS.length - 1 ? "transparent" : "#3a7bd5" }} />
                 </div>
-                <div className="flex-1 h-[2px]" style={{ background: i === STEPS.length - 1 ? "transparent" : "#3a7bd5" }} />
+                <p className="text-center mt-1 leading-tight whitespace-pre-line hidden sm:block"
+                  style={{ fontSize: "8px", color: "#3a7bd5", fontWeight: 700, maxWidth: "60px" }}>
+                  {step.label}
+                </p>
               </div>
-              <p className="text-center mt-1.5 leading-tight whitespace-pre-line"
-                style={{ fontSize: "9px", color: "#3a7bd5", fontWeight: 700, maxWidth: "70px" }}>
-                {step.label}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Main */}
-      <main className="flex-1 px-6 py-6">
-        <div className="bg-white" style={{ borderRadius: "2px", boxShadow: "0 1px 6px rgba(0,0,0,0.10)", border: "1px solid #dde3e9", borderLeft: "4px solid #3a7bd5" }}>
-          <div className="px-8 pt-5 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
+      <main className="flex-1 px-4 sm:px-6 py-5 sm:py-6">
+        <div className="bg-white max-w-2xl mx-auto" style={{ borderRadius: "3px", boxShadow: "0 1px 6px rgba(0,0,0,0.10)", border: "1px solid #dde3e9", borderLeft: "4px solid #3a7bd5" }}>
+          <div className="px-5 sm:px-8 pt-5 pb-4" style={{ borderBottom: "1px solid #e8edf2" }}>
             <p style={{ fontSize: "15px", color: "#3a7bd5", fontWeight: 600 }}>Application Submitted</p>
           </div>
-          <div className="py-16 flex flex-col items-center" style={{ minHeight: "260px" }}>
-            <h2 className="font-semibold mb-2" style={{ fontSize: "20px", color: "#333" }}>Thank you!</h2>
-            <p className="mb-6" style={{ fontSize: "13px", color: "#666" }}>Your Application has been successfully submitted.</p>
+          <div className="px-5 sm:px-8 py-12 sm:py-16 flex flex-col items-center" style={{ minHeight: "260px" }}>
+            <div className="flex items-center justify-center rounded-full mb-5"
+              style={{ width: "60px", height: "60px", background: "#e8f5e9", border: "2px solid #28a745" }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#28a745" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+            <h2 className="font-semibold mb-2 text-center" style={{ fontSize: "20px", color: "#333" }}>Thank you!</h2>
+            <p className="mb-6 text-center" style={{ fontSize: "13px", color: "#666", maxWidth: "400px" }}>
+              Your application has been successfully submitted. You will be redirected to check your application status.
+            </p>
             <button
               onClick={() => navigate("/application-pending")}
               style={{
-                padding: "6px 18px",
-                fontSize: "12px",
+                padding: "10px 28px",
+                fontSize: "13px",
                 fontWeight: 600,
                 color: "#3a7bd5",
                 border: "1.5px solid #3a7bd5",
-                borderRadius: "2px",
+                borderRadius: "4px",
                 background: "white",
                 cursor: "pointer",
-                letterSpacing: "0.05em",
-                textTransform: "uppercase",
               }}
             >
-              Redirect to Portal
+              View Application Status
             </button>
           </div>
         </div>
       </main>
 
-      {/* Footer */}
       <footer style={{ background: "#111" }}>
-        <div className="px-10 pt-12 pb-10" style={{ borderBottom: "1px solid #2a2a2a" }}>
-          <div className="flex flex-col lg:flex-row gap-10">
+        <div className="px-5 sm:px-10 pt-10 sm:pt-12 pb-8 sm:pb-10" style={{ borderBottom: "1px solid #2a2a2a" }}>
+          <div className="flex flex-col lg:flex-row gap-8 sm:gap-10">
             <div className="flex-shrink-0 lg:w-[200px]">
               <Link href="/"><img src={guardianReversedLogo} alt="Guardian Trading" style={{ height: "36px", width: "auto" }} /></Link>
             </div>
-            <div className="flex flex-1 flex-wrap gap-12">
+            <div className="flex flex-1 flex-wrap gap-8 sm:gap-12">
               <div>
                 <h4 className="text-[11px] font-bold uppercase tracking-widest mb-4" style={{ color: "#aaa" }}>Company</h4>
                 <ul className="flex flex-col gap-2.5">{["About","Services","Platforms","Pricing","Insights"].map((item) => (<li key={item}><Link href={`/${item.toLowerCase()}`} className="text-[13px] hover:text-white" style={{ color: "#bbb" }}>{item}</Link></li>))}</ul>
@@ -136,7 +150,7 @@ export default function ApplicationSubmitted() {
             </div>
           </div>
         </div>
-        <div className="px-10 py-8 text-center">
+        <div className="px-5 sm:px-10 py-6 sm:py-8 text-center" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 2rem)" }}>
           <p className="text-[13px] mb-1" style={{ color: "#aaa" }}>Guardian Trading – A Division of Velocity Clearing, LLC ("Velocity"). Member FINRA/ SIPC.</p>
           <p className="text-[13px] mb-6" style={{ color: "#aaa" }}>All securities and transactions are handled through Velocity.</p>
           <p className="text-[11px] uppercase leading-relaxed mb-5" style={{ color: "#666", maxWidth: "900px", margin: "0 auto 20px" }}>

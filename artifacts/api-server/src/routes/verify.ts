@@ -1,6 +1,6 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { setUserStatus, getUserData } from "../lib/userDataStore.js";
+import { setUserStatus, getUserData, getUserProfileData } from "../lib/userDataStore.js";
 import { sendAccountVerifiedEmail } from "../lib/mailer.js";
 
 const verifyRouter = Router();
@@ -79,10 +79,35 @@ verifyRouter.get("/signup/status", (req, res) => {
     return;
   }
 
-  res.json({
-    status: (user["status"] as string) ?? "pending",
+  const userStatus = (user["status"] as string) ?? "pending";
+  const response: Record<string, unknown> = {
+    status: userStatus,
     verifiedAt: user["verifiedAt"] ?? null,
-  });
+  };
+
+  if (userStatus === "rejected" || userStatus === "resubmit") {
+    const profile = getUserProfileData(email);
+    const auditLog = (profile._auditLog as Array<Record<string, unknown>>) ?? [];
+
+    if (userStatus === "rejected") {
+      const rejectEntry = [...auditLog].reverse().find((e) => e.actionType === "ADMIN_REJECT");
+      if (rejectEntry) {
+        response.rejectionReason = rejectEntry.reason ?? null;
+      }
+    }
+
+    if (userStatus === "resubmit") {
+      const resubmitEntry = [...auditLog].reverse().find((e) => e.actionType === "ADMIN_REQUEST_RESUBMIT");
+      const metaFields = (profile._resubmitFields as string[]) ?? [];
+      const auditFields = (resubmitEntry?.fields as string[]) ?? [];
+      response.resubmitFields = metaFields.length > 0 ? metaFields : auditFields;
+      if (resubmitEntry) {
+        response.resubmitNote = resubmitEntry.note ?? null;
+      }
+    }
+  }
+
+  res.json(response);
 });
 
 export default verifyRouter;

@@ -71,7 +71,13 @@ export async function verifyAccount(): Promise<{ success: boolean; error?: strin
 /**
  * Poll the current user's application status from the server.
  */
-export async function checkApplicationStatus(): Promise<{ status: string; verifiedAt?: string | null }> {
+export async function checkApplicationStatus(): Promise<{
+  status: string;
+  verifiedAt?: string | null;
+  rejectionReason?: string | null;
+  resubmitFields?: string[];
+  resubmitNote?: string | null;
+}> {
   const email = sessionStorage.getItem("signupEmail");
   if (!email) return { status: "pending" };
   try {
@@ -80,6 +86,9 @@ export async function checkApplicationStatus(): Promise<{ status: string; verifi
     return {
       status: (body["status"] as string) ?? "pending",
       verifiedAt: body["verifiedAt"] as string | null | undefined,
+      rejectionReason: body["rejectionReason"] as string | null | undefined,
+      resubmitFields: (body["resubmitFields"] as string[]) ?? [],
+      resubmitNote: body["resubmitNote"] as string | null | undefined,
     };
   } catch {
     return { status: "pending" };
