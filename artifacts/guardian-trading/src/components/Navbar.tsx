@@ -44,7 +44,6 @@ export function Navbar() {
         className="fixed top-0 w-full z-50"
         style={{
           background: headerBg,
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
           transition: "background 0.35s ease",
         }}
       >
