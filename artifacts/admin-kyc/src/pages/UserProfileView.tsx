@@ -584,13 +584,36 @@ export default function UserProfileView({ email, onBack }: Props) {
                     />
                   </div>
                   {!hasKycDecision && (
-                    <div style={{ marginTop: "8px" }}>
-                      <label style={{ fontSize: "11px", color: "#9CA3AF", display: "block", marginBottom: "4px" }}>Reject reason <span style={{ color: "#DC2626" }}>*</span></label>
-                      <input value={rejectReason} onChange={(e) => setRejectReason(e.target.value)}
-                        placeholder="Required when rejecting…"
-                        disabled={kycAnyPending}
-                        style={{ width: "100%", boxSizing: "border-box", padding: "7px 9px", border: "1px solid #E5E7EB", borderRadius: "4px", fontSize: "12px" }} />
-                    </div>
+                    <>
+                      <div style={{ marginTop: "8px" }}>
+                        <label style={{ fontSize: "11px", color: "#9CA3AF", display: "block", marginBottom: "4px" }}>Reject reason <span style={{ color: "#DC2626" }}>*</span></label>
+                        <input value={rejectReason} onChange={(e) => setRejectReason(e.target.value)}
+                          placeholder="Required when rejecting…"
+                          disabled={kycAnyPending}
+                          style={{ width: "100%", boxSizing: "border-box", padding: "7px 9px", border: "1px solid #E5E7EB", borderRadius: "4px", fontSize: "12px" }} />
+                      </div>
+                      <div style={{ marginTop: "10px" }}>
+                        <label style={{ fontSize: "11px", color: "#9CA3AF", display: "block", marginBottom: "6px" }}>Resubmit fields (select sections the user must correct):</label>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
+                          {["Personal Details", "Professional Details", "ID Information", "Income Details", "Risk Tolerance", "Financial Situation", "Investment Experience", "ID Proof Upload", "Funding Details", "Disclosures", "Signatures"].map((f) => {
+                            const sel = resubmitFields.includes(f);
+                            return (
+                              <button key={f} type="button"
+                                onClick={() => setResubmitFields((prev) => sel ? prev.filter((x) => x !== f) : [...prev, f])}
+                                disabled={kycAnyPending}
+                                style={{
+                                  padding: "4px 10px", borderRadius: "4px", fontSize: "11px", fontWeight: 500,
+                                  border: sel ? "1px solid #2563EB" : "1px solid #D1D5DB",
+                                  background: sel ? "#EFF6FF" : "white",
+                                  color: sel ? "#2563EB" : "#6B7280",
+                                  cursor: kycAnyPending ? "not-allowed" : "pointer",
+                                }}
+                              >{f}</button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </>
                   )}
                   {currentStatus === "rejected" && (
                     <div style={{ marginTop: "8px", fontSize: "11px", color: "#6B7280" }}>

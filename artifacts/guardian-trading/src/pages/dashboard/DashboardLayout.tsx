@@ -72,7 +72,11 @@ export default function DashboardLayout({ children }: Props) {
           if (data.status === "verified" && data.kycComplete) {
             navigate("/application-pending");
           } else if (data.status === "rejected") {
-            navigate("/login");
+            navigate("/application-pending");
+          } else if (data.status === "resubmit") {
+            navigate("/application-pending");
+          } else if (data.status === "pending" && data.kycComplete) {
+            navigate("/application-pending");
           } else {
             const stepPaths = [
               "/general-details", "/personal-details", "/professional-details",

@@ -14,6 +14,7 @@ import {
   saveUserCredentials,
   getDataDir,
 } from "../lib/userDataStore.js";
+import { userDataLimit, sensitiveEndpointLimit } from "../middleware/security.js";
 
 const BCRYPT_ROUNDS = 12;
 
@@ -64,11 +65,11 @@ const upload = multer({
   },
 });
 
-profileRouter.get("/user/me", (req, res) => {
+profileRouter.get("/user/me", userDataLimit, (req, res) => {
   try {
     const email = req.query["email"] as string | undefined;
-    if (!email) {
-      res.status(400).json({ error: "email is required" });
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      res.status(400).json({ error: "Valid email is required" });
       return;
     }
 
@@ -108,8 +109,8 @@ profileRouter.post(
   (req, res) => {
     try {
       const email = (req.body as Record<string, string>)["email"];
-      if (!email || !req.file) {
-        res.status(400).json({ error: "email and picture are required" });
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !req.file) {
+        res.status(400).json({ error: "Valid email and picture are required" });
         return;
       }
       setProfilePicture(email, req.file.filename);
@@ -140,11 +141,11 @@ profileRouter.get("/user/profile-picture/:filename", (req, res) => {
   }
 });
 
-profileRouter.delete("/user/profile-picture", (req, res) => {
+profileRouter.delete("/user/profile-picture", userDataLimit, (req, res) => {
   try {
     const email = req.query["email"] as string | undefined;
-    if (!email) {
-      res.status(400).json({ error: "email is required" });
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      res.status(400).json({ error: "Valid email is required" });
       return;
     }
     const current = getProfilePicture(email);
@@ -160,10 +161,10 @@ profileRouter.delete("/user/profile-picture", (req, res) => {
   }
 });
 
-profileRouter.post("/user/update-profile", (req, res) => {
+profileRouter.post("/user/update-profile", userDataLimit, (req, res) => {
   try {
     const { email, firstName, lastName, phone, country, state, city } = req.body as Record<string, string>;
-    if (!email) { res.status(400).json({ error: "email is required" }); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { res.status(400).json({ error: "Valid email is required" }); return; }
 
     const NAME_RE = /^[a-zA-Z\s'-]{1,50}$/;
     const PHONE_RE = /^[0-9()+\-.\s]{7,20}$/;
@@ -206,11 +207,11 @@ profileRouter.post("/user/update-profile", (req, res) => {
   }
 });
 
-profileRouter.post("/user/change-password", async (req, res) => {
+profileRouter.post("/user/change-password", sensitiveEndpointLimit, async (req, res) => {
   try {
     const { email, currentPassword, newPassword } = req.body as Record<string, string>;
-    if (!email || !currentPassword || !newPassword) {
-      res.status(400).json({ error: "email, currentPassword, and newPassword are required" });
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !currentPassword || !newPassword) {
+      res.status(400).json({ error: "Valid email, currentPassword, and newPassword are required" });
       return;
     }
     if (newPassword.length < 8) {
@@ -236,10 +237,10 @@ profileRouter.post("/user/change-password", async (req, res) => {
   }
 });
 
-profileRouter.post("/user/update-notifications", (req, res) => {
+profileRouter.post("/user/update-notifications", userDataLimit, (req, res) => {
   try {
     const { email, preferences } = req.body as { email?: string; preferences?: Record<string, boolean> };
-    if (!email) { res.status(400).json({ error: "email is required" }); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { res.status(400).json({ error: "Valid email is required" }); return; }
     if (!preferences) { res.status(400).json({ error: "preferences are required" }); return; }
     setUserProfileMeta(email, "_notificationPreferences", {
       ...preferences,

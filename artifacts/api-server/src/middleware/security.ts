@@ -147,6 +147,15 @@ export const uploadLimit = rateLimit({
   validate: { xForwardedForHeader: false },
 });
 
+export const userDataLimit = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests. Please slow down." },
+  validate: { xForwardedForHeader: false },
+});
+
 export const marketDataLimit = rateLimit({
   windowMs: 60 * 1000,
   max: 30,

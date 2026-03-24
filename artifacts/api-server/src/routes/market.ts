@@ -38,7 +38,15 @@ marketRouter.get("/market/prices", marketDataLimit, async (_req, res) => {
 marketRouter.get("/market/chart/:id", marketDataLimit, async (req, res) => {
   try {
     const { id } = req.params;
+    if (!id || !/^[a-z0-9-]+$/.test(id)) {
+      res.status(400).json({ error: "Invalid coin ID" });
+      return;
+    }
     const days = (req.query["days"] as string) || "1";
+    if (!/^[0-9]+$/.test(days)) {
+      res.status(400).json({ error: "Invalid days parameter" });
+      return;
+    }
     const cacheKey = `${id}_${days}`;
 
     const cached = chartCache.get(cacheKey);

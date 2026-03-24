@@ -4,10 +4,11 @@ import {
   markNotificationsRead,
   markAllNotificationsRead,
 } from "../lib/userDataStore.js";
+import { userDataLimit } from "../middleware/security.js";
 
 const notificationsRouter = Router();
 
-notificationsRouter.get("/notifications", (req, res) => {
+notificationsRouter.get("/notifications", userDataLimit, (req, res) => {
   const email = req.query["email"] as string | undefined;
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     res.status(400).json({ error: "Valid email is required" });
@@ -20,7 +21,7 @@ notificationsRouter.get("/notifications", (req, res) => {
   res.json({ notifications, unreadCount });
 });
 
-notificationsRouter.post("/notifications/read", (req, res) => {
+notificationsRouter.post("/notifications/read", userDataLimit, (req, res) => {
   const { email, ids } = req.body as { email?: string; ids?: string[] };
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     res.status(400).json({ error: "Valid email is required" });

@@ -9,8 +9,8 @@ const router = Router();
 router.post("/ai/chat", aiChatLimit, async (req: Request, res: Response): Promise<void> => {
   try {
     const { message, email } = req.body as { message?: string; email?: string };
-    if (!message || !email) {
-      res.status(400).json({ error: "message and email are required" });
+    if (!message || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      res.status(400).json({ error: "Valid message and email are required" });
       return;
     }
 
@@ -73,7 +73,7 @@ router.post("/ai/chat", aiChatLimit, async (req: Request, res: Response): Promis
 router.get("/ai/history", (req: Request, res: Response): void => {
   try {
     const email = req.query.email as string;
-    if (!email) { res.status(400).json({ error: "email is required" }); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { res.status(400).json({ error: "Valid email is required" }); return; }
 
     const conv = getConversation(email);
     res.json({
@@ -89,7 +89,7 @@ router.get("/ai/history", (req: Request, res: Response): void => {
 router.post("/ai/clear", (req: Request, res: Response): void => {
   try {
     const { email } = req.body as { email?: string };
-    if (!email) { res.status(400).json({ error: "email is required" }); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { res.status(400).json({ error: "Valid email is required" }); return; }
     clearConversation(email);
     res.json({ success: true });
   } catch (err) {
