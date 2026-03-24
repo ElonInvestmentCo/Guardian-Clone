@@ -127,13 +127,15 @@ export default function ForgotPassword() {
                   Enter your account email and we'll send you a 6-digit reset code.
                 </p>
                 <div className="mb-5">
-                  <input
-                    type="email"
-                    placeholder="Email address"
-                    value={email}
-                    onChange={(e) => { setEmail(e.target.value); setErrors({}); }}
-                    className="w-full px-4 py-3 bg-gray-100 border-0 rounded text-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
-                  />
+                  <div className="gt-input-wrap">
+                    <input
+                      type="email"
+                      placeholder="Email address"
+                      value={email}
+                      onChange={(e) => { setEmail(e.target.value); setErrors({}); }}
+                      className="w-full px-4 py-3 bg-gray-100 border-0 rounded text-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
+                    />
+                  </div>
                   {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
                 </div>
                 {errors.submit && <p className="mb-3 text-xs text-red-500 text-center">{errors.submit}</p>}
@@ -159,50 +161,56 @@ export default function ForgotPassword() {
 
                 <div className="mb-4">
                   <label className="block text-xs text-gray-500 mb-1">Verification Code</label>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={6}
-                    placeholder="· · · · · ·"
-                    value={code}
-                    onChange={(e) => { setCode(e.target.value.replace(/\D/g, "")); setErrors({}); }}
-                    className="w-full px-4 py-3 bg-gray-100 border-0 rounded text-gray-700 placeholder-gray-400 text-sm text-center tracking-[0.35em] font-bold focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
-                  />
+                  <div className="gt-input-wrap">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={6}
+                      placeholder="· · · · · ·"
+                      value={code}
+                      onChange={(e) => { setCode(e.target.value.replace(/\D/g, "")); setErrors({}); }}
+                      className="w-full px-4 py-3 bg-gray-100 border-0 rounded text-gray-700 placeholder-gray-400 text-sm text-center tracking-[0.35em] font-bold focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
+                    />
+                  </div>
                   {errors.code && <p className="mt-1 text-xs text-red-500">{errors.code}</p>}
                 </div>
 
                 <div className="mb-4">
                   <label className="block text-xs text-gray-500 mb-1">New Password</label>
-                  <div className="relative">
-                    <input
-                      type={showNew ? "text" : "password"}
-                      placeholder="Min. 8 characters"
-                      value={newPassword}
-                      onChange={(e) => { setNewPassword(e.target.value); setErrors({}); }}
-                      className="w-full px-4 py-3 pr-11 bg-gray-100 border-0 rounded text-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
-                    />
-                    <button type="button" onClick={() => setShowNew(!showNew)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
-                      <EyeIcon open={showNew} />
-                    </button>
+                  <div className="gt-input-wrap">
+                    <div className="relative">
+                      <input
+                        type={showNew ? "text" : "password"}
+                        placeholder="Min. 8 characters"
+                        value={newPassword}
+                        onChange={(e) => { setNewPassword(e.target.value); setErrors({}); }}
+                        className="w-full px-4 py-3 pr-11 bg-gray-100 border-0 rounded text-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
+                      />
+                      <button type="button" onClick={() => setShowNew(!showNew)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                        <EyeIcon open={showNew} />
+                      </button>
+                    </div>
                   </div>
                   {errors.newPassword && <p className="mt-1 text-xs text-red-500">{errors.newPassword}</p>}
                 </div>
 
                 <div className="mb-5">
                   <label className="block text-xs text-gray-500 mb-1">Confirm New Password</label>
-                  <div className="relative">
-                    <input
-                      type={showConfirm ? "text" : "password"}
-                      placeholder="Re-enter password"
-                      value={confirmPassword}
-                      onChange={(e) => { setConfirmPassword(e.target.value); setErrors({}); }}
-                      className="w-full px-4 py-3 pr-11 bg-gray-100 border-0 rounded text-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
-                    />
-                    <button type="button" onClick={() => setShowConfirm(!showConfirm)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
-                      <EyeIcon open={showConfirm} />
-                    </button>
+                  <div className="gt-input-wrap">
+                    <div className="relative">
+                      <input
+                        type={showConfirm ? "text" : "password"}
+                        placeholder="Re-enter password"
+                        value={confirmPassword}
+                        onChange={(e) => { setConfirmPassword(e.target.value); setErrors({}); }}
+                        className="w-full px-4 py-3 pr-11 bg-gray-100 border-0 rounded text-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
+                      />
+                      <button type="button" onClick={() => setShowConfirm(!showConfirm)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                        <EyeIcon open={showConfirm} />
+                      </button>
+                    </div>
                   </div>
                   {errors.confirmPassword && <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>}
                 </div>

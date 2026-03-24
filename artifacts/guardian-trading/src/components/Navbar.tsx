@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
@@ -8,10 +8,24 @@ import createAccountBtn from "@assets/Guardian_Trading_-_Google_Chrome_3_21_2026
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
+  const [atBottom, setAtBottom] = useState(false);
 
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
+
+  const handleScroll = useCallback(() => {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+    setAtBottom(scrollTop + clientHeight >= scrollHeight - 50);
+  }, []);
+
+  useEffect(() => {
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   const navLinks = [
     { name: "About",      href: "/about" },
@@ -22,21 +36,22 @@ export function Navbar() {
     { name: "Contact Us", href: "/contact" },
   ];
 
+  const headerBg = atBottom ? "#000000" : "#151515";
+
   return (
     <>
-      {/* ── Desktop / Tablet Navbar ─────────────────────────────────────────── */}
       <nav
         className="fixed top-0 w-full z-50"
         style={{
-          background: "#000000",
+          background: headerBg,
           borderBottom: "1px solid rgba(255,255,255,0.06)",
+          transition: "background 0.35s ease",
         }}
       >
         <div
           className="w-full flex items-center justify-between"
           style={{ height: "65px", paddingLeft: "clamp(16px, 4vw, 56px)", paddingRight: "clamp(16px, 4vw, 44px)" }}
         >
-          {/* ── Logo ─────────────────────────────────────────────────────────── */}
           <Link href="/" className="flex items-center flex-shrink-0">
             <img
               src={guardianLogo}
@@ -47,13 +62,12 @@ export function Navbar() {
             />
           </Link>
 
-          {/* ── Desktop Nav Links ─────────────────────────────────────────────── */}
           <div className="hidden lg:flex items-center" style={{ gap: "26px" }}>
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="transition-colors"
+                className="gt-nav-link"
                 style={{
                   fontSize: "16px",
                   fontWeight: 600,
@@ -62,8 +76,6 @@ export function Navbar() {
                   textDecoration: "none",
                   whiteSpace: "nowrap",
                 }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#76d0f4"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#ffffff"; }}
                 data-testid={`link-nav-${link.name.toLowerCase().replace(/\s/g, "-")}`}
               >
                 {link.name}
@@ -71,9 +83,7 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* ── Desktop Right Buttons ─────────────────────────────────────────── */}
           <div className="hidden lg:flex items-center" style={{ gap: "12px" }}>
-            {/* Client Portal BETA — image button */}
             <Link
               href="/login"
               style={{ display: "inline-block", lineHeight: 0, textDecoration: "none" }}
@@ -103,7 +113,6 @@ export function Navbar() {
               />
             </Link>
 
-            {/* Create Account — image button */}
             <Link
               href="/signup"
               style={{ display: "inline-block", lineHeight: 0, textDecoration: "none" }}
@@ -134,7 +143,6 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* ── Mobile Toggle ────────────────────────────────────────────────── */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="lg:hidden text-white p-2"
@@ -145,11 +153,10 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* ── Mobile Menu ──────────────────────────────────────────────────────── */}
       {isOpen && (
         <div
           className="fixed inset-0 z-40 flex flex-col lg:hidden"
-          style={{ background: "#000000", paddingTop: "65px" }}
+          style={{ background: "#151515", paddingTop: "65px" }}
         >
           <div className="flex flex-col px-8 py-4 gap-0">
             {navLinks.map((link) => (

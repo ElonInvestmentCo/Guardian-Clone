@@ -117,3 +117,48 @@
 .spinner-bars-rotate {
   animation: spinner-bars-rotate 1s steps(12) infinite;
 }
+
+.gt-nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding-bottom: 4px;
+  cursor: pointer;
+}
+.gt-nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #76d0f4;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.gt-nav-link:hover::after,
+.gt-nav-link:focus::after {
+  transform: scaleX(1);
+}
+
+.gt-input-wrap {
+  position: relative;
+}
+.gt-input-wrap::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #4a7fbd;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+  pointer-events: none;
+  border-radius: 0 0 3px 3px;
+}
+.gt-input-wrap:focus-within::after {
+  transform: scaleX(1);
+}

@@ -100,11 +100,9 @@ export default function Login() {
     <div className="min-h-screen bg-white flex items-center justify-center p-4">
       <div className="w-full max-w-[340px]">
         <div className="bg-white rounded-lg shadow-xl overflow-hidden border border-gray-200">
-          {/* Blue top stripe */}
           <div className="h-[5px] bg-[#4a7fbd] w-full" />
 
           <div className="px-8 py-8">
-            {/* Logo row */}
             <div className="flex items-center gap-3 mb-7">
               <img
                 src={guardianLogo}
@@ -118,55 +116,57 @@ export default function Login() {
             </h1>
 
             <form onSubmit={handleSubmit} noValidate>
-              {/* Email */}
               <div className="mb-3">
-                <input
-                  type="email"
-                  placeholder="Email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
-                  }}
-                  className="w-full px-4 py-3 bg-gray-100 border-0 rounded text-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
-                />
+                <div className="gt-input-wrap">
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+                    }}
+                    className="w-full px-4 py-3 bg-gray-100 border-0 rounded text-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
+                  />
+                </div>
                 {errors.email && (
                   <p className="mt-1 text-xs text-red-500">{errors.email}</p>
                 )}
               </div>
 
-              {/* Password */}
               <div className="mb-6">
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Password"
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
-                    }}
-                    className="w-full px-4 py-3 pr-12 bg-gray-100 border-0 rounded text-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                  >
-                    <img
-                      src={showPassword ? "/eye-open-clean.png" : "/eye-closed-clean.png"}
-                      alt=""
-                      style={{
-                        width: "35px",
-                        height: "35px",
-                        objectFit: "contain",
-                        filter: "brightness(0) opacity(0.85)",
+                <div className="gt-input-wrap">
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password"
+                      autoComplete="current-password"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
                       }}
+                      className="w-full px-4 py-3 pr-12 bg-gray-100 border-0 rounded text-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
                     />
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      <img
+                        src={showPassword ? "/eye-open-clean.png" : "/eye-closed-clean.png"}
+                        alt=""
+                        style={{
+                          width: "35px",
+                          height: "35px",
+                          objectFit: "contain",
+                          filter: "brightness(0) opacity(0.85)",
+                        }}
+                      />
+                    </button>
+                  </div>
                 </div>
                 {errors.password && (
                   <p className="mt-1 text-xs text-red-500">{errors.password}</p>
@@ -177,7 +177,6 @@ export default function Login() {
                 <p className="mb-3 text-xs text-red-500">{errors.submit}</p>
               )}
 
-              {/* Login Button */}
               <button
                 type="submit"
                 disabled={loading}
@@ -187,7 +186,6 @@ export default function Login() {
               </button>
             </form>
 
-            {/* Forgot Password */}
             <div className="mt-5 text-right">
               <Link
                 href="/forgot-password"
@@ -197,7 +195,6 @@ export default function Login() {
               </Link>
             </div>
 
-            {/* Need an Account */}
             <div className="mt-3 text-center">
               <span className="text-sm text-gray-800 font-medium">Need An Account </span>
               <Link
