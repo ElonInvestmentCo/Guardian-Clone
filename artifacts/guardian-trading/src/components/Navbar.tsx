@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
@@ -8,24 +8,20 @@ import createAccountBtn from "@assets/Guardian_Trading_-_Google_Chrome_3_21_2026
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
-  const [atBottom, setAtBottom] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
 
-  const handleScroll = useCallback(() => {
-    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    const scrollHeight = document.documentElement.scrollHeight;
-    const clientHeight = document.documentElement.clientHeight;
-    setAtBottom(scrollTop + clientHeight >= scrollHeight - 50);
-  }, []);
-
   useEffect(() => {
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 60);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const navLinks = [
     { name: "About",      href: "/about" },
@@ -36,7 +32,7 @@ export function Navbar() {
     { name: "Contact Us", href: "/contact" },
   ];
 
-  const headerBg = atBottom ? "#000000" : "#151515";
+  const headerBg = scrolled ? "#000000" : "#151515";
 
   return (
     <>
