@@ -14,6 +14,7 @@ import {
   saveUserCredentials,
   getDataDir,
 } from "../lib/userDataStore.js";
+import crypto from "crypto";
 import { userDataLimit, sensitiveEndpointLimit } from "../middleware/security.js";
 
 const BCRYPT_ROUNDS = 12;

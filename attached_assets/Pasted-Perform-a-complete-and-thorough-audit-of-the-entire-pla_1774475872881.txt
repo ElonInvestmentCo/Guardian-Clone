@@ -1,0 +1,121 @@
+Perform a complete and thorough audit of the entire platform, including both the main website and the admin dashboard. Review every file, component, module, API endpoint, database interaction, UI element, and background process. Identify and fix all issues such as broken functionality, missing logic, inconsistent UI behavior, failed API calls, incorrect data flow, performance bottlenecks, and security gaps. Ensure all frontend elements are properly connected to backend services, all requests return valid responses, and there are no console errors or silent failures. The system should be optimized for speed, reliability, and scalability, matching the standards of a professional financial/trading company.
+
+Complete Removal of “Guardian AI”:
+The “Guardian AI” assistant must be fully and permanently removed from the entire platform.
+
+* Remove all frontend components related to it (UI elements, buttons, modals, scripts).
+* Remove all backend logic, API endpoints, or services connected to it.
+* Delete any assets (icons, images, configurations) related to it.
+* Ensure there are no remaining references in the codebase (imports, hooks, event listeners).
+* Confirm that it is not conditionally rendered or hidden—it must not exist at all in any part of the system.
+* This removal must not break any other functionality or create dependency issues.
+
+“Need Help?” Card – Professional Behavior:
+Redesign and implement the “Need Help?” card as a professional support entry point:
+
+* Position it directly above or slightly attached to the LiveChat widget in the bottom-right corner.
+* Ensure proper spacing so it does not overlap with the chat widget or other floating elements.
+* It should always remain visible but subtle, with a clean and modern design consistent with the platform.
+* When the user clicks the “Need Help?” card:
+
+  * It must instantly trigger and open the LiveChat widget.
+  * Use smooth animation (fade/slide) to make the interaction feel polished.
+* The card should act as a call-to-action and must not reload the page or redirect.
+* If the chat widget is already open, clicking it should focus or expand the chat instead of re-triggering it.
+* Ensure responsiveness across all screen sizes (desktop, tablet, mobile).
+* Optionally store user interaction state (e.g., if dismissed) using local storage or session state.
+
+Persistent Settings System:
+All user settings and toggles must behave reliably:
+
+* When a user changes any setting and clicks “Save,” the data must be stored in the database.
+* On reload, login, or device change, fetch and apply saved settings automatically.
+* Prevent any reset-to-default bugs.
+* Include backend validation and error handling.
+* Provide user feedback such as “Settings saved successfully.”
+
+Two-Factor Authentication (2FA) – Enterprise-Level Implementation:
+Implement a secure, professional 2FA system:
+
+* Allow users to enable 2FA via authenticator apps (Google Authenticator, Authy).
+* Generate QR code and manual setup key.
+* Require OTP verification before activation.
+* Provide backup recovery codes (download/copy option).
+* Display clear status indicators (Enabled/Disabled).
+* Require password + OTP to disable 2FA.
+* Enforce 2FA during login if enabled.
+* Handle invalid/expired codes and edge cases gracefully.
+
+Responsive Design & UI Consistency:
+Ensure all UI components (especially the “Willowwealth – Pro Account” section) are fully responsive:
+
+* Adapt properly across all screen sizes.
+* Maintain consistent spacing, typography, and alignment.
+* Avoid overlapping elements or broken layouts.
+* Use flexible layouts (grid/flexbox) and media queries.
+
+User Profile Data Integrity:
+
+* Once users submit personal details (first name, last name, country, state, city, etc.), store them permanently.
+* These fields must become non-editable to maintain data integrity and compliance.
+* Any future changes must require admin approval or a secure verification process.
+* Enforce restrictions on both frontend and backend.
+
+Account Approval Workflow (Strict Access Control):
+
+* All new users must default to “Pending” status.
+* While pending:
+
+  * No access to dashboard or trading features.
+  * Display a “Pending – Awaiting Approval” screen.
+* Admin must approve users via admin dashboard.
+* Only after approval:
+
+  * Change status to “Approved.”
+  * Grant full access and redirect to dashboard.
+* Prevent any bypass via API or direct URL access.
+
+Empty Initial State & Activity-Based Data:
+For new users, all sections must start empty and only populate with real data:
+
+* Dashboard: No stats until activity exists.
+* Markets: Show live market data only.
+* Positions/Orders: Empty until trades occur.
+* Portfolio: Empty until assets are owned.
+* Statements: Generated only after transactions.
+* Notifications: Triggered only by real events.
+
+Automatic Data Tracking:
+
+* Record all user activities (trades, deposits, withdrawals, settings changes).
+* Store with timestamps and metadata.
+* Display in appropriate sections (history, statements, logs).
+
+Professional Platform Behavior:
+Ensure the platform behaves like a large-scale financial system:
+
+* Real-time data updates (prices, balances, trade statuses).
+* Strong validation for all inputs.
+* Secure authentication and authorization on every request.
+* Role-based access control (user vs admin).
+* Detailed audit logs for critical actions.
+* Smooth loading states, clear success/error messages.
+* No crashes, blank screens, or broken flows.
+
+Security & Compliance:
+
+* Encrypt sensitive data.
+* Use secure authentication (JWT/session management).
+* Prevent unauthorized API access.
+* Implement rate limiting and protection against abuse.
+* Monitor and log suspicious activities.
+
+Scalability & Code Quality:
+
+* Use modular, clean architecture.
+* Separate frontend, backend, and database logic.
+* Ensure code is maintainable and scalable.
+* Optimize queries and API performance.
+
+Final Expected Outcome:
+The platform must operate exactly like a professional, enterprise-level trading company system—secure, responsive, reliable, clean, and fully driven by real user actions, with zero placeholder data and zero unnecessary or unused features.

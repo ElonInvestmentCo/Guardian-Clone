@@ -10,10 +10,10 @@ import trackingScriptRouter from "./trackingScript.js";
 import trackingRouter from "./tracking.js";
 import adminRouter from "./admin.js";
 import fraudRouter from "./fraud.js";
-import aiRouter from "./ai/index.js";
 import notificationsRouter from "./notifications.js";
 import marketRouter from "./market.js";
 import profileRouter from "./profile.js";
+import twoFARouter from "./twofa.js";
 
 const router: IRouter = Router();
 
@@ -28,9 +28,9 @@ router.use(trackingScriptRouter);
 router.use(trackingRouter);
 router.use(adminRouter);
 router.use(fraudRouter);
-router.use(aiRouter);
 router.use(notificationsRouter);
 router.use(marketRouter);
 router.use(profileRouter);
+router.use(twoFARouter);
 
 export default router;
