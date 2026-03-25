@@ -1,0 +1,229 @@
+2026-03-25T22:26:14.755554158Z [inf]  
+2026-03-25T22:26:16.604893861Z [inf]  [35m[Region: us-west1][0m
+2026-03-25T22:26:16.728658823Z [inf]  
+2026-03-25T22:26:16.728707085Z [inf]  [38;2;125;86;243m╭─────────────────╮[0m
+2026-03-25T22:26:16.728712716Z [inf]  [38;2;125;86;243m│[0m Railpack 0.22.1 [38;2;125;86;243m│[0m
+2026-03-25T22:26:16.728716944Z [inf]  [38;2;125;86;243m╰─────────────────╯[0m
+2026-03-25T22:26:16.728723163Z [inf]  
+2026-03-25T22:26:16.728728631Z [inf]  [97m↳ Detected Node[0m
+2026-03-25T22:26:16.728732739Z [inf]  [97m↳ Using pnpm package manager[0m
+2026-03-25T22:26:16.728736901Z [inf]  [97m↳ Found workspace with 11 packages[0m
+2026-03-25T22:26:16.728740707Z [inf]  
+2026-03-25T22:26:16.728744829Z [inf]  [1mPackages[0m
+2026-03-25T22:26:16.728748896Z [inf]  [38;5;238m──────────[0m
+2026-03-25T22:26:16.728752946Z [inf]  [95mnode[0m  [38;5;238m│[0m  [96m22.22.2[0m  [38;5;238m│[0m  railpack default (22)
+2026-03-25T22:26:16.728757462Z [inf]  [95mpnpm[0m  [38;5;238m│[0m  [96m9.15.9[0m   [38;5;238m│[0m  railpack default (9)
+2026-03-25T22:26:16.728761937Z [inf]  
+2026-03-25T22:26:16.728768229Z [inf]  [1mSteps[0m
+2026-03-25T22:26:16.728773015Z [inf]  [38;5;238m──────────[0m
+2026-03-25T22:26:16.728777065Z [inf]  [95m▸ install[0m
+2026-03-25T22:26:16.728781915Z [inf]  [38;5;245m$[0m [1mpnpm add -g node-gyp[0m
+2026-03-25T22:26:16.728786776Z [inf]  [38;5;245m$[0m [1mpnpm install --frozen-lockfile --prefer-offline[0m
+2026-03-25T22:26:16.728791116Z [inf]  
+2026-03-25T22:26:16.728795326Z [inf]  [95m▸ build[0m
+2026-03-25T22:26:16.728799741Z [inf]  [38;5;245m$[0m [1mpnpm --filter @workspace/admin-kyc build[0m
+2026-03-25T22:26:16.728803684Z [inf]  
+2026-03-25T22:26:16.728808205Z [inf]  [1mDeploy[0m
+2026-03-25T22:26:16.728812046Z [inf]  [38;5;238m──────────[0m
+2026-03-25T22:26:16.728816276Z [inf]  [38;5;245m$[0m [1mpnpm --filter @workspace/admin-kyc dev[0m
+2026-03-25T22:26:16.728820306Z [inf]  
+2026-03-25T22:26:16.728824303Z [inf]  
+2026-03-25T22:26:16.730804891Z [inf]  Successfully prepared Railpack plan for build
+2026-03-25T22:26:16.730841122Z [inf]  
+2026-03-25T22:26:16.730849749Z [inf]  
+2026-03-25T22:26:16.731230589Z [inf]  context: h1jk-LB_R
+2026-03-25T22:26:16.962431566Z [inf]  [internal] load build definition from railpack-plan.json
+2026-03-25T22:26:16.962545898Z [inf]  [internal] load build definition from railpack-plan.json
+2026-03-25T22:26:16.963707465Z [inf]  [internal] load build definition from railpack-plan.json
+2026-03-25T22:26:16.978713234Z [inf]  [internal] load build definition from railpack-plan.json
+2026-03-25T22:26:16.980931248Z [inf]  resolve image config for docker-image://ghcr.io/railwayapp/railpack-frontend:v0.22.1
+2026-03-25T22:26:17.287633843Z [inf]  resolve image config for docker-image://ghcr.io/railwayapp/railpack-frontend:v0.22.1
+2026-03-25T22:26:17.287691167Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.22.1@sha256:0f30b660172764dc605f0f17a2905a5d166206b9005d2e054fcbc3894bfa75d1
+2026-03-25T22:26:17.287828247Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.22.1@sha256:0f30b660172764dc605f0f17a2905a5d166206b9005d2e054fcbc3894bfa75d1
+2026-03-25T22:26:17.296223864Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.22.1@sha256:0f30b660172764dc605f0f17a2905a5d166206b9005d2e054fcbc3894bfa75d1
+2026-03-25T22:26:17.296404750Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.22.1@sha256:0f30b660172764dc605f0f17a2905a5d166206b9005d2e054fcbc3894bfa75d1
+2026-03-25T22:26:17.296949695Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.22.1@sha256:0f30b660172764dc605f0f17a2905a5d166206b9005d2e054fcbc3894bfa75d1
+2026-03-25T22:26:17.422322670Z [inf]  load build definition from railpack-plan.json
+2026-03-25T22:26:17.422393732Z [inf]  load build definition from railpack-plan.json
+2026-03-25T22:26:17.422421432Z [inf]  load build definition from railpack-plan.json
+2026-03-25T22:26:17.434024820Z [inf]  load build definition from railpack-plan.json
+2026-03-25T22:26:17.553037186Z [inf]  copy /mise/installs
+2026-03-25T22:26:17.553102916Z [inf]  copy /mise/shims
+2026-03-25T22:26:17.553119674Z [inf]  install mise packages: node, pnpm
+2026-03-25T22:26:17.553130871Z [inf]  create mise config
+2026-03-25T22:26:17.553144485Z [inf]  mkdir /etc/mise
+2026-03-25T22:26:17.553159368Z [inf]  docker-image://ghcr.io/railwayapp/railpack-builder:mise-2026.3.13
+2026-03-25T22:26:17.553166936Z [inf]  install apt packages: libatomic1
+2026-03-25T22:26:17.553173926Z [inf]  docker-image://ghcr.io/railwayapp/railpack-runtime:mise-2026.3.13
+2026-03-25T22:26:17.553234678Z [inf]  pnpm --filter @workspace/admin-kyc build
+2026-03-25T22:26:17.553244721Z [inf]  [railpack] secrets hash
+2026-03-25T22:26:17.553252108Z [inf]  copy .
+2026-03-25T22:26:17.553263086Z [inf]  copy / /app
+2026-03-25T22:26:17.553273875Z [inf]  pnpm install --frozen-lockfile --prefer-offline
+2026-03-25T22:26:17.553281743Z [inf]  copy /root/.cache
+2026-03-25T22:26:17.553288850Z [inf]  mkdir -p /app/node_modules/.cache
+2026-03-25T22:26:17.553296463Z [inf]  copy / /app
+2026-03-25T22:26:17.553303890Z [inf]  loading .
+2026-03-25T22:26:17.553310898Z [inf]  copy /root/.local/state/mise
+2026-03-25T22:26:17.553317812Z [inf]  copy /etc/mise/config.toml
+2026-03-25T22:26:17.553326568Z [inf]  copy /app/node_modules
+2026-03-25T22:26:17.553333825Z [inf]  copy /usr/local/bin/mise
+2026-03-25T22:26:17.553345332Z [inf]  pnpm add -g node-gyp
+2026-03-25T22:26:17.553368123Z [inf]  [railpack] merge $packages:apt:runtime, $packages:mise, $build, $build
+2026-03-25T22:26:17.553375981Z [inf]  copy /app
+2026-03-25T22:26:17.553569971Z [inf]  docker-image://ghcr.io/railwayapp/railpack-runtime:mise-2026.3.13
+2026-03-25T22:26:17.553614568Z [inf]  [railpack] secrets hash
+2026-03-25T22:26:17.553630091Z [inf]  docker-image://ghcr.io/railwayapp/railpack-builder:mise-2026.3.13
+2026-03-25T22:26:17.553904676Z [inf]  loading .
+2026-03-25T22:26:17.755874483Z [inf]  docker-image://ghcr.io/railwayapp/railpack-builder:mise-2026.3.13
+2026-03-25T22:26:17.757437375Z [inf]  mkdir /etc/mise
+2026-03-25T22:26:17.757482107Z [inf]  create mise config
+2026-03-25T22:26:17.757493809Z [inf]  loading .
+2026-03-25T22:26:17.757505313Z [inf]  [railpack] secrets hash
+2026-03-25T22:26:17.757520067Z [inf]  create mise config
+2026-03-25T22:26:17.757534292Z [inf]  install mise packages: node, pnpm
+2026-03-25T22:26:17.772647301Z [inf]  [railpack] secrets hash
+2026-03-25T22:26:17.787986992Z [inf]  docker-image://ghcr.io/railwayapp/railpack-runtime:mise-2026.3.13
+2026-03-25T22:26:17.788564892Z [inf]  docker-image://ghcr.io/railwayapp/railpack-runtime:mise-2026.3.13
+2026-03-25T22:26:17.788618038Z [inf]  install apt packages: libatomic1
+2026-03-25T22:26:17.962178443Z [inf]  Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+
+2026-03-25T22:26:17.988660319Z [inf]  Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+
+2026-03-25T22:26:17.994837702Z [inf]  Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [48.0 kB]
+
+2026-03-25T22:26:18.074219537Z [inf]  Get:4 http://deb.debian.org/debian bookworm/main amd64 Packages [8792 kB]
+
+2026-03-25T22:26:18.171552064Z [inf]  Get:5 http://deb.debian.org/debian bookworm-updates/main amd64 Packages [6924 B]
+
+2026-03-25T22:26:18.200185956Z [inf]  Get:6 http://deb.debian.org/debian-security bookworm-security/main amd64 Packages [294 kB]
+
+2026-03-25T22:26:18.354446523Z [inf]  mise node@22.22.2    [1/3] install
+
+2026-03-25T22:26:18.357071342Z [inf]  mise pnpm@9.15.9     [1/2] install
+
+2026-03-25T22:26:18.358639044Z [inf]  mise node@22.22.2    [1/3] download node-v22.22.2-linux-x64.tar.gz
+
+2026-03-25T22:26:18.506905083Z [inf]  loading .
+2026-03-25T22:26:18.741941103Z [inf]  mise node@22.22.2    [2/3] generate checksum node-v22.22.2-linux-x64.tar.gz
+
+2026-03-25T22:26:18.762540249Z [inf]  mise node@22.22.2    [3/3] extract node-v22.22.2-linux-x64.tar.gz
+
+2026-03-25T22:26:19.024328843Z [inf]  mise pnpm@9.15.9     [1/2] download pnpm-linux-x64
+
+2026-03-25T22:26:19.295658077Z [inf]  Fetched 9347 kB in 1s (6902 kB/s)
+Reading package lists...
+2026-03-25T22:26:19.509977599Z [inf]  mise pnpm@9.15.9     [1/2] generate checksum pnpm-linux-x64
+
+2026-03-25T22:26:19.540026761Z [inf]  mise pnpm@9.15.9     [1/2] extract pnpm-linux-x64
+
+2026-03-25T22:26:19.667418189Z [inf]  mise pnpm@9.15.9   ✓ installed
+
+2026-03-25T22:26:19.801039906Z [inf]  mise node@22.22.2    [3/3] node -v
+
+2026-03-25T22:26:19.806013273Z [inf]  mise node@22.22.2    [3/3] v22.22.2
+
+2026-03-25T22:26:19.806963453Z [inf]  mise node@22.22.2    [3/3] npm -v
+
+2026-03-25T22:26:19.93375903Z [inf]  mise node@22.22.2    [3/3] 10.9.7
+
+2026-03-25T22:26:19.936753523Z [inf]  
+
+2026-03-25T22:26:19.95485826Z [inf]  mise node@22.22.2  ✓ installed
+
+2026-03-25T22:26:19.971028887Z [inf]  Reading package lists...
+2026-03-25T22:26:20.408173441Z [inf]  install mise packages: node, pnpm
+2026-03-25T22:26:20.411988417Z [inf]  copy / /app
+2026-03-25T22:26:20.548702695Z [inf]  copy /mise/shims
+2026-03-25T22:26:20.667802102Z [inf]  copy /mise/shims
+2026-03-25T22:26:20.721762474Z [inf]  
+
+2026-03-25T22:26:20.739054952Z [inf]  Building dependency tree...
+2026-03-25T22:26:20.924241491Z [inf]  copy / /app
+2026-03-25T22:26:20.926934543Z [inf]  mkdir -p /app/node_modules/.cache
+2026-03-25T22:26:20.948363386Z [inf]  
+Reading state information...
+2026-03-25T22:26:20.948859315Z [inf]  
+
+2026-03-25T22:26:21.263425325Z [inf]  The following NEW packages will be installed:
+
+2026-03-25T22:26:21.264424715Z [inf]    libatomic1
+
+2026-03-25T22:26:21.309518924Z [inf]  0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Need to get 9376 B of archives.
+After this operation, 46.1 kB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian bookworm/main amd64 libatomic1 amd64 12.2.0-14+deb12u1 [9376 B]
+
+2026-03-25T22:26:21.323435075Z [inf]  mkdir -p /app/node_modules/.cache
+2026-03-25T22:26:21.326259032Z [inf]  pnpm add -g node-gyp
+2026-03-25T22:26:21.472629008Z [inf]  debconf: delaying package configuration, since apt-utils is not installed
+
+2026-03-25T22:26:21.521793014Z [inf]  Fetched 9376 B in 0s (237 kB/s)
+
+2026-03-25T22:26:21.606128654Z [inf]  Selecting previously unselected package libatomic1:amd64.
+(Reading database ... 
+2026-03-25T22:26:21.608541627Z [inf]  (Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+2026-03-25T22:26:21.614007829Z [inf]  (Reading database ... 75%
+2026-03-25T22:26:21.617655568Z [inf]  (Reading database ... 80%
+2026-03-25T22:26:21.621372146Z [inf]  (Reading database ... 85%
+2026-03-25T22:26:21.625651079Z [inf]  (Reading database ... 90%
+2026-03-25T22:26:21.630783974Z [inf]  (Reading database ... 95%
+2026-03-25T22:26:21.635140244Z [inf]  (Reading database ... 100%
+(Reading database ... 6623 files and directories currently installed.)
+
+2026-03-25T22:26:21.635656516Z [inf]  Preparing to unpack .../libatomic1_12.2.0-14+deb12u1_amd64.deb ...
+
+2026-03-25T22:26:21.675681037Z [inf]  Unpacking libatomic1:amd64 (12.2.0-14+deb12u1) ...
+
+2026-03-25T22:26:21.754584908Z [inf]  Setting up libatomic1:amd64 (12.2.0-14+deb12u1) ...
+
+2026-03-25T22:26:21.777245408Z [inf]  Processing triggers for libc-bin (2.36-9+deb12u13) ...
+
+2026-03-25T22:26:21.908947776Z [inf]  Progress: resolved 1, reused 0, downloaded 0, added 0
+
+2026-03-25T22:26:22.069472390Z [inf]  copy /mise/installs
+2026-03-25T22:26:22.108191976Z [inf]  install apt packages: libatomic1
+2026-03-25T22:26:22.51617246Z [inf]  Packages: +54
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+2026-03-25T22:26:22.909959202Z [inf]  Progress: resolved 54, reused 0, downloaded 54, added 20
+
+2026-03-25T22:26:23.000694901Z [inf]  Progress: resolved 54, reused 0, downloaded 54, added 54, done
+
+2026-03-25T22:26:23.111640868Z [inf]  
+/pnpm/global/5:
++ node-gyp 12.2.0
+
+
+2026-03-25T22:26:23.246807684Z [inf]  Done in 1.5s using pnpm v9.15.9
+
+2026-03-25T22:26:23.433429911Z [inf]  copy /mise/installs
+2026-03-25T22:26:23.441320969Z [inf]  copy /usr/local/bin/mise
+2026-03-25T22:26:23.511101857Z [inf]  pnpm add -g node-gyp
+2026-03-25T22:26:23.518869785Z [inf]  pnpm install --frozen-lockfile --prefer-offline
+2026-03-25T22:26:23.939400692Z [inf]  copy /usr/local/bin/mise
+2026-03-25T22:26:23.951459618Z [inf]  copy /etc/mise/config.toml
+2026-03-25T22:26:23.978923805Z [inf]  copy /etc/mise/config.toml
+2026-03-25T22:26:23.982211435Z [inf]  copy /root/.local/state/mise
+2026-03-25T22:26:24.009349676Z [inf]  copy /root/.local/state/mise
+2026-03-25T22:26:24.158932455Z [inf]  Scope: all 12 workspace projects
+
+2026-03-25T22:26:24.211422859Z [inf]   ERR_PNPM_LOCKFILE_CONFIG_MISMATCH  Cannot proceed with the frozen installation. The current "overrides" configuration doesn't match the value found in the lockfile
+
+Update your lockfile using "pnpm install --no-frozen-lockfile"
+
+2026-03-25T22:26:24.357913686Z [err]  pnpm install --frozen-lockfile --prefer-offline
+2026-03-25T22:26:24.384697412Z [err]  ERROR: failed to build: failed to solve: process "pnpm install --frozen-lockfile --prefer-offline" did not complete successfully: exit code: 1
