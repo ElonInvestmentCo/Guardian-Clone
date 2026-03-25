@@ -90,6 +90,11 @@ profileRouter.get("/user/me", userDataLimit, (req, res) => {
     const kycComplete = completedSteps.length >= totalSteps;
     const profilePic = getProfilePicture(email);
 
+    const profile = getUserProfileData(email);
+    const settings = (profile["_settings"] as Record<string, unknown>) ?? {};
+    const notifPrefs = (profile["_notificationPreferences"] as Record<string, unknown>) ?? {};
+    const twoFAData = (profile["_2fa"] as Record<string, unknown>) ?? {};
+
     res.json({
       status,
       kycComplete,
@@ -97,6 +102,25 @@ profileRouter.get("/user/me", userDataLimit, (req, res) => {
       totalSteps,
       profilePicture: profilePic,
       role: (userData["role"] as string) ?? "user",
+      settings: {
+        firstName: (settings["firstName"] as string) ?? "",
+        lastName: (settings["lastName"] as string) ?? "",
+        phone: (settings["phone"] as string) ?? "",
+        country: (settings["country"] as string) ?? "",
+        state: (settings["state"] as string) ?? "",
+        city: (settings["city"] as string) ?? "",
+      },
+      notificationPreferences: {
+        tradeConfirmations: (notifPrefs["tradeConfirmations"] as boolean) ?? true,
+        priceAlerts: (notifPrefs["priceAlerts"] as boolean) ?? true,
+        orderFills: (notifPrefs["orderFills"] as boolean) ?? true,
+        marketOpen: (notifPrefs["marketOpen"] as boolean) ?? false,
+        marketClose: (notifPrefs["marketClose"] as boolean) ?? false,
+        weeklyReport: (notifPrefs["weeklyReport"] as boolean) ?? true,
+        promotions: (notifPrefs["promotions"] as boolean) ?? false,
+        securityAlerts: (notifPrefs["securityAlerts"] as boolean) ?? true,
+      },
+      twoFAEnabled: (twoFAData["enabled"] as boolean) ?? false,
     });
   } catch (err) {
     console.error("[Profile] /user/me error:", err);
