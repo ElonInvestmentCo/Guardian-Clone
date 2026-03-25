@@ -1,14 +1,18 @@
 import { Router } from "express";
-import { authenticator } from "otplib";
-import qrcode from "qrcode";
+import { createRequire } from "module";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
+import qrcode from "qrcode";
 import {
   getUserProfileData,
   setUserProfileMeta,
   getStoredPasswordHash,
 } from "../lib/userDataStore.js";
 import { sensitiveEndpointLimit } from "../middleware/security.js";
+
+const _require = createRequire(import.meta.url);
+const otplib = _require("otplib") as typeof import("otplib");
+const { authenticator } = otplib;
 
 const twoFARouter = Router();
 
