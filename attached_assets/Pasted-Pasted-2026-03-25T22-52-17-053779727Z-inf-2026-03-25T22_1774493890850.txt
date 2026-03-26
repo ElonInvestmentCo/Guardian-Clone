@@ -1,0 +1,74 @@
+Pasted-2026-03-25T22-52-17-053779727Z-inf-2026-03-25T22-52-18-_1774479375954.txt
+2026-03-25T22:52:17.053779727Z [inf]  
+2026-03-25T22:52:18.891085026Z [inf]  [35m[Region: us-west1][0m
+2026-03-25T22:52:18.985269106Z [inf]  
+2026-03-25T22:52:18.985318129Z [inf]  [38;2;125;86;243m╭─────────────────╮[0m
+2026-03-25T22:52:18.985327099Z [inf]  [38;2;125;86;243m│[0m Railpack 0.22.1 [38;2;125;86;243m│[0m
+2026-03-25T22:52:18.985332745Z [inf]  [38;2;125;86;243m╰─────────────────╯[0m
+2026-03-25T22:52:18.985338910Z [inf]  
+2026-03-25T22:52:18.985343624Z [inf]  [97m↳ Detected Node[0m
+2026-03-25T22:52:18.985348502Z [inf]  [97m↳ Using pnpm package manager[0m
+2026-03-25T22:52:18.985353449Z [inf]  [97m↳ Found workspace with 11 packages[0m
+2026-03-25T22:52:18.985358102Z [inf]  
+2026-03-25T22:52:18.985362891Z [inf]  [1mPackages[0m
+2026-03-25T22:52:18.985367268Z [inf]  [38;5;238m──────────[0m
+2026-03-25T22:52:18.985371778Z [inf]  [95mnode[0m  [38;5;238m│[0m  [96m22.22.2[0m  [38;5;238m│[0m  railpack default (22)
+2026-03-25T22:52:18.985375792Z [inf]  [95mpnpm[0m  [38;5;238m│[0m  [96m9.15.9[0m   [38;5;238m│[0m  railpack default (9)
+2026-03-25T22:52:18.985380225Z [inf]  
+2026-03-25T22:52:18.985384621Z [inf]  [1mSteps[0m
+2026-03-25T22:52:18.985389010Z [inf]  [38;5;238m──────────[0m
+2026-03-25T22:52:18.985393448Z [inf]  [95m▸ install[0m
+2026-03-25T22:52:18.985403817Z [inf]  [38;5;245m$[0m [1mpnpm add -g node-gyp[0m
+2026-03-25T22:52:18.985409214Z [inf]  [38;5;245m$[0m [1mpnpm install --frozen-lockfile --prefer-offline[0m
+2026-03-25T22:52:18.985413779Z [inf]  
+2026-03-25T22:52:18.985418880Z [inf]  [95m▸ build[0m
+2026-03-25T22:52:18.985423238Z [inf]  [38;5;245m$[0m [1mpnpm --filter @workspace/api-server build[0m
+2026-03-25T22:52:18.985429011Z [inf]  
+2026-03-25T22:52:18.985433363Z [inf]  [1mDeploy[0m
+2026-03-25T22:52:18.985437670Z [inf]  [38;5;238m──────────[0m
+2026-03-25T22:52:18.985442165Z [inf]  [38;5;245m$[0m [1mpnpm --filter @workspace/api-server dev[0m
+2026-03-25T22:52:18.985446691Z [inf]  
+2026-03-25T22:52:18.985451213Z [inf]  
+2026-03-25T22:52:18.986992789Z [inf]  Successfully prepared Railpack plan for build
+2026-03-25T22:52:18.987065241Z [inf]  
+2026-03-25T22:52:18.987080318Z [inf]  
+2026-03-25T22:52:18.987619465Z [inf]  context: m0hm-lO_P
+2026-03-25T22:52:19.165260028Z [inf]  [internal] load build definition from railpack-plan.json
+2026-03-25T22:52:19.165327474Z [inf]  [internal] load build definition from railpack-plan.json
+2026-03-25T22:52:19.165365316Z [inf]  [internal] load build definition from railpack-plan.json
+2026-03-25T22:52:19.176352326Z [inf]  [internal] load build definition from railpack-plan.json
+2026-03-25T22:52:19.177888058Z [inf]  resolve image config for docker-image://ghcr.io/railwayapp/railpack-frontend:v0.22.1
+2026-03-25T22:52:19.310768379Z [inf]  resolve image config for docker-image://ghcr.io/railwayapp/railpack-frontend:v0.22.1
+2026-03-25T22:52:19.415773447Z [inf]  load build definition from railpack-plan.json
+2026-03-25T22:52:19.415829961Z [inf]  load build definition from railpack-plan.json
+2026-03-25T22:52:19.415847809Z [inf]  load build definition from railpack-plan.json
+2026-03-25T22:52:19.444760622Z [inf]  load build definition from railpack-plan.json
+2026-03-25T22:52:19.626874071Z [inf]  pnpm add -g node-gyp
+2026-03-25T22:52:19.626966692Z [inf]  [railpack] merge $packages:apt:runtime, $packages:mise, $build, $build
+2026-03-25T22:52:19.626981259Z [inf]  copy /app
+2026-03-25T22:52:19.626987953Z [inf]  copy /root/.cache
+2026-03-25T22:52:19.626994702Z [inf]  copy /app/node_modules
+2026-03-25T22:52:19.627003213Z [inf]  pnpm --filter @workspace/api-server build
+2026-03-25T22:52:19.627009898Z [inf]  [railpack] secrets hash
+2026-03-25T22:52:19.627015441Z [inf]  copy .
+2026-03-25T22:52:19.627021341Z [inf]  copy / /app
+2026-03-25T22:52:19.627027186Z [inf]  pnpm install --frozen-lockfile --prefer-offline
+2026-03-25T22:52:19.627176801Z [inf]  loading .
+2026-03-25T22:52:19.627188431Z [inf]  [railpack] secrets hash
+2026-03-25T22:52:19.627468576Z [inf]  mkdir /etc/mise
+2026-03-25T22:52:19.627486680Z [inf]  [railpack] secrets hash
+2026-03-25T22:52:19.627502905Z [inf]  install apt packages: libatomic1
+2026-03-25T22:52:19.627517509Z [inf]  loading .
+2026-03-25T22:52:19.627531219Z [inf]  create mise config
+2026-03-25T22:52:19.645412821Z [inf]  [railpack] secrets hash
+2026-03-25T22:52:19.652150211Z [inf]  create mise config
+2026-03-25T22:52:19.653660479Z [inf]  install mise packages: node, pnpm
+2026-03-25T22:52:19.80631845Z [inf]  Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+
+2026-03-25T22:52:19.831543441Z [inf]  Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+
+2026-03-25T22:52:19.841273308Z [inf]  Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [48.0 kB]
+
+2026-03-25T22:52:19.89451256Z [inf]  Get:4 http://deb.debian.org/debian bookworm/main amd64 Packages [8792 kB]
+
+2026-03-25T22:52:19.994799538...

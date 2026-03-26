@@ -1,0 +1,66 @@
+6-03-25T22:52:26.130989057Z [inf]
+2026-03-25T22:52:28.049215115Z [inf] [35m[Region: us-west1][0m
+2026-03-25T22:52:28.147205869Z [inf]
+2026-03-25T22:52:28.147264218Z [inf] [38;2;125;86;243m╭─────────────────╮[0m
+2026-03-25T22:52:28.147272775Z [inf] [38;2;125;86;243m│[0m Railpack 0.22.1 [38;2;125;86;243m│[0m
+2026-03-25T22:52:28.147279671Z [inf] [38;2;125;86;243m╰─────────────────╯[0m
+2026-03-25T22:52:28.147287775Z [inf]
+2026-03-25T22:52:28.147293441Z [inf] [97m↳ Detected Node[0m
+2026-03-25T22:52:28.147298266Z [inf] [97m↳ Using pnpm package manager[0m
+2026-03-25T22:52:28.147303070Z [inf] [97m↳ Found workspace with 11 packages[0m
+2026-03-25T22:52:28.147307447Z [inf] [1;31m✖ No start command detected. Specify a start command: https://railpack.com/config/file[0m
+2026-03-25T22:52:28.147311792Z [inf]
+2026-03-25T22:52:28.147316070Z
+[inf] To configure your start command, Railpack will check:
+2026-03-25T22:52:28.147319945Z [inf]
+2026-03-25T22:52:28.147323762Z [inf] 1. A "start" script in your package.json:
+2026-03-25T22:52:28.147327742Z [inf] "scripts": {
+2026-03-25T22:52:28.147332319Z [inf] "start": "node index.js"
+2026-03-25T22:52:28.147336268Z [inf] }
+2026-03-25T22:52:28.147340313Z [inf]
+2026-03-25T22:52:28.147344189Z [inf] 2. A "main" field in your package.json pointing to your entry file:
+2026-03-25T22:52:28.147348321Z [inf] "main": "src/server.js"
+2026-03-25T22:52:28.147352215Z [inf]
+2026-03-25T22:52:28.147356183Z [inf] 3. An index.js or index.ts file in your project root
+2026-03-25T22:52:28.147360114Z [inf]
+2026-03-25T22:52:28.147364195Z [inf] If you have a static site, you can set the RAILPACK_SPA_OUTPUT_DIR environment variable
+2026-03-25T22:52:28.147368201Z [inf] containing the directory of your built static files.
+2026-03-25T22:52:28.147372241Z [inf]
+2026-03-25T22:52:28.147376130Z [inf]
+2026-03-25T22:52:28.147380257Z [inf]
+
+Perform a full system audit and automatically fix all deployment and build issues across the entire project.
+
+Specifically:
+
+Detect and fix all pnpm workspace and lockfile inconsistencies:
+Ensure pnpm-lock.yaml is valid and synced with all package.json files
+Remove any conflicting overrides or mismatched dependencies
+Ensure compatibility with pnpm install in production environments
+Resolve Railway deployment failures:
+Ensure each service runs independently (no monorepo root conflicts)
+Add proper start scripts to every service package.json
+If missing, create a valid "start" script for each service:
+Backend: node/dist start or equivalent
+Frontend: serve/build preview or correct framework start command
+Fix “No start command detected” error:
+Automatically add a valid "start" script in every package.json
+Ensure Railway can detect and execute the correct entry point
+Optimize project structure:
+Ensure each service (api-server, api-client-react, admin-kyc, guardian-trading) is fully isolated and deployable
+Remove any root-level execution conflicts
+Ensure each service installs only its own dependencies
+Configure production readiness:
+Ensure environment variables are properly handled
+Ensure builds succeed without requiring --frozen-lockfile
+Add fallback install command if needed
+Validate everything:
+Run full install
+Run build for all services
+Confirm no errors
+Ensure all services can start successfully
+Output a final report:
+List all fixes applied
+Confirm all services are deployable without errors
+Highlight any remaining manual configuration needed (if any)
+Goal: Make the entire system deploy successfully on Railway with zero build errors and fully working services.

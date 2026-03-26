@@ -6,6 +6,10 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "scripts": {
+    "build": "echo 'Library package — no build output'",
+    "start": "node healthcheck.mjs"
+  },
   "dependencies": {
     "@tanstack/react-query": "catalog:"
   },

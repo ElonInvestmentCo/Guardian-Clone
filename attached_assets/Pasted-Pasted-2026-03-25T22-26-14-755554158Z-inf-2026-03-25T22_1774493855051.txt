@@ -1,0 +1,63 @@
+Pasted-2026-03-25T22-26-14-755554158Z-inf-2026-03-25T22-26-16-_1774479358158.txt
+2026-03-25T22:26:14.755554158Z [inf]  
+2026-03-25T22:26:16.604893861Z [inf]  [35m[Region: us-west1][0m
+2026-03-25T22:26:16.728658823Z [inf]  
+2026-03-25T22:26:16.728707085Z [inf]  [38;2;125;86;243m╭─────────────────╮[0m
+2026-03-25T22:26:16.728712716Z [inf]  [38;2;125;86;243m│[0m Railpack 0.22.1 [38;2;125;86;243m│[0m
+2026-03-25T22:26:16.728716944Z [inf]  [38;2;125;86;243m╰─────────────────╯[0m
+2026-03-25T22:26:16.728723163Z [inf]  
+2026-03-25T22:26:16.728728631Z [inf]  [97m↳ Detected Node[0m
+2026-03-25T22:26:16.728732739Z [inf]  [97m↳ Using pnpm package manager[0m
+2026-03-25T22:26:16.728736901Z [inf]  [97m↳ Found workspace with 11 packages[0m
+2026-03-25T22:26:16.728740707Z [inf]  
+2026-03-25T22:26:16.728744829Z [inf]  [1mPackages[0m
+2026-03-25T22:26:16.728748896Z [inf]  [38;5;238m──────────[0m
+2026-03-25T22:26:16.728752946Z [inf]  [95mnode[0m  [38;5;238m│[0m  [96m22.22.2[0m  [38;5;238m│[0m  railpack default (22)
+2026-03-25T22:26:16.728757462Z [inf]  [95mpnpm[0m  [38;5;238m│[0m  [96m9.15.9[0m   [38;5;238m│[0m  railpack default (9)
+2026-03-25T22:26:16.728761937Z [inf]  
+2026-03-25T22:26:16.728768229Z [inf]  [1mSteps[0m
+2026-03-25T22:26:16.728773015Z [inf]  [38;5;238m──────────[0m
+2026-03-25T22:26:16.728777065Z [inf]  [95m▸ install[0m
+2026-03-25T22:26:16.728781915Z [inf]  [38;5;245m$[0m [1mpnpm add -g node-gyp[0m
+2026-03-25T22:26:16.728786776Z [inf]  [38;5;245m$[0m [1mpnpm install --frozen-lockfile --prefer-offline[0m
+2026-03-25T22:26:16.728791116Z [inf]  
+2026-03-25T22:26:16.728795326Z [inf]  [95m▸ build[0m
+2026-03-25T22:26:16.728799741Z [inf]  [38;5;245m$[0m [1mpnpm --filter @workspace/admin-kyc build[0m
+2026-03-25T22:26:16.728803684Z [inf]  
+2026-03-25T22:26:16.728808205Z [inf]  [1mDeploy[0m
+2026-03-25T22:26:16.728812046Z [inf]  [38;5;238m──────────[0m
+2026-03-25T22:26:16.728816276Z [inf]  [38;5;245m$[0m [1mpnpm --filter @workspace/admin-kyc dev[0m
+2026-03-25T22:26:16.728820306Z [inf]  
+2026-03-25T22:26:16.728824303Z [inf]  
+2026-03-25T22:26:16.730804891Z [inf]  Successfully prepared Railpack plan for build
+2026-03-25T22:26:16.730841122Z [inf]  
+2026-03-25T22:26:16.730849749Z [inf]  
+2026-03-25T22:26:16.731230589Z [inf]  context: h1jk-LB_R
+2026-03-25T22:26:16.962431566Z [inf]  [internal] load build definition from railpack-plan.json
+2026-03-25T22:26:16.962545898Z [inf]  [internal] load build definition from railpack-plan.json
+2026-03-25T22:26:16.963707465Z [inf]  [internal] load build definition from railpack-plan.json
+2026-03-25T22:26:16.978713234Z [inf]  [internal] load build definition from railpack-plan.json
+2026-03-25T22:26:16.980931248Z [inf]  resolve image config for docker-image://ghcr.io/railwayapp/railpack-frontend:v0.22.1
+2026-03-25T22:26:17.287633843Z [inf]  resolve image config for docker-image://ghcr.io/railwayapp/railpack-frontend:v0.22.1
+2026-03-25T22:26:17.287691167Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.22.1@sha256:0f30b660172764dc605f0f17a2905a5d166206b9005d2e054fcbc3894bfa75d1
+2026-03-25T22:26:17.287828247Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.22.1@sha256:0f30b660172764dc605f0f17a2905a5d166206b9005d2e054fcbc3894bfa75d1
+2026-03-25T22:26:17.296223864Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.22.1@sha256:0f30b660172764dc605f0f17a2905a5d166206b9005d2e054fcbc3894bfa75d1
+2026-03-25T22:26:17.296404750Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.22.1@sha256:0f30b660172764dc605f0f17a2905a5d166206b9005d2e054fcbc3894bfa75d1
+2026-03-25T22:26:17.296949695Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.22.1@sha256:0f30b660172764dc605f0f17a2905a5d166206b9005d2e054fcbc3894bfa75d1
+2026-03-25T22:26:17.422322670Z [inf]  load build definition from railpack-plan.json
+2026-03-25T22:26:17.422393732Z [inf]  load build definition from railpack-plan.json
+2026-03-25T22:26:17.422421432Z [inf]  load build definition from railpack-plan.json
+2026-03-25T22:26:17.434024820Z [inf]  load build definition from railpack-plan.json
+2026-03-25T22:26:17.553037186Z [inf]  copy /mise/installs
+2026-03-25T22:26:17.553102916Z [inf]  copy /mise/shims
+2026-03-25T22:26:17.553119674Z [inf]  install mise packages: node, pnpm
+2026-03-25T22:26:17.553130871Z [inf]  create mise config
+2026-03-25T22:26:17.553144485Z [inf]  mkdir /etc/mise
+2026-03-25T22:26:17.553159368Z [inf]  docker-image://ghcr.io/railwayapp/railpack-builder:mise-2026.3.13
+2026-03-25T22:26:17.553166936Z [inf]  install apt packages: libatomic1
+2026-03-25T22:26:17.553173926Z [inf]  docker-image://ghcr.io/railwayapp/railpack-runtime:mise-2026.3.13
+2026-03-25T22:26:17.553234678Z [inf]  pnpm --filter @workspace/admin-kyc build
+2026-03-25T22:26:17.553244721Z [inf]  [railpack] secrets hash
+2026-03-25T22:26:17.553252108Z [inf]  copy .
+2026-03-25T22:26:17.553263086Z [inf]  copy / /app
+2026-03-25T22:26:17.553273875Z [inf]  pnpm install --frozen-lockfile --pref...
