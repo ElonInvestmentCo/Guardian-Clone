@@ -1,0 +1,113 @@
+The Netlify deploy errored, with the following guidance provided:
+
+**Diagnosis**
+
+- Relevant log lines show TypeScript failed during the workspace typecheck: see the TypeScript error at [line 82](#L82). The recursive pnpm run fails afterwards: [line 85](#L85) and the build exits non‑zero: [line 86](#L86) / [line 88](#L88).
+- The core error is a TypeScript compile error: `TS2339: Property 'authenticator' does not ...` in `artifacts/api-server/src/routes/twofa.ts` (reported at [line 82](#L82)). This means your code is attempting to access a property named `authenticator` on an imported module, but the TypeScript type for that import does not expose that property.
+- Cause: a mismatched import shape vs. the package’s public API / types. Common causes:
+  - You imported the module as a default import (e.g. `import otplib from 'otplib'`) and then use `otplib.authenticator`, but the package exposes `authenticator` as a named export (or the type definitions differ from runtime).
+  - The package providing `authenticator` (for example `otplib` or another 2FA lib) is not installed or has a different version whose types don’t include `authenticator`.
+
+You can view the route file in the repo here: https://github.com/ElonInvestmentCo/Guardian-Clone/blob/master/artifacts/api-server/src/routes/twofa.ts
+
+**Solution**
+
+1. Verify the correct package is installed
+   - Open your workspace package.json and confirm the dependency that provides `authenticator` (commonly `otplib` or `speakeasy`) is present. For example:
+     - Check package.json for an entry like `"otplib": "..."` or `"speakeasy": "..."`.
+   - If it is missing, add it (example using npm):
+```bash
+# example (choose the dependency your code expects)
+npm install otplib
+# or
+npm install speakeasy
+```
+   - If you use pnpm in CI, run `pnpm install` locally to verify.
+
+2. Fix the import in artifacts/api-server/src/routes/twofa.ts
+   - If the code currently does a default import and then uses `.authenticator` (this is what causes TS2339), change the import to the proper named import. For `otplib` the correct import is:
+```ts
+// artifacts/api-server/src/routes/twofa.ts
+import { authenticator } from 'otplib';
+
+// then use:
+const token = authenticator.generate(secret);
+const isValid = authenticator.check(token, secret);
+```
+   - If your code currently has `import * as otplib from 'otplib'` then either use the named export directly:
+```ts
+import { authenticator } from 'otplib';
+```
+     or access the correct property according to the package types (but prefer the named import).
+   - If you expect `speakeasy` instead, use its documented API (speakeasy exposes totp/other functions), e.g.:
+```ts
+import * as speakeasy from 'speakeasy';
+
+const token = speakeasy.totp({ secret, encoding: 'base32' });
+```
+
+3. If types are missing or mismatched
+   - Ensure the package version and its bundled types (or DefinitelyTyped types) match. For example, if using `otplib` and the TypeScript definitions are missing or outdated, install/update types:
+```bash
+# if package provides types, ensure version is correct
+npm install otplib@latest
+
+# if using an external @types package (not typical for otplib), add it:
+npm install -D @types/packagename
+```
+   - Re-run the typechecker locally: from repo root run:
+```bash
+pnpm run typecheck
+# or go into the api-server package and run:
+pnpm --filter ./artifacts/api-server run typecheck
+```
+
+4. Commit and push the fix
+   - After editing `artifacts/api-server/src/routes/twofa.ts` and updating package.json if needed, commit & push. Netlify will re-run the build.
+
+Notes and verification
+- The failing TypeScript error is shown at [line 82](#L82). Fixing the import/type mismatch as above should resolve the TS2339 error and allow the build to proceed past the typecheck step.
+- If you discover the problem is actually a missing dependency or a Node version mismatch, first verify the dependency is listed in package.json (as above). If you need to change Node version on Netlify, follow Netlify’s docs for changing Node versions: https://docs.netlify.com/configure-builds/manage-dependencies/#node-js-and-javascript
+
+If you’d like, paste the first ~30 lines of artifacts/api-server/src/routes/twofa.ts and I’ll suggest the exact line edit to make.
+
+The relevant error logs are:
+
+Line 72: > workspace@0.0.0 build
+Line 73: > pnpm run typecheck && pnpm -r --if-present run build
+Line 74: > workspace@0.0.0 typecheck /opt/build/repo
+Line 75: > pnpm run typecheck:libs && pnpm -r --filter "./artifacts/**" --filter "./scripts" --if-present run typecheck
+Line 76: > workspace@0.0.0 typecheck:libs /opt/build/repo
+Line 77: > tsc --build
+Line 78: Scope: 5 of 12 workspace projects
+Line 79: [36martifacts/admin-kyc[39m [96mtypecheck[39m$ tsc -p tsconfig.json --noEmit
+Line 80: [35martifacts/api-server[39m [96mtypecheck[39m$ tsc -p tsconfig.json --noEmit
+Line 81: [34martifacts/guardian-trading[39m [96mtypecheck[39m$ tsc -p tsconfig.json --noEmit
+Line 82: Failed during stage 'building site': Build script returned non-zero exit code: 2
+Line 83: [35martifacts/api-server[39m [96mtypecheck[39m: src/routes/twofa.ts(15,9): error TS2339: Property 'authenticator' does not e
+Line 84: [35martifacts/api-server[39m [96mtypecheck[39m: Failed
+Line 85: /opt/build/repo/artifacts/api-server:
+Line 86: [41m[30m ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL [39m[49m [31m@workspace/api-server@0.0.0 typecheck: `tsc -p tsconfig.json --noEm
+Line 87: [31mExit status 2[39m
+Line 88: [33martifacts/mockup-sandbox[39m [96mtypecheck[39m$ tsc -p tsconfig.json --noEmit
+Line 89: [41m[30m ELIFECYCLE [39m[49m [31mCommand failed with exit code 2.[39m
+Line 90: [91m[1m​[22m[39m
+Line 91: [91m[1m"build.command" failed                                        [22m[39m
+Line 92: [91m[1m────────────────────────────────────────────────────────────────[22m[39m
+Line 93: ​
+Line 94:   [31m[1mError message[22m[39m
+Line 95:   Command failed with exit code 2: npm run build
+Line 96: ​
+Line 97:   [31m[1mError location[22m[39m
+Line 98:   In Build command from Netlify app:
+Line 99:   npm run build
+Line 100: ​
+Line 101:   [31m[1mResolved config[22m[39m
+Line 102:   build:
+Line 103:     command: npm run build
+Line 104:     commandOrigin: ui
+Line 105:     publish: /opt/build/repo/dist
+Line 106:     publishOrigin: ui
+Line 107: Build failed due to a user error: Build script returned non-zero exit code: 2
+Line 108: Failing build: Failed to build site
+Line 109: Finished processing build request in 28.92s

@@ -1,18 +1,14 @@
 import { Router } from "express";
-import { createRequire } from "module";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import qrcode from "qrcode";
+import { generateSecret, generateURI, verifySync } from "otplib";
 import {
   getUserProfileData,
   setUserProfileMeta,
   getStoredPasswordHash,
 } from "../lib/userDataStore.js";
 import { sensitiveEndpointLimit } from "../middleware/security.js";
-
-const _require = createRequire(import.meta.url);
-const otplib = _require("otplib") as typeof import("otplib");
-const { authenticator } = otplib;
 
 const twoFARouter = Router();
 
@@ -84,8 +80,8 @@ twoFARouter.post("/user/2fa/setup", sensitiveEndpointLimit, async (req, res) => 
       return;
     }
 
-    const secret = authenticator.generateSecret();
-    const otpauth = authenticator.keyuri(email, "Guardian Trading", secret);
+    const secret = generateSecret();
+    const otpauth = generateURI({ issuer: "Guardian Trading", label: email, secret });
     const qrDataUrl = await qrcode.toDataURL(otpauth);
 
     setUserProfileMeta(email, "_2faPending", { secret, createdAt: new Date().toISOString() });
@@ -121,8 +117,8 @@ twoFARouter.post("/user/2fa/enable", sensitiveEndpointLimit, (req, res) => {
       return;
     }
 
-    const isValid = authenticator.verify({ token, secret: pending.secret });
-    if (!isValid) {
+    const result = verifySync({ token, secret: pending.secret });
+    if (!result.valid) {
       res.status(401).json({ error: "Invalid OTP code. Please check your authenticator app and try again." });
       return;
     }
@@ -179,8 +175,8 @@ twoFARouter.post("/user/2fa/disable", sensitiveEndpointLimit, async (req, res) =
       return;
     }
 
-    const tokenValid = authenticator.verify({ token, secret: data.secret });
-    if (!tokenValid) {
+    const tokenResult = verifySync({ token, secret: data.secret });
+    if (!tokenResult.valid) {
       res.status(401).json({ error: "Invalid OTP code" });
       return;
     }
@@ -229,8 +225,8 @@ twoFARouter.post("/user/2fa/verify", sensitiveEndpointLimit, (req, res) => {
       return;
     }
 
-    const isValid = authenticator.verify({ token, secret: data.secret });
-    if (!isValid) {
+    const verifyResult = verifySync({ token, secret: data.secret });
+    if (!verifyResult.valid) {
       res.status(401).json({ error: "Invalid or expired OTP code" });
       return;
     }
