@@ -1,0 +1,152 @@
+12:25:13 AM: Failed during stage 'building site': Build script returned non-zero exit code: 2 (https://ntl.fyi/exit-code-2)
+12:25:13 AM: Deploy site                                                   
+12:25:13 AM: ────────────────────────────────────────────────────────────────
+12:25:13 AM: ​
+12:25:13 AM: Section completed: deploying
+12:25:13 AM: ​
+12:25:13 AM: Configuration error                                           
+12:25:13 AM: ────────────────────────────────────────────────────────────────
+12:25:13 AM: ​
+12:25:13 AM:   Error message
+12:25:13 AM:   Deploy did not succeed: Deploy directory 'dist' does not exist
+12:25:13 AM: ​
+12:25:13 AM:   Resolved config
+12:25:13 AM:   build:
+12:25:13 AM:     command: npm run build
+12:25:13 AM:     commandOrigin: ui
+12:25:13 AM:     publish: /opt/build/repo/dist
+12:25:13 AM:     publishOrigin: ui
+12:25:13 AM: Build failed due to a user error: Build script returned non-zero exit code: 2
+12:25:13 AM: Failing build: Failed to build site
+
+
+
+
+The Netlify deploy errored, with the following guidance provided:
+
+Diagnosis
+- The build failed while Vite was processing a sourcemap for src/components/ui/tooltip.tsx — see the error at [line 115](#L115). This caused the build script to exit non‑zero and no top‑level dist directory was produced; Netlify then failed because the configured publish directory dist does not exist (see [line 164](#L164)).
+- Two related issues to fix:
+  1. A sourcemap/processing error in src/components/ui/tooltip.tsx that aborts the build.
+  2. Netlify is configured to publish /dist at the repo root but this repo appears to be a monorepo with built outputs under subfolders (e.g., artifact apps produce their own dist/public), so the publish path may be wrong if you intended to deploy one subproject.
+
+Relevant log lines
+- Vite sourcemap error: [line 115](#L115)
+- Deploy directory missing: [line 164](#L164)
+
+Suggested fixes (apply both as needed)
+
+1) Fix the sourcemap error in src/components/ui/tooltip.tsx
+- Reproduce locally to get a full stack trace:
+  - Run: npm run build (or the same build command Netlify runs) locally and inspect the Vite error. That will show the exact cause and stack trace.
+- Inspect the file (repo link): https://github.com/ElonInvestmentCo/Guardian-Clone/blob/master/src/components/ui/tooltip.tsx
+  - Look for any stray sourceMappingURL comments, imports of prebuilt files that reference missing .map files, or plugins that emit invalid sourcemaps.
+- Quick temporary workaround (if you don't need sourcemaps in production):
+  - Disable sourcemaps in Vite by setting build.sourcemap to false in vite.config.ts. Example (TypeScript config):
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  // ...your existing config
+  build: {
+    // disable sourcemaps to avoid the sourcemap parsing error
+    sourcemap: false,
+  },
+})
+```
+  - Commit and push, then re-run the Netlify build.
+- Better long‑term: fix the root cause seen in the local build trace — e.g. remove or correct any invalid sourceMappingURL in files imported by tooltip.tsx, or ensure any dependency that points to a .map file has the .map committed (or the dependency packaged correctly).
+
+2) Ensure Netlify publishes the correct build output (monorepo consideration)
+- Decide which subproject (app) you intend to deploy. The logs show several artifact builds and subproject outputs like dist/public for each artifact rather than a single top-level dist.
+- Option A — update Netlify publish directory to the app’s output:
+  - If you want to publish the guardian-trading app, set Netlify’s publish directory to the subfolder produced by that build, for example:
+    - artifacts/guardian-trading/dist/public
+  - You can change this in the Netlify UI (Site settings → Build & deploy → Publish directory) or add a netlify.toml at the repo root. Example netlify.toml:
+```toml
+[build]
+  command = "npm run build"
+  publish = "artifacts/guardian-trading/dist/public"
+```
+  - Adjust the path to match the exact app and output folder you want to host.
+- Option B — consolidate build outputs into a single top-level dist
+  - Modify your build script to copy the desired subproject output into /dist at the repo root as the last step, so Netlify's publish = dist continues to work. Example in package.json scripts:
+```json
+{
+  "scripts": {
+    "build": "npm --workspace=artifacts/guardian-trading run build && cp -r artifacts/guardian-trading/dist ./dist"
+  }
+}
+```
+  - (Adjust to your workspace/monorepo tool and paths.)
+
+Actions to take now
+1. Reproduce locally: run npm run build and inspect the full Vite error for tooltip.tsx.
+2. Either fix the source causing the sourcemap error OR disable sourcemaps in vite.config.ts as a quick workaround.
+3. Ensure Netlify’s publish directory points at the correct built site folder (or copy the built site into the repo root dist as part of the build).
+4. Commit and push the changes and trigger a new Netlify deploy.
+
+If the local build reveals a Node version mismatch error, follow Netlify’s docs to change Node versions: https://docs.netlify.com/configure-builds/manage-dependencies/#node-js-and-javascript
+
+The relevant error logs are:
+
+Line 102: [36martifacts/mockup-sandbox[39m [96mbuild[39m: [32m✓ built in 994ms[39m
+Line 103: [36martifacts/mockup-sandbox[39m [96mbuild[39m: Done
+Line 104: [34martifacts/admin-kyc[39m [96mbuild[39m$ vite build --config vite.config.ts
+Line 105: [33martifacts/api-server[39m [96mbuild[39m$ tsx ./build.ts
+Line 106: [32martifacts/guardian-trading[39m [96mbuild[39m$ vite build --config vite.config.ts
+Line 107: [34martifacts/admin-kyc[39m [96mbuild[39m: [36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+Line 108: [32martifacts/guardian-trading[39m [96mbuild[39m: [36mvite v7.3.1 [32mbuilding client environment for production...[36m[
+Line 109: [33martifacts/api-server[39m [96mbuild[39m: building server...
+Line 110: [34martifacts/admin-kyc[39m [96mbuild[39m: transforming...
+Line 111: [32martifacts/guardian-trading[39m [96mbuild[39m: transforming...
+Line 112: [33martifacts/api-server[39m [96mbuild[39m: [90m  dist/index.cjs  1.4mb ⚠️[39m
+Line 113: [33martifacts/api-server[39m [96mbuild[39m: [90m⚡ Done in 252ms[39m
+Line 114: [33martifacts/api-server[39m [96mbuild[39m: Done
+Line 115: [32martifacts/guardian-trading[39m [96mbuild[39m: [90m[33msrc/components/ui/tooltip.tsx (2:0): Error when using sourcemap 
+Line 116: [34martifacts/admin-kyc[39m [96mbuild[39m: rendering chunks...
+Line 117: [34martifacts/admin-kyc[39m [96mbuild[39m: computing gzip size...
+Line 118: [34martifacts/admin-kyc[39m [96mbuild[39m: [2mdist/public/[22m[32mindex.html                             [39m[1m[2m  0
+Line 119: [34martifacts/admin-kyc[39m [96mbuild[39m: [2mdist/public/[22m[2massets/[22m[32mbootstrap-icons-mSm7cUeB.woff2  [39m[
+Line 120: [34martifacts/admin-kyc[39m [96mbuild[39m: [2mdist/public/[22m[2massets/[22m[32mbootstrap-icons-BeopsB42.woff   [39m[
+Line 121: [34martifacts/admin-kyc[39m [96mbuild[39m: [2mdist/public/[22m[2massets/[22m[35mindex-BjkEbBpV.css              [39m[
+Line 122: [34martifacts/admin-kyc[39m [96mbuild[39m: [2mdist/public/[22m[2massets/[22m[36mindex-BbjbLMzg.js               [39m[
+Line 123: [34martifacts/admin-kyc[39m [96mbuild[39m: [32m✓ built in 2.27s[39m
+Line 124: [34martifacts/admin-kyc[39m [96mbuild[39m: Done
+Line 125: Failed during stage 'building site': Build script returned non-zero exit code: 2
+Line 126: [32martifacts/guardian-trading[39m [96mbuild[39m: [32m✓[39m 2863 modules transformed.
+Line 127: [32martifacts/guardian-trading[39m [96mbuild[39m: rendering chunks...
+Line 128: [32martifacts/guardian-trading[39m [96mbuild[39m: computing gzip size...
+Line 129: [32martifacts/guardian-trading[39m [96mbuild[39m: [2mdist/public/[22m[32mindex.html                                      
+Line 130: [32martifacts/guardian-trading[39m [96mbuild[39m: [2mdist/public/[22m[2massets/[22m[32mico-our-infrastructure-132x72_17
+Line 131: [32martifacts/guardian-trading[39m [96mbuild[39m: [2mdist/public/[22m[2massets/[22m[32mimg-guardian-reversed-291x63-1_1
+Line 132: [32martifacts/guardian-trading[39m [96mbuild[39m: [2mdist/public/[22m[2massets/[22m[32mGuardian_Trading_-_Google_Chrome
+Line 133: [32martifacts/guardian-trading[39m [96mbuild[39m: [2mdist/public/[22m[2massets/[22m[32mGuardian_Trading_-_Google_Chrome
+Line 134: [32martifacts/guardian-trading[39m [96mbuild[39m: [2mdist/public/[22m[2massets/[22m[32mIMG_7934_1773719077190-CLq6B01D.
+Line 135: [32martifacts/guardian-trading[39m [96mbuild[39m: [2mdist/public/[22m[2massets/[22m[32mIMG_7968_1773721659915-C53aLAjV.
+Line 150: [32martifacts/guardian-trading[39m [96mbuild[39m: [90m- Adjust chunk size limit for this warning via build.chunkSizeWarning
+Line 151: [32martifacts/guardian-trading[39m [96mbuild[39m: Done
+Line 152: ​
+Line 153: [90m(build.command completed in 25s)[39m
+Line 154: [96m[1m​[22m[39m
+Line 155: [96m[1mDeploy site                                                   [22m[39m
+Line 156: [96m[1m────────────────────────────────────────────────────────────────[22m[39m
+Line 157: ​
+Line 158: Section completed: deploying
+Line 159: [91m[1m​[22m[39m
+Line 160: [91m[1mConfiguration error                                           [22m[39m
+Line 161: [91m[1m────────────────────────────────────────────────────────────────[22m[39m
+Line 162: ​
+Line 163:   [31m[1mError message[22m[39m
+Line 164:   Deploy did not succeed: Deploy directory 'dist' does not exist
+Line 165: ​
+Line 166:   [31m[1mResolved config[22m[39m
+Line 167:   build:
+Line 168:     command: npm run build
+Line 169:     commandOrigin: ui
+Line 170:     publish: /opt/build/repo/dist
+Line 171:     publishOrigin: ui
+Line 172: Build failed due to a user error: Build script returned non-zero exit code: 2
+Line 173: Failing build: Failed to build site
+Line 174: Finished processing build request in 44.654s
