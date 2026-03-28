@@ -1,7 +1,3 @@
 [build]
-  command = "pnpm run build"
+  command = "npm run build"
   publish = "artifacts/guardian-trading/dist/public"
-
-[build.environment]
-  NODE_VERSION = "22"
-  PNPM_VERSION = "10.26.1"
