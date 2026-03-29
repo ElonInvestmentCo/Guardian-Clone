@@ -1,0 +1,75 @@
+IMMEDIATELY FIX the email template system. The current verification email is NOT acceptable.
+
+CRITICAL ISSUES:
+
+* Logo is NOT displaying in emails
+* Email UI looks basic and unprofessional
+* Not matching a premium fintech standard
+
+FIX EVERYTHING BELOW WITHOUT BREAKING EMAIL FUNCTIONALITY:
+
+1. FIX LOGO NOT SHOWING (MANDATORY)
+
+* Replace ANY local or relative image path (e.g. /logo.png) with a FULL PUBLIC URL
+* Use a hosted logo URL such as:
+  https://guardiiantrading.com/logo.png
+* Ensure the logo is:
+  • Centered
+  • Properly sized (~120–160px width)
+  • Has margin spacing below it
+* Add fallback alt text "Guardian Trading"
+
+2. REBUILD EMAIL UI TO PREMIUM STANDARD
+
+* Use a centered container (max-width: 600px)
+* Background: dark (#0b0f14) or light clean fintech style
+* Inner card with:
+  • padding: 24px–32px
+  • border-radius: 8px–12px
+  • subtle border or shadow
+
+3. MAKE VERIFICATION CODE THE FOCAL POINT
+
+* Large font (32px–40px)
+* Bold, letter-spacing (4px–6px)
+* Place inside a bordered box with padding
+* High contrast for readability
+
+4. PROFESSIONAL TYPOGRAPHY
+
+* Font stack: Arial, Helvetica, sans-serif
+* Clear hierarchy:
+  • Small label: GUARDIAN TRADING
+  • Title: Email Verification Code
+  • Body: readable spacing and line height
+
+5. ADD FOOTER
+
+* Divider line
+* Text:
+  "If you didn’t request this, you can safely ignore this email."
+* Add support email:
+  [support@guardiiantrading.com](mailto:support@guardiiantrading.com)
+
+6. EMAIL CLIENT COMPATIBILITY (VERY IMPORTANT)
+
+* Use TABLE-BASED layout (NOT div-only)
+* ALL styles MUST be inline (no external CSS)
+* Avoid unsupported CSS (no flexbox/grid in emails)
+* Must render correctly in Gmail and mobile
+
+7. DO NOT BREAK BACKEND
+
+* Do NOT change how verification codes are generated
+* Only modify the email HTML template inside mailer.ts
+
+8. FINAL CHECK
+
+* Send a test email after changes
+* Confirm:
+  • Logo appears
+  • Layout is centered
+  • Code is prominent
+  • Looks like a high-end fintech product
+
+This is a production-level UI fix. Do NOT return until the email looks clean, branded, and professional.
