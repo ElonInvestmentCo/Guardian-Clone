@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { getApiBase } from "@/lib/api";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, TooltipProps,
@@ -53,7 +54,7 @@ export default function Overview() {
 
   useEffect(() => {
     if (!email) return;
-    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+    const base = getApiBase();
     fetch(`${base}/api/admin/user-balance/${encodeURIComponent(email)}`)
       .then((r) => r.json())
       .then((d: { balance?: number; profit?: number }) => {

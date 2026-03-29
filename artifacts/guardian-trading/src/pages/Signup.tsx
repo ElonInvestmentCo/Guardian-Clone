@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
+import { getApiBase } from "@/lib/api";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -48,7 +49,7 @@ export default function Signup() {
     setErrors({});
     setLoading(true);
     try {
-      const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const base = getApiBase();
       const res = await fetch(`${base}/api/auth/send-verification`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

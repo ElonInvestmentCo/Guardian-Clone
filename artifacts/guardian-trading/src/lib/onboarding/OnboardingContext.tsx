@@ -18,7 +18,8 @@ import {
 } from "./machine";
 import { flushRetryQueue } from "./retryQueue";
 
-const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+import { getApiBase } from "../api";
+const BASE = getApiBase();
 
 interface ProgressResponse {
   completedSteps?: string[];

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { getApiBase } from "@/lib/api";
 import { User, Lock, BellRing, ChevronRight, Eye, EyeOff, Check, Shield, Copy, Download, AlertTriangle } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme, type ThemeColors } from "@/context/ThemeContext";
@@ -124,7 +125,7 @@ export default function Settings() {
   const [cityOptions, setCityOptions] = useState<string[]>([]);
   const isInitialMount = useRef(true);
 
-  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const base = getApiBase();
 
   useEffect(() => {
     if (!email) return;

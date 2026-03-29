@@ -2,11 +2,12 @@
   command = "pnpm --filter @workspace/guardian-trading run build"
   publish = "artifacts/guardian-trading/dist/public"
 
-[[redirects]]
-  from = "/api/*"
-  to = "https://guardiiantrading.com/api/:splat"
-  status = 200
-  force = true
+  # VITE_API_URL must be set in Netlify → Site settings → Environment variables.
+  # Point it at your deployed backend, e.g.:
+  #   VITE_API_URL = "https://your-api-server.replit.app"
+  # Without this, API calls will fail on Netlify (it's a static host with no Node backend).
+  [build.environment]
+    NODE_VERSION = "20"
 
 [[redirects]]
   from = "/*"

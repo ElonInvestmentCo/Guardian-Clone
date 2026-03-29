@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
+import { getApiBase } from "@/lib/api";
 
 const RESEND_COOLDOWN = 180;
 
@@ -48,7 +49,7 @@ export default function EmailVerification() {
     setError("");
     setResendSuccess(false);
     try {
-      const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const base = getApiBase();
       const res = await fetch(`${base}/api/auth/send-verification`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -91,7 +92,7 @@ export default function EmailVerification() {
     setVerifying(true);
 
     try {
-      const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const base = getApiBase();
       const res = await fetch(`${base}/api/auth/verify-code`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -109,7 +110,7 @@ export default function EmailVerification() {
         let registered = false;
         for (let attempt = 0; attempt < 3; attempt++) {
           try {
-            const regRes = await fetch(`${base}/api/auth/register`, {
+            const regRes = await fetch(`${getApiBase()}/api/auth/register`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ email, password: storedPassword }),

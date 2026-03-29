@@ -1,5 +1,6 @@
 import { useLocation, Link } from "wouter";
 import { useState, useEffect } from "react";
+import { getApiBase } from "@/lib/api";
 import {
   LayoutDashboard, Briefcase, ShoppingCart, PieChart,
   FileText, Settings, LogOut, Sun, Moon, Search, Bell,
@@ -187,7 +188,7 @@ export default function DashboardLayout({ children }: Props) {
 
   useEffect(() => {
     if (!email) { navigate("/login"); return; }
-    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+    const base = getApiBase();
     fetch(`${base}/api/user/me?email=${encodeURIComponent(email)}`)
       .then((r) => r.json())
       .then((data: UserStatus & { completedSteps?: number[] }) => {
@@ -220,7 +221,7 @@ export default function DashboardLayout({ children }: Props) {
 
   useEffect(() => {
     if (!email) return;
-    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+    const base = getApiBase();
     const fetchNotifs = () => {
       fetch(`${base}/api/notifications?email=${encodeURIComponent(email)}`)
         .then((r) => r.json())
@@ -254,7 +255,7 @@ export default function DashboardLayout({ children }: Props) {
   }
 
   const profilePicUrl = userStatus?.profilePicture
-    ? `${import.meta.env.BASE_URL.replace(/\/$/, "")}/api/user/profile-picture/${userStatus.profilePicture}`
+    ? `${getApiBase()}/api/user/profile-picture/${userStatus.profilePicture}`
     : null;
 
   const handleLogout = () => {

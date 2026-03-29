@@ -1,4 +1,5 @@
-const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+import { getApiBase } from "./api";
+const BASE = getApiBase();
 
 /**
  * Save a completed onboarding step to the server.

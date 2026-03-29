@@ -4,7 +4,8 @@ import { type StepNum, getStepByNum } from "./machine";
 import { useOnboardingContext } from "./OnboardingContext";
 import { enqueueRetry } from "./retryQueue";
 
-const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+import { getApiBase } from "../api";
+const BASE = getApiBase();
 
 interface CompleteStepResponse {
   success?: boolean;

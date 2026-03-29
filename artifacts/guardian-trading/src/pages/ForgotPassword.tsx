@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
+import { getApiBase } from "@/lib/api";
 
 type Step = "email" | "reset" | "done";
 
@@ -29,7 +30,7 @@ export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const base = getApiBase();
 
   const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();

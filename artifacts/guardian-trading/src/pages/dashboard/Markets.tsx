@@ -7,7 +7,8 @@ import { TrendingUp, TrendingDown, Search, RefreshCw } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
 
-const API = import.meta.env.BASE_URL.replace(/\/$/, "");
+import { getApiBase } from "@/lib/api";
+const API = getApiBase();
 
 interface CoinData {
   id: string;

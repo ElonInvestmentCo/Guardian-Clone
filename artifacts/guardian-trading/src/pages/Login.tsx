@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
+import { getApiBase } from "@/lib/api";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -35,7 +36,7 @@ export default function Login() {
     setErrors({});
     setLoading(true);
     try {
-      const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const base = getApiBase();
       const res = await fetch(`${base}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

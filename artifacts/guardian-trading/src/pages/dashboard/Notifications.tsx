@@ -14,7 +14,8 @@ interface Notification {
   actionUrl?: string;
 }
 
-const API = import.meta.env.BASE_URL.replace(/\/$/, "");
+import { getApiBase } from "@/lib/api";
+const API = getApiBase();
 
 export default function NotificationsPage() {
   const { colors } = useTheme();
