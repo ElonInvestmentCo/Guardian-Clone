@@ -139,8 +139,13 @@ authRouter.post("/auth/send-verification", sensitiveEndpointLimit, async (req, r
     const mailResult = await sendVerificationEmail(email, code);
 
     if (!mailResult.success) {
-      logAttempt("SEND_VERIFICATION", email, `email delivery failed: ${mailResult.error ?? "unknown"}`);
-      res.status(500).json({ error: "Failed to send verification email. Please try again." });
+      const reason = mailResult.error ?? "unknown error";
+      logAttempt("SEND_VERIFICATION", email, `email delivery failed: ${reason}`);
+      console.error(`[Auth] Resend failure for ${email}: ${reason}`);
+      res.status(500).json({
+        error: "Failed to send verification email. Please try again or contact support.",
+        detail: process.env.NODE_ENV === "development" ? reason : undefined,
+      });
       return;
     }
 
@@ -230,7 +235,9 @@ authRouter.post("/auth/send-reset-code", sensitiveEndpointLimit, async (req, res
     const mailResult = await sendPasswordResetEmail(email, code);
 
     if (!mailResult.success) {
-      logAttempt("SEND_RESET_CODE", email, `email delivery failed: ${mailResult.error ?? "unknown"}`);
+      const reason = mailResult.error ?? "unknown error";
+      logAttempt("SEND_RESET_CODE", email, `email delivery failed: ${reason}`);
+      console.error(`[Auth] Resend failure for reset email to ${email}: ${reason}`);
       res.status(500).json({ error: "Failed to send reset email. Please try again." });
       return;
     }

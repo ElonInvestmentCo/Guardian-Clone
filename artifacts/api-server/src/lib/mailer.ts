@@ -28,8 +28,10 @@ async function getResendCredentials(): Promise<{ apiKey: string; fromEmail?: str
       const data = await resp.json() as { items?: Array<{ settings?: { api_key?: string; from_email?: string } }> };
       const settings = data.items?.[0]?.settings;
       if (settings?.api_key) {
+        console.log("[Mailer] Using Resend credentials from Replit connector");
         return { apiKey: settings.api_key, fromEmail: settings.from_email };
       }
+      console.warn("[Mailer] Replit connector responded but no api_key found in settings:", JSON.stringify(data.items?.[0] ?? {}));
     } catch (err) {
       console.warn("[Mailer] Failed to fetch Resend credentials from connector:", err);
     }
@@ -38,9 +40,15 @@ async function getResendCredentials(): Promise<{ apiKey: string; fromEmail?: str
   // Fallback: plain env var
   const apiKey = process.env["RESEND_API_KEY"];
   if (apiKey) {
+    console.log("[Mailer] Using Resend credentials from RESEND_API_KEY env var");
     return { apiKey };
   }
 
+  console.error(
+    "[Mailer] No Resend credentials found. " +
+    "Set RESEND_API_KEY as an environment secret, or configure the Resend connector. " +
+    "Emails will NOT be sent until this is resolved."
+  );
   return null;
 }
 
@@ -51,8 +59,7 @@ export async function sendAccountVerifiedEmail(
   const creds = await getResendCredentials();
 
   if (!creds) {
-    console.warn(`[Mailer] No Resend credentials — logging verified notification for ${to}`);
-    return { success: true };
+    return { success: false, error: "Email service not configured — RESEND_API_KEY is missing" };
   }
 
   const client = new Resend(creds.apiKey);
@@ -143,8 +150,8 @@ export async function sendPasswordResetEmail(
   const creds = await getResendCredentials();
 
   if (!creds) {
-    console.log(`[Mailer] DEV — password reset code for ${to}: ${code}`);
-    return { success: true };
+    console.error(`[Mailer] Cannot send password reset to ${to} — no email credentials configured`);
+    return { success: false, error: "Email service not configured — RESEND_API_KEY is missing" };
   }
 
   const client = new Resend(creds.apiKey);
@@ -231,13 +238,11 @@ export async function sendVerificationEmail(
   const creds = await getResendCredentials();
 
   if (!creds) {
-    console.warn("[Mailer] No Resend credentials available — logging code to console instead");
-    console.log(`[Mailer] DEV — verification code for ${to}: ${code}`);
-    return { success: true };
+    console.error(`[Mailer] Cannot send verification email to ${to} — no email credentials configured`);
+    return { success: false, error: "Email service not configured — RESEND_API_KEY is missing. Please contact support." };
   }
 
   const client = new Resend(creds.apiKey);
-  const fromAddress = FROM_ADDRESS;
 
   const html = `
 <!DOCTYPE html>
@@ -306,22 +311,22 @@ export async function sendVerificationEmail(
 
   try {
     const result = await client.emails.send({
-      from: fromAddress,
+      from: FROM_ADDRESS,
       to,
-      subject: "Your Verification Code",
+      subject: "Your Verification Code — Guardian Trading",
       html,
     });
 
     if (result.error) {
-      console.error(`[Mailer] Failed to send to ${to}:`, result.error);
+      console.error(`[Mailer] Resend API error sending to ${to}:`, JSON.stringify(result.error));
       return { success: false, error: result.error.message };
     }
 
-    console.log(`[Mailer] Email sent to ${to} — id: ${result.data?.id}`);
+    console.log(`[Mailer] Verification email sent to ${to} — id: ${result.data?.id}`);
     return { success: true };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error(`[Mailer] Exception sending to ${to}:`, msg);
+    console.error(`[Mailer] Exception sending verification email to ${to}:`, msg);
     return { success: false, error: msg };
   }
 }

@@ -1,3 +1,14 @@
 [build]
-  command = "npm run build"
+  command = "pnpm --filter @workspace/guardian-trading run build"
   publish = "artifacts/guardian-trading/dist/public"
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://guardiiantrading.com/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
