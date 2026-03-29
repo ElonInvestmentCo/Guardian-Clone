@@ -12,7 +12,7 @@ version = "1.0.0"
 [[services]]
 name = "web"
 paths = [ "/admin-kyc/" ]
-localPort = 22593
+localPort = 8080
 
 [services.development]
 run = "pnpm --filter @workspace/admin-kyc run dev"
@@ -27,5 +27,5 @@ from = "/*"
 to = "/index.html"
 
 [services.env]
-PORT = "22593"
+PORT = "8080"
 BASE_PATH = "/admin-kyc/"
