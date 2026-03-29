@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import AnalyticsLayout from "@/components/analytics/AnalyticsLayout";
 import { Megaphone, TrendingUp } from "lucide-react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
 } from "recharts";
@@ -61,7 +61,7 @@ export default function Campaigns() {
           <div className="text-center">
             <Megaphone size={48} className="mx-auto mb-4 opacity-30" />
             <p>Select a project to view campaigns</p>
-            <a href="/analytics/projects" className="text-blue-400 text-sm mt-2 block">Go to Projects →</a>
+            <Link href="/analytics/projects" className="text-blue-400 text-sm mt-2 block">Go to Projects →</Link>
           </div>
         </div>
       </AnalyticsLayout>

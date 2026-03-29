@@ -14,6 +14,7 @@ import notificationsRouter from "./notifications.js";
 import marketRouter from "./market.js";
 import profileRouter from "./profile.js";
 import twoFARouter from "./twofa.js";
+import contactRouter from "./contact.js";
 
 const router: IRouter = Router();
 
@@ -32,5 +33,6 @@ router.use(notificationsRouter);
 router.use(marketRouter);
 router.use(profileRouter);
 router.use(twoFARouter);
+router.use(contactRouter);
 
 export default router;

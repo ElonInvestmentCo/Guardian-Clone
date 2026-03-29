@@ -6,7 +6,7 @@ import {
 } from "recharts";
 import { Users, Eye, Activity, TrendingDown, Monitor, Smartphone, Tablet, RefreshCw, Globe, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 
 const API = "/api";
 const COLORS = ["#3b82f6","#8b5cf6","#10b981","#f59e0b","#ef4444","#06b6d4","#f97316","#84cc16"];
@@ -169,7 +169,7 @@ export default function Dashboard() {
           <Activity size={48} className="mb-4 opacity-30" />
           <p className="text-lg font-medium">Select a project</p>
           <p className="text-sm mt-1">Go to Projects and choose a project to view analytics</p>
-          <a href="/analytics/projects" className="mt-4 text-blue-400 hover:underline text-sm">Manage Projects →</a>
+          <Link href="/analytics/projects" className="mt-4 text-blue-400 hover:underline text-sm">Manage Projects →</Link>
         </div>
       </AnalyticsLayout>
     );

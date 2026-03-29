@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import AnalyticsLayout from "@/components/analytics/AnalyticsLayout";
 import { Flame, MousePointer, Layers, BarChart2 } from "lucide-react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 
 interface HeatPoint { click_x: number; click_y: number; viewport_width: number; viewport_height: number; }
 interface HeatPage { page_url: string; clicks: number; }
@@ -188,7 +188,7 @@ export default function Heatmap() {
           <div className="text-center">
             <Flame size={48} className="mx-auto mb-4 opacity-30" />
             <p>Select a project to view heatmaps</p>
-            <a href="/analytics/projects" className="text-blue-400 text-sm mt-2 block">Go to Projects →</a>
+            <Link href="/analytics/projects" className="text-blue-400 text-sm mt-2 block">Go to Projects →</Link>
           </div>
         </div>
       </AnalyticsLayout>

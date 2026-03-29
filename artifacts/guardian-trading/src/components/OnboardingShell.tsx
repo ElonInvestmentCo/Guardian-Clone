@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";
 
@@ -31,6 +31,13 @@ interface OnboardingShellProps {
 }
 
 export default function OnboardingShell({ currentStep, children }: OnboardingShellProps) {
+  const [, navigate] = useLocation();
+
+  const handleLogout = () => {
+    sessionStorage.clear();
+    navigate("/login");
+  };
+
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#f4f4f4" }}>
 
@@ -66,6 +73,7 @@ export default function OnboardingShell({ currentStep, children }: OnboardingShe
             ))}
           </div>
           <button
+            onClick={handleLogout}
             className="text-white font-medium px-3 sm:px-5 py-1.5 border transition-colors hover:bg-white/10"
             style={{ fontSize: "12px", borderColor: "#5baad4", borderRadius: "3px" }}
           >

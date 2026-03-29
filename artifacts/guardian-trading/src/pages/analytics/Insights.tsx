@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import AnalyticsLayout from "@/components/analytics/AnalyticsLayout";
 import { Lightbulb, AlertTriangle, CheckCircle, Info, RefreshCw } from "lucide-react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 
 interface Insight {
   type: "warning" | "success" | "info";
@@ -85,7 +85,7 @@ export default function Insights() {
           <div className="text-center">
             <Lightbulb size={48} className="mx-auto mb-4 opacity-30" />
             <p>Select a project to view AI insights</p>
-            <a href="/analytics/projects" className="text-blue-400 text-sm mt-2 block">Go to Projects →</a>
+            <Link href="/analytics/projects" className="text-blue-400 text-sm mt-2 block">Go to Projects →</Link>
           </div>
         </div>
       </AnalyticsLayout>

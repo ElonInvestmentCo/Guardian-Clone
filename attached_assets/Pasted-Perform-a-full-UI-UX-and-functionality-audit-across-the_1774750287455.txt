@@ -1,0 +1,52 @@
+Perform a full UI/UX and functionality audit across the entire codebase (both the main website and the admin dashboard).
+
+1. Identify and fix all non-responsive buttons, links, and clickable elements:
+
+* Ensure every button, link, and interactive element is fully responsive across all screen sizes (mobile, tablet, desktop)
+* Fix layout issues causing overflow, misalignment, or hidden elements
+* Apply proper responsive styling (flexbox/grid, breakpoints, scalable padding/font sizes)
+* Ensure all click handlers (onClick, navigation, form submissions) are working correctly without broken routes or dead actions
+
+2. Standardize button behavior and accessibility:
+
+* Ensure consistent styling and sizing across the platform
+* Add proper hover, focus, and active states
+* Ensure buttons are keyboard accessible and not blocked by overlays or layout issues
+
+3. Fix routing and navigation issues:
+
+* Ensure all routes (e.g. /signup, /dashboard, /personal-details) load correctly on refresh and direct access
+* Confirm no 404 errors due to missing SPA redirects
+* Verify all navigation actions trigger correct route transitions
+
+4. Verify API connectivity:
+
+* Ensure all frontend API calls use the centralized API base URL (VITE_API_URL)
+* Confirm all requests successfully reach the backend and return expected responses
+* Fix any broken endpoints or incorrect request paths
+
+5. Admin dashboard integrity (CRITICAL — DO NOT BREAK):
+
+* Ensure the admin dashboard continues to:
+  • View real registered users
+  • Access and display user personal details
+  • View uploaded documents (KYC, ID, etc.)
+  • Reflect real-time or latest backend data
+* Do NOT replace real data with mock or static data
+* Ensure all admin API endpoints remain connected to the live backend
+
+6. Form validation and submission:
+
+* Fix any forms that are not submitting properly
+* Ensure validation messages display correctly and responsively
+* Ensure no required fields are visually broken or blocked
+
+7. Final verification:
+
+* Test all major flows:
+  • Signup → Email verification → Onboarding steps
+  • Login → Dashboard access
+  • Admin login → User data + document viewing
+* Ensure everything works in production environment (Netlify frontend + Replit backend)
+
+Do not remove or break any existing working backend logic. Focus on fixing responsiveness, interaction reliability, and maintaining full backend connectivity.

@@ -86,13 +86,13 @@ export default function Home() {
               <h1 className="text-[2.6rem] lg:text-5xl font-display font-bold leading-tight text-white mb-8">
                 Optimized services, tools and support designed specifically for active traders.
               </h1>
-              <a
+              <Link
                 href="/signup"
                 className="inline-block border text-white text-sm px-8 py-3 font-semibold tracking-wide transition-colors hover:bg-white/10"
                 style={{ borderColor: "#1ab8d4" }}
               >
                 Start Trading
-              </a>
+              </Link>
             </div>
 
             {/* Right column — laptop + phone platform screenshot */}
@@ -274,12 +274,12 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-              <a
+              <Link
                 href="/platforms"
                 className="inline-block border border-primary text-primary text-sm px-5 py-2 hover:bg-primary hover:text-black transition-colors"
               >
                 Stock Locates and Borrows
-              </a>
+              </Link>
             </div>
             {/* Stock borrows screenshot — bottom on mobile, left on desktop */}
             <div className="flex-shrink-0 w-full -mx-4 lg:mx-0 lg:w-[460px] order-2 lg:order-1">
@@ -429,7 +429,7 @@ export default function Home() {
 /* ── CTA row used in Trading Technology cards ── */
 function TechCTA({ label, href }: { label: string; href: string }) {
   return (
-    <a
+    <Link
       href={href}
       className="group inline-flex items-center gap-3 w-fit"
       style={{ textDecoration: "none" }}
@@ -449,6 +449,6 @@ function TechCTA({ label, href }: { label: string; href: string }) {
           <polygon points="2,1 10,5.5 2,10" />
         </svg>
       </span>
-    </a>
+    </Link>
   );
 }
