@@ -1,0 +1,57 @@
+Refactor and upgrade the email template used for verification emails to a professional, branded design for Guardian Trading.
+
+1. Add company branding:
+
+* Include the Guardian Trading logo at the top of the email
+* Logo should be centered and properly sized (not stretched)
+* Use a hosted image URL (e.g. https://guardiiantrading.com/logo.png or CDN)
+
+2. Improve layout and structure:
+
+* Wrap the email content in a centered container with max-width ~600px
+* Add a clean background (light gray or dark theme depending on current style)
+* Use proper spacing (padding/margins) to avoid cramped text
+* Add a card-style layout with rounded corners and subtle shadow
+
+3. Typography improvements:
+
+* Use a clean font stack (Arial, Helvetica, sans-serif)
+* Improve hierarchy:
+  • Small label: "GUARDIAN TRADING"
+  • Large title: "Email Verification Code"
+  • Body text: clear and readable
+* Increase spacing between sections
+
+4. Verification code styling:
+
+* Make the code the main focus
+* Use a large, bold font with letter spacing
+* Place inside a styled box with border and background contrast
+* Ensure it is easily readable on mobile
+
+5. Add professional elements:
+
+* Add a subtle divider line between sections
+* Add a footer with:
+  • Company name (Guardian Trading)
+  • Support email (e.g. [support@guardiiantrading.com](mailto:support@guardiiantrading.com))
+  • Optional: “If you didn’t request this, ignore this email”
+
+6. Mobile responsiveness:
+
+* Ensure email renders correctly on mobile devices
+* Use inline styles (important for email compatibility)
+* Avoid complex CSS that email clients don’t support
+
+7. Keep functionality unchanged:
+
+* Do NOT modify how the verification code is generated or passed
+* Only improve the HTML/CSS template and styling
+
+8. Ensure compatibility:
+
+* Use table-based layout where necessary for email client support
+* Inline all styles (no external CSS)
+* Test rendering for Gmail and mobile devices
+
+Goal: Make the email look like a high-end fintech platform (clean, minimal, trustworthy, modern).
