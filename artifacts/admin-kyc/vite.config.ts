@@ -6,7 +6,7 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
 const port = Number(process.env.PORT) || 3000;
 const basePath = process.env.BASE_PATH || "/";
-const apiPort = Number(process.env.API_PORT) || 3001;
+const apiPort = Number(process.env.API_PORT) || 3000;
 
 export default defineConfig({
   base: basePath,

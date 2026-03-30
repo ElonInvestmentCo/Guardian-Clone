@@ -1,0 +1,63 @@
+Continue from your previous audit and COMPLETE the implementation professionally.
+
+Do the following immediately:
+
+1. APPLY ENVIRONMENT VARIABLES
+- Automatically configure the required secrets in the environment:
+  • ADMIN_USERNAME
+  • ADMIN_JWT_SECRET
+  • ADMIN_PASSWORD_HASH
+- Ensure they are properly loaded in the backend (process.env or equivalent).
+- Remove any fallback logic that causes 503 errors when unset.
+
+2. FIX ADMIN AUTH SYSTEM
+- Ensure admin login endpoint is fully functional.
+- Validate JWT generation and verification.
+- Confirm protected admin routes (/api/admin/*) require valid authentication.
+- Test login flow end-to-end and confirm successful access to dashboard.
+
+3. VERIFY USER VISIBILITY IN ADMIN DASHBOARD
+- Fetch all registered users from the database.
+- Ensure the admin dashboard correctly displays:
+  • Name
+  • Email
+  • Registration date
+  • Any KYC/status fields
+- Fix any API response mismatch or frontend rendering issues.
+
+4. FIX DUPLICATE REGISTRATION BUG
+- Modify /api/auth/register to:
+  • Check if email already exists
+  • Return proper 409 Conflict response if duplicate
+  • Prevent overwriting existing user data
+
+5. FIX RISK ENGINE SIDE EFFECT BUG
+- Remove any logic that writes “rapid attempt” or fraud flags during admin dashboard reads.
+- Ensure risk evaluation is ONLY triggered on real user actions (signup, login, transactions).
+- Clean up any corrupted or falsely flagged user records if necessary.
+
+6. ENSURE ADMIN-KYC DASHBOARD IS RUNNING
+- Start and verify the admin dashboard service.
+- Confirm it is properly connected to backend APIs.
+- Ensure no port conflicts or broken routing.
+
+7. FULL SYSTEM TEST
+- Create a new test user.
+- Confirm:
+  ✔ User is saved in database
+  ✔ User appears in admin dashboard immediately or on refresh
+  ✔ Admin login works without errors
+  ✔ No false fraud flags are triggered
+  ✔ No 500/503 errors anywhere
+
+8. FINALIZE
+- Remove debug logs and temporary fixes.
+- Ensure production-ready code quality.
+- Provide a final confirmation report:
+  • All issues fixed
+  • System fully operational
+  • Admin dashboard correctly synced with live user data
+
+IMPORTANT:
+Execute all fixes directly. Do not stop at explanations. Do not ask for manual steps unless absolutely required.
+Ensure everything works in the live environment.

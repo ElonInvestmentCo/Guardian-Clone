@@ -30,6 +30,7 @@ import {
   getDataDir,
 } from "../lib/userDataStore.js";
 import { evaluateRisk } from "../lib/fraud/riskEngine.js";
+import { getAdminCredentials } from "../lib/setupAdmin.js";
 
 const router = Router();
 
@@ -38,9 +39,7 @@ const SESSION_TTL_HOURS = 8;
 const SESSION_TTL_MS    = SESSION_TTL_HOURS * 60 * 60 * 1000;
 
 function jwtSecret(): string {
-  const s = process.env.ADMIN_JWT_SECRET;
-  if (!s) throw new Error("ADMIN_JWT_SECRET is not set");
-  return s;
+  return getAdminCredentials().jwtSecret;
 }
 
 function readMasterUsers(): Record<string, Record<string, unknown>> {
@@ -131,14 +130,7 @@ router.post(
         return;
       }
 
-      const expectedUsername = process.env.ADMIN_USERNAME;
-      const expectedHash     = process.env.ADMIN_PASSWORD_HASH;
-
-      if (!expectedUsername || !expectedHash) {
-        console.error("[Admin] Credentials not configured in environment");
-        res.status(503).json({ error: "Admin system is not configured" });
-        return;
-      }
+      const { username: expectedUsername, passwordHash: expectedHash } = getAdminCredentials();
 
       // Always run bcrypt compare to prevent timing attacks
       const usernameMatch = username === expectedUsername;

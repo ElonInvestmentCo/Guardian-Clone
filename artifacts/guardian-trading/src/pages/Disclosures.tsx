@@ -7,18 +7,45 @@ type YNVal = "yes" | "no" | "";
 
 function YesNo({ value, onChange, hasError }: { value: YNVal; onChange: (v: YNVal) => void; hasError?: boolean }) {
   return (
-    <div className="flex items-center gap-5 mt-1.5">
-      <label className="flex items-center gap-1.5 cursor-pointer">
-        <input type="radio" checked={value === "yes"} onChange={() => onChange("yes")} style={{ accentColor: "#3a7bd5" }} />
-        <span style={{ fontSize: "12px", color: "#555" }}>Yes</span>
-      </label>
-      <label className="flex items-center gap-1.5 cursor-pointer">
-        <input type="radio" checked={value === "no"} onChange={() => onChange("no")} style={{ accentColor: "#3a7bd5" }} />
-        <span style={{ fontSize: "12px", color: "#555" }}>No</span>
-      </label>
-      {hasError && <span style={{ fontSize: "11px", color: "#e53e3e", marginLeft: "4px" }}>Required</span>}
+    <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "4px", flexWrap: "wrap" }}>
+      {(["yes", "no"] as const).map((opt) => (
+        <label
+          key={opt}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            minHeight: "44px",
+            minWidth: "72px",
+            padding: "0 10px",
+            cursor: "pointer",
+            userSelect: "none",
+            border: `1px solid ${value === opt ? "#3a7bd5" : "#dde3e9"}`,
+            borderRadius: "3px",
+            background: value === opt ? "#f0f6ff" : "white",
+            transition: "border-color 0.05s, background 0.05s",
+          }}
+        >
+          <input
+            type="radio"
+            checked={value === opt}
+            onChange={() => onChange(opt)}
+            style={{ width: "15px", height: "15px", accentColor: "#3a7bd5", flexShrink: 0, cursor: "pointer" }}
+          />
+          <span style={{ fontSize: "13px", color: "#444", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
+            {opt === "yes" ? "Yes" : "No"}
+          </span>
+        </label>
+      ))}
+      {hasError && <span style={{ fontSize: "11px", color: "#e53e3e", marginLeft: "4px", alignSelf: "center" }}>Required</span>}
     </div>
   );
+}
+
+function formatDeposit(raw: string): string {
+  const digits = raw.replace(/[^\d]/g, "");
+  if (!digits) return "";
+  return Number(digits).toLocaleString("en-US");
 }
 
 type Fields = "initialDeposit" | "q1" | "q2" | "q3" | "q4" | "q5" | "q6" | "q7" | "q8" | "q9" | "q10";
@@ -123,7 +150,18 @@ export default function Disclosures() {
 
             <div style={blockStyle}>
               <p style={qStyle}>Please state your approximate initial deposit: <span style={{ color: "#e53e3e" }}>*</span></p>
-              <input type="text" value={initialDeposit} onChange={(e) => { setInitialDeposit(e.target.value); setErrors((p) => ({ ...p, initialDeposit: undefined })); }} placeholder="$30,000" style={{ marginTop: "6px", width: "100%", maxWidth: "360px", padding: "7px 10px", fontSize: "13px", border: `1px solid ${errors.initialDeposit ? "#e53e3e" : "#ccd3da"}`, borderRadius: "2px", color: "#444" }} />
+              <input
+                type="text"
+                inputMode="numeric"
+                value={initialDeposit}
+                onChange={(e) => {
+                  const formatted = formatDeposit(e.target.value);
+                  setInitialDeposit(formatted);
+                  setErrors((p) => ({ ...p, initialDeposit: undefined }));
+                }}
+                placeholder="30,000"
+                style={{ marginTop: "6px", width: "100%", maxWidth: "360px", padding: "9px 12px", fontSize: "14px", border: `1px solid ${errors.initialDeposit ? "#e53e3e" : "#ccd3da"}`, borderRadius: "3px", color: "#333", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", minHeight: "44px", boxSizing: "border-box" }}
+              />
               {errors.initialDeposit && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.initialDeposit}</p>}
             </div>
 

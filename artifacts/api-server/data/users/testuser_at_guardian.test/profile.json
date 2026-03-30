@@ -1,0 +1,9 @@
+{
+  "email": "testuser@guardian.test",
+  "createdAt": "2026-03-30T13:00:21.901Z",
+  "status": "pending",
+  "credentials": {
+    "passwordHash": "enc:d3a1741f55d9dccf1a2009724c743f1e:5cd6d94a29428b2bbaabb248be722269:7ef82024ee96507fd46fcc73ce1e7f819d6728b3bbaf38dfdbea67b28921957ea76297b1629733bcfcdc398334b4a4b40407715f15137f83229e076b"
+  },
+  "updatedAt": "2026-03-30T13:00:21.901Z"
+}
