@@ -66,6 +66,12 @@ authRouter.post("/auth/register", sensitiveEndpointLimit, async (req, res) => {
       res.status(400).json({ error: "Valid email is required" });
       return;
     }
+    const existing = getUserData(email);
+    if (existing) {
+      logAttempt("REGISTER", email, "rejected — email already registered");
+      res.status(409).json({ error: "An account with this email already exists. Please log in instead." });
+      return;
+    }
     const hash = await hashPassword(password);
     saveUserCredentials(email, hash);
     logAttempt("REGISTER", email, "success — credentials persisted to disk");

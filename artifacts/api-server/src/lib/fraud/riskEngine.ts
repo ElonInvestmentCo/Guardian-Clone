@@ -32,7 +32,8 @@ export interface RiskScore {
 /** In-memory store of previously seen emails / phones / IPs */
 const seenEmails  = new Map<string, string[]>();   // email → [email, email, ...]
 const seenPhones  = new Map<string, string[]>();   // phone → [email, ...]
-const recentAttempts = new Map<string, number[]>(); // email → [timestamps]
+// Note: rapid submission detection now reads from the user's audit log in their profile
+// to avoid false positives from admin panel calls to evaluateRisk()
 
 function scoreToLevel(score: number): RiskLevel {
   if (score >= 75) return "critical";
@@ -94,15 +95,24 @@ export function evaluateRisk(email: string, ipAddress?: string): RiskScore {
     }
   }
 
-  // ── 5. Rapid onboarding attempt (>3 completions in 10 min) ───────────
+  // ── 5. Rapid onboarding attempt (>3 unique steps in 10 min) ─────────
+  // Read from profile audit log — signup entries have a `stepKey` field and no `actionType`
+  // This avoids false positives caused by admin panel views calling evaluateRisk()
   const now = Date.now();
-  const attempts = recentAttempts.get(email) ?? [];
-  const recent   = attempts.filter((t) => now - t < 10 * 60 * 1000);
-  recent.push(now);
-  recentAttempts.set(email, recent);
-  if (recent.length > 3) {
+  const auditLog = (profile._auditLog as Array<Record<string, unknown>> | undefined) ?? [];
+  const recentStepKeys = new Set<string>();
+  for (const entry of auditLog) {
+    const stepKey = entry.stepKey as string | undefined;
+    if (!stepKey || entry.actionType) continue; // skip admin action entries
+    const ts = entry.timestamp as string | undefined;
+    if (!ts) continue;
+    if (now - new Date(ts).getTime() < 10 * 60 * 1000) {
+      recentStepKeys.add(stepKey);
+    }
+  }
+  if (recentStepKeys.size > 3) {
     score += 20;
-    flags.push({ code: "RAPID_SUBMISSION", description: `${recent.length} step completions in under 10 minutes`, severity: "warning" });
+    flags.push({ code: "RAPID_SUBMISSION", description: `${recentStepKeys.size} distinct steps completed in under 10 minutes`, severity: "warning" });
   }
 
   // ── 6. High-risk investment objectives ───────────────────────────────

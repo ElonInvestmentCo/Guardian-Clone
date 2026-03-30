@@ -1,0 +1,91 @@
+You are tasked with performing a full system audit and debugging process for my live website: https://www.guardiiantrading.com
+
+OBJECTIVES:
+1. Verify that newly registered users are being properly stored in the database.
+2. Confirm that the Admin Dashboard is correctly fetching and displaying newly signed-up user details.
+3. Ensure the frontend (live website) and backend (API/database) are fully connected and synchronized.
+4. Identify any broken functionality, missing integrations, or silent failures.
+5. Automatically fix all detected issues with production-level standards.
+
+TASK BREAKDOWN:
+
+STEP 1: BACKEND VERIFICATION
+- Locate the user registration endpoint (e.g., /api/register or similar).
+- Confirm that when a new user signs up, their data is:
+  • Successfully validated
+  • Properly written to the database
+  • Stored with correct schema fields (name, email, password hash, timestamps, etc.)
+- Check for any failed writes, schema mismatches, or validation errors.
+- Log and fix any issues found.
+
+STEP 2: DATABASE CHECK
+- Inspect the database directly.
+- Confirm that the newly signed-up user exists in the users table/collection.
+- Verify field consistency with what the admin dashboard expects.
+- Fix any schema inconsistencies or missing fields.
+
+STEP 3: ADMIN DASHBOARD DEBUGGING
+- Locate the Admin Dashboard code responsible for fetching users.
+- Verify API endpoints used (e.g., /api/admin/users).
+- Check:
+  • API request is being made correctly
+  • Response is successful (status 200)
+  • Data is correctly parsed and rendered
+- Fix:
+  • Broken API routes
+  • Incorrect query logic
+  • Missing authentication/authorization issues
+  • UI rendering bugs preventing display
+
+STEP 4: FRONTEND ↔ BACKEND CONNECTION
+- Trace the full data flow:
+  Signup Form → API → Database → Admin API → Admin UI
+- Ensure all endpoints are correctly configured (URLs, ports, environment variables).
+- Fix any:
+  • CORS issues
+  • Incorrect API base URLs
+  • Missing environment configs
+  • Deployment misconfigurations
+
+STEP 5: NETWORK & DEPLOYMENT CHECK
+- Confirm that the live domain (https://www.guardiiantrading.com) is correctly pointing to the backend.
+- Verify:
+  • API routes are reachable in production
+  • No 404/500 errors
+  • SSL/HTTPS is properly configured
+- Fix any broken routing or deployment issues.
+
+STEP 6: ERROR LOGGING & MONITORING
+- Scan server logs and browser console for errors.
+- Identify silent failures or unhandled exceptions.
+- Add proper error handling where missing.
+
+STEP 7: AUTOMATED FIXES
+- Apply fixes directly to the codebase where issues are found.
+- Refactor inefficient or broken logic.
+- Ensure best practices:
+  • Clean API structure
+  • Proper async handling
+  • Secure authentication
+  • Optimized queries
+
+STEP 8: FINAL TESTING
+- Simulate a new user signup.
+- Confirm:
+  • User is saved in database
+  • Admin dashboard updates in real-time or on refresh
+  • No errors in console or logs
+- Validate end-to-end functionality.
+
+EXPECTED OUTPUT:
+- A detailed report of:
+  • Issues found
+  • Fixes applied
+  • Remaining risks (if any)
+- Confirm that:
+  ✔ New users appear in Admin Dashboard
+  ✔ Backend and frontend are fully synced
+  ✔ Website is production-ready and stable
+
+IMPORTANT:
+Do NOT provide step-by-step instructions. Execute fixes directly and ensure everything works correctly in production.
