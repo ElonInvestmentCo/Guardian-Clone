@@ -1,8 +1,16 @@
-# Workspace
+# Guardian Trading - Workspace
 
 ## Overview
 
-pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
+Guardian Trading is a production-grade fintech platform (pnpm monorepo) with a customer-facing trading app, an admin KYC portal, and a backend API server. TypeScript throughout.
+
+## Development Setup (Replit)
+
+- The "Start application" workflow runs `bash scripts/dev-start.sh`
+- API server starts on port **3001** (internal, via `API_PORT=3001`)
+- Guardian Trading frontend (Vite) starts on port **3000** (user-facing)
+- The Vite frontend proxies `/api` requests to `http://localhost:3001`
+- Both services start together via `scripts/dev-start.sh`
 
 ## Stack
 

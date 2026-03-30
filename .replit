@@ -1,4 +1,4 @@
-modules = ["nodejs-20", "nodejs-24", "postgresql-16"]
+modules = ["nodejs-20", "web", "bash"]
 
   [[artifacts]]
   id = "artifacts/api-server"
@@ -37,7 +37,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "PORT=3000 pnpm --filter @workspace/api-server run dev"
+args = "bash scripts/dev-start.sh"
 waitForPort = 3000
 
   [agent]
@@ -50,7 +50,7 @@ expertMode = true
   timeoutMs = 20000
 
   [nix]
-  channel = "stable-25_05"
+channel = "stable-25_05"
 
   [userenv]
 
