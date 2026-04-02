@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
-import { join } from "path";
+import { join, resolve, sep } from "path";
 import { getDataDir } from "../userDataStore.js";
 
 interface ChatMessage {
@@ -16,7 +16,7 @@ interface Conversation {
   updatedAt: string;
 }
 
-const DATA_DIR = join(getDataDir(), "ai-chats");
+const DATA_DIR = resolve(getDataDir(), "ai-chats");
 
 function ensureDir(): void {
   if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
@@ -24,7 +24,12 @@ function ensureDir(): void {
 
 function filePath(email: string): string {
   const sanitized = email.toLowerCase().replace(/@/g, "_at_").replace(/[^a-z0-9._-]/g, "_");
-  return join(DATA_DIR, `${sanitized}.json`);
+  const fp = resolve(DATA_DIR, `${sanitized}.json`);
+  const base = DATA_DIR + sep;
+  if (!fp.startsWith(base) && fp !== DATA_DIR) {
+    throw new Error("Path traversal blocked in chatStore");
+  }
+  return fp;
 }
 
 export function getConversation(email: string): Conversation {

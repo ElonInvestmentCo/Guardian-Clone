@@ -125,19 +125,33 @@ export function sanitizeEmail(email: string): string {
   return email.toLowerCase().replace(/@/g, "_at_").replace(/[^a-z0-9._-]/g, "_");
 }
 
+function assertSafePath(resolvedPath: string, baseDir: string): void {
+  const normalizedBase = path.resolve(baseDir) + path.sep;
+  const normalizedTarget = path.resolve(resolvedPath);
+  if (normalizedTarget !== path.resolve(baseDir) && !normalizedTarget.startsWith(normalizedBase)) {
+    throw new Error(`Path traversal blocked: ${resolvedPath} escapes ${baseDir}`);
+  }
+}
+
 /** Path to the per-user profile directory */
 export function getUserDir(email: string): string {
-  return path.join(USERS_DIR, sanitizeEmail(email));
+  const dir = path.resolve(USERS_DIR, sanitizeEmail(email));
+  assertSafePath(dir, USERS_DIR);
+  return dir;
 }
 
 /** Path to the per-user documents directory */
 export function getUserDocDir(email: string): string {
-  return path.join(getUserDir(email), "documents");
+  const dir = path.resolve(getUserDir(email), "documents");
+  assertSafePath(dir, USERS_DIR);
+  return dir;
 }
 
 /** Path to the per-user profile JSON file */
 export function getUserProfilePath(email: string): string {
-  return path.join(getUserDir(email), "profile.json");
+  const filePath = path.resolve(getUserDir(email), "profile.json");
+  assertSafePath(filePath, USERS_DIR);
+  return filePath;
 }
 
 function ensureDir(dir: string): void {

@@ -1,0 +1,142 @@
+Run a full verification and QA audit across BOTH:
+
+1) Live website (frontend)
+2) Admin dashboard (admin-kyc)
+3) Backend API (Railway)
+
+DO NOT assume anything works — VERIFY everything.
+
+========================
+PART 1 — API VERIFICATION
+========================
+
+1. Confirm ALL API calls use:
+https://guardian-clone-production.up.railway.app
+
+2. Log every request from api.ts:
+console.log("API CALL →", url)
+
+3. Verify:
+- Login works (returns token)
+- Authenticated requests include Authorization: Bearer token
+- Users endpoint returns real users (not empty/local data)
+- KYC queue loads correctly
+- No calls go to /api or localhost
+
+Report failures clearly.
+
+========================
+PART 2 — SECURITY FIX VALIDATION
+========================
+
+1. Confirm lodash is upgraded everywhere
+2. Verify path traversal protection:
+   - path.resolve used
+   - base directory enforced
+   - no direct user input in fs paths
+
+3. Re-run scan:
+- ZERO HIGH vulnerabilities
+
+========================
+PART 3 — BUTTON & UI TESTING (CRITICAL)
+========================
+
+Test EVERY button and interaction.
+
+LIVE WEBSITE:
+- All CTAs
+- Forms
+- Navigation
+
+ADMIN DASHBOARD:
+- Login
+- Users tab
+- KYC actions
+- Filters/search
+- Logout
+- ALL clickable elements
+
+For EACH:
+- Click works?
+- API triggered?
+- UI updates?
+
+========================
+PART 4 — RESPONSIVENESS TEST
+========================
+
+Test:
+- Desktop
+- Tablet
+- Mobile
+
+Check:
+- No overlap
+- No cutoff
+- Scroll works
+- Tables responsive
+- Modals usable
+
+========================
+PART 5 — PROFILE BUTTON ("A") FIX
+========================
+
+The profile avatar ("A") in the top-right of the Admin dashboard MUST be fixed. 
+
+Current issues to check:
+- Not responsive on smaller screens
+- May overlap or misalign
+- Click/tap area may be too small
+- Dropdown (if exists) may break
+
+Fix requirements:
+
+1. Make it responsive:
+   - Use flexbox (flex items-center justify-end)
+   - Ensure proper spacing from edges (padding-right)
+
+2. Ensure proper sizing:
+   - Minimum 40x40px clickable area
+   - Use Tailwind: w-10 h-10
+
+3. Make it mobile-friendly:
+   - Increase tap area
+   - Ensure no overlap with search bar
+
+4. If dropdown exists:
+   - Must open on click
+   - Must close on outside click
+   - Must not overflow screen
+
+5. Accessibility:
+   - Add cursor-pointer
+   - Add hover + focus states
+
+6. If layout is breaking:
+   - Wrap header in flex container:
+     justify-between items-center
+   - Prevent shrinking:
+     flex-shrink-0
+
+========================
+PART 6 — REPORT FORMAT
+========================
+
+Return ONLY:
+
+✅ WORKING:
+(list verified working)
+
+❌ BROKEN:
+(issue + file + reason)
+
+⚠️ PARTIAL:
+(works but buggy)
+
+🔧 FIXES:
+(exact code-level fixes)
+
+DO NOT guess.
+DO NOT say "everything works".
+VERIFY via actual behavior and code.

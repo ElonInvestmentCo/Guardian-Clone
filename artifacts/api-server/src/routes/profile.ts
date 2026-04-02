@@ -149,8 +149,8 @@ profileRouter.post(
 profileRouter.get("/user/profile-picture/:filename", (req, res) => {
   try {
     const safeName = path.basename(req.params["filename"]!);
-    const filePath = path.join(PROFILE_PIC_DIR, safeName);
-    if (!filePath.startsWith(PROFILE_PIC_DIR + path.sep) && filePath !== PROFILE_PIC_DIR) {
+    const filePath = path.resolve(PROFILE_PIC_DIR, safeName);
+    if (!filePath.startsWith(path.resolve(PROFILE_PIC_DIR) + path.sep)) {
       res.status(403).json({ error: "Access denied" });
       return;
     }
