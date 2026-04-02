@@ -77,7 +77,12 @@ export function stepsPercent(completed: number, total: number): number {
 export function getProfileField(profile: Record<string, unknown>, step: string, field: string): string {
   const stepData = profile[step] as Record<string, unknown> | undefined;
   const v = stepData?.[field];
-  return v != null ? String(v) : "—";
+  if (v == null) return "—";
+  const s = String(v);
+  if (s.startsWith("enc:")) return "⚠ Encrypted (re-entry required)";
+  if (s === "[decryption failed]") return "⚠ Encrypted (re-entry required)";
+  if (s.startsWith("[encrypted with previous key")) return "⚠ Encrypted (re-entry required)";
+  return s;
 }
 
 export function actionTypeLabel(actionType: string): string {

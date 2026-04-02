@@ -239,6 +239,29 @@ router.get("/admin/user-details/:email", (req: Request, res: Response): void => 
       profile["documents"] = master["documents"];
     }
 
+    const ID_FIELDS = ["taxId", "dateOfBirth", "idNumber", "idType", "taxIdType", "foreignIdType", "taxResidenceCountry", "countryOfIssuance", "issuingState", "issueDate", "expirationDate"];
+    const FUNDING_FIELDS = ["accountNumber", "abaSwift", "bankAccountNumber", "routingNumber", "bankName", "accountName", "accountType", "fundingSources"];
+
+    function consolidateFields(prof: Record<string, unknown>, fields: string[], targetKey: string): void {
+      const target = (prof[targetKey] as Record<string, unknown>) ?? {};
+      const ALL_STEPS = ["personalDetails", "personal", "idInformation", "idProofUpload", "fundingDetails", "general"];
+      for (const field of fields) {
+        if (target[field] != null && String(target[field]) !== "" && String(target[field]) !== "—") continue;
+        for (const step of ALL_STEPS) {
+          if (step === targetKey) continue;
+          const stepData = prof[step] as Record<string, unknown> | undefined;
+          if (stepData?.[field] != null && String(stepData[field]) !== "") {
+            target[field] = stepData[field];
+            break;
+          }
+        }
+      }
+      prof[targetKey] = target;
+    }
+
+    consolidateFields(profile, ID_FIELDS, "idInformation");
+    consolidateFields(profile, FUNDING_FIELDS, "fundingDetails");
+
     const auditLog  = (profile._auditLog as unknown[]) ?? [];
 
     const safeProfile = { ...profile };

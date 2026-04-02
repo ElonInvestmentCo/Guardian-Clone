@@ -373,7 +373,7 @@ export default function UserPanel({ user, onClose, onAction, onOpenProfile }: Pr
             activeColor="#16A34A"
             hoverColor="#15803D"
             isActive={currentStatus === "approved"}
-            isDisabled={hasDecision && currentStatus !== "approved"}
+            isDisabled={hasDecision}
             anyPending={anyPending}
           />
           <KycActionBtn
@@ -389,7 +389,7 @@ export default function UserPanel({ user, onClose, onAction, onOpenProfile }: Pr
             activeColor="#DC2626"
             hoverColor="#B91C1C"
             isActive={currentStatus === "rejected"}
-            isDisabled={hasDecision && currentStatus !== "rejected"}
+            isDisabled={hasDecision}
             anyPending={anyPending}
           />
           <KycActionBtn
@@ -399,7 +399,7 @@ export default function UserPanel({ user, onClose, onAction, onOpenProfile }: Pr
             activeColor="#2563EB"
             hoverColor="#1D4ED8"
             isActive={currentStatus === "resubmit"}
-            isDisabled={hasDecision && currentStatus !== "resubmit"}
+            isDisabled={hasDecision}
             anyPending={anyPending}
           />
         </div>
@@ -435,10 +435,11 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 function Field({ label, value }: { label: string; value: string }) {
+  const isWarning = value.startsWith("⚠");
   return (
     <div style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", borderBottom: "1px solid #F9FAFB" }}>
       <span style={{ fontSize: "11px", color: "#9CA3AF" }}>{label}</span>
-      <span style={{ fontSize: "11px", color: "#374151", fontWeight: value === "—" ? "400" : "500", textAlign: "right", maxWidth: "200px", wordBreak: "break-word" }}>{value}</span>
+      <span style={{ fontSize: "11px", color: isWarning ? "#D97706" : value === "—" ? "#9CA3AF" : "#374151", fontWeight: value === "—" ? "400" : "500", fontStyle: isWarning ? "italic" : "normal", textAlign: "right", maxWidth: "200px", wordBreak: "break-word" }}>{value}</span>
     </div>
   );
 }
@@ -455,20 +456,15 @@ function KycActionBtn({ label, onClick, loading, activeColor, hoverColor, isActi
 }) {
   const disabled = loading || isDisabled || (anyPending && !loading);
 
-  const bg = isActive
-    ? activeColor
-    : disabled
-      ? "#E5E7EB"
-      : activeColor;
-
-  const textColor = isActive || !disabled ? "white" : "#9CA3AF";
+  const bg = disabled ? "#E5E7EB" : activeColor;
+  const textColor = disabled ? "#9CA3AF" : "white";
 
   return (
     <button
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
-      onMouseEnter={(e) => { if (!disabled && !isActive) (e.currentTarget as HTMLElement).style.background = hoverColor; }}
-      onMouseLeave={(e) => { if (!disabled && !isActive) (e.currentTarget as HTMLElement).style.background = activeColor; }}
+      onMouseEnter={(e) => { if (!disabled) (e.currentTarget as HTMLElement).style.background = hoverColor; }}
+      onMouseLeave={(e) => { if (!disabled) (e.currentTarget as HTMLElement).style.background = activeColor; }}
       style={{
         flex: 1, padding: "7px 4px",
         borderRadius: "4px", border: isActive ? `2px solid ${activeColor}` : "none",
@@ -476,7 +472,7 @@ function KycActionBtn({ label, onClick, loading, activeColor, hoverColor, isActi
         color: textColor, fontSize: "11px", fontWeight: "700",
         cursor: disabled ? "not-allowed" : "pointer",
         transition: "background 0.15s, opacity 0.15s",
-        opacity: isDisabled ? 0.4 : 1,
+        opacity: isDisabled ? 0.5 : 1,
         position: "relative",
       }}
     >
