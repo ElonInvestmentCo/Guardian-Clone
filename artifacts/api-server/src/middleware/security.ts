@@ -87,7 +87,7 @@ export function securityHeaders(_req: Request, res: Response, next: NextFunction
   res.setHeader("X-Download-Options", "noopen");
   res.setHeader("X-Permitted-Cross-Domain-Policies", "none");
   res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-  res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
 
   res.setHeader(
     "Content-Security-Policy",

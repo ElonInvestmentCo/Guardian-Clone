@@ -19,6 +19,7 @@ app.set("trust proxy", 1);
 const allowedOrigins = [
   "https://guardiiantrading.com",
   "https://www.guardiiantrading.com",
+  "https://guardian-clone-production.up.railway.app",
 ];
 
 const devDomain = process.env.REPLIT_DEV_DOMAIN;
