@@ -97,8 +97,15 @@ Guardian Trading is structured as a pnpm monorepo, utilizing Node.js 24 and Type
 - **Honeytrap Routes**: Decoy endpoints to detect and ban scrapers.
 - **Robots.txt**: Disallows sensitive pages and blocks AI crawlers.
 - **Frontend Anti-scrape**: Disables right-click, blocks keyboard shortcuts, and prevents image dragging.
-- **Profile Picture Safety**: Path traversal prevention for uploaded files.
+- **Path Traversal Protection**: `assertSafePath()` guard in `userDataStore.ts` validates all user-derived file paths against base directory. `chatStore.ts` and `profile.ts` use `path.resolve` + `startsWith` checks. All filesystem operations use resolved absolute paths.
+- **Profile Picture Safety**: Path traversal prevention for uploaded files using `path.basename` + resolved path validation.
+- **Dependency Overrides**: lodash forced to `>=4.17.21` via pnpm overrides to address known CVEs.
 - **Field-Level Encryption**: Sensitive fields (taxId, ssn, idNumber, dateOfBirth, foreignIdType, accountNumber, abaSwift, bankAccountNumber, routingNumber) are encrypted at rest with AES-256-GCM. Key derived from `USER_DATA_KEY` env var via scrypt. Admin dashboard decrypts server-side in the authenticated `user-details` endpoint only — raw encrypted values never reach the frontend. `decryptSensitiveProfile()` recursively walks all nested objects/arrays and replaces any undecryptable `enc:` values with `[decryption failed]`.
+
+### Admin Dashboard Header
+- **Profile Avatar ("A")**: 40x40px button with gradient background, hover glow, focus-visible outline, and active scale effect.
+- **Profile Dropdown**: Opens on click, closes on outside click. Shows admin info and Sign Out button. Animated fade-in. z-index 1050.
+- **Responsive Header**: Search bar hidden on mobile (<992px). Tighter padding on tablet/mobile. Title font scales down on small screens (<576px). All header elements use flexbox with `flex-shrink: 0` to prevent overlap.
 
 ## External Dependencies
 
