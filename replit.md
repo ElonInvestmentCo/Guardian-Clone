@@ -69,6 +69,16 @@ Guardian Trading is structured as a pnpm monorepo, utilizing Node.js 24 and Type
 - **KYC Queue side panel** (UserPanel): Quick overview with Profile/Risk/Audit tabs and admin actions (approve/reject/resubmit). "Full Profile →" button navigates to the detailed UserProfileView.
 - **Full Profile View**: All user data across 12+ sections, uploaded documents with secure "View" buttons (blob URLs), Balance management, and Admin Actions (suspend/ban/flag/delete/role assignment/password reset).
 
+### Admin Balance & Profit Management
+- **Transaction types**: 7 categorized types (deposit, withdrawal, adjustment, bonus, correction, fee, refund) with color-coded badges.
+- **Required notes**: All balance/profit changes require an admin note explaining the reason. Backend returns 400 if note is missing.
+- **Validation**: Negative balances blocked, numeric validation on all amounts.
+- **Confirmation dialog**: Balance changes show a review step (current vs new values, type, reason) before applying. Admin must explicitly confirm.
+- **Transaction history**: Full audit trail with color-coded entries showing previous values, change deltas (+/-), transaction type, timestamp, actor, and note.
+- **Audit log filtering**: Search/filter input on the Audit tab to find entries by action type, actor, note, or metadata.
+- **Action confirmation safeguards**: Sensitive operations (suspend, ban, role change, password reset, delete) all require explicit confirmation dialogs before executing.
+- **Balance change audit metadata**: Each balance change records `transactionType`, `balanceChange`, and `profitChange` in both `_balanceHistory` and `_auditLog`.
+
 ### Platform Security
 - **Security Headers**: Comprehensive set of security headers to mitigate common web vulnerabilities.
 - **Global Error Handler**: Centralized error handling for Express to log errors and return consistent 500 JSON responses.
