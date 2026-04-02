@@ -4,7 +4,7 @@
   "credentials": {
     "passwordHash": "[encrypted with previous key - re-entry required]"
   },
-  "updatedAt": "2026-04-02T04:33:56.974Z",
+  "updatedAt": "2026-04-02T04:47:54.680Z",
   "income": {
     "annualIncome": "over $500,000",
     "netWorth": "$500,001 - $1,000,000",
@@ -194,6 +194,25 @@
       "actor": "admin",
       "note": null,
       "timestamp": "2026-04-02T04:33:56.974Z"
+    },
+    {
+      "actionType": "ADMIN_SUSPEND",
+      "actor": "admin",
+      "note": null,
+      "timestamp": "2026-04-02T04:47:40.557Z"
+    },
+    {
+      "actionType": "ADMIN_REQUEST_RESUBMIT",
+      "actor": "admin",
+      "fields": [
+        "Professional Details",
+        "Disclosures",
+        "Funding Details",
+        "Risk Tolerance",
+        "Personal Details"
+      ],
+      "note": null,
+      "timestamp": "2026-04-02T04:47:54.680Z"
     }
   ],
   "riskTolerance": {
@@ -252,8 +271,17 @@
     "frontUploaded": true,
     "backUploaded": true
   },
-  "status": "approved",
+  "status": "resubmit",
   "_notifications": [
+    {
+      "id": "aff88a66-0a0c-4992-b842-45ce56fa117d",
+      "type": "kyc",
+      "title": "Documents Resubmission Required",
+      "message": "Some of your submitted documents need to be updated. Please log in and re-upload the requested items.",
+      "actionUrl": "/settings",
+      "read": false,
+      "createdAt": "2026-04-02T04:47:54.682Z"
+    },
     {
       "id": "43cc4a8e-d1d6-455a-8c95-b962e5efc990",
       "type": "kyc",
@@ -291,5 +319,12 @@
       "createdAt": "2026-03-23T22:59:40.015Z"
     }
   ],
-  "_flagged": true
+  "_flagged": true,
+  "_resubmitFields": [
+    "Professional Details",
+    "Disclosures",
+    "Funding Details",
+    "Risk Tolerance",
+    "Personal Details"
+  ]
 }
