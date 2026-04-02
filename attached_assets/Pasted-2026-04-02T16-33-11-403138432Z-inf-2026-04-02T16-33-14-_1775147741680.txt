@@ -1,0 +1,456 @@
+2026-04-02T16:33:11.403138432Z [inf]  
+2026-04-02T16:33:14.194491293Z [inf]  [35m[Region: us-west1][0m
+2026-04-02T16:33:14.333963249Z [inf]  
+2026-04-02T16:33:14.333990222Z [inf]  [38;2;125;86;243m╭─────────────────╮[0m
+2026-04-02T16:33:14.333994696Z [inf]  [38;2;125;86;243m│[0m Railpack 0.23.0 [38;2;125;86;243m│[0m
+2026-04-02T16:33:14.333998048Z [inf]  [38;2;125;86;243m╰─────────────────╯[0m
+2026-04-02T16:33:14.334002758Z [inf]  
+2026-04-02T16:33:14.334006045Z [inf]  [97m↳ Detected Node[0m
+2026-04-02T16:33:14.334009366Z [inf]  [97m↳ Using pnpm package manager[0m
+2026-04-02T16:33:14.334012439Z [inf]  [97m↳ Found workspace with 11 packages[0m
+2026-04-02T16:33:14.334015566Z [inf]  [97m↳ Installing pnpm@10.26.1 with Corepack[0m
+2026-04-02T16:33:14.334018465Z [inf]  
+2026-04-02T16:33:14.334021197Z [inf]  [1mPackages[0m
+2026-04-02T16:33:14.334036555Z [inf]  [38;5;238m──────────[0m
+2026-04-02T16:33:14.334041005Z [inf]  [95mnode[0m  [38;5;238m│[0m  [96m22.22.2[0m  [38;5;238m│[0m  mise.toml (22.22.2)
+2026-04-02T16:33:14.334045995Z [inf]  [95mpnpm[0m  [38;5;238m│[0m  [96m10.26.1[0m  [38;5;238m│[0m  package.json > packageManager (10.26.1)
+2026-04-02T16:33:14.334050403Z [inf]  
+2026-04-02T16:33:14.334053789Z [inf]  [1mSteps[0m
+2026-04-02T16:33:14.334057054Z [inf]  [38;5;238m──────────[0m
+2026-04-02T16:33:14.334060024Z [inf]  [95m▸ install[0m
+2026-04-02T16:33:14.334063026Z [inf]  [38;5;245m$[0m [1mnpm i -g corepack@latest && corepack enable && corepack prepare --activate[0m
+2026-04-02T16:33:14.334066008Z [inf]  [38;5;245m$[0m [1mpnpm install --frozen-lockfile --prefer-offline[0m
+2026-04-02T16:33:14.334068931Z [inf]  
+2026-04-02T16:33:14.334071974Z [inf]  [95m▸ build[0m
+2026-04-02T16:33:14.334079347Z [inf]  [38;5;245m$[0m [1mpnpm install && pnpm run build[0m
+2026-04-02T16:33:14.334082151Z [inf]  
+2026-04-02T16:33:14.334084873Z [inf]  [1mDeploy[0m
+2026-04-02T16:33:14.334087686Z [inf]  [38;5;238m──────────[0m
+2026-04-02T16:33:14.334090776Z [inf]  [38;5;245m$[0m [1mnode artifacts/api-server/dist/index.cjs[0m
+2026-04-02T16:33:14.334093713Z [inf]  
+2026-04-02T16:33:14.334096557Z [inf]  
+2026-04-02T16:33:14.335500169Z [inf]  Successfully prepared Railpack plan for build
+2026-04-02T16:33:14.335529512Z [inf]  
+2026-04-02T16:33:14.335534486Z [inf]  
+2026-04-02T16:33:14.335941670Z [inf]  context: ztlz-eCCa
+2026-04-02T16:33:14.691060585Z [inf]  [internal] load build definition from railpack-plan.json
+2026-04-02T16:33:14.691094296Z [inf]  [internal] load build definition from railpack-plan.json
+2026-04-02T16:33:14.691110733Z [inf]  [internal] load build definition from railpack-plan.json
+2026-04-02T16:33:14.691122090Z [inf]  [internal] load build definition from railpack-plan.json
+2026-04-02T16:33:14.699408603Z [inf]  [internal] load build definition from railpack-plan.json
+2026-04-02T16:33:14.700746172Z [inf]  resolve image config for docker-image://ghcr.io/railwayapp/railpack-frontend:v0.23.0
+2026-04-02T16:33:15.101184220Z [inf]  resolve image config for docker-image://ghcr.io/railwayapp/railpack-frontend:v0.23.0
+2026-04-02T16:33:15.101236067Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.23.0@sha256:ba4c430961d9ee3215c64807727a4b11e2198daac31250e9db9eaf9cee4624d6
+2026-04-02T16:33:15.101383327Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.23.0@sha256:ba4c430961d9ee3215c64807727a4b11e2198daac31250e9db9eaf9cee4624d6
+2026-04-02T16:33:15.106135884Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.23.0@sha256:ba4c430961d9ee3215c64807727a4b11e2198daac31250e9db9eaf9cee4624d6
+2026-04-02T16:33:15.106397446Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.23.0@sha256:ba4c430961d9ee3215c64807727a4b11e2198daac31250e9db9eaf9cee4624d6
+2026-04-02T16:33:15.192442094Z [inf]  load build definition from railpack-plan.json
+2026-04-02T16:33:15.192491850Z [inf]  load build definition from railpack-plan.json
+2026-04-02T16:33:15.192514808Z [inf]  load build definition from railpack-plan.json
+2026-04-02T16:33:15.200684078Z [inf]  load build definition from railpack-plan.json
+2026-04-02T16:33:15.229467452Z [inf]  copy /etc/mise/config.toml
+2026-04-02T16:33:15.229511323Z [inf]  copy /usr/local/bin/mise
+2026-04-02T16:33:15.229523340Z [inf]  install mise packages: node
+2026-04-02T16:33:15.229535292Z [inf]  create mise config
+2026-04-02T16:33:15.229546172Z [inf]  mkdir -p /app/node_modules/.cache
+2026-04-02T16:33:15.229559667Z [inf]  copy / /app
+2026-04-02T16:33:15.229568811Z [inf]  npm i -g corepack@latest && corepack enable && corepack prepare --activate
+2026-04-02T16:33:15.229577437Z [inf]  copy .mise.toml
+2026-04-02T16:33:15.229585188Z [inf]  loading .
+2026-04-02T16:33:15.229590780Z [inf]  docker-image://ghcr.io/railwayapp/railpack-builder:mise-2026.3.17
+2026-04-02T16:33:15.229596533Z [inf]  install apt packages: libatomic1
+2026-04-02T16:33:15.229604742Z [inf]  copy /root/.local/state/mise
+2026-04-02T16:33:15.229610180Z [inf]  copy package.json
+2026-04-02T16:33:15.229615724Z [inf]  mkdir /etc/mise
+2026-04-02T16:33:15.229622561Z [inf]  copy /mise/installs
+2026-04-02T16:33:15.229627467Z [inf]  docker-image://ghcr.io/railwayapp/railpack-runtime:mise-2026.3.17
+2026-04-02T16:33:15.229632655Z [inf]  copy /mise/shims
+2026-04-02T16:33:15.229663608Z [inf]  [railpack] merge $packages:apt:runtime, $packages:mise, $build, $build
+2026-04-02T16:33:15.229669410Z [inf]  copy /opt/corepack
+2026-04-02T16:33:15.229676649Z [inf]  copy /app
+2026-04-02T16:33:15.229682888Z [inf]  copy /root/.cache
+2026-04-02T16:33:15.229688234Z [inf]  copy /app/node_modules
+2026-04-02T16:33:15.229693930Z [inf]  pnpm install && pnpm run build
+2026-04-02T16:33:15.229700144Z [inf]  [railpack] secrets hash
+2026-04-02T16:33:15.229705341Z [inf]  copy .
+2026-04-02T16:33:15.229710518Z [inf]  copy / /app
+2026-04-02T16:33:15.229715830Z [inf]  pnpm install --frozen-lockfile --prefer-offline
+2026-04-02T16:33:15.229727967Z [inf]  loading .
+2026-04-02T16:33:15.229738226Z [inf]  [railpack] secrets hash
+2026-04-02T16:33:15.229743613Z [inf]  docker-image://ghcr.io/railwayapp/railpack-runtime:mise-2026.3.17
+2026-04-02T16:33:15.229754091Z [inf]  docker-image://ghcr.io/railwayapp/railpack-builder:mise-2026.3.17
+2026-04-02T16:33:15.471408608Z [inf]  docker-image://ghcr.io/railwayapp/railpack-runtime:mise-2026.3.17
+2026-04-02T16:33:15.471633658Z [inf]  docker-image://ghcr.io/railwayapp/railpack-runtime:mise-2026.3.17
+2026-04-02T16:33:15.471678105Z [inf]  install apt packages: libatomic1
+2026-04-02T16:33:15.472294052Z [inf]  docker-image://ghcr.io/railwayapp/railpack-builder:mise-2026.3.17
+2026-04-02T16:33:15.472638033Z [inf]  docker-image://ghcr.io/railwayapp/railpack-builder:mise-2026.3.17
+2026-04-02T16:33:15.472662844Z [inf]  [railpack] secrets hash
+2026-04-02T16:33:15.472675577Z [inf]  loading .
+2026-04-02T16:33:15.481630994Z [inf]  [railpack] secrets hash
+2026-04-02T16:33:15.65071965Z [inf]  Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+
+2026-04-02T16:33:15.673259535Z [inf]  Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+
+2026-04-02T16:33:15.683099674Z [inf]  Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [48.0 kB]
+
+2026-04-02T16:33:15.732009418Z [inf]  Get:4 http://deb.debian.org/debian bookworm/main amd64 Packages [8792 kB]
+
+2026-04-02T16:33:15.829541195Z [inf]  Get:5 http://deb.debian.org/debian bookworm-updates/main amd64 Packages [6924 B]
+
+2026-04-02T16:33:15.829770196Z [inf]  Get:6 http://deb.debian.org/debian-security bookworm-security/main amd64 Packages [294 kB]
+
+2026-04-02T16:33:16.070446430Z [inf]  loading .
+2026-04-02T16:33:16.075039219Z [inf]  copy .mise.toml
+2026-04-02T16:33:16.124917903Z [inf]  copy .mise.toml
+2026-04-02T16:33:16.125994235Z [inf]  mkdir /etc/mise
+2026-04-02T16:33:16.141085273Z [inf]  mkdir /etc/mise
+2026-04-02T16:33:16.142285572Z [inf]  create mise config
+2026-04-02T16:33:16.151740638Z [inf]  create mise config
+2026-04-02T16:33:16.152530326Z [inf]  install mise packages: node
+2026-04-02T16:33:16.750111217Z [inf]  mise node@22.22.1    [1/3] install
+
+2026-04-02T16:33:16.750976926Z [inf]  mise pnpm@10.26.1    [1/2] install
+mise node@22.22.1    [1/3] download node-v22.22.1-linux-x64.tar.gz
+
+2026-04-02T16:33:16.763860888Z [inf]  Fetched 9347 kB in 1s (8198 kB/s)
+Reading package lists...
+2026-04-02T16:33:17.080635127Z [inf]  mise node@22.22.1    [2/3] generate checksum node-v22.22.1-linux-x64.tar.gz
+
+2026-04-02T16:33:17.096575278Z [inf]  mise node@22.22.1    [3/3] extract node-v22.22.1-linux-x64.tar.gz
+
+2026-04-02T16:33:17.177872336Z [inf]  
+
+2026-04-02T16:33:17.191770285Z [inf]  Reading package lists...
+2026-04-02T16:33:17.608367447Z [inf]  
+
+2026-04-02T16:33:17.619439835Z [inf]  Building dependency tree...
+2026-04-02T16:33:17.666284564Z [inf]  mise pnpm@10.26.1    [1/2] download pnpm-linux-x64
+
+2026-04-02T16:33:17.705280598Z [inf]  
+Reading state information...
+2026-04-02T16:33:17.705562067Z [inf]  
+
+2026-04-02T16:33:17.808197535Z [inf]  mise node@22.22.1    [3/3] node -v
+
+2026-04-02T16:33:17.81142529Z [inf]  mise node@22.22.1    [3/3] v22.22.1
+
+2026-04-02T16:33:17.812044744Z [inf]  mise node@22.22.1    [3/3] npm -v
+
+2026-04-02T16:33:17.814443162Z [inf]  The following NEW packages will be installed:
+
+2026-04-02T16:33:17.814847038Z [inf]    libatomic1
+
+2026-04-02T16:33:17.84509349Z [inf]  0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Need to get 9376 B of archives.
+After this operation, 46.1 kB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian bookworm/main amd64 libatomic1 amd64 12.2.0-14+deb12u1 [9376 B]
+
+2026-04-02T16:33:17.894757748Z [inf]  mise node@22.22.1    [3/3] 10.9.4
+
+2026-04-02T16:33:17.900984526Z [inf]  mise node@22.22.1    [3/3] enable corepack shims
+
+2026-04-02T16:33:17.951909616Z [inf]  debconf: delaying package configuration, since apt-utils is not installed
+
+2026-04-02T16:33:17.969747979Z [inf]  Fetched 9376 B in 0s (354 kB/s)
+
+2026-04-02T16:33:17.984344925Z [inf]  Selecting previously unselected package libatomic1:amd64.
+(Reading database ... 
+2026-04-02T16:33:17.986026753Z [inf]  mise node@22.22.1  ✓ installed
+
+2026-04-02T16:33:17.986215567Z [inf]  (Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+2026-04-02T16:33:17.990041948Z [inf]  (Reading database ... 75%
+2026-04-02T16:33:17.992751337Z [inf]  (Reading database ... 80%
+2026-04-02T16:33:17.995446613Z [inf]  (Reading database ... 85%
+2026-04-02T16:33:17.99794827Z [inf]  (Reading database ... 90%
+2026-04-02T16:33:18.000441801Z [inf]  (Reading database ... 95%
+2026-04-02T16:33:18.004163573Z [inf]  (Reading database ... 100%
+(Reading database ... 6623 files and directories currently installed.)
+
+2026-04-02T16:33:18.004674993Z [inf]  Preparing to unpack .../libatomic1_12.2.0-14+deb12u1_amd64.deb ...
+
+2026-04-02T16:33:18.006966227Z [inf]  Unpacking libatomic1:amd64 (12.2.0-14+deb12u1) ...
+
+2026-04-02T16:33:18.022323523Z [inf]  Setting up libatomic1:amd64 (12.2.0-14+deb12u1) ...
+
+2026-04-02T16:33:18.025306275Z [inf]  Processing triggers for libc-bin (2.36-9+deb12u13) ...
+
+2026-04-02T16:33:18.15257619Z [inf]  mise pnpm@10.26.1    [2/2] checksum pnpm-linux-x64
+
+2026-04-02T16:33:18.173621224Z [inf]  install apt packages: libatomic1
+2026-04-02T16:33:18.456759186Z [inf]  mise pnpm@10.26.1    [2/2] extract pnpm-linux-x64
+
+2026-04-02T16:33:18.505023047Z [inf]  mise pnpm@10.26.1  ✓ installed
+
+2026-04-02T16:33:18.555051307Z [inf]  install mise packages: node
+2026-04-02T16:33:18.556023447Z [inf]  copy / /app
+2026-04-02T16:33:18.744632812Z [inf]  copy / /app
+2026-04-02T16:33:18.745954244Z [inf]  copy package.json
+2026-04-02T16:33:18.760001609Z [inf]  copy package.json
+2026-04-02T16:33:18.761548564Z [inf]  npm i -g corepack@latest && corepack enable && corepack prepare --activate
+2026-04-02T16:33:18.923908119Z [inf]  npm warn config production Use `--omit=dev` instead.
+
+2026-04-02T16:33:19.39897728Z [inf]  
+changed 1 package in 496ms
+
+2026-04-02T16:33:19.426632946Z [inf]  Reshimming mise 22.22.1...
+
+2026-04-02T16:33:19.574982078Z [inf]  Preparing pnpm@10.26.1 for immediate activation...
+
+2026-04-02T16:33:19.850203890Z [inf]  copy /mise/shims
+2026-04-02T16:33:19.850266027Z [inf]  copy /mise/installs
+2026-04-02T16:33:20.319686837Z [inf]  npm i -g corepack@latest && corepack enable && corepack prepare --activate
+2026-04-02T16:33:20.320611202Z [inf]  mkdir -p /app/node_modules/.cache
+2026-04-02T16:33:20.366863283Z [inf]  copy /mise/installs
+2026-04-02T16:33:20.368168085Z [inf]  copy /usr/local/bin/mise
+2026-04-02T16:33:20.456062844Z [inf]  mkdir -p /app/node_modules/.cache
+2026-04-02T16:33:20.457026582Z [inf]  pnpm install --frozen-lockfile --prefer-offline
+2026-04-02T16:33:20.492777484Z [inf]  copy /usr/local/bin/mise
+2026-04-02T16:33:20.494224874Z [inf]  copy /etc/mise/config.toml
+2026-04-02T16:33:20.507910372Z [inf]  copy /etc/mise/config.toml
+2026-04-02T16:33:20.509311658Z [inf]  copy /root/.local/state/mise
+2026-04-02T16:33:20.568509678Z [inf]  copy /root/.local/state/mise
+2026-04-02T16:33:21.018798406Z [inf]  Scope: all 12 workspace projects
+
+2026-04-02T16:33:21.079698986Z [inf]  Lockfile is up to date, resolution step is skipped
+
+2026-04-02T16:33:21.112721451Z [inf]  Progress: resolved 1, reused 0, downloaded 0, added 0
+
+2026-04-02T16:33:21.175850092Z [inf]  Packages: +584
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+2026-04-02T16:33:22.119226172Z [inf]  Progress: resolved 584, reused 0, downloaded 328, added 327
+
+2026-04-02T16:33:23.119487695Z [inf]  Progress: resolved 584, reused 0, downloaded 568, added 568
+
+2026-04-02T16:33:24.11944537Z [inf]  Progress: resolved 584, reused 0, downloaded 582, added 581
+
+2026-04-02T16:33:24.615713729Z [inf]  Progress: resolved 584, reused 0, downloaded 584, added 584, done
+
+2026-04-02T16:33:24.763952519Z [inf]  .../esbuild@0.27.3/node_modules/esbuild postinstall$ node install.js
+
+2026-04-02T16:33:24.838821536Z [inf]  .../esbuild@0.27.3/node_modules/esbuild postinstall: Done
+
+2026-04-02T16:33:25.117180183Z [inf]  
+dependencies:
++ country-state-city 3.2.1
+
+devDependencies:
++ prettier 3.8.1
++ typescript 5.9.3
+
+
+2026-04-02T16:33:25.16245684Z [inf]  . preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+
+2026-04-02T16:33:25.197806727Z [inf]  . preinstall: Done
+
+2026-04-02T16:33:25.502970956Z [inf]  Done in 4.8s using pnpm v10.26.1
+
+2026-04-02T16:33:25.795052746Z [inf]  pnpm install --frozen-lockfile --prefer-offline
+2026-04-02T16:33:25.796262402Z [inf]  copy / /app
+2026-04-02T16:33:26.303449026Z [inf]  copy / /app
+2026-04-02T16:33:26.304779982Z [inf]  copy .
+2026-04-02T16:33:26.476273909Z [inf]  copy .
+2026-04-02T16:33:26.477619165Z [inf]  pnpm install && pnpm run build
+2026-04-02T16:33:26.875875401Z [inf]  Scope: all 12 workspace projects
+
+2026-04-02T16:33:26.953773524Z [inf]  Lockfile is up to date, resolution step is skipped
+
+2026-04-02T16:33:27.002205176Z [inf]  Already up to date
+
+2026-04-02T16:33:27.848655866Z [inf]  
+
+2026-04-02T16:33:27.889956369Z [inf]  . preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+
+2026-04-02T16:33:27.898582201Z [inf]  . preinstall: Done
+
+2026-04-02T16:33:28.027969476Z [inf]  Done in 1.3s using pnpm v10.26.1
+
+2026-04-02T16:33:28.312918239Z [inf]  
+> workspace@0.0.0 build /app
+> pnpm run typecheck && pnpm -r --if-present run build
+
+
+2026-04-02T16:33:28.591759604Z [inf]  
+> workspace@0.0.0 typecheck /app
+> pnpm run typecheck:libs && pnpm -r --filter "./artifacts/**" --filter "./scripts" --if-present run typecheck
+
+
+2026-04-02T16:33:28.867206483Z [inf]  
+> workspace@0.0.0 typecheck:libs /app
+> tsc --build
+
+
+2026-04-02T16:33:31.341577216Z [inf]  Scope: 5 of 12 workspace projects
+
+2026-04-02T16:33:31.347423628Z [inf]  artifacts/admin-kyc typecheck$ tsc -p tsconfig.json --noEmit
+
+2026-04-02T16:33:31.348040495Z [inf]  artifacts/api-server typecheck$ tsc -p tsconfig.json --noEmit
+
+2026-04-02T16:33:31.34837211Z [inf]  artifacts/guardian-trading typecheck$ tsc -p tsconfig.json --noEmit
+
+2026-04-02T16:33:31.348843228Z [inf]  artifacts/mockup-sandbox typecheck$ tsc -p tsconfig.json --noEmit
+
+2026-04-02T16:33:32.900660516Z [inf]  artifacts/api-server typecheck: Done
+
+2026-04-02T16:33:32.901794362Z [inf]  scripts typecheck$ tsc -p tsconfig.json --noEmit
+
+2026-04-02T16:33:33.388218664Z [inf]  scripts typecheck: Done
+
+2026-04-02T16:33:34.862151269Z [inf]  artifacts/mockup-sandbox typecheck: Done
+
+2026-04-02T16:33:36.422131898Z [inf]  artifacts/admin-kyc typecheck: Done
+
+2026-04-02T16:33:39.233381484Z [inf]  artifacts/guardian-trading typecheck: Done
+
+2026-04-02T16:33:39.533568618Z [inf]  Scope: 11 of 12 workspace projects
+
+2026-04-02T16:33:39.539557218Z [inf]  artifacts/mockup-sandbox build$ vite build
+
+2026-04-02T16:33:39.540229988Z [inf]  lib/api-client-react build$ echo 'Library package — no build output'
+
+2026-04-02T16:33:39.548909327Z [inf]  lib/api-client-react build: Library package — no build output
+
+2026-04-02T16:33:39.550868544Z [inf]  lib/api-client-react build: Done
+
+2026-04-02T16:33:39.924715662Z [inf]  artifacts/mockup-sandbox build: [36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+
+2026-04-02T16:33:39.997559857Z [inf]  artifacts/mockup-sandbox build: transforming...
+
+2026-04-02T16:33:40.676807969Z [inf]  artifacts/mockup-sandbox build: [32m✓[39m 30 modules transformed.
+
+2026-04-02T16:33:40.784843168Z [inf]  artifacts/mockup-sandbox build: rendering chunks...
+
+2026-04-02T16:33:40.790197782Z [inf]  artifacts/mockup-sandbox build: computing gzip size...
+
+2026-04-02T16:33:40.79668589Z [inf]  artifacts/mockup-sandbox build: [2mdist/[22m[32mindex.html                 [39m[1m[2m  4.42 kB[22m[1m[22m[2m │ gzip:  1.23 kB[22m
+
+2026-04-02T16:33:40.796947985Z [inf]  artifacts/mockup-sandbox build: [2mdist/[22m[2massets/[22m[35mindex-BhVw-XfD.css  [39m[1m[2m 89.70 kB[22m[1m[22m[2m │ gzip: 14.88 kB[22m
+
+2026-04-02T16:33:40.797134797Z [inf]  artifacts/mockup-sandbox build: [2mdist/[22m[2massets/[22m[36mindex-ZTNvmnih.js   [39m[1m[2m187.72 kB[22m[1m[22m[2m │ gzip: 59.51 kB[22m
+
+2026-04-02T16:33:40.797382137Z [inf]  artifacts/mockup-sandbox build: [32m✓ built in 838ms[39m
+
+2026-04-02T16:33:40.827161467Z [inf]  artifacts/mockup-sandbox build: Done
+
+2026-04-02T16:33:40.827794308Z [inf]  artifacts/admin-kyc build$ vite build --config vite.config.ts
+
+2026-04-02T16:33:40.828058594Z [inf]  artifacts/api-server build$ tsx ./build.ts
+
+2026-04-02T16:33:40.828262766Z [inf]  artifacts/guardian-trading build$ vite build --config vite.config.ts
+
+2026-04-02T16:33:41.052432549Z [inf]  artifacts/api-server build: building server...
+
+2026-04-02T16:33:41.064818522Z [inf]  artifacts/admin-kyc build: [36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+
+2026-04-02T16:33:41.06692992Z [inf]  artifacts/guardian-trading build: [36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+
+2026-04-02T16:33:41.114608319Z [inf]  artifacts/admin-kyc build: transforming...
+
+2026-04-02T16:33:41.124857367Z [inf]  artifacts/guardian-trading build: transforming...
+
+2026-04-02T16:33:41.19454074Z [inf]  artifacts/api-server build:   dist/index.cjs  1.4mb ⚠️
+
+2026-04-02T16:33:41.19467051Z [inf]  artifacts/api-server build: ⚡ Done in 134ms
+
+2026-04-02T16:33:41.204931038Z [inf]  artifacts/api-server build: Done
+
+2026-04-02T16:33:41.456553338Z [inf]  artifacts/guardian-trading build: [33msrc/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.[39m
+
+2026-04-02T16:33:42.248316337Z [inf]  artifacts/admin-kyc build: [32m✓[39m 110 modules transformed.
+
+2026-04-02T16:33:42.460283342Z [inf]  artifacts/admin-kyc build: rendering chunks...
+
+2026-04-02T16:33:42.468239247Z [inf]  artifacts/admin-kyc build: computing gzip size...
+
+2026-04-02T16:33:42.479141897Z [inf]  artifacts/admin-kyc build: [2mdist/public/[22m[32mindex.html                             [39m[1m[2m  0.78 kB[22m[1m[22m[2m │ gzip:  0.42 kB[22m
+
+2026-04-02T16:33:42.479288859Z [inf]  artifacts/admin-kyc build: [2mdist/public/[22m[2massets/[22m[32mbootstrap-icons-mSm7cUeB.woff2  [39m[1m[2m134.04 kB[22m[1m[22m
+
+2026-04-02T16:33:42.479428437Z [inf]  artifacts/admin-kyc build: [2mdist/public/[22m[2massets/[22m[32mbootstrap-icons-BeopsB42.woff   [39m[1m[2m180.29 kB[22m[1m[22m
+
+2026-04-02T16:33:42.479507546Z [inf]  artifacts/admin-kyc build: [2mdist/public/[22m[2massets/[22m[35mindex-B6WrWRWb.css              [39m[1m[2m316.56 kB[22m[1m[22m[2m │ gzip: 46.15 kB[22m
+
+2026-04-02T16:33:42.479625898Z [inf]  artifacts/admin-kyc build: [2mdist/public/[22m[2massets/[22m[36mindex-DPtgUYbk.js               [39m[1m[2m344.04 kB[22m[1m[22m[2m │ gzip: 97.60 kB[22m
+
+2026-04-02T16:33:42.479750608Z [inf]  artifacts/admin-kyc build: [32m✓ built in 1.40s[39m
+
+2026-04-02T16:33:42.50593481Z [inf]  artifacts/admin-kyc build: Done
+
+2026-04-02T16:33:45.28726139Z [inf]  artifacts/guardian-trading build: [32m✓[39m 2864 modules transformed.
+
+2026-04-02T16:33:45.895664402Z [inf]  artifacts/guardian-trading build: rendering chunks...
+
+2026-04-02T16:33:45.910106634Z [inf]  artifacts/guardian-trading build: computing gzip size...
+
+2026-04-02T16:33:45.943257324Z [inf]  artifacts/guardian-trading build: [2mdist/public/[22m[32mindex.html                                                                               [39m[1m[2m    1.97 kB[22m[1m[22m[2m │ gzip:   0.96 kB[22m
+
+2026-04-02T16:33:45.943489466Z [inf]  artifacts/guardian-trading build: [2mdist/public/[22m[2massets/[22m[32mico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png                          [39m[1m[2m    4.49 kB[22m[1m[22m
+
+2026-04-02T16:33:45.943544475Z [inf]  artifacts/guardian-trading build: [2mdist/public/[22m[2massets/[22m[32mimg-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png                         [39m[1m[2m    6.21 kB[22m[1m[22m
+
+2026-04-02T16:33:45.943704939Z [inf]  artifacts/guardian-trading build: [2mdist/public/[22m[2massets/[22m[32mGuardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png  [39m[1m[2m    6.30 kB[22m[1m[22m
+
+2026-04-02T16:33:45.943752981Z [inf]  artifacts/guardian-trading build: [2mdist/public/[22m[2massets/[22m[32mGuardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png  [39m[1m[2m    6.83 kB[22m[1m[22m
+
+2026-04-02T16:33:45.9438272Z [inf]  artifacts/guardian-trading build: [2mdist/public/[22m[2massets/[22m[32mIMG_7934_1773719077190-CLq6B01D.png                                               [39m[1m[2m    8.48 kB[22m[1m[22m
+
+2026-04-02T16:33:45.943932214Z [inf]  artifacts/guardian-trading build: [2mdist/public/[22m[2massets/[22m[32mIMG_7968_1773721659915-C53aLAjV.png                                               [39m[1m[2m   16.66 kB[22m[1m[22m
+
+2026-04-02T16:33:45.943977414Z [inf]  artifacts/guardian-trading build: [2mdist/public/[22m[2massets/[22m[32mreviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png            [39m[1m[2m   30.29 kB[22m[1m[22m
+
+2026-04-02T16:33:45.944041836Z [inf]  artifacts/guardian-trading build: [2mdist/public/[22m[2massets/[22m[32mimg-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg          [39m[1m[2m   54.99 kB[22m[1m[22m
+
+2026-04-02T16:33:45.944114783Z [inf]  artifacts/guardian-trading build: [2mdist/public/[22m[2massets/[22m[32mIMG_7967_1773721659915-Bdj3jXlG.png                                               [39m[1m[2m   80.20 kB[22m[1m[22m
+
+2026-04-02T16:33:45.944165619Z [inf]  artifacts/guardian-trading build: [2mdist/public/[22m[2massets/[22m[32mIMG_7970_1773721659915-BzHzYT_4.png                                               [39m[1m[2m   83.70 kB[22m[1m[22m
+
+2026-04-02T16:33:45.944217541Z [inf]  artifacts/guardian-trading build: [2mdist/public/[22m[2massets/[22m[32mIMG_7969_1773721659915-gt229R3v.png                                               [39m[1m[2m   85.70 kB[22m[1m[22m
+
+2026-04-02T16:33:45.944289868Z [inf]  artifacts/guardian-trading build: [2mdist/public/[22m[2massets/[22m[32mimg-background-vector-1_1773948931248-kdCdaMwT.png                                [39m[1m[2m  104.76 kB[22m[1m[22m
+
+2026-04-02T16:33:45.944369395Z [inf]  artifacts/guardian-trading build: [2mdist/public/[22m[2massets/[22m[32mpattern_1773965291387-CNruTbwj.png                                                [39m[1m[2m  200.94 kB[22m[1m[22m
+
+2026-04-02T16:33:45.944463806Z [inf]  artifacts/guardian-trading build: [2mdist/public/[22m[2massets/[22m[35mindex-DjIjp0sb.css                                                                [39m[1m[2m  116.42 kB[22m[1m[22m[2m │ gzip:  19.20 kB[22m
+
+2026-04-02T16:33:45.944632626Z [inf]  artifacts/guardian-trading build: [2mdist/public/[22m[2massets/[22m[36mindex-CO9Ag1dA.js                                                                 [39m[1m[33m1,307.30 kB[39m[22m[2m │ gzip: 367.83 kB[22m
+
+2026-04-02T16:33:45.944776473Z [inf]  artifacts/guardian-trading build: [32m✓ built in 4.85s[39m
+
+2026-04-02T16:33:45.944969244Z [inf]  artifacts/guardian-trading build: [33m
+
+2026-04-02T16:33:45.945030343Z [inf]  artifacts/guardian-trading build: (!) Some chunks are larger than 500 kB after minification. Consider:
+
+2026-04-02T16:33:45.945110907Z [inf]  artifacts/guardian-trading build: - Using dynamic import() to code-split the application
+
+2026-04-02T16:33:45.94519219Z [inf]  artifacts/guardian-trading build: - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+
+2026-04-02T16:33:45.945262343Z [inf]  artifacts/guardian-trading build: - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+
+2026-04-02T16:33:45.995362648Z [inf]  artifacts/guardian-trading build: Done
+
+2026-04-02T16:33:46.116673171Z [inf]  pnpm install && pnpm run build
+2026-04-02T16:33:52.984366228Z [inf]  copy /app/node_modules
+2026-04-02T16:33:54.664681275Z [inf]  copy /root/.cache
+2026-04-02T16:33:54.664728058Z [inf]  copy /app
+2026-04-02T16:33:55.695203898Z [inf]  copy /app
+2026-04-02T16:33:55.696768833Z [inf]  copy /opt/corepack
+2026-04-02T16:33:55.880856902Z [inf]  copy /opt/corepack
+2026-04-02T16:33:57.041428383Z [inf]  copy /app/node_modules
+2026-04-02T16:33:57.043086320Z [inf]  [railpack] merge $packages:apt:runtime, $packages:mise, $build, $build
+2026-04-02T16:33:57.276867102Z [inf]  [railpack] merge $packages:apt:runtime, $packages:mise, $build, $build
+2026-04-02T16:34:04.317069610Z [inf]  importing to docker
+2026-04-02T16:34:19.153244306Z [inf]  importing to docker
+2026-04-02T16:34:49.485812942Z [inf]  [92mBuild time: 95.15 seconds[0m
