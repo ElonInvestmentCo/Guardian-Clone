@@ -651,8 +651,8 @@ export default function UserProfileView({ email, onBack }: Props) {
                             <div style={{ fontSize: "11px", color: "#9CA3AF" }}>
                               Prev: ${Number(h.prevBalance).toLocaleString("en-US", { minimumFractionDigits: 2 })} / ${Number(h.prevProfit).toLocaleString("en-US", { minimumFractionDigits: 2 })}
                             </div>
-                            {h.note && <div style={{ fontSize: "11px", color: "#6B7280", marginTop: "2px" }}>Note: {String(h.note)}</div>}
-                            {h.actor && <div style={{ fontSize: "10px", color: "#9CA3AF", marginTop: "1px" }}>by {String(h.actor)}</div>}
+                            {h.note ? <div style={{ fontSize: "11px", color: "#6B7280", marginTop: "2px" }}>Note: {String(h.note)}</div> : null}
+                            {h.actor ? <div style={{ fontSize: "10px", color: "#9CA3AF", marginTop: "1px" }}>by {String(h.actor)}</div> : null}
                           </div>
                         );
                       })}
