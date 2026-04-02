@@ -56,13 +56,13 @@ export default function ApplicationPending() {
       setResubmitNote(result.resubmitNote ?? null);
     }
 
-    if (s === "verified" || s === "approved") {
-      setStatus("verified");
+    if (s === "approved") {
+      setStatus("approved");
       setTimeout(() => navigate("/dashboard"), 1500);
       return true;
     }
 
-    if (s === "rejected" || s === "resubmit" || s === "pending") {
+    if (s === "verified" || s === "rejected" || s === "resubmit" || s === "pending") {
       setStatus(s);
     } else {
       setStatus("pending");
@@ -151,14 +151,34 @@ export default function ApplicationPending() {
           </div>
 
           <div className="px-5 sm:px-8 py-8 sm:py-12 flex flex-col items-center" style={{ minHeight: "260px" }}>
-            {status === "verified" && (
+            {status === "approved" && (
               <>
                 <span className="inline-flex items-center gap-2 mb-5 px-5 py-2 rounded-full font-bold text-white" style={{ background: "#28a745", fontSize: "14px" }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                  Account Verified
+                  Account Approved
                 </span>
-                <h2 className="font-semibold mb-2 text-center" style={{ fontSize: "17px", color: "#333" }}>Your account has been verified!</h2>
+                <h2 className="font-semibold mb-2 text-center" style={{ fontSize: "17px", color: "#333" }}>Your account has been approved!</h2>
                 <p className="text-center" style={{ fontSize: "13px", color: "#777" }}>Redirecting to your dashboard...</p>
+              </>
+            )}
+
+            {status === "verified" && (
+              <>
+                <span className="inline-flex items-center gap-2 mb-5 px-5 py-2 rounded font-bold text-white" style={{ background: "#3a7bd5", fontSize: "13px" }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                  Under Review
+                </span>
+                <h2 className="font-semibold mb-2 text-center" style={{ fontSize: "17px", color: "#333" }}>Your Application is Under Review</h2>
+                <p className="mb-8 text-center" style={{ fontSize: "13px", color: "#777", maxWidth: "440px" }}>
+                  Our compliance team is currently reviewing your application. You will receive an email notification once a decision has been made.
+                </p>
+                <button
+                  onClick={handleCheckStatus}
+                  disabled={checking}
+                  style={{ padding: "10px 28px", fontSize: "13px", fontWeight: 700, color: "white", background: "#3a7bd5", border: "none", borderRadius: "4px", cursor: checking ? "not-allowed" : "pointer", opacity: checking ? 0.7 : 1 }}
+                >
+                  {checking ? "Checking..." : "Refresh Status"}
+                </button>
               </>
             )}
 

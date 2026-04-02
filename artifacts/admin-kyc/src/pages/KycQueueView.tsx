@@ -8,6 +8,7 @@ import UserPanel from "@/components/UserPanel";
 const STATUS_FILTERS = [
   { value: "",          label: "All" },
   { value: "pending",   label: "Pending" },
+  { value: "verified",  label: "Under Review" },
   { value: "approved",  label: "Approved" },
   { value: "rejected",  label: "Rejected" },
   { value: "resubmit",  label: "Resubmit" },
