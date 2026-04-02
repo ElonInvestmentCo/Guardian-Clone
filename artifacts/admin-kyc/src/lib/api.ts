@@ -3,13 +3,12 @@
  * Uses JWT Bearer token authentication — no plain-text keys.
  */
 
-function getApiRoot(): string {
-  const explicit = (import.meta as any).env?.["VITE_API_URL"] as string | undefined;
-  if (explicit) return explicit.replace(/\/$/, "") + "/api";
-  return "/api";
-}
+const API_BASE_URL = (
+  (import.meta as any).env?.VITE_API_URL ||
+  "https://guardian-clone-production.up.railway.app"
+).replace(/\/$/, "");
 
-const API_ROOT = getApiRoot();
+const API_ROOT = `${API_BASE_URL}/api`;
 
 const TOKEN_KEY   = "guardianAdminToken";
 const EXPIRY_KEY  = "guardianAdminExpiry";
