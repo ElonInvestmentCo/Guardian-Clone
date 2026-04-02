@@ -4,7 +4,7 @@
   "credentials": {
     "passwordHash": "enc:3e4bf09d8e013319dc36619d366da415:ac63aa4a02282f7f93daec96b9e805da:63413c8a18a0e37a"
   },
-  "updatedAt": "2026-03-23T22:59:40.015Z",
+  "updatedAt": "2026-04-02T03:56:31.239Z",
   "income": {
     "annualIncome": "over $500,000",
     "netWorth": "$500,001 - $1,000,000",
@@ -169,6 +169,18 @@
       "actor": "admin",
       "note": null,
       "timestamp": "2026-03-23T22:59:40.015Z"
+    },
+    {
+      "actionType": "ADMIN_APPROVE",
+      "actor": "admin",
+      "note": null,
+      "timestamp": "2026-04-02T03:56:09.660Z"
+    },
+    {
+      "actionType": "ADMIN_APPROVE",
+      "actor": "admin",
+      "note": null,
+      "timestamp": "2026-04-02T03:56:31.239Z"
     }
   ],
   "riskTolerance": {
@@ -229,6 +241,24 @@
   },
   "status": "approved",
   "_notifications": [
+    {
+      "id": "de29946f-94c9-4abf-bd27-644bee92dc4e",
+      "type": "kyc",
+      "title": "KYC Approved",
+      "message": "Your identity verification has been approved. You now have full access to Guardian Trading.",
+      "actionUrl": "/dashboard",
+      "read": false,
+      "createdAt": "2026-04-02T03:56:31.239Z"
+    },
+    {
+      "id": "5577ba95-da47-414a-b4f4-a7741a5be8ea",
+      "type": "kyc",
+      "title": "KYC Approved",
+      "message": "Your identity verification has been approved. You now have full access to Guardian Trading.",
+      "actionUrl": "/dashboard",
+      "read": false,
+      "createdAt": "2026-04-02T03:56:09.661Z"
+    },
     {
       "id": "f6f933e6-e947-4d52-a3c1-30bb49a8dfdb",
       "type": "kyc",
