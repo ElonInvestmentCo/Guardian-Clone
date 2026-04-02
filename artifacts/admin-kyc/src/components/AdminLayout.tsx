@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { clearSession } from "@/lib/api";
 
 export type View = "dashboard" | "kyc" | "risk" | "audit" | "users" | "activity";
@@ -22,6 +22,20 @@ interface Props {
 
 export default function AdminLayout({ activeView, setActiveView, children }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    }
+    if (profileOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [profileOpen]);
 
   const handleLogout = () => {
     clearSession();
@@ -78,44 +92,48 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
           <i className="bi bi-list" />
         </button>
 
-        <div style={{ fontSize: 16, fontWeight: 600, color: "#1E293B" }}>
+        <div className="header-title">
           {NAV.find(n => n.id === activeView)?.label || "Dashboard"}
         </div>
 
-        <div style={{ flex: 1 }} />
+        <div style={{ flex: 1, minWidth: 0 }} />
 
-        <div style={{ position: "relative" }}>
+        <div className="header-search">
           <input
             type="text"
             placeholder="Search..."
-            style={{
-              border: "1px solid #e5e7eb",
-              borderRadius: 20,
-              padding: "6px 14px 6px 34px",
-              fontSize: 13,
-              background: "#F8F9FC",
-              outline: "none",
-              width: 200,
-              color: "#3C4858",
-            }}
             disabled
           />
-          <i className="bi bi-search" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#94A3B8", fontSize: 13 }} />
+          <i className="bi bi-search" />
         </div>
 
-        <button style={{ background: "none", border: "none", position: "relative", cursor: "pointer", padding: 4 }}>
-          <i className="bi bi-bell" style={{ fontSize: 18, color: "#64748B" }} />
+        <button className="header-icon-btn" aria-label="Notifications">
+          <i className="bi bi-bell" />
         </button>
 
-        <div
-          style={{
-            width: 34, height: 34, borderRadius: "50%",
-            background: "linear-gradient(135deg, #0D6EFD, #7A5AF8)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer",
-          }}
-        >
-          A
+        <div className="header-profile-wrapper" ref={profileRef}>
+          <button
+            className="header-profile-btn"
+            onClick={() => setProfileOpen(!profileOpen)}
+            aria-label="Admin profile menu"
+            aria-expanded={profileOpen}
+          >
+            A
+          </button>
+
+          {profileOpen && (
+            <div className="header-profile-dropdown">
+              <div className="profile-dropdown-header">
+                <strong>Admin</strong>
+                <span>guardian_admin</span>
+              </div>
+              <hr style={{ margin: "4px 0", borderColor: "#e5e7eb" }} />
+              <button className="profile-dropdown-item" onClick={handleLogout}>
+                <i className="bi bi-box-arrow-left" />
+                Sign Out
+              </button>
+            </div>
+          )}
         </div>
       </header>
 

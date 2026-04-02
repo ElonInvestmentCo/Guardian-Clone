@@ -1,0 +1,110 @@
+Run a targeted security remediation based on the scan results.
+
+IMPORTANT:
+- DO NOT blindly fix everything
+- IGNORE false positives
+- ONLY fix real, exploitable issues
+
+========================
+REAL ISSUES TO FIX
+========================
+
+1. Lodash vulnerability
+- Upgrade lodash everywhere to latest stable
+- Use pnpm overrides if needed
+- Ensure only ONE version exists
+
+Steps:
+- Update all package.json files
+- Run: pnpm update lodash -r
+- Verify: pnpm list lodash
+
+------------------------
+
+2. Path traversal protection (CRITICAL)
+
+Find ALL filesystem operations:
+- fs.readFile
+- fs.writeFile
+- fs.readdir
+- fs.existsSync
+
+If ANY use user input → FIX them.
+
+Implement:
+
+const path = require("path");
+
+const BASE_DIR = path.resolve("data");
+
+function safePath(input) {
+  const resolved = path.resolve(BASE_DIR, input);
+  if (!resolved.startsWith(BASE_DIR)) {
+    throw new Error("Invalid path");
+  }
+  return resolved;
+}
+
+Replace ALL unsafe paths with safePath()
+
+------------------------
+
+3. JWT handling (ONLY if actually unsafe)
+
+VERIFY:
+- Tokens are NOT hardcoded
+- Tokens come from login response
+- Stored in memory or localStorage safely
+- Sent via Authorization header
+
+IF already correct → DO NOTHING
+
+========================
+IGNORE THESE (FALSE POSITIVES)
+========================
+
+DO NOT FIX:
+
+- bcrypt hash in admin.json → REQUIRED
+- bcrypt hash in admin.ts → expected
+- Replit API keys → platform-generated
+- JWT “detected” → normal usage
+- console.log warnings → harmless
+
+========================
+DO NOT BREAK WORKING FEATURES
+========================
+
+- Do NOT change login logic if it works
+- Do NOT remove authentication
+- Do NOT modify API routes unless insecure
+- Do NOT change working UI behavior
+
+========================
+VALIDATION AFTER FIXES
+========================
+
+1. Re-run security scan
+2. Confirm:
+   - ZERO HIGH vulnerabilities
+   - App still runs
+   - Login still works
+   - API calls still succeed
+
+========================
+OUTPUT FORMAT
+========================
+
+Return:
+
+✅ FIXED:
+(list actual fixes applied)
+
+⚠️ IGNORED:
+(list false positives skipped)
+
+❌ REMAINING:
+(any real issues still unresolved)
+
+DO NOT explain theory.
+ONLY report actions taken.
