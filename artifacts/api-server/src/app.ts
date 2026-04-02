@@ -71,25 +71,44 @@ app.use("/api", router);
 
 if (process.env.NODE_ENV === "production") {
   function resolveArtifactDir(artifactName: string): string {
-    const fromCwd = path.resolve(process.cwd(), `artifacts/${artifactName}/dist/public`);
-    if (fs.existsSync(fromCwd)) return fromCwd;
-    const fromParent = path.resolve(process.cwd(), `../${artifactName}/dist/public`);
-    if (fs.existsSync(fromParent)) return fromParent;
-    return fromCwd;
+    const candidates = [
+      path.resolve(process.cwd(), `artifacts/${artifactName}/dist/public`),
+      path.resolve(process.cwd(), `../${artifactName}/dist/public`),
+    ];
+    for (const dir of candidates) {
+      if (fs.existsSync(dir)) {
+        console.log(`[Static] ${artifactName} → ${dir}`);
+        try {
+          const files = fs.readdirSync(dir);
+          console.log(`[Static] ${artifactName} files:`, files.join(", "));
+          const assetsDir = path.join(dir, "assets");
+          if (fs.existsSync(assetsDir)) {
+            console.log(`[Static] ${artifactName}/assets:`, fs.readdirSync(assetsDir).join(", "));
+          }
+        } catch { /**/ }
+        return dir;
+      }
+    }
+    console.warn(`[Static] ${artifactName}: no dist found! Checked:`, candidates);
+    return candidates[0];
   }
+
+  const hasFileExtension = (reqPath: string) => /\.\w+$/.test(reqPath);
 
   const adminDir = resolveArtifactDir("admin-kyc");
   app.use(
     "/admin-kyc",
     express.static(adminDir, { maxAge: "1y", immutable: true }),
   );
-  app.get("/admin-kyc/{*splat}", (_req, res) => {
+  app.get("/admin-kyc/{*splat}", (req, res, next) => {
+    if (hasFileExtension(req.path)) return next();
     res.sendFile(path.join(adminDir, "index.html"));
   });
 
   const frontendDir = resolveArtifactDir("guardian-trading");
   app.use(express.static(frontendDir, { maxAge: "1y", immutable: true }));
-  app.get("{*splat}", (_req, res) => {
+  app.get("{*splat}", (req, res, next) => {
+    if (hasFileExtension(req.path)) return next();
     res.sendFile(path.join(frontendDir, "index.html"));
   });
 }

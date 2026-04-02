@@ -97,12 +97,12 @@ export function securityHeaders(_req: Request, res: Response, next: NextFunction
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https:",
-      "connect-src 'self' https://api.coingecko.com wss: https://*.livechatinc.com https://*.lc.chat",
+      "connect-src 'self' https://guardian-clone-production.up.railway.app https://api.coingecko.com wss: https://*.livechatinc.com https://*.lc.chat",
       "frame-src 'self' https://www.google.com https://*.livechatinc.com https://*.lc.chat",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
-      "frame-ancestors 'self'",
+      "frame-ancestors 'self' https://*.replit.dev https://*.replit.app",
       "upgrade-insecure-requests",
     ].join("; ")
   );
