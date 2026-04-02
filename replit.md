@@ -6,11 +6,12 @@ Guardian Trading is a production-grade fintech platform (pnpm monorepo) with a c
 
 ## Development Setup (Replit)
 
-- The "Start application" workflow runs `bash scripts/dev-start.sh`
-- API server starts on port **3001** (internal, via `API_PORT=3001`)
-- Guardian Trading frontend (Vite) starts on port **3000** (user-facing)
-- The Vite frontend proxies `/api` requests to `http://localhost:3001`
-- Both services start together via `scripts/dev-start.sh`
+Three separate workflows manage each service:
+- **"Start application"** — Guardian Trading frontend (Vite) on port **5000** (webview/user-facing)
+- **"API Server"** — Express API server on port **3001** (console)
+- **"Admin KYC"** — Admin KYC dashboard (Vite) on port **8080** (console)
+
+The Vite frontends proxy `/api` requests to `http://localhost:3001` via `API_PORT=3001`.
 
 ## Stack
 
