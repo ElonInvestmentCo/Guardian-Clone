@@ -15,6 +15,7 @@ interface Props {
   user: KycUser;
   onClose: () => void;
   onAction: () => void;
+  onOpenProfile?: (email: string) => void;
 }
 
 type Tab = "overview" | "risk" | "audit";
@@ -33,7 +34,7 @@ const RESUBMIT_FIELD_OPTIONS = [
   "Disclosures", "Signatures",
 ];
 
-export default function UserPanel({ user, onClose, onAction }: Props) {
+export default function UserPanel({ user, onClose, onAction, onOpenProfile }: Props) {
   const [tab, setTab] = useState<Tab>("overview");
   const [actionNote, setActionNote] = useState("");
   const [rejectReason, setRejectReason] = useState("");
@@ -116,7 +117,22 @@ export default function UserPanel({ user, onClose, onAction }: Props) {
               <RiskBadge level={user.riskLevel} score={user.riskScore} />
             </div>
           </div>
-          <button className="btn-close" onClick={onClose} />
+          <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+            {onOpenProfile && (
+              <button
+                onClick={() => onOpenProfile(user.email)}
+                style={{
+                  fontSize: "11px", color: "#2563EB", fontWeight: "600",
+                  cursor: "pointer", padding: "4px 10px",
+                  border: "1px solid #BFDBFE", borderRadius: "4px",
+                  background: "#EFF6FF", whiteSpace: "nowrap",
+                }}
+              >
+                Full Profile →
+              </button>
+            )}
+            <button className="btn-close" onClick={onClose} />
+          </div>
         </div>
 
         {/* Tabs */}

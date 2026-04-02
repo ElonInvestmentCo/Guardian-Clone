@@ -2,7 +2,7 @@
   "Emailmy488@gmail.com": {
     "email": "Emailmy488@gmail.com",
     "createdAt": "2026-03-20T16:30:58.865Z",
-    "updatedAt": "2026-03-23T08:36:57.632Z",
+    "updatedAt": "2026-04-02T04:17:51.458Z",
     "general": {
       "registrationType": "Individual Account",
       "product": "Stocks",
@@ -240,7 +240,7 @@
   "EVRENISIK220@GMAIL.COM": {
     "email": "EVRENISIK220@GMAIL.COM",
     "createdAt": "2026-03-23T22:56:03.571Z",
-    "updatedAt": "2026-03-23T22:58:36.787Z",
+    "updatedAt": "2026-04-02T04:22:32.496Z",
     "status": "approved",
     "credentials": {
       "passwordHash": "enc:a1ad3dc65a7664435531d1e99fb4d516:5c4a741ef414a7c8e2f5d8eeb0dcf7c2:a129bf9d3041efc9"

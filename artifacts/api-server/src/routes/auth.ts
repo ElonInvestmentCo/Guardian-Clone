@@ -51,6 +51,22 @@ function logAttempt(action: string, email: string, detail?: string) {
   console.log(`[Auth][${ts}] ${action} — email=${email}${detail ? ` ${detail}` : ""}`);
 }
 
+authRouter.post("/auth/check-email", sensitiveEndpointLimit, (req, res) => {
+  try {
+    const rawEmail = (req.body as { email?: string }).email;
+    const email = rawEmail?.trim().toLowerCase();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      res.status(400).json({ error: "Valid email is required" });
+      return;
+    }
+    const existing = getUserData(email);
+    res.json({ available: !existing });
+  } catch (err) {
+    console.error("[Auth] CHECK_EMAIL error:", err);
+    res.status(500).json({ error: "Email check failed" });
+  }
+});
+
 authRouter.post("/auth/register", sensitiveEndpointLimit, async (req, res) => {
   try {
     const { email, password } = req.body as { email?: string; password?: string };
@@ -122,10 +138,18 @@ authRouter.post("/auth/login", sensitiveEndpointLimit, async (req, res) => {
 
 authRouter.post("/auth/send-verification", sensitiveEndpointLimit, async (req, res) => {
   try {
-    const { email } = req.body as { email?: string };
+    const rawEmail = (req.body as { email?: string }).email;
+    const email = rawEmail?.trim().toLowerCase();
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       res.status(400).json({ error: "Valid email is required" });
+      return;
+    }
+
+    const existingUser = getUserData(email);
+    if (existingUser) {
+      logAttempt("SEND_VERIFICATION", email, "rejected — email already registered");
+      res.status(409).json({ error: "An account with this email already exists. Please log in instead." });
       return;
     }
 

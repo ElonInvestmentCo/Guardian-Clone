@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Link, useLocation } from "wouter";
 import { getApiBase } from "@/lib/api";
 
@@ -11,6 +11,7 @@ export default function Signup() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [emailChecking, setEmailChecking] = useState(false);
   const [errors, setErrors] = useState<{
     email?: string;
     password?: string;
@@ -18,6 +19,38 @@ export default function Signup() {
     submit?: string;
   }>({});
   const [, navigate] = useLocation();
+  const emailCheckTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastCheckedEmail = useRef("");
+
+  const checkEmailAvailability = useCallback(async (emailToCheck: string) => {
+    if (!emailToCheck || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailToCheck)) return;
+    if (emailToCheck === lastCheckedEmail.current) return;
+    lastCheckedEmail.current = emailToCheck;
+    setEmailChecking(true);
+    try {
+      const base = getApiBase();
+      const res = await fetch(`${base}/api/auth/check-email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: emailToCheck }),
+      });
+      const data = await res.json() as { available?: boolean };
+      if (!data.available) {
+        setErrors((p) => ({ ...p, email: "An account with this email already exists. Please log in instead." }));
+      }
+    } catch { /* network error — will be caught on submit */ }
+    finally { setEmailChecking(false); }
+  }, []);
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    if (errors.email) setErrors((p) => ({ ...p, email: undefined }));
+    lastCheckedEmail.current = "";
+    if (emailCheckTimer.current) clearTimeout(emailCheckTimer.current);
+    if (value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      emailCheckTimer.current = setTimeout(() => checkEmailAvailability(value), 600);
+    }
+  };
 
   const validate = () => {
     const newErrors: typeof errors = {};
@@ -134,10 +167,8 @@ export default function Signup() {
                       type="email"
                       value={email}
                       autoComplete="email"
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        if (errors.email) setErrors((p) => ({ ...p, email: undefined }));
-                      }}
+                      onChange={(e) => handleEmailChange(e.target.value)}
+                      onBlur={() => checkEmailAvailability(email)}
                       className="w-full text-sm focus:outline-none"
                       style={{
                         background: "#e8e8e8",

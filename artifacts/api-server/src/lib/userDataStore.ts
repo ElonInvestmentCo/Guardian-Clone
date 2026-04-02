@@ -297,7 +297,8 @@ export function setUserStatus(email: string, status: string): void {
 
 export function getUserData(email: string): Record<string, unknown> | null {
   const master = readMaster();
-  return master[email] ?? null;
+  const key = email.trim().toLowerCase();
+  return master[key] ?? master[email] ?? null;
 }
 
 /**

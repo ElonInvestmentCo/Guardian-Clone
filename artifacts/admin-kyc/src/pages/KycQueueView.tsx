@@ -19,7 +19,11 @@ const STATUS_FILTERS = [
 const PAGE_SIZE = 25;
 type SortKey = "riskScore" | "completedSteps" | "createdAt" | "name";
 
-export default function KycQueueView() {
+interface KycQueueProps {
+  onOpenProfile?: (email: string) => void;
+}
+
+export default function KycQueueView({ onOpenProfile }: KycQueueProps = {}) {
   const [statusFilter, setStatusFilter] = useState("");
   const [minRisk,      setMinRisk]      = useState(0);
   const [page,         setPage]         = useState(1);
@@ -184,7 +188,7 @@ export default function KycQueueView() {
 
         {selected && (
           <div className="d-none d-lg-flex" style={{ width: 380, flexShrink: 0, height: "100%" }}>
-            <UserPanel user={selected} onClose={() => setSelected(null)} onAction={onAction} />
+            <UserPanel user={selected} onClose={() => setSelected(null)} onAction={onAction} onOpenProfile={onOpenProfile} />
           </div>
         )}
       </div>
@@ -196,7 +200,7 @@ export default function KycQueueView() {
         >
           <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)" }} onClick={() => setSelected(null)} />
           <div style={{ position: "relative", background: "#fff", borderRadius: "16px 16px 0 0", maxHeight: "85vh", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-            <UserPanel user={selected} onClose={() => setSelected(null)} onAction={onAction} />
+            <UserPanel user={selected} onClose={() => setSelected(null)} onAction={onAction} onOpenProfile={onOpenProfile} />
           </div>
         </div>
       )}

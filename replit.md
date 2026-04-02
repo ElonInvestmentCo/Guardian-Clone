@@ -56,6 +56,19 @@ Guardian Trading is structured as a pnpm monorepo, utilizing Node.js 24 and Type
 - **Only `approved` grants dashboard access** — enforced in `DashboardLayout.tsx`, `Login.tsx`, and `ApplicationPending.tsx`.
 - **No auto-approval**: The `complete-step` route never changes user status, even on final step completion.
 
+### Email Validation & Forgot Password
+- **Duplicate email detection**: Real-time debounced check on Signup page (`check-email` endpoint), plus server-side guard on `send-verification` (returns 409 for existing emails).
+- **Email normalization**: All auth endpoints (`check-email`, `send-verification`, `register`, `login`, `send-reset-code`) normalize email via `trim().toLowerCase()`. `getUserData()` also performs case-insensitive lookup.
+- **Forgot Password**: Full end-to-end flow — `POST /api/auth/send-reset-code` → Resend email with 6-digit code (10min expiry) → `POST /api/auth/reset-password` with code + new password. Frontend at `/forgot-password`.
+
+### Deployment
+- **Target**: Always-on VM (`deploymentTarget = "vm"`) for persistent file storage (user data, documents, profile pictures stored on disk).
+- **Production routing**: Single Express server serves trading app at `/`, admin dashboard at `/admin-kyc/`, and API at `/api/`.
+
+### Admin KYC Navigation
+- **KYC Queue side panel** (UserPanel): Quick overview with Profile/Risk/Audit tabs and admin actions (approve/reject/resubmit). "Full Profile →" button navigates to the detailed UserProfileView.
+- **Full Profile View**: All user data across 12+ sections, uploaded documents with secure "View" buttons (blob URLs), Balance management, and Admin Actions (suspend/ban/flag/delete/role assignment/password reset).
+
 ### Platform Security
 - **Security Headers**: Comprehensive set of security headers to mitigate common web vulnerabilities.
 - **Global Error Handler**: Centralized error handling for Express to log errors and return consistent 500 JSON responses.

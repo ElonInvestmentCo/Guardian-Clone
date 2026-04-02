@@ -12,7 +12,7 @@
     "accountName": "SDERSDERS",
     "accountType": "Checking"
   },
-  "updatedAt": "2026-03-23T08:36:57.633Z",
+  "updatedAt": "2026-04-02T04:17:51.459Z",
   "disclosures": {
     "wantsMargin": "no",
     "initialDeposit": "",
@@ -283,6 +283,38 @@
       "actor": "admin",
       "note": null,
       "timestamp": "2026-03-23T08:36:57.633Z"
+    },
+    {
+      "actionType": "ADMIN_SUSPEND",
+      "actor": "admin",
+      "note": null,
+      "timestamp": "2026-04-02T04:17:39.348Z"
+    },
+    {
+      "actionType": "ADMIN_BAN",
+      "actor": "admin",
+      "reason": null,
+      "note": null,
+      "timestamp": "2026-04-02T04:17:45.276Z"
+    },
+    {
+      "actionType": "ADMIN_REACTIVATE",
+      "actor": "admin",
+      "note": null,
+      "timestamp": "2026-04-02T04:17:47.205Z"
+    },
+    {
+      "actionType": "ADMIN_BAN",
+      "actor": "admin",
+      "reason": null,
+      "note": null,
+      "timestamp": "2026-04-02T04:17:49.864Z"
+    },
+    {
+      "actionType": "ADMIN_REACTIVATE",
+      "actor": "admin",
+      "note": null,
+      "timestamp": "2026-04-02T04:17:51.459Z"
     }
   ],
   "professional": {

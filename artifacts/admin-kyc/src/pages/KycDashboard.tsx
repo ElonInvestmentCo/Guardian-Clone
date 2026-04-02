@@ -50,7 +50,7 @@ export default function KycDashboard() {
   return (
     <AdminLayout activeView={activeView} setActiveView={handleSetView}>
       {activeView === "dashboard" && <DashboardView />}
-      {activeView === "kyc"      && <KycQueueView />}
+      {activeView === "kyc"      && <KycQueueView onOpenProfile={(email) => openProfile(email, "kyc")} />}
       {activeView === "users"    && <UsersView onOpenProfile={(email) => openProfile(email, "users")} />}
       {activeView === "risk"     && <RiskEventsView />}
       {activeView === "activity" && <ActivityLogsView onOpenProfile={(email) => openProfile(email, "activity")} />}
