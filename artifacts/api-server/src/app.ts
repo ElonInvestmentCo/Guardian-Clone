@@ -1,3 +1,4 @@
+import fs from "fs";
 import path from "path";
 import express, { type Express } from "express";
 import cors from "cors";
@@ -69,7 +70,15 @@ app.get("/api/data.json", honeytrapRoute);
 app.use("/api", router);
 
 if (process.env.NODE_ENV === "production") {
-  const adminDir = path.resolve(process.cwd(), "artifacts/admin-kyc/dist/public");
+  function resolveArtifactDir(artifactName: string): string {
+    const fromCwd = path.resolve(process.cwd(), `artifacts/${artifactName}/dist/public`);
+    if (fs.existsSync(fromCwd)) return fromCwd;
+    const fromParent = path.resolve(process.cwd(), `../${artifactName}/dist/public`);
+    if (fs.existsSync(fromParent)) return fromParent;
+    return fromCwd;
+  }
+
+  const adminDir = resolveArtifactDir("admin-kyc");
   app.use(
     "/admin-kyc",
     express.static(adminDir, { maxAge: "1y", immutable: true }),
@@ -78,10 +87,7 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.join(adminDir, "index.html"));
   });
 
-  const frontendDir = path.resolve(
-    process.cwd(),
-    "artifacts/guardian-trading/dist/public",
-  );
+  const frontendDir = resolveArtifactDir("guardian-trading");
   app.use(express.static(frontendDir, { maxAge: "1y", immutable: true }));
   app.get("{*splat}", (_req, res) => {
     res.sendFile(path.join(frontendDir, "index.html"));
