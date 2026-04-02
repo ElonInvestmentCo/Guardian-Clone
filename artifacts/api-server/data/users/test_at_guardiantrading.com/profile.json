@@ -7,7 +7,7 @@
     "dateOfBirth": "enc:a424a32e7e0f908d1a0c660197e4a4f9:1be5098563b1a0375c814014a0933a08:63b7eeb37059b2902e2c",
     "taxId": "enc:46f1cd7bc4bf8bc5b97f517deefa74ab:99be6393e940ffef9e346731e58e9b26:2a2c8e99cd4200bf939ea5"
   },
-  "updatedAt": "2026-03-24T16:01:00.145Z",
+  "updatedAt": "2026-04-02T04:28:23.115Z",
   "documents": {
     "id_front": "data/users/test_at_guardiantrading.com/documents/id_front.jpg"
   },
@@ -90,6 +90,19 @@
       "actor": "admin",
       "note": null,
       "timestamp": "2026-03-24T16:01:00.145Z"
+    },
+    {
+      "actionType": "ADMIN_SET_BALANCE",
+      "actor": "admin",
+      "note": "Initial deposit for testing",
+      "meta": {
+        "balance": 5000,
+        "profit": 250,
+        "transactionType": "deposit",
+        "balanceChange": 5000,
+        "profitChange": 250
+      },
+      "timestamp": "2026-04-02T04:28:23.115Z"
     }
   ],
   "_resubmitFields": [],
@@ -105,6 +118,25 @@
       "actionUrl": "/dashboard",
       "read": false,
       "createdAt": "2026-03-24T16:01:00.146Z"
+    }
+  ],
+  "_balance": {
+    "balance": 5000,
+    "profit": 250,
+    "updatedAt": "2026-04-02T04:28:23.115Z"
+  },
+  "_balanceHistory": [
+    {
+      "timestamp": "2026-04-02T04:28:23.115Z",
+      "actor": "admin",
+      "transactionType": "deposit",
+      "prevBalance": 0,
+      "prevProfit": 0,
+      "newBalance": 5000,
+      "newProfit": 250,
+      "balanceChange": 5000,
+      "profitChange": 250,
+      "note": "Initial deposit for testing"
     }
   ]
 }

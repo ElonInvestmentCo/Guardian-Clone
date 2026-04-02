@@ -22,6 +22,8 @@ import {
   deleteUser,
   setUserBalance,
   getUserBalance,
+  TRANSACTION_TYPES,
+  type TransactionType,
   setUserRole,
   getGlobalAuditLog,
   createAdminUser,
@@ -461,16 +463,47 @@ router.get("/admin/user-balance/:email", (req: Request, res: Response): void => 
   } catch (err) { res.status(500).json({ error: "Failed to get balance" }); }
 });
 
+// ── GET /admin/transaction-types ──────────────────────────────────────────────
+router.get("/admin/transaction-types", (_req: Request, res: Response): void => {
+  res.json({ types: TRANSACTION_TYPES });
+});
+
 // ── POST /admin/set-balance ───────────────────────────────────────────────────
 router.post("/admin/set-balance", (req: Request, res: Response): void => {
   try {
-    const { email, balance, profit, adminNote } = req.body as { email: string; balance: number; profit: number; adminNote?: string };
-    if (!email || balance === undefined || profit === undefined) { res.status(400).json({ error: "email, balance and profit required" }); return; }
+    const { email, balance, profit, adminNote, transactionType } = req.body as {
+      email: string; balance: number; profit: number;
+      adminNote?: string; transactionType?: string;
+    };
+    if (!email || balance === undefined || profit === undefined) {
+      res.status(400).json({ error: "email, balance and profit required" });
+      return;
+    }
+    if (!adminNote || !adminNote.trim()) {
+      res.status(400).json({ error: "Admin note is required for balance changes" });
+      return;
+    }
+    const balNum = Number(balance);
+    const profNum = Number(profit);
+    if (isNaN(balNum) || isNaN(profNum)) {
+      res.status(400).json({ error: "Balance and profit must be valid numbers" });
+      return;
+    }
+    if (balNum < 0) {
+      res.status(400).json({ error: "Balance cannot be negative" });
+      return;
+    }
+    const txType = (transactionType && (TRANSACTION_TYPES as readonly string[]).includes(transactionType))
+      ? transactionType as TransactionType
+      : "adjustment";
     if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
-    setUserBalance(email, Number(balance), Number(profit), adminNote ?? "");
-    console.log(`[Admin] SET BALANCE: ${email} balance=$${balance} profit=$${profit}`);
-    res.json({ success: true, email, balance, profit });
-  } catch (err) { res.status(500).json({ error: "Failed to set balance" }); }
+    setUserBalance(email, balNum, profNum, adminNote.trim(), "admin", txType);
+    console.log(`[Admin] SET BALANCE: ${email} balance=$${balNum} profit=$${profNum} type=${txType}`);
+    res.json({ success: true, email, balance: balNum, profit: profNum, transactionType: txType });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Failed to set balance";
+    res.status(400).json({ error: msg });
+  }
 });
 
 // ── GET /admin/global-audit ───────────────────────────────────────────────────

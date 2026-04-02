@@ -16,6 +16,8 @@ import {
   resetPassword,
   deleteUser,
   updateUser,
+  TRANSACTION_TYPES,
+  type TransactionType,
   type AuditEntry,
   type DocumentInfo,
 } from "@/lib/api";
@@ -39,13 +41,21 @@ export default function UserProfileView({ email, onBack }: Props) {
   const [flagReason,  setFlagReason]  = useState("");
   const [banReason,   setBanReason]   = useState("");
   const [selectedRole, setSelectedRole] = useState("");
-  const [newBalance,  setNewBalance]  = useState("");
-  const [newProfit,   setNewProfit]   = useState("");
-  const [editFirst,   setEditFirst]   = useState("");
-  const [editLast,    setEditLast]    = useState("");
-  const [editMode,    setEditMode]    = useState(false);
-  const [actionMsg,   setActionMsg]   = useState<{ type: "ok" | "err"; text: string } | null>(null);
-  const [confirmDel,  setConfirmDel]  = useState(false);
+  const [newBalance,      setNewBalance]      = useState("");
+  const [newProfit,       setNewProfit]       = useState("");
+  const [txType,          setTxType]          = useState<TransactionType>("adjustment");
+  const [balanceNote,     setBalanceNote]     = useState("");
+  const [confirmBalance,  setConfirmBalance]  = useState(false);
+  const [confirmSuspend,  setConfirmSuspend]  = useState(false);
+  const [confirmBan,      setConfirmBan]      = useState(false);
+  const [confirmRole,     setConfirmRole]     = useState(false);
+  const [confirmResetPw,  setConfirmResetPw]  = useState(false);
+  const [editFirst,       setEditFirst]       = useState("");
+  const [editLast,        setEditLast]        = useState("");
+  const [editMode,        setEditMode]        = useState(false);
+  const [actionMsg,       setActionMsg]       = useState<{ type: "ok" | "err"; text: string } | null>(null);
+  const [confirmDel,      setConfirmDel]      = useState(false);
+  const [auditFilter,     setAuditFilter]     = useState("");
 
   const qc = useQueryClient();
 
@@ -78,7 +88,7 @@ export default function UserProfileView({ email, onBack }: Props) {
   const banMut       = useMutation({ mutationFn: () => banUser(email, banReason || undefined, actionNote || undefined), onSuccess: () => { showMsg("ok", "User banned"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
   const reactivateMut = useMutation({ mutationFn: () => reactivateUser(email, actionNote || undefined),                onSuccess: () => { showMsg("ok", "User reactivated"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
   const roleMut      = useMutation({ mutationFn: () => assignRole(email, selectedRole, actionNote || undefined),       onSuccess: () => { showMsg("ok", `Role set to ${selectedRole}`); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
-  const balanceMut   = useMutation({ mutationFn: () => setBalance(email, Number(newBalance), Number(newProfit), actionNote || undefined), onSuccess: () => { showMsg("ok", "Balance updated"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
+  const balanceMut   = useMutation({ mutationFn: () => setBalance(email, Number(newBalance), Number(newProfit), balanceNote, txType), onSuccess: () => { showMsg("ok", "Balance updated successfully"); setConfirmBalance(false); setNewBalance(""); setNewProfit(""); setBalanceNote(""); setTxType("adjustment"); refresh(); }, onError: (e: Error) => { showMsg("err", e.message); setConfirmBalance(false); } });
   const flagMut      = useMutation({ mutationFn: () => flagUser(email, flagReason || undefined, actionNote || undefined), onSuccess: () => { showMsg("ok", "User flagged"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
   const resetPwMut   = useMutation({ mutationFn: () => resetPassword(email, actionNote || undefined),                  onSuccess: () => { showMsg("ok", "Password reset"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
   const updateMut    = useMutation({ mutationFn: () => updateUser(email, editFirst || undefined, editLast || undefined, actionNote || undefined), onSuccess: () => { showMsg("ok", "Profile updated"); setEditMode(false); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
@@ -398,11 +408,31 @@ export default function UserProfileView({ email, onBack }: Props) {
             {/* ── Audit tab ─────────────────────────────────────────── */}
             {tab === "audit" && (
               <div style={{ maxWidth: "600px" }}>
+                {auditLog.length > 0 && (
+                  <div style={{ marginBottom: "12px" }}>
+                    <input
+                      value={auditFilter}
+                      onChange={(e) => setAuditFilter(e.target.value)}
+                      placeholder="Filter audit log (e.g. BALANCE, APPROVE, BAN)…"
+                      style={{ width: "100%", boxSizing: "border-box", padding: "8px 12px", border: "1px solid #E5E7EB", borderRadius: "6px", fontSize: "12px" }}
+                    />
+                  </div>
+                )}
                 {auditLog.length === 0 ? (
                   <div style={{ textAlign: "center", padding: "40px 0", color: "#9CA3AF", fontSize: "13px" }}>No audit events yet</div>
                 ) : (
                   <div>
-                    {[...auditLog].reverse().map((entry: AuditEntry, i) => {
+                    {[...auditLog].reverse().filter((entry: AuditEntry) => {
+                      if (!auditFilter.trim()) return true;
+                      const q = auditFilter.toLowerCase();
+                      return (
+                        (entry.actionType ?? "").toLowerCase().includes(q) ||
+                        (entry.actor ?? "").toLowerCase().includes(q) ||
+                        (entry.note ?? "").toLowerCase().includes(q) ||
+                        (entry.reason ?? "").toLowerCase().includes(q) ||
+                        JSON.stringify(entry.meta ?? {}).toLowerCase().includes(q)
+                      );
+                    }).map((entry: AuditEntry, i) => {
                       const colors = actionTypeColor(entry.actionType);
                       return (
                         <div key={i} style={{
@@ -441,55 +471,192 @@ export default function UserProfileView({ email, onBack }: Props) {
 
             {/* ── Balance tab ───────────────────────────────────────── */}
             {tab === "balance" && (
-              <div style={{ maxWidth: "500px" }}>
-                <Card title="Current Balance">
-                  <Field label="Balance" value={`$${((profile._balance as Record<string, number> | undefined)?.balance ?? 0).toLocaleString()}`} />
-                  <Field label="Profit"  value={`$${((profile._balance as Record<string, number> | undefined)?.profit  ?? 0).toLocaleString()}`} />
-                  <Field label="Last Updated" value={formatDate((profile._balance as Record<string, string> | undefined)?.updatedAt)} />
-                </Card>
+              <div style={{ maxWidth: "560px" }}>
+                {actionMsg && (
+                  <div style={{
+                    padding: "10px 14px", borderRadius: "6px", fontSize: "13px", marginBottom: "16px",
+                    background: actionMsg.type === "ok" ? "#F0FDF4" : "#FEF2F2",
+                    color: actionMsg.type === "ok" ? "#16A34A" : "#DC2626",
+                    border: `1px solid ${actionMsg.type === "ok" ? "#BBF7D0" : "#FECACA"}`,
+                  }}>{actionMsg.text}</div>
+                )}
 
-                <Card title="Set Balance">
-                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 140px), 1fr))", gap: "8px" }}>
-                      <div>
-                        <label style={{ fontSize: "11px", color: "#9CA3AF", display: "block", marginBottom: "4px" }}>New Balance ($)</label>
-                        <input type="number" value={newBalance} onChange={(e) => setNewBalance(e.target.value)}
-                          placeholder="0.00"
-                          style={{ width: "100%", boxSizing: "border-box", padding: "7px 9px", border: "1px solid #E5E7EB", borderRadius: "4px", fontSize: "13px" }} />
-                      </div>
-                      <div>
-                        <label style={{ fontSize: "11px", color: "#9CA3AF", display: "block", marginBottom: "4px" }}>Profit ($)</label>
-                        <input type="number" value={newProfit} onChange={(e) => setNewProfit(e.target.value)}
-                          placeholder="0.00"
-                          style={{ width: "100%", boxSizing: "border-box", padding: "7px 9px", border: "1px solid #E5E7EB", borderRadius: "4px", fontSize: "13px" }} />
+                <Card title="Current Balance">
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", padding: "4px 0" }}>
+                    <div style={{ textAlign: "center" }}>
+                      <div style={{ fontSize: "10px", color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "4px" }}>Balance</div>
+                      <div style={{ fontSize: "20px", fontWeight: "800", color: "#111827" }}>
+                        ${((profile._balance as Record<string, number> | undefined)?.balance ?? 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
                     </div>
-                    <textarea value={actionNote} onChange={(e) => setActionNote(e.target.value)}
-                      placeholder="Admin note (optional)…" rows={2}
-                      style={{ width: "100%", boxSizing: "border-box", padding: "7px 9px", border: "1px solid #E5E7EB", borderRadius: "4px", fontSize: "12px", resize: "none", fontFamily: "inherit" }} />
-                    <button onClick={() => balanceMut.mutate()} disabled={balanceMut.isPending || !newBalance || !newProfit}
-                      style={{
-                        padding: "8px", background: "#2563EB", color: "white",
-                        border: "none", borderRadius: "5px", fontSize: "13px", fontWeight: "700",
-                        cursor: balanceMut.isPending || !newBalance ? "not-allowed" : "pointer",
-                        opacity: !newBalance || !newProfit ? 0.5 : 1,
-                      }}>
-                      {balanceMut.isPending ? "Updating…" : "Update Balance"}
-                    </button>
+                    <div style={{ textAlign: "center" }}>
+                      <div style={{ fontSize: "10px", color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "4px" }}>Profit</div>
+                      <div style={{ fontSize: "20px", fontWeight: "800", color: ((profile._balance as Record<string, number> | undefined)?.profit ?? 0) >= 0 ? "#16A34A" : "#DC2626" }}>
+                        ${((profile._balance as Record<string, number> | undefined)?.profit ?? 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: "center" }}>
+                      <div style={{ fontSize: "10px", color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "4px" }}>Last Updated</div>
+                      <div style={{ fontSize: "12px", fontWeight: "500", color: "#6B7280", marginTop: "4px" }}>
+                        {formatDate((profile._balance as Record<string, string> | undefined)?.updatedAt)}
+                      </div>
+                    </div>
                   </div>
                 </Card>
 
-                {Array.isArray(profile._balanceHistory) && profile._balanceHistory.length > 0 && (
-                  <Card title="Balance History">
-                    {(profile._balanceHistory as Array<Record<string, unknown>>).slice().reverse().map((h, i) => (
-                      <div key={i} style={{ borderBottom: "1px solid #F3F4F6", paddingBottom: "8px", marginBottom: "8px" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px" }}>
-                          <span style={{ color: "#9CA3AF" }}>{formatDate(h.timestamp as string)}</span>
-                          <span style={{ color: "#374151", fontWeight: "600" }}>${Number(h.newBalance).toLocaleString()}</span>
-                        </div>
-                        {h.note ? <div style={{ fontSize: "11px", color: "#6B7280" }}>Note: {String(h.note)}</div> : null}
+                <Card title="Update Balance / Profit">
+                  {!confirmBalance ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      <div>
+                        <label style={{ fontSize: "11px", color: "#9CA3AF", display: "block", marginBottom: "4px" }}>
+                          Transaction Type <span style={{ color: "#DC2626" }}>*</span>
+                        </label>
+                        <select value={txType} onChange={(e) => setTxType(e.target.value as TransactionType)}
+                          style={{ width: "100%", padding: "8px 10px", border: "1px solid #E5E7EB", borderRadius: "4px", fontSize: "13px", background: "white" }}>
+                          {TRANSACTION_TYPES.map((t) => (
+                            <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+                          ))}
+                        </select>
                       </div>
-                    ))}
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                        <div>
+                          <label style={{ fontSize: "11px", color: "#9CA3AF", display: "block", marginBottom: "4px" }}>
+                            New Balance ($) <span style={{ color: "#DC2626" }}>*</span>
+                          </label>
+                          <input type="number" value={newBalance} onChange={(e) => setNewBalance(e.target.value)}
+                            placeholder="0.00" min="0" step="0.01"
+                            style={{ width: "100%", boxSizing: "border-box", padding: "8px 10px", border: "1px solid #E5E7EB", borderRadius: "4px", fontSize: "13px" }} />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: "11px", color: "#9CA3AF", display: "block", marginBottom: "4px" }}>
+                            Profit ($) <span style={{ color: "#DC2626" }}>*</span>
+                          </label>
+                          <input type="number" value={newProfit} onChange={(e) => setNewProfit(e.target.value)}
+                            placeholder="0.00" step="0.01"
+                            style={{ width: "100%", boxSizing: "border-box", padding: "8px 10px", border: "1px solid #E5E7EB", borderRadius: "4px", fontSize: "13px" }} />
+                        </div>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: "11px", color: "#9CA3AF", display: "block", marginBottom: "4px" }}>
+                          Reason / Note <span style={{ color: "#DC2626" }}>*</span>
+                        </label>
+                        <textarea value={balanceNote} onChange={(e) => setBalanceNote(e.target.value)}
+                          placeholder="Required — describe the reason for this balance change…" rows={2}
+                          style={{ width: "100%", boxSizing: "border-box", padding: "8px 10px", border: `1px solid ${!balanceNote.trim() && newBalance ? "#FECACA" : "#E5E7EB"}`, borderRadius: "4px", fontSize: "12px", resize: "none", fontFamily: "inherit" }} />
+                      </div>
+                      <button
+                        onClick={() => {
+                          if (!newBalance || !newProfit) { showMsg("err", "Balance and profit values are required"); return; }
+                          if (Number(newBalance) < 0) { showMsg("err", "Balance cannot be negative"); return; }
+                          if (!balanceNote.trim()) { showMsg("err", "A reason/note is required for all balance changes"); return; }
+                          setConfirmBalance(true);
+                        }}
+                        disabled={!newBalance || !newProfit || !balanceNote.trim()}
+                        style={{
+                          padding: "10px", background: "#2563EB", color: "white",
+                          border: "none", borderRadius: "5px", fontSize: "13px", fontWeight: "700",
+                          cursor: !newBalance || !newProfit || !balanceNote.trim() ? "not-allowed" : "pointer",
+                          opacity: !newBalance || !newProfit || !balanceNote.trim() ? 0.5 : 1,
+                        }}>
+                        Review Changes
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                      <div style={{ padding: "14px", background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: "6px" }}>
+                        <div style={{ fontSize: "12px", fontWeight: "700", color: "#92400E", marginBottom: "10px" }}>
+                          Confirm Balance Change
+                        </div>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", fontSize: "12px" }}>
+                          <div>
+                            <span style={{ color: "#9CA3AF" }}>Current Balance:</span>{" "}
+                            <strong>${((profile._balance as Record<string, number> | undefined)?.balance ?? 0).toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong>
+                          </div>
+                          <div>
+                            <span style={{ color: "#9CA3AF" }}>New Balance:</span>{" "}
+                            <strong style={{ color: "#2563EB" }}>${Number(newBalance).toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong>
+                          </div>
+                          <div>
+                            <span style={{ color: "#9CA3AF" }}>Current Profit:</span>{" "}
+                            <strong>${((profile._balance as Record<string, number> | undefined)?.profit ?? 0).toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong>
+                          </div>
+                          <div>
+                            <span style={{ color: "#9CA3AF" }}>New Profit:</span>{" "}
+                            <strong style={{ color: Number(newProfit) >= 0 ? "#16A34A" : "#DC2626" }}>${Number(newProfit).toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong>
+                          </div>
+                        </div>
+                        <div style={{ marginTop: "8px", fontSize: "12px" }}>
+                          <span style={{ color: "#9CA3AF" }}>Type:</span>{" "}
+                          <TxTypeBadge type={txType} />
+                        </div>
+                        <div style={{ marginTop: "6px", fontSize: "12px" }}>
+                          <span style={{ color: "#9CA3AF" }}>Reason:</span>{" "}
+                          <span style={{ color: "#374151" }}>{balanceNote}</span>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        <button onClick={() => balanceMut.mutate()} disabled={balanceMut.isPending}
+                          style={{
+                            flex: 1, padding: "10px", background: balanceMut.isPending ? "#9CA3AF" : "#16A34A", color: "white",
+                            border: "none", borderRadius: "5px", fontSize: "13px", fontWeight: "700",
+                            cursor: balanceMut.isPending ? "not-allowed" : "pointer",
+                          }}>
+                          {balanceMut.isPending ? "Processing…" : "Confirm & Apply"}
+                        </button>
+                        <button onClick={() => setConfirmBalance(false)} disabled={balanceMut.isPending}
+                          style={{
+                            flex: 1, padding: "10px", background: "#F3F4F6", color: "#374151",
+                            border: "1px solid #E5E7EB", borderRadius: "5px", fontSize: "13px", cursor: "pointer",
+                          }}>
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </Card>
+
+                {Array.isArray(profile._balanceHistory) && profile._balanceHistory.length > 0 && (
+                  <Card title={`Transaction History (${(profile._balanceHistory as unknown[]).length})`}>
+                    <div style={{ maxHeight: "400px", overflow: "auto" }}>
+                      {(profile._balanceHistory as Array<Record<string, unknown>>).slice().reverse().map((h, i) => {
+                        const balChange = Number(h.balanceChange ?? (Number(h.newBalance) - Number(h.prevBalance)));
+                        const profChange = Number(h.profitChange ?? (Number(h.newProfit) - Number(h.prevProfit)));
+                        const tType = (h.transactionType as string) || "adjustment";
+                        return (
+                          <div key={i} style={{
+                            borderBottom: "1px solid #F3F4F6", padding: "10px 0",
+                            borderLeft: `3px solid ${txTypeColor(tType)}`, paddingLeft: "10px", marginBottom: "2px",
+                          }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                                <TxTypeBadge type={tType} />
+                                <span style={{ fontSize: "10px", color: "#9CA3AF" }}>{formatDate(h.timestamp as string)}</span>
+                              </div>
+                              <span style={{ fontSize: "11px", color: "#374151", fontWeight: "600" }}>
+                                ${Number(h.newBalance).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                              </span>
+                            </div>
+                            <div style={{ display: "flex", gap: "12px", fontSize: "11px", marginBottom: "2px" }}>
+                              <span style={{ color: "#9CA3AF" }}>
+                                Balance: <span style={{ color: balChange >= 0 ? "#16A34A" : "#DC2626", fontWeight: "600" }}>
+                                  {balChange >= 0 ? "+" : ""}{balChange.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                                </span>
+                              </span>
+                              <span style={{ color: "#9CA3AF" }}>
+                                Profit: <span style={{ color: profChange >= 0 ? "#16A34A" : "#DC2626", fontWeight: "600" }}>
+                                  {profChange >= 0 ? "+" : ""}{profChange.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                                </span>
+                              </span>
+                            </div>
+                            <div style={{ fontSize: "11px", color: "#9CA3AF" }}>
+                              Prev: ${Number(h.prevBalance).toLocaleString("en-US", { minimumFractionDigits: 2 })} / ${Number(h.prevProfit).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                            </div>
+                            {h.note && <div style={{ fontSize: "11px", color: "#6B7280", marginTop: "2px" }}>Note: {String(h.note)}</div>}
+                            {h.actor && <div style={{ fontSize: "10px", color: "#9CA3AF", marginTop: "1px" }}>by {String(h.actor)}</div>}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </Card>
                 )}
               </div>
@@ -611,14 +778,37 @@ export default function UserProfileView({ email, onBack }: Props) {
                 <Card title="Account Controls">
                   <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "8px" }}>
                     <ActionBtn label="▶ Reactivate" onClick={() => reactivateMut.mutate()} loading={reactivateMut.isPending} color="#16A34A" hoverColor="#15803D" />
-                    <ActionBtn label="⏸ Suspend"    onClick={() => suspendMut.mutate()}    loading={suspendMut.isPending}    color="#EA580C" hoverColor="#C2410C" />
+                    {!confirmSuspend ? (
+                      <ActionBtn label="⏸ Suspend" onClick={() => setConfirmSuspend(true)} loading={false} color="#EA580C" hoverColor="#C2410C" />
+                    ) : (
+                      <ConfirmInline
+                        message={`Suspend ${userName}? They will lose access until reactivated.`}
+                        onConfirm={() => { suspendMut.mutate(); setConfirmSuspend(false); }}
+                        onCancel={() => setConfirmSuspend(false)}
+                        loading={suspendMut.isPending}
+                        color="#EA580C"
+                      />
+                    )}
                   </div>
                   <div>
                     <label style={{ fontSize: "11px", color: "#9CA3AF", display: "block", marginBottom: "4px" }}>Ban reason</label>
                     <input value={banReason} onChange={(e) => setBanReason(e.target.value)}
                       placeholder="Reason for ban…"
                       style={{ width: "100%", boxSizing: "border-box", padding: "7px 9px", border: "1px solid #E5E7EB", borderRadius: "4px", fontSize: "12px", marginBottom: "6px" }} />
-                    <ActionBtn label="⛔ Ban User" onClick={() => banMut.mutate()} loading={banMut.isPending} color="#7C3AED" hoverColor="#6D28D9" fullWidth />
+                    {!confirmBan ? (
+                      <ActionBtn label="⛔ Ban User" onClick={() => {
+                        if (!banReason.trim()) { showMsg("err", "Please provide a reason for the ban"); return; }
+                        setConfirmBan(true);
+                      }} loading={false} color="#7C3AED" hoverColor="#6D28D9" fullWidth />
+                    ) : (
+                      <ConfirmInline
+                        message={`Permanently ban ${userName}? Reason: "${banReason}"`}
+                        onConfirm={() => { banMut.mutate(); setConfirmBan(false); }}
+                        onCancel={() => setConfirmBan(false)}
+                        loading={banMut.isPending}
+                        color="#7C3AED"
+                      />
+                    )}
                   </div>
                 </Card>
 
@@ -633,13 +823,36 @@ export default function UserProfileView({ email, onBack }: Props) {
                         {ROLE_OPTIONS.map((r) => <option key={r} value={r}>{r}</option>)}
                       </select>
                     </div>
-                    <ActionBtn label="Assign Role" onClick={() => roleMut.mutate()} loading={roleMut.isPending} color="#1E3A5F" hoverColor="#162D4A" />
+                    {!confirmRole ? (
+                      <ActionBtn label="Assign Role" onClick={() => {
+                        if ((selectedRole || currentRole) === currentRole && !selectedRole) { showMsg("err", "Select a different role first"); return; }
+                        setConfirmRole(true);
+                      }} loading={false} color="#1E3A5F" hoverColor="#162D4A" />
+                    ) : (
+                      <ConfirmInline
+                        message={`Change role from "${currentRole}" to "${selectedRole || currentRole}"?`}
+                        onConfirm={() => { roleMut.mutate(); setConfirmRole(false); }}
+                        onCancel={() => setConfirmRole(false)}
+                        loading={roleMut.isPending}
+                        color="#1E3A5F"
+                      />
+                    )}
                   </div>
                 </Card>
 
                 <Card title="Security">
                   <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                    <ActionBtn label="🔒 Reset Password" onClick={() => resetPwMut.mutate()} loading={resetPwMut.isPending} color="#374151" hoverColor="#1F2937" />
+                    {!confirmResetPw ? (
+                      <ActionBtn label="🔒 Reset Password" onClick={() => setConfirmResetPw(true)} loading={false} color="#374151" hoverColor="#1F2937" />
+                    ) : (
+                      <ConfirmInline
+                        message={`Reset password for ${userName}? A new temporary password will be generated.`}
+                        onConfirm={() => { resetPwMut.mutate(); setConfirmResetPw(false); }}
+                        onCancel={() => setConfirmResetPw(false)}
+                        loading={resetPwMut.isPending}
+                        color="#374151"
+                      />
+                    )}
                     <div style={{ flex: 1 }}>
                       <label style={{ fontSize: "11px", color: "#9CA3AF", display: "block", marginBottom: "4px" }}>Flag reason</label>
                       <div style={{ display: "flex", gap: "6px" }}>
@@ -848,6 +1061,69 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
       <button onClick={onRetry} style={{ padding: "7px 18px", borderRadius: "5px", background: "#EFF6FF", color: "#2563EB", border: "1px solid #BFDBFE", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>
         Try Again
       </button>
+    </div>
+  );
+}
+
+function txTypeColor(type: string): string {
+  const map: Record<string, string> = {
+    deposit: "#16A34A",
+    withdrawal: "#DC2626",
+    adjustment: "#2563EB",
+    bonus: "#EA580C",
+    correction: "#7C3AED",
+    fee: "#374151",
+    refund: "#0891B2",
+  };
+  return map[type] ?? "#6B7280";
+}
+
+function TxTypeBadge({ type }: { type: string }) {
+  const color = txTypeColor(type);
+  return (
+    <span style={{
+      display: "inline-block",
+      fontSize: "10px", fontWeight: "700",
+      textTransform: "uppercase", letterSpacing: "0.04em",
+      padding: "2px 7px", borderRadius: "3px",
+      color, background: `${color}14`, border: `1px solid ${color}33`,
+    }}>
+      {type}
+    </span>
+  );
+}
+
+function ConfirmInline({ message, onConfirm, onCancel, loading, color }: {
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+  loading: boolean;
+  color: string;
+}) {
+  return (
+    <div style={{
+      width: "100%", padding: "10px 12px", borderRadius: "6px",
+      background: "#FFFBEB", border: "1px solid #FDE68A",
+    }}>
+      <p style={{ margin: "0 0 8px", fontSize: "12px", color: "#92400E" }}>{message}</p>
+      <div style={{ display: "flex", gap: "6px" }}>
+        <button onClick={onConfirm} disabled={loading}
+          style={{
+            flex: 1, padding: "6px", borderRadius: "4px", border: "none",
+            background: loading ? "#9CA3AF" : color, color: "white",
+            fontSize: "12px", fontWeight: "700", cursor: loading ? "not-allowed" : "pointer",
+          }}>
+          {loading ? "Processing…" : "Confirm"}
+        </button>
+        <button onClick={onCancel} disabled={loading}
+          style={{
+            flex: 1, padding: "6px", borderRadius: "4px",
+            border: "1px solid #E5E7EB", background: "#F3F4F6", color: "#374151",
+            fontSize: "12px", cursor: "pointer",
+          }}>
+          Cancel
+        </button>
+      </div>
     </div>
   );
 }

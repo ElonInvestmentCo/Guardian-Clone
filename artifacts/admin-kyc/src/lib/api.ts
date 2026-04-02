@@ -233,8 +233,16 @@ export async function assignRole(email: string, role: string, adminNote?: string
   await request("POST", "/admin/assign-role", { email, role, adminNote });
 }
 
-export async function setBalance(email: string, balance: number, profit: number, adminNote?: string): Promise<void> {
-  await request("POST", "/admin/set-balance", { email, balance, profit, adminNote });
+export const TRANSACTION_TYPES = [
+  "deposit", "withdrawal", "adjustment", "bonus", "correction", "fee", "refund",
+] as const;
+export type TransactionType = typeof TRANSACTION_TYPES[number];
+
+export async function setBalance(
+  email: string, balance: number, profit: number,
+  adminNote: string, transactionType: TransactionType = "adjustment"
+): Promise<void> {
+  await request("POST", "/admin/set-balance", { email, balance, profit, adminNote, transactionType });
 }
 
 export async function getUserBalance(email: string): Promise<{ balance: number; profit: number; updatedAt: string | null; history: unknown[] }> {

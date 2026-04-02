@@ -369,26 +369,48 @@ export function deleteUser(email: string): void {
 /**
  * Set (or update) a user's balance and profit, with full history tracking.
  */
+export const TRANSACTION_TYPES = [
+  "deposit",
+  "withdrawal",
+  "adjustment",
+  "bonus",
+  "correction",
+  "fee",
+  "refund",
+] as const;
+export type TransactionType = typeof TRANSACTION_TYPES[number];
+
 export function setUserBalance(
   email: string,
   balance: number,
   profit: number,
   adminNote: string,
-  actor = "admin"
+  actor = "admin",
+  transactionType: TransactionType = "adjustment"
 ): void {
+  if (typeof balance !== "number" || isNaN(balance)) throw new Error("Invalid balance value");
+  if (typeof profit !== "number" || isNaN(profit)) throw new Error("Invalid profit value");
+  if (balance < 0) throw new Error("Balance cannot be negative");
+
   withFileLock(getUserProfilePath(email), () => {
     const now = new Date().toISOString();
     const profile = readProfile(email);
     const current = (profile["_balance"] as { balance: number; profit: number } | undefined) ?? { balance: 0, profit: 0 };
     const history = (profile["_balanceHistory"] as unknown[]) ?? [];
 
+    const balanceChange = balance - current.balance;
+    const profitChange = profit - current.profit;
+
     history.push({
       timestamp: now,
       actor,
+      transactionType,
       prevBalance: current.balance,
       prevProfit: current.profit,
       newBalance: balance,
       newProfit: profit,
+      balanceChange,
+      profitChange,
       note: adminNote,
     });
 
@@ -401,13 +423,13 @@ export function setUserBalance(
       actionType: "ADMIN_SET_BALANCE",
       actor,
       note: adminNote || null,
-      meta: { balance, profit },
+      meta: { balance, profit, transactionType, balanceChange, profitChange },
       timestamp: now,
     });
     profile["_auditLog"] = auditLog;
     writeProfile(email, profile);
 
-    console.log(`[UserDataStore] Balance set for ${email}: $${balance}, profit: $${profit}`);
+    console.log(`[UserDataStore] Balance set for ${email}: $${balance}, profit: $${profit} (${transactionType})`);
   });
 }
 
