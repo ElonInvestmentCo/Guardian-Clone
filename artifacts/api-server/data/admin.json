@@ -1,5 +1,5 @@
 {
-  "username": "guardian_admin",
-  "passwordHash": "$2b$12$FJZMiyPADI/OxVHULXFH5.LVuD.vdIQnsSqqWaFM9ufPZEdp8cux6",
+  "username": "no-reply",
+  "passwordHash": "$2b$12$i5bl0tJc930VCs76cS2Bs.UXRfk9B59/A.Qq9SbUGIUDuTGtccyWG",
   "jwtSecret": "5ed9191fc6dcd572f6ddd5dd3318d414cb41cd107638adbaa2d5d6c82121cf5337b812e057e0178e7dea39af62e22f70"
 }
