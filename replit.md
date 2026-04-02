@@ -78,6 +78,8 @@ Guardian Trading is structured as a pnpm monorepo, utilizing Node.js 24 and Type
 - **Audit log filtering**: Search/filter input on the Audit tab to find entries by action type, actor, note, or metadata.
 - **Action confirmation safeguards**: Sensitive operations (suspend, ban, role change, password reset, delete) all require explicit confirmation dialogs before executing.
 - **Balance change audit metadata**: Each balance change records `transactionType`, `balanceChange`, and `profitChange` in both `_balanceHistory` and `_auditLog`.
+- **KYC decision buttons**: Once a KYC decision (approve/reject/resubmit) is recorded, ALL three buttons become disabled, grayed out, and non-clickable in both the side panel and full profile view. A "Decision recorded" banner appears.
+- **Sensitive field consolidation**: Admin user-details endpoint dynamically consolidates ID and funding fields from any step key into canonical `idInformation` and `fundingDetails` objects, ensuring fields are always displayed regardless of which onboarding step stored them.
 
 ### Platform Security
 - **Security Headers**: Comprehensive set of security headers to mitigate common web vulnerabilities.

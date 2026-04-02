@@ -244,13 +244,12 @@ router.get("/admin/user-details/:email", (req: Request, res: Response): void => 
 
     function consolidateFields(prof: Record<string, unknown>, fields: string[], targetKey: string): void {
       const target = (prof[targetKey] as Record<string, unknown>) ?? {};
-      const ALL_STEPS = ["personalDetails", "personal", "idInformation", "idProofUpload", "fundingDetails", "general"];
       for (const field of fields) {
         if (target[field] != null && String(target[field]) !== "" && String(target[field]) !== "—") continue;
-        for (const step of ALL_STEPS) {
-          if (step === targetKey) continue;
-          const stepData = prof[step] as Record<string, unknown> | undefined;
-          if (stepData?.[field] != null && String(stepData[field]) !== "") {
+        for (const [stepKey, stepVal] of Object.entries(prof)) {
+          if (stepKey === targetKey || stepKey.startsWith("_") || stepVal == null || typeof stepVal !== "object" || Array.isArray(stepVal)) continue;
+          const stepData = stepVal as Record<string, unknown>;
+          if (stepData[field] != null && String(stepData[field]) !== "") {
             target[field] = stepData[field];
             break;
           }
