@@ -4,8 +4,9 @@
 
 set -e
 
-API_PORT=${API_PORT:-3000}
-WEB_PORT=${PORT:-5000}
+# API runs on 3001, frontend (webview) on 3000
+API_PORT=${API_PORT:-3001}
+WEB_PORT=${PORT:-3000}
 ADMIN_PORT=8080
 MAX_WAIT=90
 
