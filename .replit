@@ -34,4 +34,7 @@ channel = "stable-25_05"
 
   [userenv.shared]
 USER_DATA_KEY = "a4ad8bf066b8560745779d7c544b986a112e1405a904b4a614a62a918e92a820"
+
+[userenv.development]
+VITE_API_URL = "https://guardian-clone-production.up.railway.app"
   
