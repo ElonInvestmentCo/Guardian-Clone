@@ -341,11 +341,13 @@ function addCompletedStepNumber(email: string, stepNum: number): number[] {
  * Legacy endpoint — kept for backward compatibility (draft saves, uploads, etc.)
  */
 signupRouter.post("/signup/save-step", (req, res) => {
-  const { email, step, data } = req.body as {
+  const { email: rawEmail, step, data } = req.body as {
     email?: string;
     step?: string;
     data?: Record<string, unknown>;
   };
+
+  const email = rawEmail?.trim().toLowerCase();
 
   if (!email || !step || !data) {
     res.status(400).json({ error: "email, step, and data are required" });
@@ -377,12 +379,14 @@ signupRouter.post("/signup/save-step", (req, res) => {
  * Returns { success: true, completedSteps: number[] } on success.
  */
 signupRouter.post("/signup/complete-step", (req, res) => {
-  const { email, stepNumber, stepKey, data } = req.body as {
+  const { email: rawEmail, stepNumber, stepKey, data } = req.body as {
     email?: string;
     stepNumber?: number;
     stepKey?: string;
     data?: Record<string, unknown>;
   };
+
+  const email = rawEmail?.trim().toLowerCase();
 
   if (
     !email ||
@@ -444,7 +448,8 @@ signupRouter.post("/signup/complete-step", (req, res) => {
  * Returns saved step data, completed step keys, and completed step numbers.
  */
 signupRouter.get("/signup/get-progress", (req, res) => {
-  const { email } = req.query as { email?: string };
+  const { email: rawEmail } = req.query as { email?: string };
+  const email = rawEmail?.trim().toLowerCase();
 
   if (!email) {
     res.status(400).json({ error: "email is required" });

@@ -81,6 +81,12 @@ Guardian Trading is structured as a pnpm monorepo, utilizing Node.js 24 and Type
 - **KYC decision buttons**: Once a KYC decision (approve/reject/resubmit) is recorded, ALL three buttons become disabled, grayed out, and non-clickable in both the side panel and full profile view. A "Decision recorded" banner appears.
 - **Sensitive field consolidation**: Admin user-details endpoint dynamically consolidates ID and funding fields from any step key into canonical `idInformation` and `fundingDetails` objects, ensuring fields are always displayed regardless of which onboarding step stored them.
 
+### Data Lifecycle & Clean State
+- **Email normalization**: All API endpoints (auth, signup, admin) normalize emails to `trim().toLowerCase()` before persistence, preventing case-variant duplicate entries.
+- **Clean user initialization**: New registrations create minimal profiles — only `email`, `createdAt`, `updatedAt`, `status: "pending"`, and encrypted `credentials`. No default balances, histories, or audit logs.
+- **Empty state messaging**: Both trading dashboard and admin dashboard display professional "No data yet" messages with appropriate icons and actionable guidance when data is empty.
+- **Data-only-on-action**: Balance, history, and audit log entries are only created when real actions occur (admin balance changes, onboarding step completions, KYC decisions).
+
 ### Platform Security
 - **Security Headers**: Comprehensive set of security headers to mitigate common web vulnerabilities.
 - **Global Error Handler**: Centralized error handling for Express to log errors and return consistent 500 JSON responses.
