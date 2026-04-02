@@ -2,12 +2,15 @@
  * Admin credential bootstrapping.
  *
  * Priority order:
- *   1. ADMIN_USERNAME / ADMIN_PASSWORD_HASH / ADMIN_JWT_SECRET env vars (production secrets)
+ *   1. ADMIN_USERNAME / ADMIN_PASSWORD_HASH env vars (override username/hash)
+ *      combined with ADMIN_JWT_SECRET env var (always required for the JWT secret)
  *   2. data/admin.json (auto-generated on first run, persisted across restarts)
- *   3. Generates new credentials on first launch and saves them to data/admin.json
+ *      NOTE: jwtSecret is NEVER stored in admin.json — it must always be supplied
+ *      via the ADMIN_JWT_SECRET environment variable / secret.
+ *   3. Generates new credentials on first launch and saves username+hash to data/admin.json.
  *
+ * ADMIN_JWT_SECRET must always be set as an environment secret.
  * The auto-generated password is printed to the server console on first run ONLY.
- * In production, always set the three env vars and delete data/admin.json.
  */
 
 import fs from "fs";
@@ -20,6 +23,11 @@ export interface AdminCredentials {
   username: string;
   passwordHash: string;
   jwtSecret: string;
+}
+
+interface AdminFileData {
+  username: string;
+  passwordHash: string;
 }
 
 const ADMIN_FILE_NAME = "admin.json";
@@ -43,22 +51,22 @@ function generatePassword(): string {
     .join("");
 }
 
-function readAdminFile(): AdminCredentials | null {
+function readAdminFile(): AdminFileData | null {
   const p = getAdminFilePath();
   if (!fs.existsSync(p)) return null;
   try {
     const raw = fs.readFileSync(p, "utf8");
-    const parsed = JSON.parse(raw) as AdminCredentials;
-    if (parsed.username && parsed.passwordHash && parsed.jwtSecret) return parsed;
+    const parsed = JSON.parse(raw) as AdminFileData;
+    if (parsed.username && parsed.passwordHash) return parsed;
     return null;
   } catch {
     return null;
   }
 }
 
-function writeAdminFile(creds: AdminCredentials): void {
+function writeAdminFile(data: AdminFileData): void {
   const p = getAdminFilePath();
-  fs.writeFileSync(p, JSON.stringify(creds, null, 2), { mode: 0o600 });
+  fs.writeFileSync(p, JSON.stringify(data, null, 2), { mode: 0o600 });
 }
 
 let _cachedCreds: AdminCredentials | null = null;
@@ -66,20 +74,27 @@ let _cachedCreds: AdminCredentials | null = null;
 export async function setupAdminCredentials(): Promise<AdminCredentials> {
   if (_cachedCreds) return _cachedCreds;
 
+  const jwtSecret = process.env.ADMIN_JWT_SECRET;
+  if (!jwtSecret) {
+    throw new Error(
+      "[Admin] ADMIN_JWT_SECRET environment variable is required but not set. " +
+      "Add it as a Replit secret before starting the server."
+    );
+  }
+
   const envUsername = process.env.ADMIN_USERNAME;
   const envHash     = process.env.ADMIN_PASSWORD_HASH;
-  const envSecret   = process.env.ADMIN_JWT_SECRET;
 
-  if (envUsername && envHash && envSecret) {
+  if (envUsername && envHash) {
     console.log("[Admin] Credentials loaded from environment variables.");
-    _cachedCreds = { username: envUsername, passwordHash: envHash, jwtSecret: envSecret };
+    _cachedCreds = { username: envUsername, passwordHash: envHash, jwtSecret };
     return _cachedCreds;
   }
 
   const fromFile = readAdminFile();
   if (fromFile) {
     console.log("[Admin] Credentials loaded from data/admin.json.");
-    _cachedCreds = fromFile;
+    _cachedCreds = { ...fromFile, jwtSecret };
     return _cachedCreds;
   }
 
@@ -87,10 +102,9 @@ export async function setupAdminCredentials(): Promise<AdminCredentials> {
   const username = "guardian_admin";
   const password = generatePassword();
   const passwordHash = await generatePasswordHash(password);
-  const jwtSecret = generateJwtSecret();
 
-  const creds: AdminCredentials = { username, passwordHash, jwtSecret };
-  writeAdminFile(creds);
+  const fileData: AdminFileData = { username, passwordHash };
+  writeAdminFile(fileData);
 
   console.log("");
   console.log("╔══════════════════════════════════════════════════════════╗");
@@ -99,13 +113,12 @@ export async function setupAdminCredentials(): Promise<AdminCredentials> {
   console.log(`║  Username : ${username.padEnd(46)}║`);
   console.log(`║  Password : ${password.padEnd(46)}║`);
   console.log("╠══════════════════════════════════════════════════════════╣");
-  console.log("║  Saved to : data/admin.json (persisted across restarts)  ║");
-  console.log("║  For production: set ADMIN_USERNAME, ADMIN_PASSWORD_HASH,║");
-  console.log("║  and ADMIN_JWT_SECRET as environment secrets.            ║");
+  console.log("║  Saved to : data/admin.json (username + password hash)   ║");
+  console.log("║  JWT secret is read from ADMIN_JWT_SECRET env secret.    ║");
   console.log("╚══════════════════════════════════════════════════════════╝");
   console.log("");
 
-  _cachedCreds = creds;
+  _cachedCreds = { username, passwordHash, jwtSecret };
   return _cachedCreds;
 }
 
