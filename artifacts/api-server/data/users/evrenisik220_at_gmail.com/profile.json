@@ -3,7 +3,7 @@
   "createdAt": "2026-03-23T22:56:03.571Z",
   "status": "approved",
   "credentials": {
-    "passwordHash": "enc:a1ad3dc65a7664435531d1e99fb4d516:5c4a741ef414a7c8e2f5d8eeb0dcf7c2:a129bf9d3041efc9"
+    "passwordHash": "[encrypted with previous key - re-entry required]"
   },
   "updatedAt": "2026-04-02T04:22:32.498Z",
   "_auditLog": [

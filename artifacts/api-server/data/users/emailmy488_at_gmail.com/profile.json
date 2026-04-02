@@ -7,8 +7,8 @@
     ],
     "otherDescription": "",
     "bankName": "EDEDRDS",
-    "abaSwift": "enc:31341469a4cb4282fa74ed787136adc8:77cd0bb771fc2beba8bae16d306a3c0e:58c395ba7f796b0226bd",
-    "accountNumber": "enc:555706fadbdebc8b653a5f034864ba8d:d40c7815742793716cc28dbebd6861f8:3ce3f5ef2d9f3a29917b",
+    "abaSwift": "[encrypted with previous key - re-entry required]",
+    "accountNumber": "[encrypted with previous key - re-entry required]",
     "accountName": "SDERSDERS",
     "accountType": "Checking"
   },
@@ -53,7 +53,7 @@
     "howHeard": "Facebook"
   },
   "credentials": {
-    "passwordHash": "enc:6c0f7f5307332ffc4854bbec4ac11687:1da532719b59ec0d140e72109368b836:90014fb38bf6031a"
+    "passwordHash": "[encrypted with previous key - re-entry required]"
   },
   "personal": {
     "firstName": "Willow",
@@ -333,10 +333,10 @@
     "taxResidenceCountry": "US",
     "foreignIdType": "",
     "taxIdType": "SSN",
-    "dateOfBirth": "enc:77118cf8ad36818a1a53eabb7f68ad44:052c6b2ac89dd785b9c5fd5130c5f17c:2aeb0c80a5ac066d48b5",
-    "taxId": "enc:076451ad95dcf685eb9154b1a9b2ad71:ceaff05ca8cd498b6ea2df28389b7e55:d23f2afb2c1d5445a8",
+    "dateOfBirth": "[encrypted with previous key - re-entry required]",
+    "taxId": "[encrypted with previous key - re-entry required]",
     "idType": "Driver's License",
-    "idNumber": "enc:840d5c074bac1e34757fa020f582eca8:18f701d87db76ebefb3845ef00baa813:4ceab5cd950d9183745246",
+    "idNumber": "[encrypted with previous key - re-entry required]",
     "issuingState": "Texas",
     "countryOfIssuance": "US",
     "issueDate": "07/28/2025",

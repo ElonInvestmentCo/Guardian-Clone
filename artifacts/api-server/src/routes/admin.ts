@@ -30,6 +30,7 @@ import {
   addNotification,
   readMaster,
   getDataDir,
+  decryptSensitiveProfile,
 } from "../lib/userDataStore.js";
 import { evaluateRisk } from "../lib/fraud/riskEngine.js";
 import { getAdminCredentials } from "../lib/setupAdmin.js";
@@ -243,7 +244,11 @@ router.get("/admin/user-details/:email", (req: Request, res: Response): void => 
     const safeProfile = { ...profile };
     delete safeProfile.credentials;
 
-    res.json({ email, master, profile: safeProfile, risk, auditLog });
+    const decryptedProfile = decryptSensitiveProfile(safeProfile);
+    const decryptedMaster  = decryptSensitiveProfile(master);
+    delete decryptedMaster["credentials"];
+
+    res.json({ email, master: decryptedMaster, profile: decryptedProfile, risk, auditLog });
   } catch (err) {
     console.error("[Admin] user-details error:", err);
     res.status(500).json({ error: "Failed to load user details" });

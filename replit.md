@@ -90,6 +90,7 @@ Guardian Trading is structured as a pnpm monorepo, utilizing Node.js 24 and Type
 - **Robots.txt**: Disallows sensitive pages and blocks AI crawlers.
 - **Frontend Anti-scrape**: Disables right-click, blocks keyboard shortcuts, and prevents image dragging.
 - **Profile Picture Safety**: Path traversal prevention for uploaded files.
+- **Field-Level Encryption**: Sensitive fields (taxId, ssn, idNumber, dateOfBirth, foreignIdType, accountNumber, abaSwift, bankAccountNumber, routingNumber) are encrypted at rest with AES-256-GCM. Key derived from `USER_DATA_KEY` env var via scrypt. Admin dashboard decrypts server-side in the authenticated `user-details` endpoint only — raw encrypted values never reach the frontend. `decryptSensitiveProfile()` recursively walks all nested objects/arrays and replaces any undecryptable `enc:` values with `[decryption failed]`.
 
 ## External Dependencies
 

@@ -90,6 +90,33 @@ function encryptSensitive(data: Record<string, unknown>): Record<string, unknown
   return result;
 }
 
+function decryptDeep(value: unknown): unknown {
+  if (typeof value === "string" && value.startsWith("enc:")) {
+    try {
+      const decrypted = decryptValue(value);
+      if (decrypted.startsWith("enc:")) return "[decryption failed]";
+      return decrypted;
+    } catch {
+      return "[decryption failed]";
+    }
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => decryptDeep(item));
+  }
+  if (value !== null && typeof value === "object") {
+    return decryptSensitiveProfile(value as Record<string, unknown>);
+  }
+  return value;
+}
+
+export function decryptSensitiveProfile(obj: Record<string, unknown>): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    result[key] = decryptDeep(value);
+  }
+  return result;
+}
+
 /**
  * Convert an email address into a safe directory/file name component.
  * e.g. "john.doe@example.com" → "john.doe_at_example.com"

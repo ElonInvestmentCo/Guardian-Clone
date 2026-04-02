@@ -35,10 +35,10 @@
       "taxResidenceCountry": "US",
       "foreignIdType": "",
       "taxIdType": "SSN",
-      "dateOfBirth": "enc:77118cf8ad36818a1a53eabb7f68ad44:052c6b2ac89dd785b9c5fd5130c5f17c:2aeb0c80a5ac066d48b5",
-      "taxId": "enc:076451ad95dcf685eb9154b1a9b2ad71:ceaff05ca8cd498b6ea2df28389b7e55:d23f2afb2c1d5445a8",
+      "dateOfBirth": "[encrypted with previous key - re-entry required]",
+      "taxId": "[encrypted with previous key - re-entry required]",
       "idType": "Driver's License",
-      "idNumber": "enc:840d5c074bac1e34757fa020f582eca8:18f701d87db76ebefb3845ef00baa813:4ceab5cd950d9183745246",
+      "idNumber": "[encrypted with previous key - re-entry required]",
       "issuingState": "Texas",
       "countryOfIssuance": "US",
       "issueDate": "07/28/2025",
@@ -106,8 +106,8 @@
       ],
       "otherDescription": "",
       "bankName": "EDEDRDS",
-      "abaSwift": "enc:31341469a4cb4282fa74ed787136adc8:77cd0bb771fc2beba8bae16d306a3c0e:58c395ba7f796b0226bd",
-      "accountNumber": "enc:555706fadbdebc8b653a5f034864ba8d:d40c7815742793716cc28dbebd6861f8:3ce3f5ef2d9f3a29917b",
+      "abaSwift": "[encrypted with previous key - re-entry required]",
+      "accountNumber": "[encrypted with previous key - re-entry required]",
       "accountName": "SDERSDERS",
       "accountType": "Checking"
     },
@@ -146,7 +146,7 @@
     "status": "approved",
     "verifiedAt": "2026-03-20T18:06:09.033Z",
     "credentials": {
-      "passwordHash": "enc:6c0f7f5307332ffc4854bbec4ac11687:1da532719b59ec0d140e72109368b836:90014fb38bf6031a"
+      "passwordHash": "[encrypted with previous key - re-entry required]"
     }
   },
   "test@guardiantrading.com": {
@@ -156,8 +156,8 @@
     "personalDetails": {
       "firstName": "John",
       "lastName": "Doe",
-      "dateOfBirth": "enc:a424a32e7e0f908d1a0c660197e4a4f9:1be5098563b1a0375c814014a0933a08:63b7eeb37059b2902e2c",
-      "taxId": "enc:46f1cd7bc4bf8bc5b97f517deefa74ab:99be6393e940ffef9e346731e58e9b26:2a2c8e99cd4200bf939ea5"
+      "dateOfBirth": "[encrypted with previous key - re-entry required]",
+      "taxId": "[encrypted with previous key - re-entry required]"
     },
     "documents": {
       "id_front": "data/users/test_at_guardiantrading.com/documents/id_front.jpg"
@@ -171,7 +171,7 @@
     "createdAt": "2026-03-23T05:16:18.602Z",
     "updatedAt": "2026-04-02T04:33:56.973Z",
     "credentials": {
-      "passwordHash": "enc:3e4bf09d8e013319dc36619d366da415:ac63aa4a02282f7f93daec96b9e805da:63413c8a18a0e37a"
+      "passwordHash": "[encrypted with previous key - re-entry required]"
     },
     "income": {
       "annualIncome": "over $500,000",
@@ -243,14 +243,14 @@
     "updatedAt": "2026-04-02T04:22:32.496Z",
     "status": "approved",
     "credentials": {
-      "passwordHash": "enc:a1ad3dc65a7664435531d1e99fb4d516:5c4a741ef414a7c8e2f5d8eeb0dcf7c2:a129bf9d3041efc9"
+      "passwordHash": "[encrypted with previous key - re-entry required]"
     }
   },
   "testuser@guardian.test": {
     "email": "testuser@guardian.test",
     "createdAt": "2026-03-30T13:00:21.901Z",
-    "updatedAt": "2026-03-30T13:00:21.901Z",
-    "status": "pending",
+    "updatedAt": "2026-04-02T04:44:35.401Z",
+    "status": "resubmit",
     "credentials": {
       "passwordHash": "enc:d3a1741f55d9dccf1a2009724c743f1e:5cd6d94a29428b2bbaabb248be722269:7ef82024ee96507fd46fcc73ce1e7f819d6728b3bbaf38dfdbea67b28921957ea76297b1629733bcfcdc398334b4a4b40407715f15137f83229e076b"
     }

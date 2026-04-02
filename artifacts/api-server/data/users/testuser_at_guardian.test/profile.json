@@ -1,11 +1,11 @@
 {
   "email": "testuser@guardian.test",
   "createdAt": "2026-03-30T13:00:21.901Z",
-  "status": "pending",
+  "status": "resubmit",
   "credentials": {
     "passwordHash": "enc:d3a1741f55d9dccf1a2009724c743f1e:5cd6d94a29428b2bbaabb248be722269:7ef82024ee96507fd46fcc73ce1e7f819d6728b3bbaf38dfdbea67b28921957ea76297b1629733bcfcdc398334b4a4b40407715f15137f83229e076b"
   },
-  "updatedAt": "2026-04-02T04:34:57.719Z",
+  "updatedAt": "2026-04-02T04:44:35.402Z",
   "_balance": {
     "balance": 15000,
     "profit": 750,
@@ -38,6 +38,43 @@
         "profitChange": 750
       },
       "timestamp": "2026-04-02T04:34:57.719Z"
+    },
+    {
+      "actionType": "ADMIN_REQUEST_RESUBMIT",
+      "actor": "admin",
+      "fields": [
+        "Personal Details",
+        "Professional Details",
+        "ID Information",
+        "Investment Experience",
+        "Income Details",
+        "ID Proof Upload",
+        "Financial Situation",
+        "Disclosures"
+      ],
+      "note": null,
+      "timestamp": "2026-04-02T04:44:35.402Z"
+    }
+  ],
+  "_resubmitFields": [
+    "Personal Details",
+    "Professional Details",
+    "ID Information",
+    "Investment Experience",
+    "Income Details",
+    "ID Proof Upload",
+    "Financial Situation",
+    "Disclosures"
+  ],
+  "_notifications": [
+    {
+      "id": "17ae311f-80f9-4a5e-aa70-c7ca16829d14",
+      "type": "kyc",
+      "title": "Documents Resubmission Required",
+      "message": "Some of your submitted documents need to be updated. Please log in and re-upload the requested items.",
+      "actionUrl": "/settings",
+      "read": false,
+      "createdAt": "2026-04-02T04:44:35.403Z"
     }
   ]
 }
