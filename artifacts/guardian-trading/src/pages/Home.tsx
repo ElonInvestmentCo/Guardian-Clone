@@ -25,17 +25,16 @@ export default function Home() {
       {newsBannerVisible && (
         <div
           className="fixed top-[65px] left-0 right-0 z-40"
-          style={{
-            backgroundColor: "#121212",
-            borderBottom: "1px solid #212e33",
-          }}
+          style={{ backgroundColor: "#121212" }}
         >
           <div
-            className="w-full flex items-center justify-between"
+            className="flex items-center justify-between"
             style={{
+              maxWidth: "1200px",
+              margin: "0 auto",
               height: "44px",
-              paddingLeft: "clamp(16px, 4vw, 56px)",
-              paddingRight: "clamp(16px, 4vw, 44px)",
+              padding: "0 24px",
+              borderBottom: "1px solid #212e33",
             }}
           >
             <div className="flex items-center min-w-0" style={{ gap: "10px" }}>
