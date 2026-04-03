@@ -11,6 +11,7 @@ import {
   setUserProfileMeta,
   getStoredPasswordHash,
   saveUserCredentials,
+  getUserBalance,
 } from "../lib/userDataStore.js";
 import { getPool } from "../lib/db.js";
 import { userDataLimit, sensitiveEndpointLimit } from "../middleware/security.js";
@@ -267,6 +268,26 @@ profileRouter.post("/user/update-notifications", userDataLimit, async (req, res)
   } catch (err) {
     console.error("[Profile] update-notifications error:", err);
     res.status(500).json({ error: "Failed to update notification preferences" });
+  }
+});
+
+profileRouter.get("/user/balance/:email", userDataLimit, async (req, res) => {
+  try {
+    const email = decodeURIComponent(String(req.params["email"]));
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      res.status(400).json({ error: "Valid email is required" });
+      return;
+    }
+    const userData = await getUserData(email);
+    if (!userData) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+    const bal = await getUserBalance(email);
+    res.json({ email, balance: bal.balance, profit: bal.profit, updatedAt: bal.updatedAt });
+  } catch (err) {
+    console.error("[Profile] user balance error:", err);
+    res.status(500).json({ error: "Failed to get balance" });
   }
 });
 

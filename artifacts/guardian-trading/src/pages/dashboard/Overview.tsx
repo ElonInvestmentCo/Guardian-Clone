@@ -55,14 +55,19 @@ export default function Overview() {
   useEffect(() => {
     if (!email) return;
     const base = getApiBase();
-    fetch(`${base}/api/admin/user-balance/${encodeURIComponent(email)}`)
-      .then((r) => r.json())
+    fetch(`${base}/api/user/balance/${encodeURIComponent(email)}`)
+      .then((r) => {
+        if (!r.ok) throw new Error(`Balance fetch failed: ${r.status}`);
+        return r.json();
+      })
       .then((d: { balance?: number; profit?: number }) => {
         setBalance(d.balance ?? 0);
         setProfit(d.profit ?? 0);
         setLiveData(generateLiveData(d.balance ?? 1000));
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.warn("[Overview] Could not load balance:", err);
+      });
   }, [email]);
 
   useEffect(() => {
