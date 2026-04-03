@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { login } from "@/lib/api";
 import { useLoading } from "@/context/LoadingContext";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function AdminLoginModal({ onSuccess }: { onSuccess: () => void }) {
   const [username, setUsername] = useState("");
@@ -9,6 +10,7 @@ export default function AdminLoginModal({ onSuccess }: { onSuccess: () => void }
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { startLoading, stopLoading } = useLoading();
+  const { theme, toggleTheme } = useTheme();
 
   const basePath = import.meta.env.BASE_URL || "/";
 
@@ -33,13 +35,29 @@ export default function AdminLoginModal({ onSuccess }: { onSuccess: () => void }
 
   return (
     <div className="safee-login">
+      <button
+        onClick={toggleTheme}
+        aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+        title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+        style={{
+          position: "fixed", top: 16, right: 16,
+          background: "rgba(255,255,255,0.15)", border: "none",
+          borderRadius: "50%", width: 40, height: 40,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          cursor: "pointer", color: "#fff", fontSize: 18,
+          backdropFilter: "blur(8px)", transition: "background 0.15s",
+          zIndex: 10,
+        }}
+      >
+        <i className={`bi ${theme === "light" ? "bi-moon-stars-fill" : "bi-sun-fill"}`} />
+      </button>
       <div className="login-card">
         <div className="login-header">
-          <img src={`${basePath}logo-white.png`} alt="Guardiian Trading" style={{ height: 32, filter: "brightness(0)" }} />
-          <h5 style={{ fontSize: 18, fontWeight: 700, color: "#1E293B", marginTop: 8, marginBottom: 4 }}>
+          <img src={`${basePath}logo-white.png`} alt="Guardian Trading" className="login-logo" style={{ height: 32 }} />
+          <h5 style={{ fontSize: 18, fontWeight: 700, color: "var(--login-text)", marginTop: 8, marginBottom: 4 }}>
             Guardiian Trading Admin
           </h5>
-          <p style={{ fontSize: 13, color: "#64748B", margin: 0 }}>
+          <p style={{ fontSize: 13, color: "var(--login-subtext)", margin: 0 }}>
             Sign in to your admin account
           </p>
         </div>
@@ -47,7 +65,7 @@ export default function AdminLoginModal({ onSuccess }: { onSuccess: () => void }
         <div className="login-body">
           <form onSubmit={handleSubmit} autoComplete="on">
             <div style={{ marginBottom: 16 }}>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 6 }}>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>
                 Username
               </label>
               <div style={{ position: "relative" }}>
@@ -72,7 +90,7 @@ export default function AdminLoginModal({ onSuccess }: { onSuccess: () => void }
             </div>
 
             <div style={{ marginBottom: 20 }}>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 6 }}>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>
                 Password
               </label>
               <div style={{ position: "relative" }}>
@@ -143,7 +161,7 @@ export default function AdminLoginModal({ onSuccess }: { onSuccess: () => void }
             </button>
           </form>
 
-          <p style={{ fontSize: 11, color: "#94A3B8", marginTop: 24, textAlign: "center", lineHeight: 1.5 }}>
+          <p style={{ fontSize: 11, color: "var(--text-faint)", marginTop: 24, textAlign: "center", lineHeight: 1.5 }}>
             This system is restricted to authorized personnel only.
             <br />All access is monitored and logged.
           </p>

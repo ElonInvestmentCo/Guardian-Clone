@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { clearSession } from "@/lib/api";
+import { useTheme } from "@/context/ThemeContext";
 
 export type View = "dashboard" | "kyc" | "risk" | "audit" | "users" | "activity";
 
@@ -24,6 +25,7 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -55,7 +57,7 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
 
       <aside className={`safee-sidebar ${sidebarOpen ? "show" : ""}`}>
         <div className="sidebar-brand">
-          <img src={`${basePath}logo-white.png`} alt="Guardiian Trading" style={{ height: 28 }} />
+          <img src={`${basePath}logo-white.png`} alt="Guardian Trading" className="sidebar-logo" />
         </div>
 
         <div className="sidebar-nav">
@@ -106,6 +108,15 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
           />
           <i className="bi bi-search" />
         </div>
+
+        <button
+          className="theme-toggle-btn"
+          onClick={toggleTheme}
+          aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+          title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+        >
+          <i className={`bi ${theme === "light" ? "bi-moon-stars-fill" : "bi-sun-fill"}`} />
+        </button>
 
         <button className="header-icon-btn" aria-label="Notifications">
           <i className="bi bi-bell" />

@@ -6,6 +6,7 @@ import NotFound from "@/pages/not-found";
 import AdminLoginModal from "@/components/AdminKeyModal";
 import { isAuthenticated, clearSession, getSession } from "@/lib/api";
 import { LoadingProvider } from "@/context/LoadingContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import { PageLoader } from "@/components/PageLoader";
 import AntiScrape from "@/components/AntiScrape";
 
@@ -99,15 +100,17 @@ function AppShell() {
 function App() {
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <LoadingProvider>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <AppShell />
-          </WouterRouter>
-          <AntiScrape />
-          <PageLoader />
-        </LoadingProvider>
-      </QueryClientProvider>
+      <ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <LoadingProvider>
+            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+              <AppShell />
+            </WouterRouter>
+            <AntiScrape />
+            <PageLoader />
+          </LoadingProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }
