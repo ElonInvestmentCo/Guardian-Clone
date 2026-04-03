@@ -5,6 +5,7 @@ import {
   getUserProfileData,
   setUserProfileMeta,
 } from "../lib/userDataStore.js";
+import { userDataLimit } from "../middleware/security.js";
 
 const signupRouter = Router();
 
@@ -308,7 +309,7 @@ async function addCompletedStepNumber(email: string, stepNum: number): Promise<n
   return updated;
 }
 
-signupRouter.post("/signup/save-step", async (req, res) => {
+signupRouter.post("/signup/save-step", userDataLimit, async (req, res) => {
   const { email: rawEmail, step, data } = req.body as {
     email?: string;
     step?: string;
@@ -338,7 +339,7 @@ signupRouter.post("/signup/save-step", async (req, res) => {
   }
 });
 
-signupRouter.post("/signup/complete-step", async (req, res) => {
+signupRouter.post("/signup/complete-step", userDataLimit, async (req, res) => {
   const { email: rawEmail, stepNumber, stepKey, data } = req.body as {
     email?: string;
     stepNumber?: number;
@@ -396,7 +397,7 @@ signupRouter.post("/signup/complete-step", async (req, res) => {
   }
 });
 
-signupRouter.get("/signup/get-progress", async (req, res) => {
+signupRouter.get("/signup/get-progress", userDataLimit, async (req, res) => {
   const { email: rawEmail } = req.query as { email?: string };
   const email = rawEmail?.trim().toLowerCase();
 

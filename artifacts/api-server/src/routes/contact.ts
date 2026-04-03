@@ -1,5 +1,6 @@
 import { Router, type IRouter } from "express";
 import { Resend } from "resend";
+import { sensitiveEndpointLimit } from "../middleware/security.js";
 
 const router: IRouter = Router();
 
@@ -34,7 +35,16 @@ async function getResendClient(): Promise<Resend | null> {
   return null;
 }
 
-router.post("/contact", async (req, res) => {
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+router.post("/contact", sensitiveEndpointLimit, async (req, res) => {
   try {
     const { name, email, subject, message } = req.body as {
       name?: string; email?: string; subject?: string; message?: string;
@@ -45,11 +55,21 @@ router.post("/contact", async (req, res) => {
       return;
     }
 
+    if (name.trim().length > 100 || subject.trim().length > 200 || message.trim().length > 5000) {
+      res.status(400).json({ error: "Input exceeds maximum length." });
+      return;
+    }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
       res.status(400).json({ error: "Invalid email address." });
       return;
     }
+
+    const safeName = escapeHtml(name.trim());
+    const safeEmail = escapeHtml(email.trim());
+    const safeSubject = escapeHtml(subject.trim());
+    const safeMessage = escapeHtml(message.trim());
 
     const client = await getResendClient();
 
@@ -72,11 +92,11 @@ router.post("/contact", async (req, res) => {
         <tr>
           <td style="padding:32px 40px;">
             <table width="100%" cellpadding="0" cellspacing="0">
-              <tr><td style="padding:6px 0;"><strong style="color:#555;font-size:13px;">Name:</strong> <span style="color:#333;font-size:14px;">${name.trim()}</span></td></tr>
-              <tr><td style="padding:6px 0;"><strong style="color:#555;font-size:13px;">Email:</strong> <a href="mailto:${email.trim()}" style="color:#3a7bd5;font-size:14px;">${email.trim()}</a></td></tr>
-              <tr><td style="padding:6px 0;"><strong style="color:#555;font-size:13px;">Subject:</strong> <span style="color:#333;font-size:14px;">${subject.trim()}</span></td></tr>
+              <tr><td style="padding:6px 0;"><strong style="color:#555;font-size:13px;">Name:</strong> <span style="color:#333;font-size:14px;">${safeName}</span></td></tr>
+              <tr><td style="padding:6px 0;"><strong style="color:#555;font-size:13px;">Email:</strong> <a href="mailto:${safeEmail}" style="color:#3a7bd5;font-size:14px;">${safeEmail}</a></td></tr>
+              <tr><td style="padding:6px 0;"><strong style="color:#555;font-size:13px;">Subject:</strong> <span style="color:#333;font-size:14px;">${safeSubject}</span></td></tr>
               <tr><td style="padding:16px 0 6px;"><strong style="color:#555;font-size:13px;">Message:</strong></td></tr>
-              <tr><td style="background:#f9fafc;border:1px solid #e8edf2;border-radius:4px;padding:16px;font-size:14px;color:#333;line-height:1.7;">${message.trim().replace(/\n/g, "<br/>")}</td></tr>
+              <tr><td style="background:#f9fafc;border:1px solid #e8edf2;border-radius:4px;padding:16px;font-size:14px;color:#333;line-height:1.7;">${safeMessage.replace(/\n/g, "<br/>")}</td></tr>
             </table>
           </td>
         </tr>
@@ -95,7 +115,7 @@ router.post("/contact", async (req, res) => {
         from: "Guardian Trading <noreply@guardiiantrading.com>",
         to: "info@guardiiantrading.com",
         replyTo: email.trim(),
-        subject: `Contact Form: ${subject.trim()}`,
+        subject: `Contact Form: ${safeSubject}`,
         html,
       });
     } else {

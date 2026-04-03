@@ -23,6 +23,8 @@ const allowedOrigins = [
   "https://guardian-clone-production.up.railway.app",
 ];
 
+const IS_DEV = process.env.NODE_ENV !== "production";
+
 const devDomain = process.env.REPLIT_DEV_DOMAIN;
 if (devDomain) allowedOrigins.push(`https://${devDomain}`);
 const replDomains = process.env.REPLIT_DOMAINS;
@@ -33,18 +35,20 @@ if (replDomains) {
   });
 }
 
-if (process.env.NODE_ENV === "development") {
+if (IS_DEV) {
   allowedOrigins.push("http://localhost:5000", "http://localhost:5001", "http://localhost:5002");
   allowedOrigins.push("http://localhost:22593", "http://localhost:22594", "http://localhost:22595");
 }
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.some((o) => origin === o || origin.endsWith(".replit.dev") || origin.endsWith(".replit.app"))) {
+    if (!origin) { callback(null, true); return; }
+    if (allowedOrigins.includes(origin)) { callback(null, true); return; }
+    if (IS_DEV && (origin.endsWith(".replit.dev") || origin.endsWith(".replit.app"))) {
       callback(null, true);
-    } else {
-      callback(null, false);
+      return;
     }
+    callback(null, false);
   },
   credentials: true,
   maxAge: 86400,

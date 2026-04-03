@@ -1,8 +1,10 @@
 import { useEffect } from "react";
+import { isAuthenticated } from "@/lib/api";
 
 export default function AntiScrape() {
   useEffect(() => {
     function blockContextMenu(e: MouseEvent) {
+      if (isAuthenticated()) return;
       e.preventDefault();
       return false;
     }
@@ -17,12 +19,14 @@ export default function AntiScrape() {
     }
 
     function blockCopycut(e: ClipboardEvent) {
+      if (isAuthenticated()) return;
       if (isEditableTarget(e)) return;
       e.preventDefault();
       return false;
     }
 
     function blockSelectStart(e: Event) {
+      if (isAuthenticated()) return;
       if (isEditableTarget(e)) return;
       e.preventDefault();
       return false;
@@ -32,19 +36,20 @@ export default function AntiScrape() {
       const key = e.key.toLowerCase();
       const ctrl = e.ctrlKey || e.metaKey;
       const editable = isEditableTarget(e);
+      const authed = isAuthenticated();
 
       if (ctrl && key === "u") e.preventDefault();
       if (ctrl && key === "s") e.preventDefault();
-      if (ctrl && key === "p") e.preventDefault();
-      if (ctrl && key === "a" && !editable) e.preventDefault();
-      if (ctrl && key === "c" && !editable) e.preventDefault();
-      if (ctrl && key === "x" && !editable) e.preventDefault();
+      if (ctrl && key === "p" && !authed) e.preventDefault();
+      if (ctrl && key === "a" && !editable && !authed) e.preventDefault();
+      if (ctrl && key === "c" && !editable && !authed) e.preventDefault();
+      if (ctrl && key === "x" && !editable && !authed) e.preventDefault();
       if (ctrl && key === "v" && !editable) e.preventDefault();
       if (ctrl && e.shiftKey && ["i", "j", "c", "k", "m"].includes(key)) e.preventDefault();
       if (e.key === "F12") e.preventDefault();
       if (ctrl && key === "g") e.preventDefault();
       if (ctrl && key === "h") e.preventDefault();
-      if (e.key === "PrintScreen") {
+      if (e.key === "PrintScreen" && !authed) {
         e.preventDefault();
         navigator.clipboard.writeText("").catch(() => {});
       }
@@ -56,7 +61,9 @@ export default function AntiScrape() {
     }
 
     function blockBeforePrint() {
-      document.body.style.visibility = "hidden";
+      if (!isAuthenticated()) {
+        document.body.style.visibility = "hidden";
+      }
     }
 
     function blockAfterPrint() {
@@ -73,20 +80,8 @@ export default function AntiScrape() {
     window.addEventListener("afterprint", blockAfterPrint);
 
     const style = document.createElement("style");
+    style.id = "anti-scrape-styles";
     style.textContent = `
-      *, *::before, *::after {
-        -webkit-user-select: none !important;
-        -moz-user-select: none !important;
-        -ms-user-select: none !important;
-        user-select: none !important;
-        -webkit-touch-callout: none !important;
-      }
-      input, textarea, [contenteditable="true"] {
-        -webkit-user-select: text !important;
-        -moz-user-select: text !important;
-        -ms-user-select: text !important;
-        user-select: text !important;
-      }
       img, video, canvas, svg, picture, source {
         -webkit-user-drag: none !important;
         pointer-events: none !important;
@@ -109,18 +104,43 @@ export default function AntiScrape() {
     `;
     document.head.appendChild(style);
 
+    function applySelectStyles() {
+      const existing = document.getElementById("anti-scrape-select");
+      if (existing) existing.remove();
+      const selectStyle = document.createElement("style");
+      selectStyle.id = "anti-scrape-select";
+      if (!isAuthenticated()) {
+        selectStyle.textContent = `
+          *, *::before, *::after {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+            -webkit-touch-callout: none !important;
+          }
+          input, textarea, [contenteditable="true"] {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+          }
+        `;
+      }
+      document.head.appendChild(selectStyle);
+    }
+    applySelectStyles();
+    const authCheck = setInterval(applySelectStyles, 2000);
+
     const observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         for (const node of mutation.addedNodes) {
           if (node instanceof HTMLImageElement) {
             node.setAttribute("draggable", "false");
-            node.addEventListener("contextmenu", blockContextMenu);
           }
           if (node instanceof HTMLElement) {
             const imgs = node.querySelectorAll("img");
             imgs.forEach((img) => {
               img.setAttribute("draggable", "false");
-              img.addEventListener("contextmenu", blockContextMenu);
             });
           }
         }
@@ -141,8 +161,11 @@ export default function AntiScrape() {
       document.removeEventListener("dragstart", blockDragStart);
       window.removeEventListener("beforeprint", blockBeforePrint);
       window.removeEventListener("afterprint", blockAfterPrint);
+      clearInterval(authCheck);
       observer.disconnect();
       style.remove();
+      const selectEl = document.getElementById("anti-scrape-select");
+      if (selectEl) selectEl.remove();
     };
   }, []);
 
