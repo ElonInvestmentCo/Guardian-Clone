@@ -139,7 +139,7 @@ export default function NeedHelpCard() {
           display: block;
           width: 220px;
           height: auto;
-          border-radius: 10px;
+          border-radius: 0;
           box-shadow: 0 4px 20px rgba(0,0,0,0.25);
           transition: box-shadow 0.3s ease;
         }
