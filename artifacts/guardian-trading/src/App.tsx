@@ -9,6 +9,7 @@ import { OnboardingProvider } from "@/lib/onboarding/OnboardingContext";
 import { OnboardingGuard } from "@/lib/onboarding/OnboardingGuard";
 import { ThemeProvider } from "@/context/ThemeContext";
 import AntiScrape from "@/components/AntiScrape";
+import NeedHelpCard from "@/components/NeedHelpCard";
 
 import Home from "@/pages/Home";
 import About from "@/pages/About";
@@ -142,6 +143,7 @@ function App() {
                 <Router />
               </OnboardingProvider>
             </WouterRouter>
+            <NeedHelpCard />
             <AntiScrape />
             <PageLoader />
             <Toaster />

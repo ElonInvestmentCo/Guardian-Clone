@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Briefcase, ShoppingCart, PieChart,
   FileText, Settings, LogOut, Sun, Moon, Search, Bell,
   TrendingUp, TrendingDown, ChevronDown, BarChart3,
-  MessageCircle, X, Headphones,
+  MessageCircle,
 } from "lucide-react";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import { useTheme } from "@/context/ThemeContext";
@@ -48,130 +48,6 @@ interface UserStatus {
   status: string;
   kycComplete: boolean;
   profilePicture: string | null;
-}
-
-declare global {
-  interface Window {
-    LC_API?: { open_chat_window?: () => void; chat_running?: () => boolean };
-    LiveChatWidget?: { call: (action: string) => void };
-  }
-}
-
-function NeedHelpWidget() {
-  const [dismissed, setDismissed] = useState(() => {
-    try { return sessionStorage.getItem("needHelpDismissed") === "1"; } catch { return false; }
-  });
-  const [hovered, setHovered] = useState(false);
-
-  if (dismissed) return null;
-
-  const openChat = () => {
-    if (window.LiveChatWidget) {
-      window.LiveChatWidget.call("maximize");
-    } else if (window.LC_API?.open_chat_window) {
-      window.LC_API.open_chat_window();
-    }
-  };
-
-  const handleDismiss = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setDismissed(true);
-    try { sessionStorage.setItem("needHelpDismissed", "1"); } catch {}
-  };
-
-  return (
-    <div
-      onClick={openChat}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position: "fixed",
-        bottom: "88px",
-        right: "20px",
-        zIndex: 999,
-        cursor: "pointer",
-        transition: "transform 0.2s ease, box-shadow 0.2s ease",
-        transform: hovered ? "translateY(-2px)" : "translateY(0)",
-      }}
-    >
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "10px",
-        padding: "10px 16px 10px 12px",
-        background: "linear-gradient(135deg, #1e3a5f 0%, #0f2544 100%)",
-        border: "1px solid rgba(59,130,246,0.35)",
-        borderRadius: "14px",
-        boxShadow: hovered
-          ? "0 8px 32px rgba(59,130,246,0.25), 0 2px 8px rgba(0,0,0,0.4)"
-          : "0 4px 20px rgba(0,0,0,0.35)",
-        minWidth: "180px",
-        position: "relative",
-      }}>
-        <button
-          onClick={handleDismiss}
-          style={{
-            position: "absolute",
-            top: "-6px",
-            right: "-6px",
-            width: "18px",
-            height: "18px",
-            borderRadius: "50%",
-            background: "#374151",
-            border: "1px solid #4b5563",
-            color: "#9ca3af",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 0,
-          }}
-        >
-          <X size={10} />
-        </button>
-
-        <div style={{
-          width: "36px",
-          height: "36px",
-          borderRadius: "10px",
-          background: "linear-gradient(135deg, #3b82f6, #2563eb)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexShrink: 0,
-          boxShadow: "0 2px 8px rgba(59,130,246,0.4)",
-        }}>
-          <Headphones size={18} color="#fff" />
-        </div>
-
-        <div>
-          <p style={{ fontSize: "12px", fontWeight: 700, color: "#e2e8f0", marginBottom: "1px", lineHeight: 1.2 }}>
-            Need Help?
-          </p>
-          <p style={{ fontSize: "10px", color: "#94a3b8", lineHeight: 1.3 }}>
-            Chat with our support team
-          </p>
-        </div>
-
-        <div style={{
-          width: "7px",
-          height: "7px",
-          borderRadius: "50%",
-          background: "#0ecb81",
-          flexShrink: 0,
-          boxShadow: "0 0 6px rgba(14,203,129,0.6)",
-          animation: "supportPulse 2s infinite",
-        }} />
-      </div>
-
-      <style>{`
-        @keyframes supportPulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.6; transform: scale(0.85); }
-        }
-      `}</style>
-    </div>
-  );
 }
 
 export default function DashboardLayout({ children }: Props) {
@@ -426,7 +302,6 @@ export default function DashboardLayout({ children }: Props) {
           {children}
         </div>
 
-        <NeedHelpWidget />
 
         <nav className="flex md:hidden flex-shrink-0" style={{
           borderTop: `1px solid ${colors.topBarBorder}`,
