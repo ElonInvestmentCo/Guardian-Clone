@@ -201,7 +201,7 @@ export default function Home() {
       </div>
 
       {/* ── WHY DO ACTIVE TRADERS USE GUARDIAN? ── */}
-      <section id="services" className="bg-[#222222] py-20 px-4">
+      <section id="services" className="bg-[#1c1c1c] py-20 px-4">
         <div className="max-w-[1200px] mx-auto">
           <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-3">
             Why Do Active Traders Use Guardian?
@@ -277,7 +277,7 @@ export default function Home() {
       </section>
 
       {/* ── MASTER YOUR ORDER FLOW ── */}
-      <section className="bg-[#0d0d0d] py-16 lg:py-20 px-4">
+      <section className="bg-[#141414] py-16 lg:py-20 px-4">
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-center">
             <div className="flex-1 max-w-[480px]">
@@ -320,7 +320,7 @@ export default function Home() {
       </section>
 
       {/* ── LOCATES & STOCK BORROWS ── */}
-      <section className="bg-[#111] py-16 lg:py-20 px-4">
+      <section className="bg-[#141414] py-16 lg:py-20 px-4">
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-center">
             {/* Text — top on mobile, right on desktop */}
