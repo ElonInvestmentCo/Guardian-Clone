@@ -231,8 +231,6 @@ router.get("/admin/user-details/:email", async (req: Request, res: Response): Pr
     consolidateFields(profile, ID_FIELDS, "idInformation");
     consolidateFields(profile, FUNDING_FIELDS, "fundingDetails");
 
-    const auditLog  = (profile._auditLog as unknown[]) ?? [];
-
     const safeProfile = { ...profile };
     delete safeProfile.credentials;
 
@@ -240,7 +238,10 @@ router.get("/admin/user-details/:email", async (req: Request, res: Response): Pr
     const decryptedMaster  = decryptSensitiveProfile(master);
     delete decryptedMaster["credentials"];
 
-    res.json({ email, master: decryptedMaster, profile: decryptedProfile, risk, auditLog });
+    const auditLog = (decryptedProfile._auditLog as unknown[]) ?? [];
+    const role = (master.role as string) ?? (profile.role as string) ?? "user";
+
+    res.json({ email, master: decryptedMaster, profile: decryptedProfile, risk, auditLog, role });
   } catch (err) {
     console.error("[Admin] user-details error:", err);
     res.status(500).json({ error: "Failed to load user details" });
@@ -470,7 +471,8 @@ router.get("/admin/global-audit", async (req: Request, res: Response): Promise<v
   try {
     const limit = Math.min(500, parseInt(String(req.query.limit ?? "100")));
     const all   = (await getGlobalAuditLog()).slice(0, limit);
-    res.json({ total: all.length, entries: all });
+    const decrypted = decryptSensitiveProfile({ entries: all });
+    res.json({ total: all.length, entries: (decrypted as Record<string, unknown>).entries ?? all });
   } catch (err) { res.status(500).json({ error: "Failed to load audit log" }); }
 });
 

@@ -101,7 +101,7 @@ export default function UserProfileView({ email, onBack }: Props) {
 
   const pf = (step: string, field: string) => getProfileField(profile, step, field);
   const currentStatus = (master.status as string) ?? (profile.status as string) ?? "pending";
-  const currentRole   = (master.role   as string) ?? (profile.role   as string) ?? "user";
+  const currentRole   = (data?.role as string) ?? (master.role as string) ?? (profile.role as string) ?? "user";
   const userName      = [pf("personal", "firstName"), pf("personal", "lastName")].join(" ").trim().replace(/—/g, "").trim() || email;
 
   const kycDecisionStatuses = ["approved", "rejected", "resubmit", "resubmit_required"] as const;

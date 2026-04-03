@@ -156,6 +156,7 @@ export interface UserDetails {
   profile: Record<string, unknown>;
   risk: RiskScore;
   auditLog: AuditEntry[];
+  role?: string;
 }
 
 export interface KycQueueResponse {
