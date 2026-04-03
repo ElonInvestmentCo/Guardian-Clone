@@ -81,6 +81,27 @@ export function Navbar() {
           <div className="hidden lg:flex items-center" style={{ gap: "12px" }}>
             <Link
               href="/login"
+              className="gt-login-link"
+              style={{
+                fontSize: "16px",
+                fontWeight: 600,
+                color: "#3f88c4",
+                textDecoration: "none",
+                padding: "8px 16px",
+                borderRadius: "6px",
+                transition: "color 0.2s ease",
+                whiteSpace: "nowrap",
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#5da0d6"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#3f88c4"; }}
+              data-testid="link-login"
+            >
+              Login
+            </Link>
+
+            <Link
+              href="/login"
               style={{ display: "inline-block", lineHeight: 0, textDecoration: "none" }}
               data-testid="link-client-portal"
             >
@@ -172,6 +193,19 @@ export function Navbar() {
             ))}
           </div>
           <div className="px-8 mt-6 flex flex-col gap-3">
+            <Link
+              href="/login"
+              style={{
+                display: "block", padding: "14px",
+                background: "#3f88c4",
+                color: "white", textAlign: "center",
+                fontSize: "15px", fontWeight: 600,
+                textDecoration: "none", borderRadius: "6px",
+              }}
+              data-testid="link-mobile-login"
+            >
+              Login
+            </Link>
             <Link
               href="/login"
               style={{
