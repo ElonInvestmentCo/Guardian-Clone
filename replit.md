@@ -33,11 +33,18 @@ Guardian Trading is structured as a pnpm monorepo using Node.js 24 and TypeScrip
 - **Data Integrity**: Email normalization, minimal user initialization, empty state messaging, and data-only-on-action for balance/history/audit logs.
 
 ### Platform Security
-- **Web Security**: Comprehensive security headers, global error handling, bot detection, rate limiting, strict CORS, hotlink protection, honeytrap routes, and `robots.txt`.
-- **Frontend Anti-scrape**: Comprehensive protection on all pages — blocks right-click context menu, disables all text selection (except form inputs), blocks copy/cut/paste outside editable fields, prevents image/video dragging, blocks keyboard shortcuts (Ctrl+U/S/P/A/C/X, F12, DevTools, PrintScreen), hides content on print (@media print), MutationObserver marks all dynamically-loaded images as non-draggable, and HTML body-level event handlers as fallback. Form inputs/textareas remain fully usable.
+- **Web Security**: Comprehensive security headers (CSP, X-Content-Type-Options, X-Frame-Options, HSTS via proxy, Referrer-Policy, Permissions-Policy), global error handling, bot detection (60+ patterns), rate limiting on ALL routes, strict CORS, hotlink protection, honeytrap routes, and `robots.txt` (30+ AI/SEO bots blocked).
+- **CORS**: Production-locked — only allows `guardiiantrading.com`, `www.guardiiantrading.com`, and `guardian-clone-production.up.railway.app`. Replit wildcards (`*.replit.dev`, `*.replit.app`) only allowed in development mode.
+- **Admin Authentication**: JWT-based (8h TTL, `guardian-admin` issuer), bcrypt password hashing, timing-attack protection (dummy hash on wrong username), login rate limiting (5 attempts/15 min), and auto-logout on token expiry. All `/admin/*` routes (except login) protected by `requireAdmin` JWT middleware.
+- **Frontend Anti-scrape**: Comprehensive protection on all pages — blocks right-click, text selection (except form inputs), copy/cut/paste outside editable fields, image/video dragging, keyboard shortcuts (Ctrl+U/S/P/A/C/X, F12, DevTools, PrintScreen), print (@media print + beforeprint handler), and MutationObserver for dynamic images. Admin dashboard allows text selection/copying when authenticated.
+- **Rate Limiting**: Global (100/min), auth/signup/contact (30/15min), admin (120/min), admin login (5/15min), uploads (30/15min), market data (30/min), AI chat (20/min), user data (60/min).
+- **Input Validation**: All routes validate email format, field lengths, and types. Signup uses comprehensive per-step field validation. Profile uses regex patterns. Contact form uses HTML escaping and length limits. File uploads enforce MIME + extension whitelists and size limits.
+- **File Upload Security**: KYC documents (8MB max, JPG/PNG/PDF only, min 1KB), profile pictures (5MB max, JPG/PNG/WEBP only). Both validate MIME type + extension, use memory storage, and persist to PostgreSQL (not filesystem).
 - **Path Traversal Protection**: `assertSafePath()`, `path.resolve`, and `startsWith` checks for all user-derived file paths and uploads.
-- **Dependency Management**: pnpm overrides to address CVEs (e.g., `lodash`).
-- **Field-Level Encryption**: Sensitive user fields are encrypted at rest (AES-256-GCM) with server-side decryption only for authenticated admin access.
+- **Dependency Management**: pnpm overrides to address CVEs (lodash `>=4.18.0`).
+- **Field-Level Encryption**: Sensitive user fields encrypted at rest (AES-256-GCM), server-side decryption only for authenticated admin access. Credentials stripped from all API responses.
+- **XSS Prevention**: Contact form HTML email uses `escapeHtml()` for all user inputs. AI responses sanitized with DOMPurify on frontend.
+- **Anti-bot Headers**: `X-Robots-Tag: noindex, nofollow, noarchive, noimageindex, nosnippet` on all API responses. `Cache-Control: no-store` prevents caching.
 
 ## External Dependencies
 

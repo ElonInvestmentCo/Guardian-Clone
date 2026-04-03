@@ -25,17 +25,16 @@ const allowedOrigins = [
 
 const IS_DEV = process.env.NODE_ENV !== "production";
 
-const devDomain = process.env.REPLIT_DEV_DOMAIN;
-if (devDomain) allowedOrigins.push(`https://${devDomain}`);
-const replDomains = process.env.REPLIT_DOMAINS;
-if (replDomains) {
-  replDomains.split(",").forEach((d) => {
-    const trimmed = d.trim();
-    if (trimmed) allowedOrigins.push(`https://${trimmed}`);
-  });
-}
-
 if (IS_DEV) {
+  const devDomain = process.env.REPLIT_DEV_DOMAIN;
+  if (devDomain) allowedOrigins.push(`https://${devDomain}`);
+  const replDomains = process.env.REPLIT_DOMAINS;
+  if (replDomains) {
+    replDomains.split(",").forEach((d) => {
+      const trimmed = d.trim();
+      if (trimmed) allowedOrigins.push(`https://${trimmed}`);
+    });
+  }
   allowedOrigins.push("http://localhost:5000", "http://localhost:5001", "http://localhost:5002");
   allowedOrigins.push("http://localhost:22593", "http://localhost:22594", "http://localhost:22595");
 }
