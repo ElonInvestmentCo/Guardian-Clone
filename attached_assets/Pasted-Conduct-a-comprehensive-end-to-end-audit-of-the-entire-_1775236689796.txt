@@ -1,0 +1,11 @@
+Conduct a comprehensive, end-to-end audit of the entire codebase, including all frontend and backend files, configurations, and dependencies, with the objective of preparing the application for stable, production-grade deployment on Railway (backend) and Netlify (frontend).
+
+Systematically scan and analyze every file, route, component, API endpoint, environment configuration, and integration point. Identify and resolve all errors, inconsistencies, misconfigurations, broken imports, unused dependencies, and potential runtime failures. This includes but is not limited to: incorrect API base URLs, mismatched environment variables, improper build scripts, routing issues, CORS misconfigurations, authentication/session handling flaws, and any frontend-backend communication gaps.
+
+Ensure the frontend is fully optimized for Netlify deployment by verifying static build output, correct environment variable usage, proper routing fallback configuration (e.g., handling of SPA routes), and elimination of any server-dependent logic. Confirm that all assets load correctly, all links resolve properly, and no console errors or warnings remain.
+
+Simultaneously, validate the backend for Railway deployment by ensuring the server starts correctly with the defined start command, all environment variables are properly referenced, database connections are stable, APIs respond correctly, and no hardcoded local paths or development-only configurations remain. Confirm proper handling of ports, secure headers, and production-ready logging.
+
+Resolve all detected issues proactively—do not ignore warnings. Refactor where necessary to improve stability, maintainability, and performance. Ensure consistency in coding standards, remove redundant code, and verify that all features (authentication, KYC flows, admin dashboard, file uploads, etc.) function correctly under production conditions.
+
+Finally, confirm that both environments can be deployed independently and operate seamlessly together, with the frontend correctly consuming the deployed backend APIs, resulting in a fully functional, error-free production build ready for live deployment.

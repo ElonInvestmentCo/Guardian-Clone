@@ -1,0 +1,28 @@
+6 potential vulnerabilities found.
+Last ran on
+ 
+10:14 am, Apr 03, 2026
+Security
+Outdated dependencies have known vulnerabilities
+There are dependencies that have vulnerabilities and may need to be updated.
+These dependencies can be updated automatically.
+lodash@4.17.23 -> 4.18.0
+Security
+A gitleaks Generic API Key detected. Avoid hardcoding credentials directly in connection strings as this creates security risks. Instead, use environment variables to store and access credentials at runtime. If you need the actual credential values to make this work properly, ask me to provide them through Replit's secret system.
+A gitleaks Generic API Key detected. Avoid hardcoding credentials directly in connection strings as this creates security risks. Instead, use environment variables to store and access credentials at runtime. If you need the actual credential values to make this work properly, ask me to provide them through Replit's secret system.
+.replit
+USER_DATA_KEY = "a4ad8bf066b8560745779d7c544b986a112e1405a904b4a614a62a918e92a820"
+Security
+Bcrypt Hash detected. Avoid hardcoding credentials directly in connection strings as this creates security risks. Instead, use environment variables to store and access credentials at runtime. If you need the actual credential values to make this work properly, ask me to provide them through Replit's secret system.
+Bcrypt Hash detected. Avoid hardcoding credentials directly in connection strings as this creates security risks. Instead, use environment variables to store and access credentials at runtime. If you need the actual credential values to make this work properly, ask me to provide them through Replit's secret system.
+artifacts/api-server/data/admin.json
+  "passwordHash": "$2b$12$6vLF.VyAAHmhszfVLeF1GeGXN0k5BZvKq0ZTAk/UGvN0/t2aHJkt2"
+Security
+Bcrypt Hash detected. Avoid hardcoding credentials directly in connection strings as this creates security risks. Instead, use environment variables to store and access credentials at runtime. If you need the actual credential values to make this work properly, ask me to provide them through Replit's secret system.
+Bcrypt Hash detected. Avoid hardcoding credentials directly in connection strings as this creates security risks. Instead, use environment variables to store and access credentials at runtime. If you need the actual credential values to make this work properly, ask me to provide them through Replit's secret system.
+artifacts/api-server/src/routes/admin.ts
+        usernameMatch ? expectedHash : "$2b$12$invalidhashtopreventtimingattack000000000000000000000000"
+Security
+JWT token detected in source code. Avoid hardcoding tokens directly in your code, even if they are public or anonymous keys. Instead, use environment variables to store and access tokens at runtime. If you need the actual token values to make this work properly, ask me to provide them through Replit's secret system.
+Security
+A gitleaks JWT credential detected. Avoid hardcoding credentials directly in connection strings as this creates security risks. Instead, use environment variables to store and access credentials at runtime. If you need the actual credential values to make this work properly, ask me to provide them through Replit's secret system.
