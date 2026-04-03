@@ -1,0 +1,385 @@
+2026-04-03T04:10:27.287070976Z [inf]  Starting Container
+2026-04-03T04:10:27.806723189Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:10:27.806729367Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:10:27.806753265Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:10:27.806755636Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:10:27.806757285Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:10:27.806762193Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:10:27.806764111Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:10:27.806766432Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:27.806768933Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:27.806772737Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:10:27.807138759Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:10:27.807142378Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:10:27.807145307Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:10:27.807148870Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:10:27.807151974Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:10:27.807155127Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:10:27.807158452Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:10:27.807204904Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:10:27.807208002Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:10:27.875920181Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:10:27.875925351Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:27.875928883Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:10:27.875932810Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:10:27.875936948Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:27.875940713Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:10:27.877600473Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:10:27.877605531Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:10:27.877610704Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:10:27.877618170Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:10:27.877623235Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:10:27.877627736Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:10:27.877631645Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:10:27.877635382Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:10:27.877638681Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:10:27.877642127Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:10:27.877645466Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:10:30.273043293Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:10:30.361527996Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:10:30.361532485Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:10:30.361534683Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:10:30.361542055Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:10:30.361543496Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:10:30.361547164Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:30.361551352Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:10:30.361555520Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:10:30.361555604Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:10:30.361561084Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:30.363362688Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:10:30.363371956Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:10:30.363377155Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:10:30.363381344Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:10:30.363384879Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:10:30.363388965Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:10:30.363392369Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:10:33.125321991Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:10:33.181046014Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:10:33.181051160Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:33.181054449Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:10:33.181057581Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:10:33.181060669Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:33.181063832Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:10:33.181067233Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:10:33.181070057Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:10:33.181073008Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:10:33.181075795Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:10:33.182750316Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:10:33.182757051Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:10:33.182761157Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:10:33.182764865Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:10:33.182768927Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:10:33.182772367Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:10:33.182776559Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:10:34.017154849Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:10:34.099316684Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:10:34.099328149Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:34.099333639Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:10:34.101142762Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:10:34.101150199Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:34.101156371Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:10:34.101160443Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:10:34.101164127Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:10:34.101168092Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:10:34.101171786Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:10:34.101175351Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:10:34.101179432Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:10:34.101184619Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:10:34.101188271Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:10:34.102650428Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:10:34.102655356Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:10:34.102658725Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:10:34.929622571Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:10:35.022031454Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:10:35.022038646Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:35.022042817Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:10:35.022046333Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:10:35.022049884Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:35.022053581Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:10:35.022057129Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:10:35.022060597Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:10:35.022064237Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:10:35.022067899Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:10:35.025570036Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:10:35.025577287Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:10:35.025581153Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:10:35.025585728Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:10:35.025590713Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:10:35.025596570Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:10:35.025602228Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:10:35.888696089Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:10:35.929259519Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:10:35.929263658Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:10:35.929269619Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:35.929272887Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:10:35.929275842Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:10:35.929278685Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:35.929281500Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:10:35.929285725Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:10:35.929288984Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:10:35.929291939Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:10:35.931234907Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:10:35.931239422Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:10:35.931242433Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:10:35.931245174Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:10:35.931248108Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:10:35.931250738Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:10:35.931253368Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:10:36.917817687Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:10:36.917820473Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:10:36.917823563Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:36.917826724Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:10:36.917829693Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:10:36.917832506Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:36.917835229Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:10:36.917838074Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:10:36.917840886Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:10:36.917843888Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:10:36.918710453Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:10:36.918716899Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:10:36.918723318Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:10:36.918725378Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:10:36.918732730Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:10:36.918750542Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:10:36.918759654Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:10:36.918762849Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:10:37.907646167Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:10:37.907649937Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:10:37.907654081Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:10:37.907657913Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:37.907662481Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:10:37.907668660Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:10:37.907674200Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:10:37.907676230Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:37.907680105Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:10:37.907696899Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:10:37.908814888Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:10:37.908818447Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:10:37.908821835Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:10:37.908825566Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:10:37.908828893Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:10:37.908832537Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:10:37.908835429Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:10:37.908838634Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:10:38.927739010Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:10:38.927743174Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:10:38.927748184Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:38.927752199Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:10:38.927756621Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:10:38.927760941Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:38.927764827Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:10:38.927768890Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:10:38.927773139Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:10:38.927777414Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:10:38.928515318Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:10:38.928518524Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:10:38.928532928Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:10:38.928537009Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:10:38.928540286Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:10:38.928543363Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:10:38.928546415Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:10:38.928549629Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:10:39.500684985Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:10:39.940790766Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:10:39.940791350Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:10:39.940796407Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:10:39.940804851Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:10:39.940813908Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:10:39.940817259Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:39.940821772Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:10:39.940827109Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:10:39.940830879Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:10:39.940859416Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:10:39.941086790Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:10:39.941091621Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:10:39.941096399Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:10:39.941100901Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:10:39.941105511Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:10:39.941110526Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:10:39.941115297Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:18:03.374181419Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:03.374189597Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:18:03.374194233Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:18:03.374198172Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:18:03.374201751Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:18:03.374267431Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:18:03.374270467Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:18:03.374273443Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:03.374276441Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:18:03.374279709Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:18:03.375450166Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:18:03.375471296Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:18:03.375475632Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:18:03.375478847Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:18:03.375482113Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:18:03.375487410Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:18:03.375490610Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:18:03.375493757Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:18:03.681654920Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:18:03.790012074Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:18:03.790016997Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:03.790021006Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:18:03.790025354Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:18:03.790029369Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:03.790033727Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:18:03.790037955Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:18:03.790042266Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:18:03.790046286Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:18:03.790049946Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:18:03.790872421Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:18:03.790876848Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:18:03.790881649Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:18:03.790884820Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:18:03.790888493Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:18:03.790891327Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:18:03.790894227Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:18:04.572346708Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:18:04.689169765Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:18:04.689174318Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:04.689177345Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:18:04.689180418Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:18:04.689183957Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:04.689186802Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:18:04.689189471Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:18:04.689192130Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:18:04.689194775Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:18:04.689197543Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:18:04.690816486Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:18:04.690821308Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:18:04.690824866Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:18:04.690827802Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:18:04.690830729Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:18:04.690835522Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:18:04.690838357Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:18:05.554824133Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:18:05.659944302Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:18:05.659948485Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:05.659952942Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:18:05.659958173Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:18:05.659962197Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:05.659965779Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:18:05.659969380Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:18:05.659972615Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:18:05.659975594Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:18:05.659978579Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:18:05.660925993Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:18:05.660929483Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:18:05.660932817Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:18:05.660935642Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:18:05.660938405Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:18:05.660941340Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:18:05.660944077Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:18:06.526358847Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:18:06.625124496Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:18:06.625130378Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:18:06.625133346Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:06.625139535Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:18:06.625143327Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:18:06.625146690Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:06.625150313Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:18:06.625154571Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:18:06.625160363Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:18:06.625165476Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:18:06.626666162Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:18:06.626669379Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:18:06.626672175Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:18:06.626675384Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:18:06.626678315Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:18:06.626681511Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:18:06.626684134Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:18:07.451915798Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:18:07.544420582Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:18:07.544424284Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:07.544427793Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:18:07.544431659Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:18:07.544437259Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:07.544442025Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:18:07.544445817Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:18:07.544449496Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:18:07.544453146Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:18:07.544456447Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:18:07.546162068Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:18:07.546165991Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:18:07.546168767Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:18:07.546172216Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:18:07.546175181Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:18:07.546177928Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:18:07.546180640Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:18:08.412500582Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:18:08.439272886Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:18:08.439277196Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:08.439280448Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:18:08.439284301Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:18:08.439286996Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:08.439289925Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:18:08.441037152Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:18:08.441040775Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:18:08.441043940Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:18:08.441046663Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:18:08.441049428Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:18:08.441052204Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:18:08.441055066Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:18:08.441057842Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:18:08.441060801Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:18:08.441063853Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:18:08.441066562Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:18:09.462654937Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:18:09.462664103Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:18:09.462668249Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:09.462672506Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:18:09.462676106Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:18:09.462680504Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:09.462685029Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:18:09.462689661Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:18:09.462693526Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:18:09.462697138Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:18:09.464418622Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:18:09.464424826Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:18:09.464428894Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:18:09.464432327Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:18:09.464435926Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:18:09.464439566Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:18:09.464442707Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:18:09.464446079Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:18:10.430268008Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:18:10.430275934Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:18:10.430294721Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:18:10.430299306Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:18:10.430304821Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:10.430310509Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:18:10.430315564Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:18:10.430319346Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:10.430323161Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:18:10.430326710Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:18:10.430958295Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:18:10.430964971Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:18:10.430968879Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-03T04:18:10.430971909Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:18:10.430975448Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:18:10.430979644Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-03T04:18:10.431007918Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:18:10.431010668Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:18:11.445276842Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:11.445284791Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:18:11.445296619Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:18:11.445306925Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:11.445310320Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:18:11.445313567Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:18:11.446825507Z [err]      at oX (/app/artifacts/api-server/dist/index.cjs:542:2859)
+2026-04-03T04:18:11.446829605Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:18:11.446834048Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-03T04:18:11.446838474Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-03T04:18:11.446848607Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-03T04:18:11.446852806Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:18:12.442359024Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:18:12.442364715Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:12.442369243Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:18:12.442375141Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:18:12.442378689Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:18:12.442382069Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:18:12.442385531Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-03T04:18:12.442389072Z [err]      at we (/app/artifacts/api-server/dist/index.cjs:274:975)
+2026-04-03T04:18:12.442394382Z [err]      at eE (/app/artifacts/api-server/dist/index.cjs:274:1306)
+2026-04-03T04:18:12.443626624Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3080)
+2026-04-03T04:18:12.443641497Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-03T04:18:12.443644108Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
