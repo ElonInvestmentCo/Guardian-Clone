@@ -1,0 +1,61 @@
+IMPLEMENT A PIXEL-PERFECT REPLICA OF THE “NEW ON THE BLOG” SUBSCRIPTION BANNER USING THE EXACT VISUAL SPECIFICATIONS PROVIDED. NO COLOR, SPACING, OR STRUCTURE DEVIATIONS ARE PERMITTED.
+
+The component must be rendered as a full-width horizontal banner positioned directly beneath the main navigation bar. The entire container must use a solid background color of rgb(18, 18, 18) (#121212) and include a bottom border line spanning the full width using rgb(33, 46, 51) (#212e33).
+
+On the left side of the banner, render a small “moon dot” indicator. This must be a circular element approximately 6–8px in diameter, vertically centered within the banner, and positioned with consistent left padding. The dot should visually match the subtle glow/indicator style shown in the reference and must sit directly before the text content.
+
+Immediately to the right of the dot, display the label text:
+“New on the blog”
+This text must use the color rgb(245, 249, 252) (#f5f9fc), with clean spacing between the dot and text.
+
+Following this, render the clickable blog title:
+“DAS Trader Pro hotkeys by Peter Benci”
+This must use the exact color rgb(54, 172, 245) (#36acf5), visually distinct from the label text, and aligned inline on the same horizontal row.
+
+On the far right side of the banner, implement the email subscription input group. This must include:
+
+1. An email input field:
+   - Background color: rgb(18, 21, 28) (#12151c)
+   - Border: 1px solid rgb(35, 54, 66) (#233642)
+   - Text color should be readable (light tone)
+   - Placeholder: “Enter your email”
+   - Shape: rectangular with sharp or slightly rounded edges matching screenshot
+   - Must be vertically aligned with the text on the left
+
+2. A “Subscribe” button:
+   - REPLACE the existing button completely
+   - Use the provided design (gradient style from screenshot)
+   - Ensure font weight, padding, and height match input field
+   - Align perfectly to the right of the input with no misalignment
+
+3. A close (×) icon:
+   - Color: rgb(157, 180, 199) (#9db4c7)
+   - Positioned to the right of the Subscribe button
+   - Vertically centered
+   - Must have proper clickable spacing
+
+SPACING AND ALIGNMENT:
+
+- All elements must be vertically centered within the banner
+- Maintain consistent horizontal padding on both left and right sides
+- Ensure equal spacing between:
+  dot → label → blog title → input → button → close icon
+- No element should appear misaligned or offset
+
+RESPONSIVENESS:
+
+- Maintain horizontal layout on desktop
+- On smaller screens, elements may stack or compress proportionally
+- Input field must scale using max-width: 100% without breaking layout
+
+STRICT RULES:
+
+- DO NOT change any provided colors
+- DO NOT approximate spacing — match screenshot visually
+- DO NOT reuse old button styles
+- DO NOT introduce new UI elements
+- DO NOT alter typography hierarchy
+
+EXPECTED RESULT:
+
+A clean, modern, pixel-perfect blog subscription banner that visually matches the reference exactly, with precise alignment, correct color usage, and professional UI consistency consistent with a high-end trading platform.

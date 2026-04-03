@@ -23,36 +23,119 @@ export default function Home() {
     <Layout>
       {/* ── NEWS / BLOG ANNOUNCEMENT BAR ── */}
       {newsBannerVisible && (
-        <div className="fixed top-[65px] left-0 right-0 z-40 bg-[#1c1c1c]">
-          <div className="max-w-[1200px] mx-auto px-4 h-[42px] flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="text-primary text-sm">✦</span>
-              <span className="text-[#aaa] text-xs whitespace-nowrap">New on the blog</span>
+        <div
+          className="fixed top-[65px] left-0 right-0 z-40"
+          style={{
+            backgroundColor: "#121212",
+            borderBottom: "1px solid #212e33",
+          }}
+        >
+          <div
+            className="w-full flex items-center justify-between"
+            style={{
+              height: "44px",
+              paddingLeft: "clamp(16px, 4vw, 56px)",
+              paddingRight: "clamp(16px, 4vw, 44px)",
+            }}
+          >
+            <div className="flex items-center min-w-0" style={{ gap: "10px" }}>
+              <span
+                style={{
+                  width: "8px",
+                  height: "8px",
+                  borderRadius: "50%",
+                  background: "linear-gradient(180deg, #5bc5f0 0%, #0a8fd4 100%)",
+                  flexShrink: 0,
+                  boxShadow: "0 0 4px rgba(54, 172, 245, 0.4)",
+                }}
+              />
+              <span
+                style={{
+                  color: "#f5f9fc",
+                  fontSize: "13px",
+                  fontWeight: 500,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                New on the blog
+              </span>
               <a
                 href="https://www.guardiiantrading.com/how-to-prepare-your-das-trader-pro-for-advanced-hotkeys-scripting/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary text-xs hover:underline truncate"
+                style={{
+                  color: "#36acf5",
+                  fontSize: "13px",
+                  fontWeight: 500,
+                  whiteSpace: "nowrap",
+                  textDecoration: "none",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.textDecoration = "underline"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.textDecoration = "none"; }}
               >
                 DAS Trader Pro hotkeys by Peter Benci
               </a>
             </div>
-            <div className="flex items-center gap-2 flex-shrink-0">
+
+            <div className="flex items-center flex-shrink-0" style={{ gap: "0" }}>
               <input
                 type="email"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="hidden sm:block bg-[#111] border border-white/10 text-white text-xs px-3 h-7 w-44 placeholder-[#555] focus:outline-none focus:border-primary/50"
+                className="hidden sm:block"
+                style={{
+                  backgroundColor: "#12151c",
+                  border: "1px solid #233642",
+                  color: "#c8d8e4",
+                  fontSize: "13px",
+                  padding: "0 14px",
+                  height: "34px",
+                  width: "180px",
+                  outline: "none",
+                  borderRadius: "2px",
+                }}
               />
-              <button className="bg-[#4a7fbd] hover:bg-[#3d6fad] text-white text-xs px-3 h-7 transition-colors whitespace-nowrap">
+              <button
+                className="hidden sm:block"
+                style={{
+                  background: "linear-gradient(135deg, #3a8fd4 0%, #2a6ab5 50%, #4a6ea0 100%)",
+                  color: "#ffffff",
+                  fontSize: "14px",
+                  fontWeight: 600,
+                  padding: "0 20px",
+                  height: "34px",
+                  border: "none",
+                  cursor: "pointer",
+                  whiteSpace: "nowrap",
+                  letterSpacing: "0.02em",
+                  transition: "filter 0.2s ease",
+                }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.filter = "brightness(1.15)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.filter = "brightness(1)"; }}
+              >
                 Subscribe
               </button>
               <button
                 onClick={() => setNewsBannerVisible(false)}
-                className="text-[#666] hover:text-white transition-colors ml-1"
+                style={{
+                  color: "#9db4c7",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "6px 8px",
+                  marginLeft: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "color 0.2s ease",
+                }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#ffffff"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#9db4c7"; }}
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
           </div>
