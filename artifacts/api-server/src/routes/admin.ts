@@ -22,6 +22,8 @@ import {
 import { getPool } from "../lib/db.js";
 import { evaluateRisk } from "../lib/fraud/riskEngine.js";
 import { getAdminCredentials } from "../lib/setupAdmin.js";
+import { validate, AdminLoginSchema, AdminEmailSchema, AdminRejectSchema, AdminResubmitSchema, AdminCreateUserSchema, AdminUpdateUserSchema, AdminAssignRoleSchema, AdminBanSchema, AdminSetBalanceSchema } from "../lib/validation.js";
+import { logSecurity } from "../lib/securityLogger.js";
 
 const router = Router();
 
@@ -98,14 +100,10 @@ router.use("/admin", securityHeaders);
 router.post(
   "/admin/login",
   loginRateLimit,
+  validate(AdminLoginSchema),
   async (req: Request, res: Response): Promise<void> => {
     try {
-      const { username, password } = req.body as { username?: string; password?: string };
-
-      if (!username || !password) {
-        res.status(400).json({ error: "Username and password are required" });
-        return;
-      }
+      const { username, password } = req.body as { username: string; password: string };
 
       const { username: expectedUsername, passwordHash: expectedHash } = getAdminCredentials();
 
@@ -117,6 +115,7 @@ router.post(
 
       if (!usernameMatch || !passwordMatch) {
         await new Promise((r) => setTimeout(r, 400 + Math.random() * 300));
+        logSecurity("ADMIN_LOGIN_FAIL", req, `username: ${username}`);
         res.status(401).json({ error: "Invalid username or password" });
         return;
       }
@@ -130,6 +129,7 @@ router.post(
       );
 
       const expiresAt = Date.now() + SESSION_TTL_MS;
+      logSecurity("ADMIN_LOGIN_SUCCESS", req, `username: ${username}`);
       console.log(`[Admin] LOGIN SUCCESS: ${username} from ${req.ip ?? "unknown"}`);
       res.json({ token, expiresAt });
     } catch (err) {
@@ -247,10 +247,9 @@ router.get("/admin/user-details/:email", async (req: Request, res: Response): Pr
   }
 });
 
-router.post("/admin/approve-user", async (req: Request, res: Response): Promise<void> => {
+router.post("/admin/approve-user", validate(AdminEmailSchema), async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, adminNote } = req.body as { email: string; adminNote?: string };
-    if (!email) { res.status(400).json({ error: "email required" }); return; }
     if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
 
     await setUserStatus(email, "approved");
@@ -275,11 +274,9 @@ router.post("/admin/approve-user", async (req: Request, res: Response): Promise<
   }
 });
 
-router.post("/admin/reject-user", async (req: Request, res: Response): Promise<void> => {
+router.post("/admin/reject-user", validate(AdminRejectSchema), async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email, reason, adminNote } = req.body as { email: string; reason?: string; adminNote?: string };
-    if (!email) { res.status(400).json({ error: "email required" }); return; }
-    if (!reason || !reason.trim()) { res.status(400).json({ error: "Reject reason is required" }); return; }
+    const { email, reason, adminNote } = req.body as { email: string; reason: string; adminNote?: string };
     if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
 
     await setUserStatus(email, "rejected");
@@ -301,10 +298,9 @@ router.post("/admin/reject-user", async (req: Request, res: Response): Promise<v
   }
 });
 
-router.post("/admin/request-resubmission", async (req: Request, res: Response): Promise<void> => {
+router.post("/admin/request-resubmission", validate(AdminResubmitSchema), async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, fields, adminNote } = req.body as { email: string; fields?: string[]; adminNote?: string };
-    if (!email) { res.status(400).json({ error: "email required" }); return; }
     if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
 
     await setUserStatus(email, "resubmit_required");
@@ -329,10 +325,9 @@ router.post("/admin/request-resubmission", async (req: Request, res: Response): 
   }
 });
 
-router.post("/admin/create-user", async (req: Request, res: Response): Promise<void> => {
+router.post("/admin/create-user", validate(AdminCreateUserSchema), async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, displayName, role = "user" } = req.body as { email: string; displayName: string; role?: string };
-    if (!email || !displayName) { res.status(400).json({ error: "email and displayName required" }); return; }
     if (await getUserData(email)) { res.status(409).json({ error: "User already exists" }); return; }
     await createAdminUser(email, displayName, role);
     console.log(`[Admin] CREATED user: ${email} (role: ${role})`);
@@ -343,10 +338,9 @@ router.post("/admin/create-user", async (req: Request, res: Response): Promise<v
   }
 });
 
-router.delete("/admin/delete-user", async (req: Request, res: Response): Promise<void> => {
+router.delete("/admin/delete-user", validate(AdminEmailSchema), async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, adminNote } = req.body as { email: string; adminNote?: string };
-    if (!email) { res.status(400).json({ error: "email required" }); return; }
     if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
     console.log(`[Admin] DELETE user: ${email} — note: ${adminNote ?? "none"}`);
     await deleteUser(email);
@@ -357,10 +351,9 @@ router.delete("/admin/delete-user", async (req: Request, res: Response): Promise
   }
 });
 
-router.post("/admin/update-user", async (req: Request, res: Response): Promise<void> => {
+router.post("/admin/update-user", validate(AdminUpdateUserSchema), async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, firstName, lastName, adminNote } = req.body as { email: string; firstName?: string; lastName?: string; adminNote?: string };
-    if (!email) { res.status(400).json({ error: "email required" }); return; }
     if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
 
     const profile = await getUserProfileData(email);
@@ -381,10 +374,9 @@ router.post("/admin/update-user", async (req: Request, res: Response): Promise<v
   }
 });
 
-router.post("/admin/suspend-user", async (req: Request, res: Response): Promise<void> => {
+router.post("/admin/suspend-user", validate(AdminEmailSchema), async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, adminNote } = req.body as { email: string; adminNote?: string };
-    if (!email) { res.status(400).json({ error: "email required" }); return; }
     if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
     await setUserStatus(email, "suspended");
     const profile = await getUserProfileData(email);
@@ -396,10 +388,9 @@ router.post("/admin/suspend-user", async (req: Request, res: Response): Promise<
   } catch (err) { res.status(500).json({ error: "Failed to suspend user" }); }
 });
 
-router.post("/admin/ban-user", async (req: Request, res: Response): Promise<void> => {
+router.post("/admin/ban-user", validate(AdminBanSchema), async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, reason, adminNote } = req.body as { email: string; reason?: string; adminNote?: string };
-    if (!email) { res.status(400).json({ error: "email required" }); return; }
     if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
     await setUserStatus(email, "banned");
     const profile = await getUserProfileData(email);
@@ -411,10 +402,9 @@ router.post("/admin/ban-user", async (req: Request, res: Response): Promise<void
   } catch (err) { res.status(500).json({ error: "Failed to ban user" }); }
 });
 
-router.post("/admin/reactivate-user", async (req: Request, res: Response): Promise<void> => {
+router.post("/admin/reactivate-user", validate(AdminEmailSchema), async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, adminNote } = req.body as { email: string; adminNote?: string };
-    if (!email) { res.status(400).json({ error: "email required" }); return; }
     if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
     await setUserStatus(email, "approved");
     const profile = await getUserProfileData(email);
@@ -426,10 +416,9 @@ router.post("/admin/reactivate-user", async (req: Request, res: Response): Promi
   } catch (err) { res.status(500).json({ error: "Failed to reactivate user" }); }
 });
 
-router.post("/admin/assign-role", async (req: Request, res: Response): Promise<void> => {
+router.post("/admin/assign-role", validate(AdminAssignRoleSchema), async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, role, adminNote } = req.body as { email: string; role: string; adminNote?: string };
-    if (!email || !role) { res.status(400).json({ error: "email and role required" }); return; }
     if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
     await setUserRole(email, role);
     if (adminNote) {
@@ -456,30 +445,14 @@ router.get("/admin/transaction-types", (_req: Request, res: Response): void => {
   res.json({ types: TRANSACTION_TYPES });
 });
 
-router.post("/admin/set-balance", async (req: Request, res: Response): Promise<void> => {
+router.post("/admin/set-balance", validate(AdminSetBalanceSchema), async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, balance, profit, adminNote, transactionType } = req.body as {
       email: string; balance: number; profit: number;
-      adminNote?: string; transactionType?: string;
+      adminNote: string; transactionType?: string;
     };
-    if (!email || balance === undefined || profit === undefined) {
-      res.status(400).json({ error: "email, balance and profit required" });
-      return;
-    }
-    if (!adminNote || !adminNote.trim()) {
-      res.status(400).json({ error: "Admin note is required for balance changes" });
-      return;
-    }
-    const balNum = Number(balance);
-    const profNum = Number(profit);
-    if (isNaN(balNum) || isNaN(profNum)) {
-      res.status(400).json({ error: "Balance and profit must be valid numbers" });
-      return;
-    }
-    if (balNum < 0) {
-      res.status(400).json({ error: "Balance cannot be negative" });
-      return;
-    }
+    const balNum = balance;
+    const profNum = profit;
     const txType = (transactionType && (TRANSACTION_TYPES as readonly string[]).includes(transactionType))
       ? transactionType as TransactionType
       : "adjustment";

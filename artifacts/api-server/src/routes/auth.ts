@@ -4,6 +4,8 @@ import crypto from "crypto";
 import { sendVerificationEmail, sendPasswordResetEmail } from "../lib/mailer.js";
 import { saveUserCredentials, getStoredPasswordHash, getUserData } from "../lib/userDataStore.js";
 import { sensitiveEndpointLimit } from "../middleware/security.js";
+import { validate, AuthLoginSchema, AuthRegisterSchema, AuthCheckEmailSchema, AuthSendVerificationSchema, AuthVerifyCodeSchema, AuthResetPasswordSchema } from "../lib/validation.js";
+import { logSecurity } from "../lib/securityLogger.js";
 
 const authRouter = Router();
 
@@ -51,14 +53,9 @@ function logAttempt(action: string, email: string, detail?: string) {
   console.log(`[Auth][${ts}] ${action} — email=${email}${detail ? ` ${detail}` : ""}`);
 }
 
-authRouter.post("/auth/check-email", sensitiveEndpointLimit, async (req, res) => {
+authRouter.post("/auth/check-email", sensitiveEndpointLimit, validate(AuthCheckEmailSchema), async (req, res) => {
   try {
-    const rawEmail = (req.body as { email?: string }).email;
-    const email = rawEmail?.trim().toLowerCase();
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      res.status(400).json({ error: "Valid email is required" });
-      return;
-    }
+    const { email } = req.body as { email: string };
     const existing = await getUserData(email);
     res.json({ available: !existing });
   } catch (err) {
@@ -67,21 +64,9 @@ authRouter.post("/auth/check-email", sensitiveEndpointLimit, async (req, res) =>
   }
 });
 
-authRouter.post("/auth/register", sensitiveEndpointLimit, async (req, res) => {
+authRouter.post("/auth/register", sensitiveEndpointLimit, validate(AuthRegisterSchema), async (req, res) => {
   try {
-    const { email, password } = req.body as { email?: string; password?: string };
-    if (!email || !password) {
-      res.status(400).json({ error: "Email and password are required" });
-      return;
-    }
-    if (password.length < 8) {
-      res.status(400).json({ error: "Password must be at least 8 characters" });
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      res.status(400).json({ error: "Valid email is required" });
-      return;
-    }
+    const { email, password } = req.body as { email: string; password: string };
     const existing = await getUserData(email);
     if (existing) {
       logAttempt("REGISTER", email, "rejected — email already registered");
@@ -98,19 +83,15 @@ authRouter.post("/auth/register", sensitiveEndpointLimit, async (req, res) => {
   }
 });
 
-authRouter.post("/auth/login", sensitiveEndpointLimit, async (req, res) => {
+authRouter.post("/auth/login", sensitiveEndpointLimit, validate(AuthLoginSchema), async (req, res) => {
   try {
-    const { email, password } = req.body as { email?: string; password?: string };
-
-    if (!email || !password) {
-      res.status(400).json({ error: "Email and password are required" });
-      return;
-    }
+    const { email, password } = req.body as { email: string; password: string };
 
     const storedHash = await getStoredPasswordHash(email);
     if (!storedHash) {
       await bcrypt.hash("dummy", BCRYPT_ROUNDS);
       logAttempt("LOGIN", email, "failed — no credentials found");
+      logSecurity("AUTH_FAIL", req, "no credentials found", email);
       res.status(401).json({ error: "Invalid email or password" });
       return;
     }
@@ -118,6 +99,7 @@ authRouter.post("/auth/login", sensitiveEndpointLimit, async (req, res) => {
     const valid = await verifyPassword(password, storedHash);
     if (!valid) {
       logAttempt("LOGIN", email, "failed — invalid credentials");
+      logSecurity("AUTH_FAIL", req, "invalid credentials", email);
       res.status(401).json({ error: "Invalid email or password" });
       return;
     }
@@ -136,15 +118,9 @@ authRouter.post("/auth/login", sensitiveEndpointLimit, async (req, res) => {
   }
 });
 
-authRouter.post("/auth/send-verification", sensitiveEndpointLimit, async (req, res) => {
+authRouter.post("/auth/send-verification", sensitiveEndpointLimit, validate(AuthSendVerificationSchema), async (req, res) => {
   try {
-    const rawEmail = (req.body as { email?: string }).email;
-    const email = rawEmail?.trim().toLowerCase();
-
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      res.status(400).json({ error: "Valid email is required" });
-      return;
-    }
+    const { email } = req.body as { email: string };
 
     const existingUser = await getUserData(email);
     if (existingUser) {
@@ -186,14 +162,9 @@ authRouter.post("/auth/send-verification", sensitiveEndpointLimit, async (req, r
   }
 });
 
-authRouter.post("/auth/verify-code", sensitiveEndpointLimit, (req, res) => {
+authRouter.post("/auth/verify-code", sensitiveEndpointLimit, validate(AuthVerifyCodeSchema), (req, res) => {
   try {
-    const { email, code } = req.body as { email?: string; code?: string };
-
-    if (!email || !code) {
-      res.status(400).json({ error: "Email and code are required" });
-      return;
-    }
+    const { email, code } = req.body as { email: string; code: string };
 
     const key = email.toLowerCase();
     const record = verificationCodes.get(key);
@@ -235,14 +206,9 @@ authRouter.post("/auth/verify-code", sensitiveEndpointLimit, (req, res) => {
   }
 });
 
-authRouter.post("/auth/send-reset-code", sensitiveEndpointLimit, async (req, res) => {
+authRouter.post("/auth/send-reset-code", sensitiveEndpointLimit, validate(AuthCheckEmailSchema), async (req, res) => {
   try {
-    const { email } = req.body as { email?: string };
-
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      res.status(400).json({ error: "Valid email is required" });
-      return;
-    }
+    const { email } = req.body as { email: string };
 
     const user = await getUserData(email);
     if (!user) {
@@ -279,19 +245,9 @@ authRouter.post("/auth/send-reset-code", sensitiveEndpointLimit, async (req, res
   }
 });
 
-authRouter.post("/auth/reset-password", sensitiveEndpointLimit, async (req, res) => {
+authRouter.post("/auth/reset-password", sensitiveEndpointLimit, validate(AuthResetPasswordSchema), async (req, res) => {
   try {
-    const { email, code, newPassword } = req.body as { email?: string; code?: string; newPassword?: string };
-
-    if (!email || !code || !newPassword) {
-      res.status(400).json({ error: "Email, code and new password are required" });
-      return;
-    }
-
-    if (newPassword.length < 8) {
-      res.status(400).json({ error: "Password must be at least 8 characters" });
-      return;
-    }
+    const { email, code, newPassword } = req.body as { email: string; code: string; newPassword: string };
 
     const key = email.toLowerCase();
     const record = resetCodes.get(key);

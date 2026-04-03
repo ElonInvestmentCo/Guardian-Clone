@@ -6,6 +6,7 @@ import {
   setUserProfileMeta,
 } from "../lib/userDataStore.js";
 import { userDataLimit, sensitiveEndpointLimit } from "../middleware/security.js";
+import { validate, SignupSaveStepSchema, SignupCompleteStepSchema, SignupGetProgressSchema } from "../lib/validation.js";
 
 const signupRouter = Router();
 
@@ -309,24 +310,12 @@ async function addCompletedStepNumber(email: string, stepNum: number): Promise<n
   return updated;
 }
 
-signupRouter.post("/signup/save-step", sensitiveEndpointLimit, async (req, res) => {
-  const { email: rawEmail, step, data } = req.body as {
-    email?: string;
-    step?: string;
-    data?: Record<string, unknown>;
+signupRouter.post("/signup/save-step", sensitiveEndpointLimit, validate(SignupSaveStepSchema), async (req, res) => {
+  const { email, step, data } = req.body as {
+    email: string;
+    step: string;
+    data: Record<string, unknown>;
   };
-
-  const email = rawEmail?.trim().toLowerCase();
-
-  if (!email || !step || !data) {
-    res.status(400).json({ error: "email, step, and data are required" });
-    return;
-  }
-
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    res.status(400).json({ error: "Invalid email address" });
-    return;
-  }
 
   try {
     await upsertUserStep(email, step, data);
@@ -339,27 +328,13 @@ signupRouter.post("/signup/save-step", sensitiveEndpointLimit, async (req, res) 
   }
 });
 
-signupRouter.post("/signup/complete-step", sensitiveEndpointLimit, async (req, res) => {
-  const { email: rawEmail, stepNumber, stepKey, data } = req.body as {
-    email?: string;
-    stepNumber?: number;
-    stepKey?: string;
-    data?: Record<string, unknown>;
+signupRouter.post("/signup/complete-step", sensitiveEndpointLimit, validate(SignupCompleteStepSchema), async (req, res) => {
+  const { email, stepNumber, stepKey, data } = req.body as {
+    email: string;
+    stepNumber: number;
+    stepKey: string;
+    data: Record<string, unknown>;
   };
-
-  const email = rawEmail?.trim().toLowerCase();
-
-  if (!email || stepNumber === undefined || !stepKey || !data) {
-    res.status(400).json({
-      error: "email, stepNumber, stepKey, and data are required",
-    });
-    return;
-  }
-
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    res.status(400).json({ error: "Invalid email address" });
-    return;
-  }
 
   try {
     const errors = validateStep(stepKey, data);
@@ -397,19 +372,8 @@ signupRouter.post("/signup/complete-step", sensitiveEndpointLimit, async (req, r
   }
 });
 
-signupRouter.get("/signup/get-progress", sensitiveEndpointLimit, async (req, res) => {
-  const { email: rawEmail } = req.query as { email?: string };
-  const email = rawEmail?.trim().toLowerCase();
-
-  if (!email) {
-    res.status(400).json({ error: "email is required" });
-    return;
-  }
-
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    res.status(400).json({ error: "Invalid email address" });
-    return;
-  }
+signupRouter.get("/signup/get-progress", sensitiveEndpointLimit, validate(SignupGetProgressSchema), async (req, res) => {
+  const { email } = (req as unknown as { validatedQuery: { email: string } }).validatedQuery;
 
   try {
     const profile = await getUserProfileData(email);

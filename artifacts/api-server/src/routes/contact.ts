@@ -1,6 +1,8 @@
 import { Router, type IRouter } from "express";
 import { Resend } from "resend";
 import { sensitiveEndpointLimit } from "../middleware/security.js";
+import { validate, ContactSchema } from "../lib/validation.js";
+import { sanitizeForEmail } from "../lib/sanitize.js";
 
 const router: IRouter = Router();
 
@@ -35,41 +37,16 @@ async function getResendClient(): Promise<Resend | null> {
   return null;
 }
 
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
-router.post("/contact", sensitiveEndpointLimit, async (req, res) => {
+router.post("/contact", sensitiveEndpointLimit, validate(ContactSchema), async (req, res) => {
   try {
     const { name, email, subject, message } = req.body as {
-      name?: string; email?: string; subject?: string; message?: string;
+      name: string; email: string; subject: string; message: string;
     };
 
-    if (!name?.trim() || !email?.trim() || !subject?.trim() || !message?.trim()) {
-      res.status(400).json({ error: "All fields are required." });
-      return;
-    }
-
-    if (name.trim().length > 100 || subject.trim().length > 200 || message.trim().length > 5000) {
-      res.status(400).json({ error: "Input exceeds maximum length." });
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
-      res.status(400).json({ error: "Invalid email address." });
-      return;
-    }
-
-    const safeName = escapeHtml(name.trim());
-    const safeEmail = escapeHtml(email.trim());
-    const safeSubject = escapeHtml(subject.trim());
-    const safeMessage = escapeHtml(message.trim());
+    const safeName = sanitizeForEmail(name);
+    const safeEmail = sanitizeForEmail(email);
+    const safeSubject = sanitizeForEmail(subject);
+    const safeMessage = sanitizeForEmail(message);
 
     const client = await getResendClient();
 

@@ -43,10 +43,7 @@ app.use(cors({
   origin: (origin, callback) => {
     if (!origin) { callback(null, true); return; }
     if (allowedOrigins.includes(origin)) { callback(null, true); return; }
-    if (IS_DEV && (origin.endsWith(".replit.dev") || origin.endsWith(".replit.app"))) {
-      callback(null, true);
-      return;
-    }
+    console.warn(`[CORS] Rejected origin: ${origin} — IP: unknown`);
     callback(null, false);
   },
   credentials: true,

@@ -122,6 +122,9 @@ export function securityHeaders(_req: Request, res: Response, next: NextFunction
   res.setHeader("X-Robots-Tag", "noindex, nofollow, noarchive, noimageindex, nosnippet");
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
   res.setHeader("Pragma", "no-cache");
+  res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+  res.setHeader("X-Powered-By", "");
+  res.removeHeader("X-Powered-By");
 
   res.setHeader(
     "Content-Security-Policy",
@@ -145,13 +148,17 @@ export function securityHeaders(_req: Request, res: Response, next: NextFunction
 }
 
 export const globalRateLimit = rateLimit({
-  windowMs: 60 * 1000,
+  windowMs: 15 * 60 * 1000,
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: "Too many requests. Please slow down." },
   skip: (req) => req.path === "/healthz",
   validate: { xForwardedForHeader: false },
+  handler: (_req, res, _next, options) => {
+    console.warn(`[Security] Rate limit hit — IP: ${_req.ip ?? "unknown"}, Path: ${_req.path}`);
+    res.status(options.statusCode).json(options.message);
+  },
 });
 
 export const sensitiveEndpointLimit = rateLimit({

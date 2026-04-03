@@ -15,6 +15,7 @@ import {
 } from "../lib/userDataStore.js";
 import { getPool } from "../lib/db.js";
 import { userDataLimit, sensitiveEndpointLimit } from "../middleware/security.js";
+import { validate, ProfileUpdateSchema, ChangePasswordSchema, NotificationPrefsSchema, AuthCheckEmailSchema, KycResubmitSchema } from "../lib/validation.js";
 
 const BCRYPT_ROUNDS = 12;
 
@@ -179,33 +180,9 @@ profileRouter.delete("/user/profile-picture", userDataLimit, async (req, res) =>
   }
 });
 
-profileRouter.post("/user/update-profile", userDataLimit, async (req, res) => {
+profileRouter.post("/user/update-profile", userDataLimit, validate(ProfileUpdateSchema), async (req, res) => {
   try {
     const { email, firstName, lastName, phone, country, state, city } = req.body as Record<string, string>;
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { res.status(400).json({ error: "Valid email is required" }); return; }
-
-    const NAME_RE = /^[a-zA-Z\s'-]{1,50}$/;
-    const PHONE_RE = /^[0-9()+\-.\s]{7,20}$/;
-    const LOCATION_RE = /^[a-zA-Z0-9\s'-]{1,100}$/;
-
-    if (firstName !== undefined && firstName.length > 0 && !NAME_RE.test(firstName)) {
-      res.status(400).json({ error: "Invalid first name format" }); return;
-    }
-    if (lastName !== undefined && lastName.length > 0 && !NAME_RE.test(lastName)) {
-      res.status(400).json({ error: "Invalid last name format" }); return;
-    }
-    if (phone !== undefined && phone.length > 0 && !PHONE_RE.test(phone)) {
-      res.status(400).json({ error: "Invalid phone number format" }); return;
-    }
-    if (country !== undefined && country.length > 0 && !LOCATION_RE.test(country)) {
-      res.status(400).json({ error: "Invalid country format" }); return;
-    }
-    if (state !== undefined && state.length > 0 && !LOCATION_RE.test(state)) {
-      res.status(400).json({ error: "Invalid state format" }); return;
-    }
-    if (city !== undefined && city.length > 0 && !LOCATION_RE.test(city)) {
-      res.status(400).json({ error: "Invalid city format" }); return;
-    }
 
     const profile = await getUserProfileData(email);
     if (!profile["email"]) { res.status(404).json({ error: "User not found" }); return; }
@@ -225,17 +202,9 @@ profileRouter.post("/user/update-profile", userDataLimit, async (req, res) => {
   }
 });
 
-profileRouter.post("/user/change-password", sensitiveEndpointLimit, async (req, res) => {
+profileRouter.post("/user/change-password", sensitiveEndpointLimit, validate(ChangePasswordSchema), async (req, res) => {
   try {
     const { email, currentPassword, newPassword } = req.body as Record<string, string>;
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !currentPassword || !newPassword) {
-      res.status(400).json({ error: "Valid email, currentPassword, and newPassword are required" });
-      return;
-    }
-    if (newPassword.length < 8) {
-      res.status(400).json({ error: "New password must be at least 8 characters" });
-      return;
-    }
     const storedHash = await getStoredPasswordHash(email);
     if (!storedHash) {
       res.status(404).json({ error: "No credentials found for this user" });
@@ -255,11 +224,9 @@ profileRouter.post("/user/change-password", sensitiveEndpointLimit, async (req, 
   }
 });
 
-profileRouter.post("/user/update-notifications", userDataLimit, async (req, res) => {
+profileRouter.post("/user/update-notifications", userDataLimit, validate(NotificationPrefsSchema), async (req, res) => {
   try {
-    const { email, preferences } = req.body as { email?: string; preferences?: Record<string, boolean> };
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { res.status(400).json({ error: "Valid email is required" }); return; }
-    if (!preferences) { res.status(400).json({ error: "preferences are required" }); return; }
+    const { email, preferences } = req.body as { email: string; preferences: Record<string, boolean> };
     await setUserProfileMeta(email, "_notificationPreferences", {
       ...preferences,
       updatedAt: new Date().toISOString(),
