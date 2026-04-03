@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
 import AnalyticsLayout from "@/components/analytics/AnalyticsLayout";
 import { Lightbulb, AlertTriangle, CheckCircle, Info, RefreshCw } from "lucide-react";
 import { useLocation, Link } from "wouter";
@@ -104,7 +105,7 @@ export default function Insights() {
             onClick={() => void load()}
             className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors"
           >
-            <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+            {loading ? <img src={spinnerImg} alt="" className="spinner-img-rotate" style={{ width: 14, height: 14 }} /> : <RefreshCw size={14} />}
             Refresh
           </button>
         </div>

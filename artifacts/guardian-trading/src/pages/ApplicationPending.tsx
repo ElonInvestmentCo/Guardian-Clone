@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "wouter";
+import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
 import { checkApplicationStatus } from "@/lib/saveStep";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";
@@ -280,9 +281,7 @@ export default function ApplicationPending() {
                   }}
                 >
                   {checking && (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3a7bd5" strokeWidth="2" className="animate-spin">
-                      <circle cx="12" cy="12" r="10" strokeDasharray="31.4" strokeDashoffset="10" />
-                    </svg>
+                    <img src={spinnerImg} alt="" className="spinner-img-rotate" style={{ width: 16, height: 16 }} />
                   )}
                   {checking ? "Checking..." : "Check Verification Status"}
                 </button>

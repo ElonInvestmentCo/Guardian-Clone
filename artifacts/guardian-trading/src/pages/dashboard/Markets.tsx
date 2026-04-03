@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
 import {
   ResponsiveContainer, ComposedChart, Bar, XAxis, YAxis,
   CartesianGrid, Tooltip, Line, AreaChart, Area,
@@ -202,7 +203,7 @@ export default function Markets() {
 
             {chartLoading ? (
               <div style={{ height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <div style={{ width: "24px", height: "24px", border: "2px solid #E5E7EB", borderTopColor: colors.accent, borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+                <img src={spinnerImg} alt="Loading" className="spinner-img-rotate" style={{ width: 24, height: 24 }} />
               </div>
             ) : (
               <ResponsiveContainer width="100%" height={300}>
@@ -235,8 +236,7 @@ export default function Markets() {
 
         {loading ? (
           <div style={{ display: "flex", justifyContent: "center", padding: "60px 0" }}>
-            <div style={{ width: "32px", height: "32px", border: "3px solid #E5E7EB", borderTopColor: colors.accent, borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            <img src={spinnerImg} alt="Loading" className="spinner-img-rotate" style={{ width: 32, height: 32 }} />
           </div>
         ) : (
           <div style={{

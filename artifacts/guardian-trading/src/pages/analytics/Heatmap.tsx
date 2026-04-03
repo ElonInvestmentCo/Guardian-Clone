@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
 import AnalyticsLayout from "@/components/analytics/AnalyticsLayout";
 import { Flame, MousePointer, Layers, BarChart2 } from "lucide-react";
 import { useLocation, Link } from "wouter";
@@ -259,7 +260,7 @@ export default function Heatmap() {
 
             {loading || rendering ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                <div className="w-10 h-10 border-2 border-orange-500/30 border-t-orange-500 rounded-full animate-spin" />
+                <img src={spinnerImg} alt="Loading" className="spinner-img-rotate" style={{ width: 40, height: 40 }} />
                 <span className="text-white/30 text-sm">{loading ? "Loading data…" : "Rendering heatmap…"}</span>
               </div>
             ) : points.length === 0 ? (

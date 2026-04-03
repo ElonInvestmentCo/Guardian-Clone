@@ -1,6 +1,7 @@
 import { useLocation, Link } from "wouter";
 import { useState, useEffect } from "react";
 import { getApiBase } from "@/lib/api";
+import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
 import {
   LayoutDashboard, Briefcase, ShoppingCart, PieChart,
   FileText, Settings, LogOut, Sun, Moon, Search, Bell,
@@ -126,8 +127,7 @@ export default function DashboardLayout({ children }: Props) {
   if (!gateChecked) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: colors.bg }}>
-        <div style={{ width: "32px", height: "32px", border: "3px solid #E5E7EB", borderTopColor: "#3b82f6", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        <img src={spinnerImg} alt="Loading" className="spinner-img-rotate" style={{ width: 32, height: 32 }} />
       </div>
     );
   }

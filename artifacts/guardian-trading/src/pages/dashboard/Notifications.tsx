@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Bell, Check, CheckCheck, ExternalLink } from "lucide-react";
+import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
 import { useLocation } from "wouter";
@@ -104,8 +105,7 @@ export default function NotificationsPage() {
 
         {loading ? (
           <div style={{ display: "flex", justifyContent: "center", padding: "60px 0" }}>
-            <div style={{ width: "32px", height: "32px", border: "3px solid #E5E7EB", borderTopColor: colors.accent, borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            <img src={spinnerImg} alt="Loading" className="spinner-img-rotate" style={{ width: 32, height: 32 }} />
           </div>
         ) : notifications.length === 0 ? (
           <div style={{ textAlign: "center", padding: "60px 20px" }}>

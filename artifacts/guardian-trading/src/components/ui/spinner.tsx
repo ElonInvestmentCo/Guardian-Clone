@@ -1,13 +1,15 @@
-import { Loader2Icon } from "lucide-react"
-
 import { cn } from "@/lib/utils"
+import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
 
-function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
+function Spinner({ className, ...props }: React.ComponentProps<"img">) {
   return (
-    <Loader2Icon
+    <img
+      src={spinnerImg}
       role="status"
       aria-label="Loading"
-      className={cn("size-4 animate-spin", className)}
+      alt=""
+      draggable={false}
+      className={cn("size-4 spinner-img-rotate", className)}
       {...props}
     />
   )

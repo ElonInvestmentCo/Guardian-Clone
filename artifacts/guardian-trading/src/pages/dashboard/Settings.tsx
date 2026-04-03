@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { getApiBase } from "@/lib/api";
+import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
 import { User, Lock, BellRing, ChevronRight, Eye, EyeOff, Check, Shield, Copy, Download, AlertTriangle } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme, type ThemeColors } from "@/context/ThemeContext";
@@ -333,8 +334,7 @@ export default function Settings() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-64">
-          <div style={{ width: "28px", height: "28px", border: "3px solid #E5E7EB", borderTopColor: "#3b82f6", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+          <img src={spinnerImg} alt="Loading" className="spinner-img-rotate" style={{ width: 28, height: 28 }} />
         </div>
       </DashboardLayout>
     );

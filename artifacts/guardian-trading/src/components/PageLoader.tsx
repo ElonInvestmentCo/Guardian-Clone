@@ -1,47 +1,6 @@
 import { useLoading } from "@/context/LoadingContext";
 import { useEffect } from "react";
-
-const BAR_COUNT = 12;
-
-function SpinnerBars({ size = 40 }: { size?: number }) {
-  const bars = Array.from({ length: BAR_COUNT }, (_, i) => {
-    const angle = (360 / BAR_COUNT) * i;
-    const opacity = 1 - (i / BAR_COUNT) * 0.75;
-    return (
-      <div
-        key={i}
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          width: `${size * 0.12}px`,
-          height: `${size * 0.32}px`,
-          borderRadius: `${size * 0.06}px`,
-          backgroundColor: "#555",
-          opacity,
-          transform: `rotate(${angle}deg) translateY(-${size * 0.36}px)`,
-          transformOrigin: "50% 0%",
-        }}
-      />
-    );
-  });
-
-  return (
-    <div
-      className="spinner-bars-rotate"
-      style={{
-        position: "relative",
-        width: `${size}px`,
-        height: `${size}px`,
-        flexShrink: 0,
-      }}
-      role="status"
-      aria-label="Loading"
-    >
-      {bars}
-    </div>
-  );
-}
+import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
 
 export function PageLoader() {
   const { isLoading } = useLoading();
@@ -71,7 +30,7 @@ export function PageLoader() {
         style={{
           position: "absolute",
           inset: 0,
-          backgroundColor: "rgba(255,255,255,0.65)",
+          backgroundColor: "rgba(0,0,0,0.70)",
           backdropFilter: "blur(6px)",
           WebkitBackdropFilter: "blur(6px)",
         }}
@@ -85,19 +44,13 @@ export function PageLoader() {
           gap: "14px",
         }}
       >
-        <SpinnerBars size={44} />
-        <span
-          style={{
-            fontSize: "14px",
-            fontWeight: 500,
-            color: "#555",
-            letterSpacing: "0.01em",
-            userSelect: "none",
-            fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-          }}
-        >
-          Loading...
-        </span>
+        <img
+          src={spinnerImg}
+          alt="Loading"
+          className="spinner-img-rotate"
+          style={{ width: 48, height: 48 }}
+          draggable={false}
+        />
       </div>
     </div>
   );

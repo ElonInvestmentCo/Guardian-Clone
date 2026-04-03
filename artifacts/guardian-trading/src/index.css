@@ -118,6 +118,15 @@
   animation: spinner-bars-rotate 1s steps(12) infinite;
 }
 
+@keyframes spinner-img-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.spinner-img-rotate {
+  animation: spinner-img-spin 1s linear infinite;
+}
+
 .gt-nav-link {
   position: relative;
   display: inline-flex;

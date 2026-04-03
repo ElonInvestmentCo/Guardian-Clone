@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
 import AnalyticsLayout from "@/components/analytics/AnalyticsLayout";
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -212,14 +213,14 @@ export default function Dashboard() {
               ))}
             </div>
             <button onClick={() => void load()} className="text-white/40 hover:text-white transition-colors">
-              <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+              {loading ? <img src={spinnerImg} alt="" className="spinner-img-rotate" style={{ width: 16, height: 16 }} /> : <RefreshCw size={16} />}
             </button>
           </div>
         </div>
 
         {loading && !overview ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+            <img src={spinnerImg} alt="Loading" className="spinner-img-rotate" style={{ width: 32, height: 32 }} />
           </div>
         ) : (
           <>

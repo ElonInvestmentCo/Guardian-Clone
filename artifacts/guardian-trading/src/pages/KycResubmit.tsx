@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
 import { getApiBase } from "@/lib/api";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
+import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
 
 const FIELD_TO_STEP: Record<string, { step: string; fields: { key: string; label: string; type?: string; options?: string[] }[] }> = {
   "Personal Details": {
@@ -190,8 +191,7 @@ export default function KycResubmit() {
   if (loading) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: "#f4f4f4" }}>
-        <div style={{ width: "32px", height: "32px", border: "3px solid #E5E7EB", borderTopColor: "#3a7bd5", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        <img src={spinnerImg} alt="Loading" className="spinner-img-rotate" style={{ width: 32, height: 32 }} />
       </div>
     );
   }
