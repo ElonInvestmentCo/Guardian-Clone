@@ -1,0 +1,13 @@
+2026-04-03T04:23:45.004376781Z [inf]  Starting Container
+2026-04-03T04:23:46.254730445Z [inf]  [Startup] Admin credentials configured
+2026-04-03T04:23:46.254755109Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T04:23:46.254761667Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T04:23:46.254771843Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T04:23:46.254780651Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-D6BY8fpt.css, index-kcw9hQCp.js
+2026-04-03T04:23:46.254798568Z [inf]  [Startup] Database initialized
+2026-04-03T04:23:46.254799050Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T04:23:46.254811084Z [inf]  [Admin] Credentials loaded from environment variables.
+2026-04-03T04:23:46.254817792Z [inf]  [Static] guardian-trading files: _redirects, assets, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt
+2026-04-03T04:23:46.254824372Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-benzinga-short-selling-review-1-846x218-1_1773952971025-B97T-03b.jpg, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CO9Ag1dA.js, index-DjIjp0sb.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T04:23:46.254843585Z [inf]  [DB] Database tables initialized successfully
+2026-04-03T04:23:47.678230981Z [inf]  Server listening on port 3000
