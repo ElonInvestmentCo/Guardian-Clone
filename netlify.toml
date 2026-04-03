@@ -9,6 +9,29 @@
   [build.environment]
     NODE_VERSION = "20"
 
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+    X-DNS-Prefetch-Control = "off"
+    X-Download-Options = "noopen"
+    X-Permitted-Cross-Domain-Policies = "none"
+
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate, private"
+    Pragma = "no-cache"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive, noimageindex, nosnippet"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

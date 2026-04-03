@@ -10,6 +10,23 @@ const KNOWN_BOT_PATTERNS = [
   /go-http-client/i, /java\//i, /libwww/i, /mechanize/i,
   /scrapy/i, /node-fetch/i, /axios/i, /undici/i,
   /httrack/i, /nikto/i, /sqlmap/i, /nmap/i, /masscan/i,
+  /GPTBot/i, /ChatGPT-User/i, /CCBot/i, /anthropic-ai/i, /Claude-Web/i,
+  /Google-Extended/i, /Bytespider/i, /PetalBot/i, /Amazonbot/i,
+  /FacebookBot/i, /Meta-ExternalAgent/i, /Meta-ExternalFetcher/i,
+  /Applebot/i, /Twitterbot/i, /LinkedInBot/i, /Slackbot/i,
+  /Discordbot/i, /TelegramBot/i, /WhatsApp/i,
+  /SemrushBot/i, /AhrefsBot/i, /MJ12bot/i, /DotBot/i, /BLEXBot/i,
+  /DataForSeoBot/i, /serpstatbot/i, /Rogerbot/i,
+  /archive\.org_bot/i, /Wayback/i, /Nutch/i, /Heritrix/i,
+  /colly/i, /ferret/i, /webbandit/i, /sitecopy/i, /teleport/i,
+  /webstripper/i, /webzip/i, /grab/i, /offline\s?explorer/i,
+  /superagent/i, /got\//i, /needle\//i, /request\//i,
+  /aiohttp/i, /httpx/i, /requests\//i, /urllib3/i,
+  /cfnetwork/i, /okhttp/i, /apache-httpclient/i,
+  /WebCopier/i, /NetAnts/i, /Teleport/i, /PageGrabber/i,
+  /JetCar/i, /Ezooms/i, /Exabot/i, /Gigabot/i,
+  /MegaIndex/i, /Cliqzbot/i, /Qwantify/i,
+  /PerplexityBot/i, /YouBot/i, /Diffbot/i, /Cohere-ai/i,
 ];
 
 const HEADLESS_SIGNALS = [
@@ -49,6 +66,10 @@ function getSuspiciousScore(req: Request): number {
 }
 
 export function botDetection(req: Request, res: Response, next: NextFunction): void {
+  if (req.path === "/healthz" || req.path === "/api/healthz") {
+    return next();
+  }
+
   const ua = req.headers["user-agent"] ?? "";
   const ip = req.ip ?? "unknown";
   const now = Date.now();
@@ -59,19 +80,29 @@ export function botDetection(req: Request, res: Response, next: NextFunction): v
     return;
   }
 
-  if (isSuspiciousUA(ua) && !req.path.startsWith("/api/healthz")) {
-    const score = getSuspiciousScore(req);
-    if (score >= 5) {
-      const current = suspiciousIPs.get(ip) ?? { count: 0, blockedUntil: 0 };
-      current.count++;
-      if (current.count >= 3) {
-        current.blockedUntil = now + 10 * 60 * 1000;
-      }
-      suspiciousIPs.set(ip, current);
-
-      res.status(403).json({ error: "Access denied" });
-      return;
+  if (isSuspiciousUA(ua)) {
+    console.warn(`[Security] Bot blocked — IP: ${ip}, UA: ${ua}, Path: ${req.path}`);
+    const current = suspiciousIPs.get(ip) ?? { count: 0, blockedUntil: 0 };
+    current.count++;
+    if (current.count >= 3) {
+      current.blockedUntil = now + 10 * 60 * 1000;
     }
+    suspiciousIPs.set(ip, current);
+    res.status(403).json({ error: "Access denied" });
+    return;
+  }
+
+  const score = getSuspiciousScore(req);
+  if (score >= 5) {
+    console.warn(`[Security] Suspicious client blocked — IP: ${ip}, Score: ${score}, UA: ${ua}`);
+    const current = suspiciousIPs.get(ip) ?? { count: 0, blockedUntil: 0 };
+    current.count++;
+    if (current.count >= 3) {
+      current.blockedUntil = now + 10 * 60 * 1000;
+    }
+    suspiciousIPs.set(ip, current);
+    res.status(403).json({ error: "Access denied" });
+    return;
   }
 
   next();
@@ -88,6 +119,9 @@ export function securityHeaders(_req: Request, res: Response, next: NextFunction
   res.setHeader("X-Permitted-Cross-Domain-Policies", "none");
   res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
   res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  res.setHeader("X-Robots-Tag", "noindex, nofollow, noarchive, noimageindex, nosnippet");
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  res.setHeader("Pragma", "no-cache");
 
   res.setHeader(
     "Content-Security-Policy",

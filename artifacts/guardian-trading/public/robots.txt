@@ -6,6 +6,9 @@ Disallow: /settings/
 Disallow: /signup/
 Disallow: /login
 Disallow: /email-verification
+Disallow: /client-portal/
+Disallow: /kyc/
+Disallow: /profile/
 
 User-agent: GPTBot
 Disallow: /
@@ -19,10 +22,115 @@ Disallow: /
 User-agent: anthropic-ai
 Disallow: /
 
+User-agent: Claude-Web
+Disallow: /
+
 User-agent: Google-Extended
 Disallow: /
 
 User-agent: FacebookBot
+Disallow: /
+
+User-agent: Meta-ExternalAgent
+Disallow: /
+
+User-agent: Meta-ExternalFetcher
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: Applebot
+Disallow: /
+
+User-agent: Twitterbot
+Disallow: /
+
+User-agent: LinkedInBot
+Disallow: /
+
+User-agent: Slackbot
+Disallow: /
+
+User-agent: Discordbot
+Disallow: /
+
+User-agent: TelegramBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+User-agent: serpstatbot
+Disallow: /
+
+User-agent: Rogerbot
+Disallow: /
+
+User-agent: archive.org_bot
+Disallow: /
+
+User-agent: ia_archiver
+Disallow: /
+
+User-agent: Nutch
+Disallow: /
+
+User-agent: Heritrix
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: YouBot
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+User-agent: Cohere-ai
+Disallow: /
+
+User-agent: Baiduspider
+Disallow: /
+
+User-agent: YandexBot
+Disallow: /
+
+User-agent: Sogou
+Disallow: /
+
+User-agent: Exabot
+Disallow: /
+
+User-agent: MegaIndex
+Disallow: /
+
+User-agent: Cliqzbot
+Disallow: /
+
+User-agent: Qwantify
 Disallow: /
 
 Sitemap: https://guardiiantrading.com/sitemap.xml
