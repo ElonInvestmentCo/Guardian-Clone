@@ -23,7 +23,7 @@ export default function Home() {
     <Layout>
       {/* ── NEWS / BLOG ANNOUNCEMENT BAR ── */}
       {newsBannerVisible && (
-        <div style={{ backgroundColor: "#121212", marginTop: "65px" }}>
+        <div style={{ backgroundColor: "#141414", marginTop: "65px" }}>
           <div
             className="flex items-center justify-between"
             style={{
@@ -31,8 +31,7 @@ export default function Home() {
               margin: "0 auto",
               height: "44px",
               padding: "0 24px",
-              borderLeft: "1px solid #212e33",
-              borderRight: "1px solid #212e33",
+              backgroundColor: "#121212",
               borderBottom: "1px solid #212e33",
             }}
           >
@@ -146,7 +145,7 @@ export default function Home() {
         style={{
           paddingTop: newsBannerVisible ? "60px" : "125px",
           paddingBottom: "80px",
-          backgroundColor: "#151515",
+          backgroundColor: "#141414",
           minHeight: "520px",
         }}
       >
@@ -190,14 +189,16 @@ export default function Home() {
       </section>
 
       {/* ── BENZINGA AWARD BANNER ── */}
-      <img
-        src="/benzinga-review.jpg"
-        alt="Reviewed by Benzinga 2024 — Preferred Broker for Short Selling"
-        width={846}
-        height={218}
-        loading="lazy"
-        style={{ display: "block", width: "846px", maxWidth: "100%", height: "auto", aspectRatio: "846 / 218", margin: "0 auto" }}
-      />
+      <div style={{ backgroundColor: "#141414" }}>
+        <img
+          src="/benzinga-review.jpg"
+          alt="Reviewed by Benzinga 2024 — Preferred Broker for Short Selling"
+          width={846}
+          height={218}
+          loading="lazy"
+          style={{ display: "block", width: "846px", maxWidth: "100%", height: "auto", aspectRatio: "846 / 218", margin: "0 auto" }}
+        />
+      </div>
 
       {/* ── WHY DO ACTIVE TRADERS USE GUARDIAN? ── */}
       <section id="services" className="bg-[#222222] py-20 px-4">
