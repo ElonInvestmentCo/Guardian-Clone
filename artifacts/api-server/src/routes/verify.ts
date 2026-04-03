@@ -27,11 +27,6 @@ function requireAdminOrInternal(req: Request, res: Response, next: NextFunction)
   res.status(403).json({ error: "This endpoint requires admin or internal authentication" });
 }
 
-/**
- * POST /api/signup/verify
- * Mark a user's application as verified and send the confirmation email.
- * Protected: requires admin JWT or internal API key.
- */
 verifyRouter.post("/signup/verify", requireAdminOrInternal, async (req, res) => {
   const { email } = req.body as { email?: string };
 
@@ -40,14 +35,14 @@ verifyRouter.post("/signup/verify", requireAdminOrInternal, async (req, res) => 
     return;
   }
 
-  const user = getUserData(email);
+  const user = await getUserData(email);
   if (!user) {
     res.status(404).json({ error: "User not found" });
     return;
   }
 
   try {
-    setUserStatus(email, "verified");
+    await setUserStatus(email, "verified");
 
     sendAccountVerifiedEmail(email).catch((err) => {
       console.error("[verify] Failed to send verified email:", err);
@@ -61,11 +56,7 @@ verifyRouter.post("/signup/verify", requireAdminOrInternal, async (req, res) => 
   }
 });
 
-/**
- * GET /api/signup/status?email=...
- * Return the current application status for a user.
- */
-verifyRouter.get("/signup/status", (req, res) => {
+verifyRouter.get("/signup/status", async (req, res) => {
   const email = req.query["email"] as string | undefined;
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -73,7 +64,7 @@ verifyRouter.get("/signup/status", (req, res) => {
     return;
   }
 
-  const user = getUserData(email);
+  const user = await getUserData(email);
   if (!user) {
     res.json({ status: "not_found" });
     return;
@@ -86,7 +77,7 @@ verifyRouter.get("/signup/status", (req, res) => {
   };
 
   if (userStatus === "rejected" || userStatus === "resubmit") {
-    const profile = getUserProfileData(email);
+    const profile = await getUserProfileData(email);
     const auditLog = (profile._auditLog as Array<Record<string, unknown>>) ?? [];
 
     if (userStatus === "rejected") {

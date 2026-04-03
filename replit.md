@@ -22,12 +22,12 @@ Guardian Trading is structured as a pnpm monorepo, utilizing Node.js 24 and Type
 ### Technical Implementations
 - **Monorepo Tool**: pnpm workspaces manage the project's structure.
 - **API Framework**: Express 5 is used for the backend API server.
-- **Database**: PostgreSQL with Drizzle ORM for data persistence.
+- **Database**: PostgreSQL (Railway-hosted) for all persistent data. Connection via `PG_DATABASE_URL` env var. Tables: `users` (JSONB), `user_profiles` (JSONB), `chat_conversations` (JSONB), `user_documents` (BYTEA for file storage). All data store functions are async (return Promises). Database initialized on server startup via `initDatabase()`.
 - **Validation**: Zod is used for API request/response validation and schema generation.
 - **API Codegen**: Orval generates React Query hooks and Zod schemas from an OpenAPI specification.
 - **Build System**: esbuild for CJS bundles.
 - **TypeScript & Composite Projects**: Utilizes TypeScript's composite projects for efficient type-checking and dependency management across packages.
-- **Signup Data Storage**: User data, including sensitive fields, is encrypted (AES-256-GCM) and stored securely on disk with atomic file writes and file locking to prevent race conditions.
+- **Signup Data Storage**: User data, including sensitive fields, is encrypted (AES-256-GCM) and stored in PostgreSQL JSONB columns. Document files (ID uploads, profile pictures) stored as BYTEA in `user_documents` table — no ephemeral filesystem dependency.
 - **KYC Flow Gate**: Integrates with the backend to manage user access based on KYC status, redirecting users to appropriate pages (onboarding, pending, dashboard).
 - **Notifications System**: Features real-time notifications with polling for unread counts and type-colored cards.
 - **AI Trading Assistant**: A floating chat widget in the dashboard with streaming SSE messages. The backend uses an AI service abstraction layer (`AiProvider` interface) supporting Grok (xAI) and OpenAI, building system prompts with portfolio/market/staking context.
@@ -62,8 +62,9 @@ Guardian Trading is structured as a pnpm monorepo, utilizing Node.js 24 and Type
 - **Forgot Password**: Full end-to-end flow — `POST /api/auth/send-reset-code` → Resend email with 6-digit code (10min expiry) → `POST /api/auth/reset-password` with code + new password. Frontend at `/forgot-password`.
 
 ### Deployment
-- **Target**: Always-on VM (`deploymentTarget = "vm"`) for persistent file storage (user data, documents, profile pictures stored on disk).
+- **Target**: Railway.com (backend + admin at `https://guardian-clone-production.up.railway.app`), Netlify (frontend at `www.guardiiantrading.com`).
 - **Production routing**: Single Express server serves trading app at `/`, admin dashboard at `/admin-kyc/`, and API at `/api/`.
+- **Data persistence**: All user data persists in Railway PostgreSQL (`PG_DATABASE_URL`). No filesystem dependency for user data — Railway's ephemeral filesystem is not used for storage.
 
 ### Admin KYC Navigation
 - **KYC Queue side panel** (UserPanel): Quick overview with Profile/Risk/Audit tabs and admin actions (approve/reject/resubmit). "Full Profile →" button navigates to the detailed UserProfileView.

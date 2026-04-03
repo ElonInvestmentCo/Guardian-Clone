@@ -27,27 +27,19 @@ function requireAuth(req: Request, res: Response, next: NextFunction): void {
   res.status(401).json({ error: "Authentication required" });
 }
 
-function readMasterEmails(): string[] {
-  try {
-    return Object.keys(readMaster());
-  } catch {
-    return [];
-  }
-}
-
-router.post("/api/fraud/risk-score", requireAuth, (req: Request, res: Response): void => {
+router.post("/api/fraud/risk-score", requireAuth, async (req: Request, res: Response): Promise<void> => {
   try {
     const { email } = req.body as { email?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
 
-    const result  = evaluateRisk(email, req.ip);
-    const profile = getUserProfileData(email);
+    const result  = await evaluateRisk(email, req.ip);
+    const profile = await getUserProfileData(email);
 
     const history: RiskScore[] = (profile._riskHistory as RiskScore[] | undefined) ?? [];
     history.push(result);
     if (history.length > 20) history.splice(0, history.length - 20);
-    setUserProfileMeta(email, "_riskHistory", history);
-    setUserProfileMeta(email, "_latestRisk",  result);
+    await setUserProfileMeta(email, "_riskHistory", history);
+    await setUserProfileMeta(email, "_latestRisk",  result);
 
     res.json(result);
   } catch (err) {
@@ -56,22 +48,28 @@ router.post("/api/fraud/risk-score", requireAuth, (req: Request, res: Response):
   }
 });
 
-router.get("/api/fraud/risk-events", requireAuth, (req: Request, res: Response): void => {
+router.get("/api/fraud/risk-events", requireAuth, async (req: Request, res: Response): Promise<void> => {
   try {
     const minScore = parseInt(String(req.query.minScore ?? "0"));
     const level    = req.query.level as string | undefined;
 
-    const emails = readMasterEmails();
-    const events = emails
-      .map((email) => {
-        const profile = getUserProfileData(email);
-        return (profile._latestRisk as RiskScore | undefined) ?? evaluateRisk(email);
-      })
+    const master = await readMaster();
+    const emails = Object.keys(master);
+    const events: RiskScore[] = [];
+
+    for (const email of emails) {
+      const profile = await getUserProfileData(email);
+      const cached = profile._latestRisk as RiskScore | undefined;
+      const risk = cached ?? await evaluateRisk(email);
+      events.push(risk);
+    }
+
+    const filtered = events
       .filter((r) => r.score >= minScore)
       .filter((r) => !level || r.level === level)
       .sort((a, b) => b.score - a.score);
 
-    res.json({ total: events.length, events });
+    res.json({ total: filtered.length, events: filtered });
   } catch (err) {
     console.error("[Fraud] risk-events error:", err);
     res.status(500).json({ error: "Failed to load risk events" });

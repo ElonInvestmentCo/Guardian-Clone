@@ -14,10 +14,10 @@ router.post("/ai/chat", aiChatLimit, async (req: Request, res: Response): Promis
       return;
     }
 
-    appendMessage(email, "user", message);
+    await appendMessage(email, "user", message);
 
     const systemPrompt = buildSystemPrompt(email);
-    const history = getRecentMessages(email, 20);
+    const history = await getRecentMessages(email, 20);
     const messages: AiMessage[] = [
       systemPrompt,
       ...history.map((m) => ({ role: m.role as AiMessage["role"], content: m.content })),
@@ -42,14 +42,14 @@ router.post("/ai/chat", aiChatLimit, async (req: Request, res: Response): Promis
         res.write(`data: ${JSON.stringify({ content: chunk.content })}\n\n`);
       }
       if (chunk.done && fullResponse) {
-        appendMessage(email, "assistant", fullResponse);
+        await appendMessage(email, "assistant", fullResponse);
         saved = true;
         res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
       }
     }
 
     if (!saved && fullResponse) {
-      appendMessage(email, "assistant", fullResponse);
+      await appendMessage(email, "assistant", fullResponse);
     }
 
     res.end();
@@ -70,12 +70,12 @@ router.post("/ai/chat", aiChatLimit, async (req: Request, res: Response): Promis
   }
 });
 
-router.get("/ai/history", (req: Request, res: Response): void => {
+router.get("/ai/history", async (req: Request, res: Response): Promise<void> => {
   try {
     const email = req.query.email as string;
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { res.status(400).json({ error: "Valid email is required" }); return; }
 
-    const conv = getConversation(email);
+    const conv = await getConversation(email);
     res.json({
       id: conv.id,
       messages: conv.messages.filter((m) => m.role !== "system"),
@@ -86,11 +86,11 @@ router.get("/ai/history", (req: Request, res: Response): void => {
   }
 });
 
-router.post("/ai/clear", (req: Request, res: Response): void => {
+router.post("/ai/clear", async (req: Request, res: Response): Promise<void> => {
   try {
     const { email } = req.body as { email?: string };
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { res.status(400).json({ error: "Valid email is required" }); return; }
-    clearConversation(email);
+    await clearConversation(email);
     res.json({ success: true });
   } catch (err) {
     console.error("[AI] Clear error:", err);

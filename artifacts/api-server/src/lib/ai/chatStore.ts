@@ -1,6 +1,4 @@
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
-import { join, resolve, sep } from "path";
-import { getDataDir } from "../userDataStore.js";
+import { getPool } from "../db.js";
 
 interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -16,28 +14,15 @@ interface Conversation {
   updatedAt: string;
 }
 
-const DATA_DIR = resolve(getDataDir(), "ai-chats");
-
-function ensureDir(): void {
-  if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
-}
-
-function filePath(email: string): string {
-  const sanitized = email.toLowerCase().replace(/@/g, "_at_").replace(/[^a-z0-9._-]/g, "_");
-  const fp = resolve(DATA_DIR, `${sanitized}.json`);
-  const base = DATA_DIR + sep;
-  if (!fp.startsWith(base) && fp !== DATA_DIR) {
-    throw new Error("Path traversal blocked in chatStore");
-  }
-  return fp;
-}
-
-export function getConversation(email: string): Conversation {
-  ensureDir();
-  const fp = filePath(email);
-  if (existsSync(fp)) {
+export async function getConversation(email: string): Promise<Conversation> {
+  const pool = getPool();
+  const result = await pool.query(
+    `SELECT data FROM chat_conversations WHERE email = $1`,
+    [email]
+  );
+  if (result.rows.length > 0) {
     try {
-      return JSON.parse(readFileSync(fp, "utf8"));
+      return result.rows[0].data as Conversation;
     } catch {
       console.error(`[ChatStore] Failed to parse conversation for ${email}, creating new`);
     }
@@ -49,29 +34,36 @@ export function getConversation(email: string): Conversation {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
-  writeFileSync(fp, JSON.stringify(conv, null, 2));
+  await pool.query(
+    `INSERT INTO chat_conversations (email, data, updated_at) VALUES ($1, $2, NOW())
+     ON CONFLICT (email) DO UPDATE SET data = $2, updated_at = NOW()`,
+    [email, JSON.stringify(conv)]
+  );
   return conv;
 }
 
-export function appendMessage(email: string, role: "user" | "assistant", content: string): void {
-  ensureDir();
-  const conv = getConversation(email);
+export async function appendMessage(email: string, role: "user" | "assistant", content: string): Promise<void> {
+  const conv = await getConversation(email);
   conv.messages.push({
     role,
     content,
     timestamp: new Date().toISOString(),
   });
   conv.updatedAt = new Date().toISOString();
-  writeFileSync(filePath(email), JSON.stringify(conv, null, 2));
+  const pool = getPool();
+  await pool.query(
+    `INSERT INTO chat_conversations (email, data, updated_at) VALUES ($1, $2, NOW())
+     ON CONFLICT (email) DO UPDATE SET data = $2, updated_at = NOW()`,
+    [email, JSON.stringify(conv)]
+  );
 }
 
-export function getRecentMessages(email: string, limit = 20): ChatMessage[] {
-  const conv = getConversation(email);
+export async function getRecentMessages(email: string, limit = 20): Promise<ChatMessage[]> {
+  const conv = await getConversation(email);
   return conv.messages.slice(-limit);
 }
 
-export function clearConversation(email: string): void {
-  ensureDir();
+export async function clearConversation(email: string): Promise<void> {
   const conv: Conversation = {
     id: `conv_${Date.now()}`,
     email,
@@ -79,5 +71,10 @@ export function clearConversation(email: string): void {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
-  writeFileSync(filePath(email), JSON.stringify(conv, null, 2));
+  const pool = getPool();
+  await pool.query(
+    `INSERT INTO chat_conversations (email, data, updated_at) VALUES ($1, $2, NOW())
+     ON CONFLICT (email) DO UPDATE SET data = $2, updated_at = NOW()`,
+    [email, JSON.stringify(conv)]
+  );
 }

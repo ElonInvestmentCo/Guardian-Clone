@@ -51,7 +51,7 @@ function logAttempt(action: string, email: string, detail?: string) {
   console.log(`[Auth][${ts}] ${action} — email=${email}${detail ? ` ${detail}` : ""}`);
 }
 
-authRouter.post("/auth/check-email", sensitiveEndpointLimit, (req, res) => {
+authRouter.post("/auth/check-email", sensitiveEndpointLimit, async (req, res) => {
   try {
     const rawEmail = (req.body as { email?: string }).email;
     const email = rawEmail?.trim().toLowerCase();
@@ -59,7 +59,7 @@ authRouter.post("/auth/check-email", sensitiveEndpointLimit, (req, res) => {
       res.status(400).json({ error: "Valid email is required" });
       return;
     }
-    const existing = getUserData(email);
+    const existing = await getUserData(email);
     res.json({ available: !existing });
   } catch (err) {
     console.error("[Auth] CHECK_EMAIL error:", err);
@@ -82,15 +82,15 @@ authRouter.post("/auth/register", sensitiveEndpointLimit, async (req, res) => {
       res.status(400).json({ error: "Valid email is required" });
       return;
     }
-    const existing = getUserData(email);
+    const existing = await getUserData(email);
     if (existing) {
       logAttempt("REGISTER", email, "rejected — email already registered");
       res.status(409).json({ error: "An account with this email already exists. Please log in instead." });
       return;
     }
     const hash = await hashPassword(password);
-    saveUserCredentials(email, hash);
-    logAttempt("REGISTER", email, "success — credentials persisted to disk");
+    await saveUserCredentials(email, hash);
+    logAttempt("REGISTER", email, "success — credentials persisted to database");
     res.json({ success: true });
   } catch (err) {
     console.error(`[Auth] REGISTER error:`, err);
@@ -107,7 +107,7 @@ authRouter.post("/auth/login", sensitiveEndpointLimit, async (req, res) => {
       return;
     }
 
-    const storedHash = getStoredPasswordHash(email);
+    const storedHash = await getStoredPasswordHash(email);
     if (!storedHash) {
       await bcrypt.hash("dummy", BCRYPT_ROUNDS);
       logAttempt("LOGIN", email, "failed — no credentials found");
@@ -124,7 +124,7 @@ authRouter.post("/auth/login", sensitiveEndpointLimit, async (req, res) => {
 
     if (!storedHash.startsWith("$2")) {
       const newHash = await hashPassword(password);
-      saveUserCredentials(email, newHash);
+      await saveUserCredentials(email, newHash);
       logAttempt("LOGIN", email, "migrated legacy hash to bcrypt");
     }
 
@@ -146,7 +146,7 @@ authRouter.post("/auth/send-verification", sensitiveEndpointLimit, async (req, r
       return;
     }
 
-    const existingUser = getUserData(email);
+    const existingUser = await getUserData(email);
     if (existingUser) {
       logAttempt("SEND_VERIFICATION", email, "rejected — email already registered");
       res.status(409).json({ error: "An account with this email already exists. Please log in instead." });
@@ -244,7 +244,7 @@ authRouter.post("/auth/send-reset-code", sensitiveEndpointLimit, async (req, res
       return;
     }
 
-    const user = getUserData(email);
+    const user = await getUserData(email);
     if (!user) {
       res.json({ success: true });
       return;
@@ -327,7 +327,7 @@ authRouter.post("/auth/reset-password", sensitiveEndpointLimit, async (req, res)
     resetCodes.delete(key);
 
     const hash = await hashPassword(newPassword);
-    saveUserCredentials(email, hash);
+    await saveUserCredentials(email, hash);
 
     logAttempt("RESET_PASSWORD", email, "success — new password saved");
     res.json({ success: true });

@@ -1,7 +1,6 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import multer from "multer";
 import path from "path";
-import fs from "fs";
 import bcrypt from "bcryptjs";
 import {
   getUserData,
@@ -12,8 +11,8 @@ import {
   setUserProfileMeta,
   getStoredPasswordHash,
   saveUserCredentials,
-  getDataDir,
 } from "../lib/userDataStore.js";
+import { getPool } from "../lib/db.js";
 import { userDataLimit, sensitiveEndpointLimit } from "../middleware/security.js";
 
 const BCRYPT_ROUNDS = 12;
@@ -35,24 +34,8 @@ async function verifyPassword(password: string, storedHash: string): Promise<boo
 
 const profileRouter = Router();
 
-const PROFILE_PIC_DIR = path.resolve(getDataDir(), "profile-pictures");
-if (!fs.existsSync(PROFILE_PIC_DIR)) {
-  fs.mkdirSync(PROFILE_PIC_DIR, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, PROFILE_PIC_DIR),
-  filename: (req, file, cb) => {
-    const email = (req.body as Record<string, string>)["email"] ?? "unknown";
-    const sanitized = email.replace(/[^a-zA-Z0-9]/g, "_");
-    const timestamp = Date.now();
-    const ext = path.extname(file.originalname) || ".jpg";
-    cb(null, `${sanitized}_${timestamp}${ext}`);
-  },
-});
-
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     const allowed = [".jpg", ".jpeg", ".png", ".webp"];
@@ -65,7 +48,7 @@ const upload = multer({
   },
 });
 
-profileRouter.get("/user/me", userDataLimit, (req, res) => {
+profileRouter.get("/user/me", userDataLimit, async (req, res) => {
   try {
     const email = req.query["email"] as string | undefined;
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -73,7 +56,7 @@ profileRouter.get("/user/me", userDataLimit, (req, res) => {
       return;
     }
 
-    const userData = getUserData(email);
+    const userData = await getUserData(email);
     if (!userData) {
       res.json({
         status: "not_found",
@@ -83,13 +66,13 @@ profileRouter.get("/user/me", userDataLimit, (req, res) => {
       return;
     }
 
-    const completedSteps = getCompletedStepNumbers(email);
+    const completedSteps = await getCompletedStepNumbers(email);
     const status = (userData["status"] as string) ?? "pending";
     const totalSteps = 12;
     const kycComplete = completedSteps.length >= totalSteps;
-    const profilePic = getProfilePicture(email);
+    const profilePic = await getProfilePicture(email);
 
-    const profile = getUserProfileData(email);
+    const profile = await getUserProfileData(email);
     const settings = (profile["_settings"] as Record<string, unknown>) ?? {};
     const notifPrefs = (profile["_notificationPreferences"] as Record<string, unknown>) ?? {};
     const twoFAData = (profile["_2fa"] as Record<string, unknown>) ?? {};
@@ -130,15 +113,27 @@ profileRouter.get("/user/me", userDataLimit, (req, res) => {
 profileRouter.post(
   "/user/profile-picture",
   upload.single("picture"),
-  (req, res) => {
+  async (req, res) => {
     try {
       const email = (req.body as Record<string, string>)["email"];
       if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !req.file) {
         res.status(400).json({ error: "Valid email and picture are required" });
         return;
       }
-      setProfilePicture(email, req.file.filename);
-      res.json({ success: true, filename: req.file.filename });
+      const ext = path.extname(req.file.originalname) || ".jpg";
+      const sanitized = email.replace(/[^a-zA-Z0-9]/g, "_");
+      const filename = `${sanitized}_${Date.now()}${ext}`;
+
+      const pool = getPool();
+      await pool.query(
+        `INSERT INTO user_documents (email, role, filename, mimetype, file_data, created_at)
+         VALUES ($1, 'profile_picture', $2, $3, $4, NOW())
+         ON CONFLICT (email, role) DO UPDATE SET filename = $2, mimetype = $3, file_data = $4, created_at = NOW()`,
+        [email, filename, req.file.mimetype, req.file.buffer]
+      );
+
+      await setProfilePicture(email, filename);
+      res.json({ success: true, filename });
     } catch (err) {
       console.error("[Profile] profile-picture upload error:", err);
       res.status(500).json({ error: "Failed to upload profile picture" });
@@ -146,38 +141,36 @@ profileRouter.post(
   }
 );
 
-profileRouter.get("/user/profile-picture/:filename", (req, res) => {
+profileRouter.get("/user/profile-picture/:filename", async (req, res) => {
   try {
     const safeName = path.basename(req.params["filename"]!);
-    const filePath = path.resolve(PROFILE_PIC_DIR, safeName);
-    if (!filePath.startsWith(path.resolve(PROFILE_PIC_DIR) + path.sep)) {
-      res.status(403).json({ error: "Access denied" });
-      return;
-    }
-    if (!fs.existsSync(filePath)) {
+    const pool = getPool();
+    const result = await pool.query(
+      `SELECT file_data, mimetype FROM user_documents WHERE filename = $1 AND role = 'profile_picture'`,
+      [safeName]
+    );
+    if (result.rows.length === 0) {
       res.status(404).json({ error: "Not found" });
       return;
     }
-    res.sendFile(filePath);
+    res.setHeader("Content-Type", result.rows[0].mimetype || "image/jpeg");
+    res.send(result.rows[0].file_data);
   } catch (err) {
     console.error("[Profile] profile-picture serve error:", err);
     res.status(500).json({ error: "Failed to load profile picture" });
   }
 });
 
-profileRouter.delete("/user/profile-picture", userDataLimit, (req, res) => {
+profileRouter.delete("/user/profile-picture", userDataLimit, async (req, res) => {
   try {
     const email = req.query["email"] as string | undefined;
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       res.status(400).json({ error: "Valid email is required" });
       return;
     }
-    const current = getProfilePicture(email);
-    if (current) {
-      const filePath = path.join(PROFILE_PIC_DIR, current);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-      setProfilePicture(email, "");
-    }
+    const pool = getPool();
+    await pool.query(`DELETE FROM user_documents WHERE email = $1 AND role = 'profile_picture'`, [email]);
+    await setProfilePicture(email, "");
     res.json({ success: true });
   } catch (err) {
     console.error("[Profile] profile-picture delete error:", err);
@@ -185,7 +178,7 @@ profileRouter.delete("/user/profile-picture", userDataLimit, (req, res) => {
   }
 });
 
-profileRouter.post("/user/update-profile", userDataLimit, (req, res) => {
+profileRouter.post("/user/update-profile", userDataLimit, async (req, res) => {
   try {
     const { email, firstName, lastName, phone, country, state, city } = req.body as Record<string, string>;
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { res.status(400).json({ error: "Valid email is required" }); return; }
@@ -213,7 +206,7 @@ profileRouter.post("/user/update-profile", userDataLimit, (req, res) => {
       res.status(400).json({ error: "Invalid city format" }); return;
     }
 
-    const profile = getUserProfileData(email);
+    const profile = await getUserProfileData(email);
     if (!profile["email"]) { res.status(404).json({ error: "User not found" }); return; }
     const settings = (profile["_settings"] as Record<string, unknown>) ?? {};
     if (firstName !== undefined) settings["firstName"] = firstName.trim();
@@ -223,7 +216,7 @@ profileRouter.post("/user/update-profile", userDataLimit, (req, res) => {
     if (state !== undefined) settings["state"] = state.trim();
     if (city !== undefined) settings["city"] = city.trim();
     settings["updatedAt"] = new Date().toISOString();
-    setUserProfileMeta(email, "_settings", settings);
+    await setUserProfileMeta(email, "_settings", settings);
     res.json({ success: true });
   } catch (err) {
     console.error("[Profile] update-profile error:", err);
@@ -242,7 +235,7 @@ profileRouter.post("/user/change-password", sensitiveEndpointLimit, async (req, 
       res.status(400).json({ error: "New password must be at least 8 characters" });
       return;
     }
-    const storedHash = getStoredPasswordHash(email);
+    const storedHash = await getStoredPasswordHash(email);
     if (!storedHash) {
       res.status(404).json({ error: "No credentials found for this user" });
       return;
@@ -253,7 +246,7 @@ profileRouter.post("/user/change-password", sensitiveEndpointLimit, async (req, 
       return;
     }
     const newHash = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
-    saveUserCredentials(email, newHash);
+    await saveUserCredentials(email, newHash);
     res.json({ success: true });
   } catch (err) {
     console.error("[Profile] change-password error:", err);
@@ -261,12 +254,12 @@ profileRouter.post("/user/change-password", sensitiveEndpointLimit, async (req, 
   }
 });
 
-profileRouter.post("/user/update-notifications", userDataLimit, (req, res) => {
+profileRouter.post("/user/update-notifications", userDataLimit, async (req, res) => {
   try {
     const { email, preferences } = req.body as { email?: string; preferences?: Record<string, boolean> };
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { res.status(400).json({ error: "Valid email is required" }); return; }
     if (!preferences) { res.status(400).json({ error: "preferences are required" }); return; }
-    setUserProfileMeta(email, "_notificationPreferences", {
+    await setUserProfileMeta(email, "_notificationPreferences", {
       ...preferences,
       updatedAt: new Date().toISOString(),
     });

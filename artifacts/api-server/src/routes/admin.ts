@@ -1,21 +1,9 @@
-/**
- * Admin KYC management routes.
- *
- * Authentication: JWT Bearer token issued by POST /admin/login
- * (Mounted under /api in app.ts, so externally all routes are /api/admin/*)
- * All /admin/* routes (except /login) require a valid session token.
- * No development-mode bypass — auth is always enforced.
- */
-
-import { readFileSync, existsSync } from "fs";
-import { resolve, extname } from "path";
 import { Router, type Request, type Response, type NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import {
   getUserData,
   getUserProfileData,
-  getUserDocDir,
   sanitizeEmail,
   setUserStatus,
   setUserProfileMeta,
@@ -29,15 +17,14 @@ import {
   createAdminUser,
   addNotification,
   readMaster,
-  getDataDir,
   decryptSensitiveProfile,
 } from "../lib/userDataStore.js";
+import { getPool } from "../lib/db.js";
 import { evaluateRisk } from "../lib/fraud/riskEngine.js";
 import { getAdminCredentials } from "../lib/setupAdmin.js";
 
 const router = Router();
 
-// ── Config ────────────────────────────────────────────────────────────────────
 const SESSION_TTL_HOURS = 8;
 const SESSION_TTL_MS    = SESSION_TTL_HOURS * 60 * 60 * 1000;
 
@@ -45,11 +32,6 @@ function jwtSecret(): string {
   return getAdminCredentials().jwtSecret;
 }
 
-function readMasterUsers(): Record<string, Record<string, unknown>> {
-  return readMaster();
-}
-
-// ── Security headers ──────────────────────────────────────────────────────────
 function securityHeaders(_req: Request, res: Response, next: NextFunction): void {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("X-Frame-Options", "DENY");
@@ -59,7 +41,6 @@ function securityHeaders(_req: Request, res: Response, next: NextFunction): void
   next();
 }
 
-// ── Login rate limiter: 5 attempts / 15 min per IP ───────────────────────────
 const loginAttempts = new Map<string, { count: number; resetAt: number }>();
 
 function loginRateLimit(req: Request, res: Response, next: NextFunction): void {
@@ -80,7 +61,6 @@ function loginRateLimit(req: Request, res: Response, next: NextFunction): void {
   next();
 }
 
-// ── General admin rate limiter: 120 req / min per IP ─────────────────────────
 const rateMap = new Map<string, number[]>();
 function adminRateLimit(req: Request, res: Response, next: NextFunction): void {
   const ip  = req.ip ?? "unknown";
@@ -92,7 +72,6 @@ function adminRateLimit(req: Request, res: Response, next: NextFunction): void {
   next();
 }
 
-// ── JWT auth middleware (no dev bypass — always enforced) ─────────────────────
 function requireAdmin(req: Request, res: Response, next: NextFunction): void {
   const authHeader = req.headers["authorization"] ?? "";
   const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
@@ -114,19 +93,14 @@ function requireAdmin(req: Request, res: Response, next: NextFunction): void {
   }
 }
 
-// Apply security headers to all /admin routes
 router.use("/admin", securityHeaders);
 
-// ── POST /admin/login (public) ────────────────────────────────────────────────
 router.post(
   "/admin/login",
   loginRateLimit,
   async (req: Request, res: Response): Promise<void> => {
     try {
-      const { username, password } = req.body as {
-        username?: string;
-        password?: string;
-      };
+      const { username, password } = req.body as { username?: string; password?: string };
 
       if (!username || !password) {
         res.status(400).json({ error: "Username and password are required" });
@@ -135,7 +109,6 @@ router.post(
 
       const { username: expectedUsername, passwordHash: expectedHash } = getAdminCredentials();
 
-      // Always run bcrypt compare to prevent timing attacks
       const usernameMatch = username === expectedUsername;
       const passwordMatch = await bcrypt.compare(
         password,
@@ -166,23 +139,21 @@ router.post(
   }
 );
 
-// ── All routes below require a valid JWT session ──────────────────────────────
 router.use("/admin", adminRateLimit, requireAdmin);
 
-// ── GET /admin/kyc-queue ──────────────────────────────────────────────────────
-router.get("/admin/kyc-queue", (req: Request, res: Response): void => {
+router.get("/admin/kyc-queue", async (req: Request, res: Response): Promise<void> => {
   try {
-    const master = readMasterUsers();
+    const master = await readMaster();
 
     const page         = Math.max(1, parseInt(String(req.query.page   ?? "1")));
     const limit        = Math.min(100, parseInt(String(req.query.limit ?? "25")));
     const statusFilter = req.query.status  as string | undefined;
     const minRisk      = parseInt(String(req.query.minRisk ?? "0"));
 
-    const users = Object.values(master).map((u) => {
+    const users = await Promise.all(Object.values(master).map(async (u) => {
       const email   = u.email as string;
-      const risk    = evaluateRisk(email);
-      const profile = getUserProfileData(email);
+      const risk    = await evaluateRisk(email);
+      const profile = await getUserProfileData(email);
       const completed = (profile._completedStepNumbers as number[] | undefined) ?? [];
       const p         = profile.personal as Record<string, string> | undefined;
       return {
@@ -197,7 +168,7 @@ router.get("/admin/kyc-queue", (req: Request, res: Response): void => {
         flagCount:      risk.flags.length,
         name:           [p?.firstName ?? "", p?.lastName ?? ""].join(" ").trim() || email,
       };
-    });
+    }));
 
     const filtered = users
       .filter((u) => !statusFilter || u.status === statusFilter)
@@ -215,15 +186,14 @@ router.get("/admin/kyc-queue", (req: Request, res: Response): void => {
   }
 });
 
-// ── GET /admin/user-details/:email ────────────────────────────────────────────
-router.get("/admin/user-details/:email", (req: Request, res: Response): void => {
+router.get("/admin/user-details/:email", async (req: Request, res: Response): Promise<void> => {
   try {
     const email  = decodeURIComponent(String(req.params.email));
-    const master = getUserData(email);
+    const master = await getUserData(email);
     if (!master) { res.status(404).json({ error: "User not found" }); return; }
 
-    const profile   = getUserProfileData(email);
-    const risk      = evaluateRisk(email);
+    const profile   = await getUserProfileData(email);
+    const risk      = await evaluateRisk(email);
 
     const STEP_KEYS = [
       "general", "personal", "professional", "idInformation",
@@ -277,20 +247,19 @@ router.get("/admin/user-details/:email", (req: Request, res: Response): void => 
   }
 });
 
-// ── POST /admin/approve-user ──────────────────────────────────────────────────
-router.post("/admin/approve-user", (req: Request, res: Response): void => {
+router.post("/admin/approve-user", async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, adminNote } = req.body as { email: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
-    if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
+    if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
 
-    setUserStatus(email, "approved");
-    const profile  = getUserProfileData(email);
+    await setUserStatus(email, "approved");
+    const profile  = await getUserProfileData(email);
     const auditLog = (profile._auditLog as unknown[]) ?? [];
     auditLog.push({ actionType: "ADMIN_APPROVE", actor: "admin", note: adminNote ?? null, timestamp: new Date().toISOString() });
-    setUserProfileMeta(email, "_auditLog", auditLog);
+    await setUserProfileMeta(email, "_auditLog", auditLog);
 
-    addNotification(email, {
+    await addNotification(email, {
       type: "kyc",
       title: "KYC Approved",
       message: "Your identity verification has been approved. You now have full access to Guardian Trading.",
@@ -304,21 +273,20 @@ router.post("/admin/approve-user", (req: Request, res: Response): void => {
   }
 });
 
-// ── POST /admin/reject-user ───────────────────────────────────────────────────
-router.post("/admin/reject-user", (req: Request, res: Response): void => {
+router.post("/admin/reject-user", async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, reason, adminNote } = req.body as { email: string; reason?: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
     if (!reason || !reason.trim()) { res.status(400).json({ error: "Reject reason is required" }); return; }
-    if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
+    if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
 
-    setUserStatus(email, "rejected");
-    const profile  = getUserProfileData(email);
+    await setUserStatus(email, "rejected");
+    const profile  = await getUserProfileData(email);
     const auditLog = (profile._auditLog as unknown[]) ?? [];
     auditLog.push({ actionType: "ADMIN_REJECT", actor: "admin", reason: reason ?? null, note: adminNote ?? null, timestamp: new Date().toISOString() });
-    setUserProfileMeta(email, "_auditLog", auditLog);
+    await setUserProfileMeta(email, "_auditLog", auditLog);
 
-    addNotification(email, {
+    await addNotification(email, {
       type: "kyc",
       title: "KYC Review Update",
       message: `Your identity verification was not approved. Reason: ${reason}. Please contact support for more information.`,
@@ -331,21 +299,20 @@ router.post("/admin/reject-user", (req: Request, res: Response): void => {
   }
 });
 
-// ── POST /admin/request-resubmission ─────────────────────────────────────────
-router.post("/admin/request-resubmission", (req: Request, res: Response): void => {
+router.post("/admin/request-resubmission", async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, fields, adminNote } = req.body as { email: string; fields?: string[]; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
-    if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
+    if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
 
-    setUserStatus(email, "resubmit");
-    const profile  = getUserProfileData(email);
+    await setUserStatus(email, "resubmit");
+    const profile  = await getUserProfileData(email);
     const auditLog = (profile._auditLog as unknown[]) ?? [];
     auditLog.push({ actionType: "ADMIN_REQUEST_RESUBMIT", actor: "admin", fields: fields ?? [], note: adminNote ?? null, timestamp: new Date().toISOString() });
-    setUserProfileMeta(email, "_auditLog", auditLog);
-    setUserProfileMeta(email, "_resubmitFields", fields ?? []);
+    await setUserProfileMeta(email, "_auditLog", auditLog);
+    await setUserProfileMeta(email, "_resubmitFields", fields ?? []);
 
-    addNotification(email, {
+    await addNotification(email, {
       type: "kyc",
       title: "Documents Resubmission Required",
       message: "Some of your submitted documents need to be updated. Please log in and re-upload the requested items.",
@@ -359,13 +326,12 @@ router.post("/admin/request-resubmission", (req: Request, res: Response): void =
   }
 });
 
-// ── POST /admin/create-user ───────────────────────────────────────────────────
-router.post("/admin/create-user", (req: Request, res: Response): void => {
+router.post("/admin/create-user", async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, displayName, role = "user" } = req.body as { email: string; displayName: string; role?: string };
     if (!email || !displayName) { res.status(400).json({ error: "email and displayName required" }); return; }
-    if (getUserData(email)) { res.status(409).json({ error: "User already exists" }); return; }
-    createAdminUser(email, displayName, role);
+    if (await getUserData(email)) { res.status(409).json({ error: "User already exists" }); return; }
+    await createAdminUser(email, displayName, role);
     console.log(`[Admin] CREATED user: ${email} (role: ${role})`);
     res.json({ success: true, email, role });
   } catch (err) {
@@ -374,14 +340,13 @@ router.post("/admin/create-user", (req: Request, res: Response): void => {
   }
 });
 
-// ── DELETE /admin/delete-user ─────────────────────────────────────────────────
-router.delete("/admin/delete-user", (req: Request, res: Response): void => {
+router.delete("/admin/delete-user", async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, adminNote } = req.body as { email: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
-    if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
+    if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
     console.log(`[Admin] DELETE user: ${email} — note: ${adminNote ?? "none"}`);
-    deleteUser(email);
+    await deleteUser(email);
     res.json({ success: true, email });
   } catch (err) {
     console.error("[Admin] delete-user error:", err);
@@ -389,22 +354,21 @@ router.delete("/admin/delete-user", (req: Request, res: Response): void => {
   }
 });
 
-// ── POST /admin/update-user ───────────────────────────────────────────────────
-router.post("/admin/update-user", (req: Request, res: Response): void => {
+router.post("/admin/update-user", async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, firstName, lastName, adminNote } = req.body as { email: string; firstName?: string; lastName?: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
-    if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
+    if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
 
-    const profile = getUserProfileData(email);
+    const profile = await getUserProfileData(email);
     const personal = (profile.personal as Record<string, string> | undefined) ?? {};
     if (firstName !== undefined) personal.firstName = firstName;
     if (lastName  !== undefined) personal.lastName  = lastName;
-    setUserProfileMeta(email, "personal", personal);
+    await setUserProfileMeta(email, "personal", personal);
 
     const auditLog = (profile._auditLog as unknown[]) ?? [];
     auditLog.push({ actionType: "ADMIN_UPDATE_USER", actor: "admin", note: adminNote ?? null, meta: { firstName, lastName }, timestamp: new Date().toISOString() });
-    setUserProfileMeta(email, "_auditLog", auditLog);
+    await setUserProfileMeta(email, "_auditLog", auditLog);
 
     console.log(`[Admin] UPDATED user: ${email}`);
     res.json({ success: true, email });
@@ -414,89 +378,82 @@ router.post("/admin/update-user", (req: Request, res: Response): void => {
   }
 });
 
-// ── POST /admin/suspend-user ──────────────────────────────────────────────────
-router.post("/admin/suspend-user", (req: Request, res: Response): void => {
+router.post("/admin/suspend-user", async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, adminNote } = req.body as { email: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
-    if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
-    setUserStatus(email, "suspended");
-    const profile = getUserProfileData(email);
+    if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
+    await setUserStatus(email, "suspended");
+    const profile = await getUserProfileData(email);
     const auditLog = (profile._auditLog as unknown[]) ?? [];
     auditLog.push({ actionType: "ADMIN_SUSPEND", actor: "admin", note: adminNote ?? null, timestamp: new Date().toISOString() });
-    setUserProfileMeta(email, "_auditLog", auditLog);
+    await setUserProfileMeta(email, "_auditLog", auditLog);
     console.log(`[Admin] SUSPENDED: ${email}`);
     res.json({ success: true, email, status: "suspended" });
   } catch (err) { res.status(500).json({ error: "Failed to suspend user" }); }
 });
 
-// ── POST /admin/ban-user ──────────────────────────────────────────────────────
-router.post("/admin/ban-user", (req: Request, res: Response): void => {
+router.post("/admin/ban-user", async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, reason, adminNote } = req.body as { email: string; reason?: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
-    if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
-    setUserStatus(email, "banned");
-    const profile = getUserProfileData(email);
+    if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
+    await setUserStatus(email, "banned");
+    const profile = await getUserProfileData(email);
     const auditLog = (profile._auditLog as unknown[]) ?? [];
     auditLog.push({ actionType: "ADMIN_BAN", actor: "admin", reason: reason ?? null, note: adminNote ?? null, timestamp: new Date().toISOString() });
-    setUserProfileMeta(email, "_auditLog", auditLog);
+    await setUserProfileMeta(email, "_auditLog", auditLog);
     console.log(`[Admin] BANNED: ${email}`);
     res.json({ success: true, email, status: "banned" });
   } catch (err) { res.status(500).json({ error: "Failed to ban user" }); }
 });
 
-// ── POST /admin/reactivate-user ───────────────────────────────────────────────
-router.post("/admin/reactivate-user", (req: Request, res: Response): void => {
+router.post("/admin/reactivate-user", async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, adminNote } = req.body as { email: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
-    if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
-    setUserStatus(email, "approved");
-    const profile = getUserProfileData(email);
+    if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
+    await setUserStatus(email, "approved");
+    const profile = await getUserProfileData(email);
     const auditLog = (profile._auditLog as unknown[]) ?? [];
     auditLog.push({ actionType: "ADMIN_REACTIVATE", actor: "admin", note: adminNote ?? null, timestamp: new Date().toISOString() });
-    setUserProfileMeta(email, "_auditLog", auditLog);
+    await setUserProfileMeta(email, "_auditLog", auditLog);
     console.log(`[Admin] REACTIVATED: ${email}`);
     res.json({ success: true, email, status: "approved" });
   } catch (err) { res.status(500).json({ error: "Failed to reactivate user" }); }
 });
 
-// ── POST /admin/assign-role ───────────────────────────────────────────────────
-router.post("/admin/assign-role", (req: Request, res: Response): void => {
+router.post("/admin/assign-role", async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, role, adminNote } = req.body as { email: string; role: string; adminNote?: string };
     if (!email || !role) { res.status(400).json({ error: "email and role required" }); return; }
-    if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
-    setUserRole(email, role);
+    if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
+    await setUserRole(email, role);
     if (adminNote) {
-      const profile = getUserProfileData(email);
+      const profile = await getUserProfileData(email);
       const auditLog = (profile._auditLog as unknown[]) ?? [];
       auditLog.push({ actionType: "ADMIN_ASSIGN_ROLE", actor: "admin", note: adminNote, meta: { role }, timestamp: new Date().toISOString() });
-      setUserProfileMeta(email, "_auditLog", auditLog);
+      await setUserProfileMeta(email, "_auditLog", auditLog);
     }
     console.log(`[Admin] ROLE ASSIGNED: ${email} → ${role}`);
     res.json({ success: true, email, role });
   } catch (err) { res.status(500).json({ error: "Failed to assign role" }); }
 });
 
-// ── GET /admin/user-balance/:email ────────────────────────────────────────────
-router.get("/admin/user-balance/:email", (req: Request, res: Response): void => {
+router.get("/admin/user-balance/:email", async (req: Request, res: Response): Promise<void> => {
   try {
     const email = decodeURIComponent(String(req.params.email));
-    if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
-    const bal = getUserBalance(email);
+    if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
+    const bal = await getUserBalance(email);
     res.json({ email, ...bal });
   } catch (err) { res.status(500).json({ error: "Failed to get balance" }); }
 });
 
-// ── GET /admin/transaction-types ──────────────────────────────────────────────
 router.get("/admin/transaction-types", (_req: Request, res: Response): void => {
   res.json({ types: TRANSACTION_TYPES });
 });
 
-// ── POST /admin/set-balance ───────────────────────────────────────────────────
-router.post("/admin/set-balance", (req: Request, res: Response): void => {
+router.post("/admin/set-balance", async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, balance, profit, adminNote, transactionType } = req.body as {
       email: string; balance: number; profit: number;
@@ -523,8 +480,8 @@ router.post("/admin/set-balance", (req: Request, res: Response): void => {
     const txType = (transactionType && (TRANSACTION_TYPES as readonly string[]).includes(transactionType))
       ? transactionType as TransactionType
       : "adjustment";
-    if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
-    setUserBalance(email, balNum, profNum, adminNote.trim(), "admin", txType);
+    if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
+    await setUserBalance(email, balNum, profNum, adminNote.trim(), "admin", txType);
     console.log(`[Admin] SET BALANCE: ${email} balance=$${balNum} profit=$${profNum} type=${txType}`);
     res.json({ success: true, email, balance: balNum, profit: profNum, transactionType: txType });
   } catch (err) {
@@ -533,27 +490,25 @@ router.post("/admin/set-balance", (req: Request, res: Response): void => {
   }
 });
 
-// ── GET /admin/global-audit ───────────────────────────────────────────────────
-router.get("/admin/global-audit", (req: Request, res: Response): void => {
+router.get("/admin/global-audit", async (req: Request, res: Response): Promise<void> => {
   try {
     const limit = Math.min(500, parseInt(String(req.query.limit ?? "100")));
-    const all   = getGlobalAuditLog().slice(0, limit);
+    const all   = (await getGlobalAuditLog()).slice(0, limit);
     res.json({ total: all.length, entries: all });
   } catch (err) { res.status(500).json({ error: "Failed to load audit log" }); }
 });
 
-// ── GET /admin/all-users ──────────────────────────────────────────────────────
-router.get("/admin/all-users", (req: Request, res: Response): void => {
+router.get("/admin/all-users", async (req: Request, res: Response): Promise<void> => {
   try {
-    const master = readMasterUsers();
+    const master = await readMaster();
     const search  = (req.query.search  as string ?? "").toLowerCase();
     const statusF = req.query.status   as string | undefined;
     const roleF   = req.query.role     as string | undefined;
 
-    const users = Object.values(master).map((u) => {
+    const users = await Promise.all(Object.values(master).map(async (u) => {
       const email   = u.email as string;
-      const profile = getUserProfileData(email);
-      const risk    = evaluateRisk(email);
+      const profile = await getUserProfileData(email);
+      const risk    = await evaluateRisk(email);
       const completed = (profile._completedStepNumbers as number[] | undefined) ?? [];
       const p         = profile.personal as Record<string, string> | undefined;
       const bal       = profile._balance  as { balance?: number; profit?: number } | undefined;
@@ -578,7 +533,7 @@ router.get("/admin/all-users", (req: Request, res: Response): void => {
         lastActionAt:   lastAction ? (lastAction.timestamp  as string) : null,
         auditCount:     auditLog.length,
       };
-    });
+    }));
 
     const filtered = users
       .filter((u) => !statusF || u.status === statusF)
@@ -593,56 +548,59 @@ router.get("/admin/all-users", (req: Request, res: Response): void => {
   }
 });
 
-// ── POST /admin/flag-user ─────────────────────────────────────────────────────
-router.post("/admin/flag-user", (req: Request, res: Response): void => {
+router.post("/admin/flag-user", async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, reason, adminNote } = req.body as { email: string; reason?: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
-    if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
-    const profile  = getUserProfileData(email);
+    if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
+    const profile  = await getUserProfileData(email);
     const auditLog = (profile._auditLog as unknown[]) ?? [];
     auditLog.push({ actionType: "ADMIN_FLAG", actor: "admin", reason: reason ?? null, note: adminNote ?? null, timestamp: new Date().toISOString() });
-    setUserProfileMeta(email, "_auditLog", auditLog);
-    setUserProfileMeta(email, "_flagged", true);
+    await setUserProfileMeta(email, "_auditLog", auditLog);
+    await setUserProfileMeta(email, "_flagged", true);
     console.log(`[Admin] FLAGGED: ${email}`);
     res.json({ success: true, email });
   } catch (err) { res.status(500).json({ error: "Failed to flag user" }); }
 });
 
-// ── POST /admin/reset-password ────────────────────────────────────────────────
-router.post("/admin/reset-password", (req: Request, res: Response): void => {
+router.post("/admin/reset-password", async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, adminNote } = req.body as { email: string; adminNote?: string };
     if (!email) { res.status(400).json({ error: "email required" }); return; }
-    if (!getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
-    const profile  = getUserProfileData(email);
+    if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
+    const profile  = await getUserProfileData(email);
     const creds    = (profile.credentials as Record<string, unknown>) ?? {};
     delete creds.passwordHash;
-    setUserProfileMeta(email, "credentials", creds);
+    await setUserProfileMeta(email, "credentials", creds);
     const auditLog = (profile._auditLog as unknown[]) ?? [];
     auditLog.push({ actionType: "ADMIN_RESET_PASSWORD", actor: "admin", note: adminNote ?? null, timestamp: new Date().toISOString() });
-    setUserProfileMeta(email, "_auditLog", auditLog);
+    await setUserProfileMeta(email, "_auditLog", auditLog);
     console.log(`[Admin] PASSWORD RESET: ${email}`);
     res.json({ success: true, email });
   } catch (err) { res.status(500).json({ error: "Failed to reset password" }); }
 });
 
-// ── GET /admin/user-documents/:email ─────────────────────────────────────────
-router.get("/admin/user-documents/:email", (req: Request, res: Response): void => {
+router.get("/admin/user-documents/:email", async (req: Request, res: Response): Promise<void> => {
   try {
     const email = decodeURIComponent(String(req.params.email));
-    const master = getUserData(email);
+    const master = await getUserData(email);
     if (!master) { res.status(404).json({ error: "User not found" }); return; }
-    const profile = getUserProfileData(email);
+    const profile = await getUserProfileData(email);
     const docs = (profile.documents as Record<string, string>)
       ?? (master.documents as Record<string, string>)
       ?? {};
-    const dataDir = getDataDir();
+
+    const pool = getPool();
+    const dbDocs = await pool.query(
+      `SELECT role, filename FROM user_documents WHERE email = $1`,
+      [email]
+    );
+    const dbDocSet = new Set(dbDocs.rows.map((r: any) => r.role));
+
     const result: Record<string, { role: string; path: string; exists: boolean; fileName: string }> = {};
     for (const [role, relPath] of Object.entries(docs)) {
-      const absPath = resolve(dataDir, relPath.replace(/^data\//, ""));
       const fileName = relPath.split("/").pop() ?? role;
-      result[role] = { role, path: relPath, exists: existsSync(absPath), fileName };
+      result[role] = { role, path: relPath, exists: dbDocSet.has(role), fileName };
     }
     res.json({ email, documents: result });
   } catch (err) {
@@ -651,34 +609,33 @@ router.get("/admin/user-documents/:email", (req: Request, res: Response): void =
   }
 });
 
-// ── GET /admin/user-document-file/:email/:role ──────────────────────────────
-router.get("/admin/user-document-file/:email/:role", (req: Request, res: Response): void => {
+router.get("/admin/user-document-file/:email/:role", async (req: Request, res: Response): Promise<void> => {
   try {
     const email = decodeURIComponent(String(req.params.email));
     const role = String(req.params.role);
-    const master = getUserData(email);
+    const master = await getUserData(email);
     if (!master) { res.status(404).json({ error: "User not found" }); return; }
-    const profile = getUserProfileData(email);
-    const docs = (profile.documents as Record<string, string>)
-      ?? (master.documents as Record<string, string>)
-      ?? {};
-    const relPath = docs[role];
-    if (!relPath) { res.status(404).json({ error: "Document not found" }); return; }
-    const dataDir = getDataDir();
-    const absPath = resolve(dataDir, relPath.replace(/^data\//, ""));
-    if (!absPath.startsWith(dataDir)) {
-      res.status(403).json({ error: "Access denied" });
+
+    const pool = getPool();
+    const result = await pool.query(
+      `SELECT file_data, mimetype, filename FROM user_documents WHERE email = $1 AND role = $2`,
+      [email, role]
+    );
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: "Document not found" });
       return;
     }
-    if (!existsSync(absPath)) { res.status(404).json({ error: "File not found on disk" }); return; }
-    const ext = extname(absPath).toLowerCase();
+
+    const row = result.rows[0];
+    const ext = (row.filename as string).split(".").pop()?.toLowerCase() ?? "";
     const mimeMap: Record<string, string> = {
-      ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
-      ".png": "image/png", ".pdf": "application/pdf",
+      "jpg": "image/jpeg", "jpeg": "image/jpeg",
+      "png": "image/png", "pdf": "application/pdf",
     };
-    res.setHeader("Content-Type", mimeMap[ext] ?? "application/octet-stream");
-    res.setHeader("Content-Disposition", `inline; filename="${role}${ext}"`);
-    res.send(readFileSync(absPath));
+    res.setHeader("Content-Type", row.mimetype || mimeMap[ext] || "application/octet-stream");
+    res.setHeader("Content-Disposition", `inline; filename="${role}.${ext}"`);
+    res.send(row.file_data);
   } catch (err) {
     console.error("[Admin] user-document-file error:", err);
     res.status(500).json({ error: "Failed to serve document" });

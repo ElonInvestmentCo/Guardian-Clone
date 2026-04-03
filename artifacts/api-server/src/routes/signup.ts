@@ -8,8 +8,6 @@ import {
 
 const signupRouter = Router();
 
-// ── Audit helpers ──────────────────────────────────────────────────────────────
-
 function auditLog(
   email: string,
   step: string,
@@ -52,31 +50,18 @@ function computeAuditDiff(
   return entries;
 }
 
-function appendAuditLog(email: string, entries: AuditEntry[]): void {
+async function appendAuditLog(email: string, entries: AuditEntry[]): Promise<void> {
   if (entries.length === 0) return;
-  const profile = getUserProfileData(email);
+  const profile = await getUserProfileData(email);
   const existing = (profile["_auditLog"] as AuditEntry[]) ?? [];
-  setUserProfileMeta(email, "_auditLog", [...existing, ...entries]);
+  await setUserProfileMeta(email, "_auditLog", [...existing, ...entries]);
 }
 
-// ── Step configuration ─────────────────────────────────────────────────────────
-
 const ONBOARDING_STEPS = [
-  "general",
-  "personal",
-  "professional",
-  "idInformation",
-  "income",
-  "riskTolerance",
-  "financialSituation",
-  "investmentExperience",
-  "idProofUpload",
-  "fundingDetails",
-  "disclosures",
-  "signatures",
+  "general", "personal", "professional", "idInformation",
+  "income", "riskTolerance", "financialSituation", "investmentExperience",
+  "idProofUpload", "fundingDetails", "disclosures", "signatures",
 ] as const;
-
-// ── Format validation helpers ────────────────────────────────────────────────
 
 function isValidPhone(v: string): boolean {
   const cleaned = v.replace(/[\s\-().+]/g, "");
@@ -108,8 +93,6 @@ function isValidAbaSwift(v: string): boolean {
   const trimmed = v.trim();
   return /^\d{9}$/.test(trimmed) || /^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/i.test(trimmed);
 }
-
-// ── Per-step server-side validators ───────────────────────────────────────────
 
 type ValidationErrors = Record<string, string>;
 
@@ -213,15 +196,12 @@ function validateStep(
 
     case "riskTolerance": {
       req("riskTolerance", "Risk tolerance");
-      const priorities = data["strategyPriorities"] as
-        | Record<string, string>
-        | undefined;
+      const priorities = data["strategyPriorities"] as Record<string, string> | undefined;
       if (priorities) {
         const vals = Object.values(priorities).filter(Boolean);
         const unique = new Set(vals);
         if (vals.length < 5 || unique.size < 5) {
-          errors["strategyPriorities"] =
-            "Assign a unique priority (1–5) to every strategy";
+          errors["strategyPriorities"] = "Assign a unique priority (1–5) to every strategy";
         }
       } else {
         errors["strategyPriorities"] = "Strategy priorities are required";
@@ -264,11 +244,7 @@ function validateStep(
 
     case "fundingDetails": {
       const sources = data["fundingSources"];
-      if (
-        !sources ||
-        !Array.isArray(sources) ||
-        (sources as unknown[]).length === 0
-      ) {
+      if (!sources || !Array.isArray(sources) || (sources as unknown[]).length === 0) {
         errors["fundingSources"] = "Select at least one funding source";
       }
       req("bankName", "Bank name");
@@ -319,28 +295,20 @@ function validateStep(
   return errors;
 }
 
-// ── completed-step numbers helpers ───────────────────────────────────────────
-
-function getCompletedStepNumbers(email: string): number[] {
-  const profile = getUserProfileData(email);
+async function getCompletedStepNumbers(email: string): Promise<number[]> {
+  const profile = await getUserProfileData(email);
   return (profile["_completedStepNumbers"] as number[]) ?? [];
 }
 
-function addCompletedStepNumber(email: string, stepNum: number): number[] {
-  const existing = getCompletedStepNumbers(email);
+async function addCompletedStepNumber(email: string, stepNum: number): Promise<number[]> {
+  const existing = await getCompletedStepNumbers(email);
   if (existing.includes(stepNum)) return existing;
   const updated = [...existing, stepNum].sort((a, b) => a - b);
-  setUserProfileMeta(email, "_completedStepNumbers", updated);
+  await setUserProfileMeta(email, "_completedStepNumbers", updated);
   return updated;
 }
 
-// ── Routes ────────────────────────────────────────────────────────────────────
-
-/**
- * POST /api/signup/save-step
- * Legacy endpoint — kept for backward compatibility (draft saves, uploads, etc.)
- */
-signupRouter.post("/signup/save-step", (req, res) => {
+signupRouter.post("/signup/save-step", async (req, res) => {
   const { email: rawEmail, step, data } = req.body as {
     email?: string;
     step?: string;
@@ -360,7 +328,7 @@ signupRouter.post("/signup/save-step", (req, res) => {
   }
 
   try {
-    upsertUserStep(email, step, data);
+    await upsertUserStep(email, step, data);
     auditLog(email, step, "SAVE_STEP_DRAFT", { fields: Object.keys(data) });
     console.log(`[Signup] Draft saved: step=${step} email=${email} fields=${Object.keys(data).length}`);
     res.json({ success: true });
@@ -370,15 +338,7 @@ signupRouter.post("/signup/save-step", (req, res) => {
   }
 });
 
-/**
- * POST /api/signup/complete-step
- * Production endpoint — validates, saves, marks the step complete, and
- * appends a field-level audit diff to the user's profile.
- *
- * Returns 422 with field-level errors if validation fails.
- * Returns { success: true, completedSteps: number[] } on success.
- */
-signupRouter.post("/signup/complete-step", (req, res) => {
+signupRouter.post("/signup/complete-step", async (req, res) => {
   const { email: rawEmail, stepNumber, stepKey, data } = req.body as {
     email?: string;
     stepNumber?: number;
@@ -388,12 +348,7 @@ signupRouter.post("/signup/complete-step", (req, res) => {
 
   const email = rawEmail?.trim().toLowerCase();
 
-  if (
-    !email ||
-    stepNumber === undefined ||
-    !stepKey ||
-    !data
-  ) {
+  if (!email || stepNumber === undefined || !stepKey || !data) {
     res.status(400).json({
       error: "email, stepNumber, stepKey, and data are required",
     });
@@ -406,7 +361,6 @@ signupRouter.post("/signup/complete-step", (req, res) => {
   }
 
   try {
-    // 1. Server-side field validation
     const errors = validateStep(stepKey, data);
     if (Object.keys(errors).length > 0) {
       auditLog(email, stepKey, "VALIDATE_FAIL", {
@@ -417,16 +371,15 @@ signupRouter.post("/signup/complete-step", (req, res) => {
       return;
     }
 
-    const profile = getUserProfileData(email);
-    const oldStepData =
-      (profile[stepKey] as Record<string, unknown>) ?? {};
+    const profile = await getUserProfileData(email);
+    const oldStepData = (profile[stepKey] as Record<string, unknown>) ?? {};
 
-    upsertUserStep(email, stepKey, data);
+    await upsertUserStep(email, stepKey, data);
 
-    const completedSteps = addCompletedStepNumber(email, stepNumber);
+    const completedSteps = await addCompletedStepNumber(email, stepNumber);
 
     const diff = computeAuditDiff(stepKey, oldStepData, data);
-    appendAuditLog(email, diff);
+    await appendAuditLog(email, diff);
 
     auditLog(email, stepKey, "COMPLETE_STEP", {
       stepNumber,
@@ -443,11 +396,7 @@ signupRouter.post("/signup/complete-step", (req, res) => {
   }
 });
 
-/**
- * GET /api/signup/get-progress?email=
- * Returns saved step data, completed step keys, and completed step numbers.
- */
-signupRouter.get("/signup/get-progress", (req, res) => {
+signupRouter.get("/signup/get-progress", async (req, res) => {
   const { email: rawEmail } = req.query as { email?: string };
   const email = rawEmail?.trim().toLowerCase();
 
@@ -462,7 +411,7 @@ signupRouter.get("/signup/get-progress", (req, res) => {
   }
 
   try {
-    const profile = getUserProfileData(email);
+    const profile = await getUserProfileData(email);
     if (!profile || Object.keys(profile).length === 0) {
       res.json({ stepData: {}, completedSteps: [], completedStepNumbers: [] });
       return;
@@ -478,8 +427,7 @@ signupRouter.get("/signup/get-progress", (req, res) => {
       }
     }
 
-    const completedStepNumbers =
-      (profile["_completedStepNumbers"] as number[]) ?? [];
+    const completedStepNumbers = (profile["_completedStepNumbers"] as number[]) ?? [];
 
     auditLog(email, "all", "GET_PROGRESS", {
       completedSteps,

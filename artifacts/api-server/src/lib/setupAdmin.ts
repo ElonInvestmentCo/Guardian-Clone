@@ -66,6 +66,10 @@ function readAdminFile(): AdminFileData | null {
 
 function writeAdminFile(data: AdminFileData): void {
   const p = getAdminFilePath();
+  const dir = path.dirname(p);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
   fs.writeFileSync(p, JSON.stringify(data, null, 2), { mode: 0o600 });
 }
 

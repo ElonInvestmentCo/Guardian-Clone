@@ -29,11 +29,7 @@ export interface RiskScore {
   evaluatedAt: string;
 }
 
-/** In-memory store of previously seen emails / phones / IPs */
-const seenEmails  = new Map<string, string[]>();   // email → [email, email, ...]
-const seenPhones  = new Map<string, string[]>();   // phone → [email, ...]
-// Note: rapid submission detection now reads from the user's audit log in their profile
-// to avoid false positives from admin panel calls to evaluateRisk()
+const seenPhones  = new Map<string, string[]>();
 
 function scoreToLevel(score: number): RiskLevel {
   if (score >= 75) return "critical";
@@ -42,17 +38,11 @@ function scoreToLevel(score: number): RiskLevel {
   return "low";
 }
 
-/**
- * Evaluate risk score for a user.
- * @param email     The user's email.
- * @param ipAddress The IP address of the request (optional).
- */
-export function evaluateRisk(email: string, ipAddress?: string): RiskScore {
-  const profile = getUserProfileData(email);
+export async function evaluateRisk(email: string, ipAddress?: string): Promise<RiskScore> {
+  const profile = await getUserProfileData(email);
   const flags: RiskFlag[] = [];
   let score = 0;
 
-  // ── 1. Identity mismatch ──────────────────────────────────────────────
   const personal   = profile.personal       as Record<string, unknown> | undefined;
   const idInfo     = profile.idInformation  as Record<string, unknown> | undefined;
   const idUpload   = profile.idProofUpload  as Record<string, unknown> | undefined;
@@ -66,7 +56,6 @@ export function evaluateRisk(email: string, ipAddress?: string): RiskScore {
     }
   }
 
-  // ── 2. Incomplete critical steps ──────────────────────────────────────
   const completedSteps = (profile._completedStepNumbers as number[] | undefined) ?? [];
   if (!completedSteps.includes(3)) {
     score += 10;
@@ -77,13 +66,11 @@ export function evaluateRisk(email: string, ipAddress?: string): RiskScore {
     flags.push({ code: "NO_ID_UPLOAD", description: "Document upload step not completed", severity: "warning" });
   }
 
-  // ── 3. Document upload without ID info ───────────────────────────────
   if (idUpload && !idInfo) {
     score += 15;
     flags.push({ code: "UPLOAD_WITHOUT_PROFILE", description: "Document uploaded but no ID information on file", severity: "warning" });
   }
 
-  // ── 4. Multiple account detection (phone reuse) ───────────────────────
   const phone = personal?.phoneNumber as string | undefined;
   if (phone) {
     const existing = seenPhones.get(phone) ?? [];
@@ -95,15 +82,12 @@ export function evaluateRisk(email: string, ipAddress?: string): RiskScore {
     }
   }
 
-  // ── 5. Rapid onboarding attempt (>3 unique steps in 10 min) ─────────
-  // Read from profile audit log — signup entries have a `stepKey` field and no `actionType`
-  // This avoids false positives caused by admin panel views calling evaluateRisk()
   const now = Date.now();
   const auditLog = (profile._auditLog as Array<Record<string, unknown>> | undefined) ?? [];
   const recentStepKeys = new Set<string>();
   for (const entry of auditLog) {
     const stepKey = entry.stepKey as string | undefined;
-    if (!stepKey || entry.actionType) continue; // skip admin action entries
+    if (!stepKey || entry.actionType) continue;
     const ts = entry.timestamp as string | undefined;
     if (!ts) continue;
     if (now - new Date(ts).getTime() < 10 * 60 * 1000) {
@@ -115,32 +99,27 @@ export function evaluateRisk(email: string, ipAddress?: string): RiskScore {
     flags.push({ code: "RAPID_SUBMISSION", description: `${recentStepKeys.size} distinct steps completed in under 10 minutes`, severity: "warning" });
   }
 
-  // ── 6. High-risk investment objectives ───────────────────────────────
   const risk = profile.riskTolerance as Record<string, unknown> | undefined;
   if (risk?.riskTolerance === "significant") {
     score += 5;
     flags.push({ code: "MAX_RISK_TOLERANCE", description: "User selected maximum risk tolerance", severity: "info" });
   }
 
-  // ── 7. Missing address / geographic anomaly ───────────────────────────
   if (personal && !personal.address) {
     score += 10;
     flags.push({ code: "NO_ADDRESS", description: "No address on file", severity: "warning" });
   }
 
-  // ── 8. Suspicious margin + max-risk combo ────────────────────────────
   const disclosures = profile.disclosures as Record<string, unknown> | undefined;
   if (disclosures?.wantsMargin === "yes" && risk?.riskTolerance === "significant") {
     score += 15;
     flags.push({ code: "MARGIN_MAX_RISK", description: "Margin account requested with maximum risk tolerance", severity: "warning" });
   }
 
-  // ── 9. IP-based anomaly (placeholder — flag if provided but unsupported) ──
   if (ipAddress && ipAddress.startsWith("10.")) {
     flags.push({ code: "INTERNAL_IP", description: "Request originated from internal IP range", severity: "info" });
   }
 
-  // Clamp 0–100
   const finalScore = Math.min(100, Math.max(0, score));
 
   return {

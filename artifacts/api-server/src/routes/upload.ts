@@ -1,28 +1,21 @@
 import { Router } from "express";
 import multer, { MulterError } from "multer";
 import path from "path";
-import fs from "fs";
 import {
   sanitizeEmail,
-  getUserDocDir,
   addDocumentRef,
 } from "../lib/userDataStore.js";
+import { getPool } from "../lib/db.js";
 import { uploadLimit } from "../middleware/security.js";
 
 const uploadRouter = Router();
 
-// ── Constants ────────────────────────────────────────────────────────────────
-
-const MAX_SIZE_BYTES = 8 * 1024 * 1024; // 8 MB
+const MAX_SIZE_BYTES = 8 * 1024 * 1024;
 const ALLOWED_MIME = new Set([
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "application/pdf",
+  "image/jpeg", "image/jpg", "image/png", "application/pdf",
 ]);
 const ALLOWED_EXT = new Set([".jpg", ".jpeg", ".png", ".pdf"]);
 
-// Store files in memory first so we can choose the destination after reading req.body
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: MAX_SIZE_BYTES },
@@ -36,13 +29,11 @@ const upload = multer({
   },
 });
 
-// ── Route ────────────────────────────────────────────────────────────────────
-
 uploadRouter.post(
   "/signup/upload-document",
   uploadLimit,
   upload.single("file"),
-  (req, res) => {
+  async (req, res) => {
     const { email, role } = req.body as { email?: string; role?: string };
 
     if (!email || !role) {
@@ -60,63 +51,36 @@ uploadRouter.post(
       return;
     }
 
-    // Sanitize the role name to prevent path traversal
     const safeRole = role.replace(/[^a-z0-9_-]/gi, "_").toLowerCase();
     const ext = path.extname(req.file.originalname).toLowerCase();
 
-    // Validate size (belt-and-suspenders — multer already enforces this)
     if (req.file.size < 1024) {
       res.status(400).json({ error: "File too small (minimum 1 KB)" });
       return;
     }
 
-    // Build destination
-    const docDir = getUserDocDir(email);
-    try {
-      if (!fs.existsSync(docDir)) {
-        fs.mkdirSync(docDir, { recursive: true, mode: 0o700 });
-      }
-    } catch (err) {
-      console.error("[upload] Failed to create document directory:", err);
-      res.status(500).json({ error: "Failed to create storage directory" });
-      return;
-    }
-
     const fileName = `${safeRole}${ext}`;
-    const destPath = path.join(docDir, fileName);
-
-    // Write buffer to disk
-    const writeRetries = 3;
-    for (let attempt = 1; attempt <= writeRetries; attempt++) {
-      try {
-        fs.writeFileSync(destPath, req.file.buffer, { mode: 0o600 });
-        fs.chmodSync(destPath, 0o600);
-        break;
-      } catch (err) {
-        console.error(`[upload] File write failed (attempt ${attempt}/${writeRetries}):`, err);
-        if (attempt === writeRetries) {
-          res.status(500).json({ error: "Failed to save file" });
-          return;
-        }
-      }
-    }
-
     const relativePath = `data/users/${sanitizeEmail(email)}/documents/${fileName}`;
-    try {
-      addDocumentRef(email, safeRole, relativePath);
-    } catch (err) {
-      console.error("[upload] Failed to update document reference:", err);
-      try { fs.unlinkSync(destPath); } catch { /* cleanup best-effort */ }
-      res.status(500).json({ error: "Failed to record document reference" });
-      return;
-    }
 
-    console.log(`[upload] Saved document "${fileName}" for ${email}`);
-    res.json({ success: true, path: relativePath, fileName });
+    try {
+      const pool = getPool();
+      await pool.query(
+        `INSERT INTO user_documents (email, role, filename, mimetype, file_data, created_at)
+         VALUES ($1, $2, $3, $4, $5, NOW())
+         ON CONFLICT (email, role) DO UPDATE SET filename = $3, mimetype = $4, file_data = $5, created_at = NOW()`,
+        [email, safeRole, fileName, req.file.mimetype, req.file.buffer]
+      );
+
+      await addDocumentRef(email, safeRole, relativePath);
+
+      console.log(`[upload] Saved document "${fileName}" for ${email} (stored in DB)`);
+      res.json({ success: true, path: relativePath, fileName });
+    } catch (err) {
+      console.error("[upload] Failed to save document:", err);
+      res.status(500).json({ error: "Failed to save file" });
+    }
   }
 );
-
-// ── Multer error handler ──────────────────────────────────────────────────────
 
 uploadRouter.use(
   "/signup/upload-document",
