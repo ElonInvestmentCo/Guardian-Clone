@@ -1,0 +1,205 @@
+[Region: us-west1]
+ 
+╭─────────────────╮
+│ Railpack 0.23.0 │
+╰─────────────────╯
+ 
+↳ Detected Node
+↳ Using pnpm package manager
+↳ Found workspace with 11 packages
+↳ Installing pnpm@10.26.1 with Corepack
+ 
+Packages
+──────────
+node  │  22.22.2  │  mise.toml (22.22.2)
+pnpm  │  10.26.1  │  package.json > packageManager (10.26.1)
+ 
+Steps
+──────────
+▸ install
+$ npm i -g corepack@latest && corepack enable && corepack prepare --activate
+$ pnpm install --frozen-lockfile --prefer-offline
+ 
+▸ build
+$ pnpm install && pnpm run build
+ 
+Deploy
+──────────
+$ node artifacts/api-server/dist/index.cjs
+ 
+ 
+Successfully prepared Railpack plan for build
+ 
+ 
+context: xk24-sjrm
+
+load build definition from railpack-plan.json
+0ms
+
+install mise packages: node cached
+0ms
+
+copy .mise.toml cached
+0ms
+
+copy / /app, package.json
+378ms
+
+npm i -g corepack@latest && corepack enable && corepack prepare --activate
+2s
+npm warn config production Use `--omit=dev` instead.
+
+changed 1 package in 799ms
+Reshimming mise 22.22.1...
+Preparing pnpm@10.26.1 for immediate activation...
+
+mkdir -p /app/node_modules/.cache
+126ms
+
+pnpm install --frozen-lockfile --prefer-offline
+6s
+Scope: all 12 workspace projects
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +597
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 597, reused 0, downloaded 190, added 59
+Progress: resolved 597, reused 0, downloaded 581, added 581
+Progress: resolved 597, reused 0, downloaded 592, added 593
+Progress: resolved 597, reused 0, downloaded 596, added 597, done
+.../esbuild@0.27.3/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.27.3/node_modules/esbuild postinstall: Done
+
+dependencies:
++ country-state-city 3.2.1
+
+devDependencies:
++ prettier 3.8.1
++ typescript 5.9.3
+
+. preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+. preinstall: Done
+Done in 5.8s using pnpm v10.26.1
+
+copy / /app, .
+1s
+
+pnpm install && pnpm run build
+29s
+Scope: all 12 workspace projects
+Lockfile is up to date, resolution step is skipped
+Already up to date
+
+. preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+. preinstall: Done
+Done in 1.8s using pnpm v10.26.1
+
+> workspace@0.0.0 build /app
+> pnpm run typecheck && pnpm -r --if-present run build
+
+
+> workspace@0.0.0 typecheck /app
+> pnpm run typecheck:libs && pnpm -r --filter "./artifacts/**" --filter "./scripts" --if-present run typecheck
+
+
+> workspace@0.0.0 typecheck:libs /app
+> tsc --build
+
+Scope: 5 of 12 workspace projects
+artifacts/admin-kyc typecheck$ tsc -p tsconfig.json --noEmit
+artifacts/api-server typecheck$ tsc -p tsconfig.json --noEmit
+artifacts/guardian-trading typecheck$ tsc -p tsconfig.json --noEmit
+artifacts/mockup-sandbox typecheck$ tsc -p tsconfig.json --noEmit
+artifacts/api-server typecheck: Done
+scripts typecheck$ tsc -p tsconfig.json --noEmit
+scripts typecheck: Done
+artifacts/mockup-sandbox typecheck: Done
+artifacts/admin-kyc typecheck: Done
+artifacts/guardian-trading typecheck: Done
+Scope: 11 of 12 workspace projects
+artifacts/mockup-sandbox build$ vite build
+lib/api-client-react build$ echo 'Library package — no build output'
+lib/api-client-react build: Library package — no build output
+lib/api-client-react build: Done
+artifacts/mockup-sandbox build: vite v7.3.1 building client environment for production...
+artifacts/mockup-sandbox build: transforming...
+artifacts/mockup-sandbox build: ✓ 30 modules transformed.
+artifacts/mockup-sandbox build: rendering chunks...
+artifacts/mockup-sandbox build: computing gzip size...
+artifacts/mockup-sandbox build: dist/index.html                   4.42 kB │ gzip:  1.23 kB
+artifacts/mockup-sandbox build: dist/assets/index-BhVw-XfD.css   89.70 kB │ gzip: 14.88 kB
+artifacts/mockup-sandbox build: dist/assets/index-ZTNvmnih.js   187.72 kB │ gzip: 59.51 kB
+artifacts/mockup-sandbox build: ✓ built in 1.11s
+artifacts/mockup-sandbox build: Done
+artifacts/admin-kyc build$ vite build --config vite.config.ts
+artifacts/api-server build$ tsx ./build.ts
+artifacts/guardian-trading build$ vite build --config vite.config.ts
+artifacts/api-server build: building server...
+artifacts/guardian-trading build: vite v7.3.1 building client environment for production...
+artifacts/admin-kyc build: vite v7.3.1 building client environment for production...
+artifacts/guardian-trading build: transforming...
+artifacts/api-server build:   dist/index.cjs  1.4mb ⚠️
+artifacts/api-server build: ⚡ Done in 136ms
+artifacts/admin-kyc build: transforming...
+artifacts/api-server build: Done
+artifacts/guardian-trading build: src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+artifacts/admin-kyc build: ✓ 113 modules transformed.
+artifacts/admin-kyc build: rendering chunks...
+artifacts/admin-kyc build: computing gzip size...
+artifacts/admin-kyc build: dist/public/index.html                               1.77 kB │ gzip:  0.73 kB
+artifacts/admin-kyc build: dist/public/assets/bootstrap-icons-mSm7cUeB.woff2  134.04 kB
+artifacts/admin-kyc build: dist/public/assets/bootstrap-icons-BeopsB42.woff   180.29 kB
+artifacts/admin-kyc build: dist/public/assets/index-DlhnuMXI.css              321.95 kB │ gzip: 47.31 kB
+artifacts/admin-kyc build: dist/public/assets/index-fk-6OjAD.js               351.47 kB │ gzip: 99.53 kB
+artifacts/admin-kyc build: ✓ built in 2.19s
+artifacts/admin-kyc build: Done
+artifacts/guardian-trading build: ✓ 2868 modules transformed.
+artifacts/guardian-trading build: rendering chunks...
+artifacts/guardian-trading build: computing gzip size...
+artifacts/guardian-trading build: dist/public/index.html                                                                                   2.96 kB │ gzip:   1.23 kB
+artifacts/guardian-trading build: dist/public/assets/ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png                              4.49 kB
+artifacts/guardian-trading build: dist/public/assets/img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png                             6.21 kB
+artifacts/guardian-trading build: dist/public/assets/Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png      6.30 kB
+artifacts/guardian-trading build: dist/public/assets/Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png      6.83 kB
+artifacts/guardian-trading build: dist/public/assets/IMG_7934_1773719077190-CLq6B01D.png                                                   8.48 kB
+artifacts/guardian-trading build: dist/public/assets/IMG_7968_1773721659915-C53aLAjV.png                                                  16.66 kB
+artifacts/guardian-trading build: dist/public/assets/reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png               30.29 kB
+artifacts/guardian-trading build: dist/public/assets/IMG_7967_1773721659915-Bdj3jXlG.png                                                  80.20 kB
+artifacts/guardian-trading build: dist/public/assets/IMG_7970_1773721659915-BzHzYT_4.png                                                  83.70 kB
+artifacts/guardian-trading build: dist/public/assets/IMG_7969_1773721659915-gt229R3v.png                                                  85.70 kB
+artifacts/guardian-trading build: dist/public/assets/img-background-vector-1_1773948931248-kdCdaMwT.png                                  104.76 kB
+artifacts/guardian-trading build: dist/public/assets/pattern_1773965291387-CNruTbwj.png                                                  200.94 kB
+artifacts/guardian-trading build: dist/public/assets/index-DfYxUEsN.css                                                                  116.22 kB │ gzip:  19.16 kB
+artifacts/guardian-trading build: dist/public/assets/index-Bvx8EUcn.js                                                                 1,329.79 kB │ gzip: 373.46 kB
+artifacts/guardian-trading build: 
+artifacts/guardian-trading build: (!) Some chunks are larger than 500 kB after minification. Consider:
+artifacts/guardian-trading build: - Using dynamic import() to code-split the application
+artifacts/guardian-trading build: - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+artifacts/guardian-trading build: - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+artifacts/guardian-trading build: ✓ built in 7.08s
+artifacts/guardian-trading build: Done
+
+copy /root/.cache cached
+1ms
+
+install apt packages: libatomic1 cached
+0ms
+
+copy /mise/installs, /mise/shims, /usr/local/bin/mise, /root/.local/state/mise, /etc/mise/config.toml cached
+0ms
+
+copy /app/node_modules
+4s
+
+copy /root/.cache cached
+0ms
+
+copy /app, /opt/corepack
+1s
+
+importing to docker
+16s
+
+sharing credentials for production-us-west2.railway-registry.com
+0ms
+Build time: 111.55 seconds

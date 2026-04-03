@@ -1,0 +1,49 @@
+2026-04-03T18:28:07.542844928Z [inf]  Starting Container
+2026-04-03T18:28:08.815248864Z [inf]  [Startup] Database initialized
+2026-04-03T18:28:08.815257131Z [inf]  [Admin] Credentials loaded from environment variables.
+2026-04-03T18:28:08.815264981Z [inf]  [Startup] Admin credentials configured
+2026-04-03T18:28:08.815305205Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-03T18:28:08.815312754Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-03T18:28:08.815320063Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-03T18:28:08.815327907Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-DlhnuMXI.css, index-fk-6OjAD.js
+2026-04-03T18:28:08.815334487Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-03T18:28:08.815343203Z [inf]  [Static] guardian-trading files: _redirects, assets, benzinga-review.jpg, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, logo.png, need-help-card.png, opengraph.jpg, robots.txt, support-card.png
+2026-04-03T18:28:08.815348882Z [inf]  [Static] guardian-trading/assets: Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, IMG_7969_1773721659915-gt229R3v.png, IMG_7970_1773721659915-BzHzYT_4.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-Bvx8EUcn.js, index-DfYxUEsN.css, pattern_1773965291387-CNruTbwj.png, reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png
+2026-04-03T18:28:08.815355375Z [inf]  [DB] Database tables initialized successfully
+2026-04-03T18:28:10.444569700Z [inf]  Server listening on port 3000
+2026-04-03T18:28:10.444576128Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:09.791Z"}
+2026-04-03T18:28:10.444583523Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:10.412Z"}
+2026-04-03T18:28:12.286002253Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:10.466Z"}
+2026-04-03T18:28:12.286007965Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:11.351Z"}
+2026-04-03T18:28:12.286012907Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:11.660Z"}
+2026-04-03T18:28:12.286017569Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:11.783Z"}
+2026-04-03T18:28:31.529885232Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:25.090Z"}
+2026-04-03T18:28:31.529894194Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:26.611Z"}
+2026-04-03T18:28:31.529900962Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:26.848Z"}
+2026-04-03T18:28:31.529911863Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:26.862Z"}
+2026-04-03T18:28:31.529920126Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:27.295Z"}
+2026-04-03T18:28:31.529926087Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:28.087Z"}
+2026-04-03T18:28:31.530255368Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:22.950Z"}
+2026-04-03T18:28:31.530260177Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:22.980Z"}
+2026-04-03T18:28:31.530265180Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:24.088Z"}
+2026-04-03T18:28:31.530269467Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:24.115Z"}
+2026-04-03T18:28:34.267463075Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:28.221Z"}
+2026-04-03T18:28:34.267470104Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:28.820Z"}
+2026-04-03T18:28:39.407534449Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:39.300Z"}
+2026-04-03T18:28:39.407540531Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:39.313Z"}
+2026-04-03T18:28:41.698267418Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:40.546Z"}
+2026-04-03T18:28:41.698342355Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:40.440Z"}
+2026-04-03T18:28:43.517448574Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:42.131Z"}
+2026-04-03T18:28:43.517457190Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:43.282Z"}
+2026-04-03T18:28:45.070605354Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:43.653Z"}
+2026-04-03T18:28:45.070612521Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:43.770Z"}
+2026-04-03T18:28:45.070619424Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:44.184Z"}
+2026-04-03T18:28:45.070703601Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:44.497Z"}
+2026-04-03T18:28:46.812431442Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:45.290Z"}
+2026-04-03T18:28:46.812440020Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:45.713Z"}
+2026-04-03T18:28:56.190081683Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:55.662Z"}
+2026-04-03T18:28:56.190086112Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:55.759Z"}
+2026-04-03T18:28:57.583237108Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:56.900Z"}
+2026-04-03T18:28:57.583243806Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:56.912Z"}
+2026-04-03T18:29:00.810880315Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:28:59.690Z"}
+2026-04-03T18:29:02.612477234Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://213e3e52-05a9-425f-ac72-2f919964b908-00-22l4xdy22ezg3.riker.replit.dev","timestamp":"2026-04-03T18:29:00.822Z"}
