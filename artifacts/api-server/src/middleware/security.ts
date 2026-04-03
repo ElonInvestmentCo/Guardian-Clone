@@ -71,6 +71,10 @@ export function botDetection(req: Request, res: Response, next: NextFunction): v
     return next();
   }
 
+  if (process.env.NODE_ENV !== "production") {
+    return next();
+  }
+
   const ua = req.headers["user-agent"] ?? "";
   const ip = req.ip ?? "unknown";
   const now = Date.now();

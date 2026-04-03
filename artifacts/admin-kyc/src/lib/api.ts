@@ -5,7 +5,7 @@
 
 const API_BASE_URL = (
   (import.meta as any).env?.VITE_API_URL ||
-  "https://guardian-clone-production.up.railway.app"
+  (import.meta.env.DEV ? "" : "https://guardian-clone-production.up.railway.app")
 ).replace(/\/$/, "");
 
 const API_ROOT = `${API_BASE_URL}/api`;

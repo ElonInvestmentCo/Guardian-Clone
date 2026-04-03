@@ -1,0 +1,13 @@
+Conduct a full production-level audit of the live system to verify that the admin dashboard is correctly displaying all user data, KYC information, and uploaded documents in a complete and human-readable format across both the frontend (Netlify) and backend (Railway).
+
+This audit must be performed against the live deployed environment at https://guardiiantrading.com/ and its connected backend services. Begin by validating all admin API endpoints responsible for retrieving user profiles and KYC records. Confirm that these endpoints return full datasets for every user, including account metadata, personal information, professional details, identity and tax records, financial information, risk profile, funding details, disclosures, signatures, and all uploaded document references.
+
+Ensure that any data stored securely or encrypted at the database level is properly decrypted before being returned to authorized admin clients. No field should appear hashed, encoded, masked, truncated, or unreadable in the API response.
+
+On the frontend (admin dashboard), verify that all returned data is fully rendered and visible in the UI without omission. Every field must be displayed in plain, human-readable form with proper formatting for dates, currency, and structured values. There must be no masking (e.g., asterisks), hidden values, or UI-level obfuscation applied to sensitive fields such as identification numbers or banking details.
+
+Additionally, confirm that all uploaded documents, including identity documents and supporting files, are accessible via the admin interface. The “View” functionality must successfully open each file (ID front, ID back, and any other uploads) using secure access mechanisms such as signed URLs, without broken links, permission errors, or failed loads.
+
+Test multiple user accounts to ensure consistency across different data sets, and verify that no edge cases result in missing, partially loaded, or improperly formatted information. Confirm that role-based access control is strictly enforced so that only authenticated admin users can access this full, unencrypted dataset.
+
+Finally, ensure there is complete alignment between the database, backend API responses, and frontend rendering. The admin dashboard must function as a reliable, compliance-grade back-office system where all user information and documents are fully visible, accurate, and immediately accessible for verification purposes in the live production environment.

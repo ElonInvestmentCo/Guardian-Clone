@@ -1,0 +1,62 @@
+Apply precise background styling updates across the specified sections to ensure a clean, unified, and production-grade visual layout while strictly adhering to the provided color values.
+
+1. “Master Your Order Flow” + “Locates & Stock Borrows” Section:
+
+Update the entire section containing:
+
+* “Master Your Order Flow”
+* “Locates & Stock Borrows”
+
+Set a single, unified background color for the full-width section container.
+
+Color specification (strict — do not modify):
+HEX: #141414
+HSL: 0, 0%, 8%
+RGB: 20, 20, 20
+
+Requirements:
+
+* The background must span edge-to-edge horizontally (full-width)
+* No gradients, overlays, or mixed tones
+* No seams or inherited background inconsistencies
+* Both content blocks must share the exact same background
+* Do NOT alter layout, spacing, typography, or structure
+* Ensure all text and elements remain clearly readable without changing their styling unless absolutely required for contrast
+
+The result should be a smooth, uniform dark section that integrates seamlessly with the site’s overall design.
+
+---
+
+2. “Why Do Active Traders Use Guardian?” Section:
+
+Update the section containing:
+
+* “Why Do Active Traders Use Guardian?”
+* All descriptive and supporting content within that block
+
+Apply a full-width background color to the parent container only.
+
+Color specification (strict — do not modify):
+HEX: #1c1c1c
+HSL: 0, 0%, 11%
+RGB: 28, 28, 28
+
+Requirements:
+
+* Background must span edge-to-edge horizontally
+* No gradients, overlays, or color inconsistencies
+* Maintain all existing layout, spacing, and typography
+
+CRITICAL EXCEPTION:
+Do NOT apply this background color to the subsection:
+“Control Your Costs With Customized Commissions”
+(including both options and equities pricing cards)
+
+* This pricing section must retain its current background styling
+* It must remain visually distinct from the rest of the section
+* Ensure a clean separation with no color bleeding or overlap between the #1c1c1c section and the pricing block
+
+---
+
+Final Result:
+Both sections must appear clean, consistent, and professionally structured, with strict adherence to the provided color values, proper containment, and seamless integration into the overall UI without affecting any other design elements.

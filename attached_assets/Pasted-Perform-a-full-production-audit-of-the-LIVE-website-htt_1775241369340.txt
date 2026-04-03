@@ -1,0 +1,15 @@
+Perform a full production audit of the LIVE website (https://guardiiantrading.com/) to verify that the admin dashboard correctly displays all user data, KYC information, and uploaded documents in a complete, accurate, and human-readable format across both frontend and backend systems.
+
+This audit must be conducted against the live environment—not local or staging—and must simulate real admin access using valid authenticated credentials.
+
+Begin with the backend verification. Inspect all API endpoints responsible for retrieving user profiles, KYC records, and uploaded documents. Confirm that the API responses include all required data fields across every category, including account metadata, personal information, professional details, identity and tax records, financial disclosures, risk profile, funding details, signatures, and document references. Ensure that any data stored securely (e.g., encrypted at rest) is properly decrypted before being returned to the admin interface. No fields should be returned as hashed, masked, encoded, truncated, or otherwise unreadable values.
+
+Next, validate the frontend admin dashboard. Confirm that every field returned by the backend is rendered correctly in the UI without omission. All values must be displayed in plain, readable format with proper formatting for dates, currency, and structured data. Sensitive fields such as identification numbers, tax IDs, and banking details must be fully visible to authorized admin users with no masking or obfuscation applied.
+
+Verify document handling thoroughly. All uploaded files (including ID front/back, proof of identity, and supporting documents) must be accessible via the admin interface. The “View” functionality must successfully open each file using secure access methods (e.g., signed URLs), without broken links, permission errors, or loading failures. Test multiple user accounts to ensure consistency across different records.
+
+Cross-check data integrity by comparing what is stored in the database, what is returned by the API, and what is rendered in the frontend. There must be zero discrepancies between these layers.
+
+Additionally, confirm that role-based access control is strictly enforced so that only authenticated admin users can access this full, unencrypted dataset. Ensure no exposure of sensitive data occurs for non-admin users.
+
+The final outcome must confirm that the live admin dashboard provides a complete, transparent, and compliance-ready view of all user data and documents, matching the standards of a professional financial platform’s back-office system.

@@ -37,5 +37,4 @@ USER_DATA_KEY = "a4ad8bf066b8560745779d7c544b986a112e1405a904b4a614a62a918e92a82
 PG_DATABASE_URL = "postgresql://postgres:qOuCtBfXRfVNLEjTJsjcmMBbOJVViTSZ@interchange.proxy.rlwy.net:15191/railway"
 
 [userenv.development]
-VITE_API_URL = "https://guardian-clone-production.up.railway.app"
   
