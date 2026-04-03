@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import path from "path";
 import { getPool } from "./db.js";
 
 console.log(`[UserDataStore] Using PostgreSQL-backed storage`);
@@ -88,19 +89,19 @@ export function sanitizeEmail(email: string): string {
 }
 
 export function getDataDir(): string {
-  return "/tmp/guardian-data";
+  return path.join(process.cwd(), "data");
 }
 
 export function getUserDir(email: string): string {
-  return `/tmp/guardian-data/users/${sanitizeEmail(email)}`;
+  return path.join(getDataDir(), "users", sanitizeEmail(email));
 }
 
 export function getUserDocDir(email: string): string {
-  return `/tmp/guardian-data/users/${sanitizeEmail(email)}/documents`;
+  return path.join(getUserDir(email), "documents");
 }
 
 export function getUserProfilePath(email: string): string {
-  return `/tmp/guardian-data/users/${sanitizeEmail(email)}/profile.json`;
+  return path.join(getUserDir(email), "profile.json");
 }
 
 async function getMasterEntry(email: string): Promise<Record<string, unknown> | null> {

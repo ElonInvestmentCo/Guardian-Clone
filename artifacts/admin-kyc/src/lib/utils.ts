@@ -82,10 +82,15 @@ export function getProfileField(profile: Record<string, unknown>, step: string, 
   const stepData = profile[step] as Record<string, unknown> | undefined;
   const v = stepData?.[field];
   if (v == null) return "—";
+  if (typeof v === "boolean") return v ? "Yes" : "No";
   const s = String(v);
   if (s.startsWith("enc:")) return "⚠ Encrypted (re-entry required)";
   if (s === "[decryption failed]") return "⚠ Encrypted (re-entry required)";
   if (s.startsWith("[encrypted with previous key")) return "⚠ Encrypted (re-entry required)";
+  if (s === "true") return "Yes";
+  if (s === "false") return "No";
+  if (s === "yes") return "Yes";
+  if (s === "no") return "No";
   return s;
 }
 

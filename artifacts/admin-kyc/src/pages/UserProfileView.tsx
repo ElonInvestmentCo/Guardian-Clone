@@ -228,11 +228,12 @@ export default function UserProfileView({ email, onBack }: Props) {
                   <Field label="Employer Name"       value={pf("professional", "employerName")} />
                   <Field label="Position/Title"      value={pf("professional", "positionTitle")} />
                   <Field label="Employer Address"    value={pf("professional", "employerAddress")} />
-                  <Field label="Country"             value={pf("professional", "country")} />
+                  <Field label="Apt/Suite"           value={pf("professional", "aptSuiteNo")} />
                   <Field label="City"                value={pf("professional", "city")} />
+                  <Field label="State"               value={pf("professional", "state")} />
+                  <Field label="Country"             value={pf("professional", "country")} />
                   <Field label="Years with Employer" value={pf("professional", "yearsWithEmployer")} />
                   <Field label="Phone"               value={pf("professional", "phoneNumber")} />
-                  <Field label="Education Level"     value={pf("professional", "educationLevel")} />
                 </Card>
 
                 <Card title="Identity & Tax">
@@ -256,8 +257,6 @@ export default function UserProfileView({ email, onBack }: Props) {
 
                 <Card title="Risk Tolerance">
                   <Field label="Risk Level"            value={pf("riskTolerance", "riskTolerance")} />
-                  <Field label="Investment Objective"  value={pf("riskTolerance", "investmentObjective")} />
-                  <Field label="Time Horizon"          value={pf("riskTolerance", "timeHorizon")} />
                   <Field label="Financial Education"   value={pf("riskTolerance", "hasFinancialEducation")} />
                   {(() => {
                     const priorities = (profile.riskTolerance as Record<string, unknown> | undefined)?.strategyPriorities as Record<string, string> | undefined;
@@ -309,16 +308,16 @@ export default function UserProfileView({ email, onBack }: Props) {
                   <Field label="Initial Deposit"         value={pf("disclosures", "initialDeposit")} />
                   <Field label="Wants Margin"            value={pf("disclosures", "wantsMargin")} />
                   <Field label="Partnership Check"       value={pf("disclosures", "partnershipCheck")} />
-                  <Field label="FINRA Affiliated"        value={pf("disclosures", "finraAffiliated")} />
-                  <Field label="Political Exposure"      value={pf("disclosures", "politicallyExposed")} />
-                  <Field label="Public Company Officer"  value={pf("disclosures", "publicCompanyOfficer")} />
-                  <Field label="Director/10% Holder"     value={pf("disclosures", "director10Holder")} />
-                  <Field label="Regulatory Affiliation"  value={pf("disclosures", "regulatoryAffiliation")} />
-                  <Field label="Foreign Bank Account"    value={pf("disclosures", "foreignBankAccount")} />
-                  <Field label="Discretionary Authority" value={pf("disclosures", "discretionaryAuthority")} />
-                  <Field label="Control Person"          value={pf("disclosures", "controlPerson")} />
-                  <Field label="Senior Military Officer" value={pf("disclosures", "seniorMilitaryOfficer")} />
-                  <Field label="Tax Exempt"              value={pf("disclosures", "taxExempt")} />
+                  <Field label="Existing Account"                  value={pf("disclosures", "q1")} />
+                  <Field label="Related Entity Relationship"       value={pf("disclosures", "q2")} />
+                  <Field label="Director/10% Holder (Public Co.)"  value={pf("disclosures", "q3")} />
+                  <Field label="FINRA/Broker-Dealer Affiliated"    value={pf("disclosures", "q4")} />
+                  <Field label="Senior Financial Officer"          value={pf("disclosures", "q5")} />
+                  <Field label="Senior Political Figure"           value={pf("disclosures", "q6")} />
+                  <Field label="Discretionary Authority"           value={pf("disclosures", "q7")} />
+                  <Field label="Day Trading Capital ($25K+)"       value={pf("disclosures", "q8")} />
+                  <Field label="High Risk Objective"               value={pf("disclosures", "q9")} />
+                  <Field label="Can Withstand Total Loss"          value={pf("disclosures", "q10")} />
                 </Card>
 
                 <Card title="Signatures & Consents">
@@ -326,7 +325,13 @@ export default function UserProfileView({ email, onBack }: Props) {
                   <Field label="Electronic Delivery"   value={pf("signatures", "electronicDelivery")} />
                   <Field label="Has Signed"            value={pf("signatures", "hasSigned")} />
                   <Field label="Signature Name"        value={pf("signatures", "signatureName")} />
-                  <Field label="Signed At"             value={pf("signatures", "signedAt")} />
+                  {(() => {
+                    const consents = (profile.signatures as Record<string, unknown> | undefined)?.consents as Record<string, boolean> | undefined;
+                    if (!consents || Object.keys(consents).length === 0) return null;
+                    return Object.entries(consents).map(([name, agreed]) => (
+                      <Field key={name} label={name} value={agreed ? "Yes" : "No"} />
+                    ));
+                  })()}
                 </Card>
 
                 <Card title="Uploaded Documents">

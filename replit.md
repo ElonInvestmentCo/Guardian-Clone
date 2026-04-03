@@ -21,7 +21,7 @@ Guardian Trading is structured as a pnpm monorepo using Node.js 24 and TypeScrip
 - **Monorepo & Build**: pnpm workspaces, esbuild for CJS bundles, and TypeScript composite projects.
 - **Backend & Database**: Express 5 API server, PostgreSQL (Railway-hosted) accessed via Drizzle ORM, with JSONB columns for users, profiles, chat, and BYTEA for document storage.
 - **Validation & API Generation**: Zod for schema validation; Orval generates React Query hooks and Zod schemas from OpenAPI.
-- **Data Storage**: User data (including sensitive fields) is AES-256-GCM encrypted and stored in PostgreSQL JSONB columns. Document files are stored as BYTEA.
+- **Data Storage**: User data (including sensitive fields) is AES-256-GCM encrypted and stored in PostgreSQL JSONB columns. Document files are stored as BYTEA. Data directory is persistent (`process.cwd()/data`), not `/tmp`.
 - **KYC Flow Gate**: Manages user access based on KYC status, redirecting users through onboarding, pending, or dashboard views.
 - **Notifications System**: Real-time notifications with polling for unread counts.
 - **AI Trading Assistant**: A floating chat widget with streaming SSE messages, using an `AiProvider` abstraction layer for Grok (xAI) and OpenAI, building prompts with contextual data.
@@ -29,7 +29,7 @@ Guardian Trading is structured as a pnpm monorepo using Node.js 24 and TypeScrip
 - **KYC Lifecycle**: User status transitions from `pending` to `verified`, `approved`, `rejected`, or `resubmit_required`, with route guards enforcing access based on status. Resubmission allows users to correct specific fields requested by admin.
 - **Email & Password Management**: Real-time duplicate email detection, email normalization, and a complete forgot password flow with timed reset codes.
 - **Deployment**: Railway.com for backend/admin and Netlify for frontend. Single Express server serves all applications.
-- **Admin Features**: KYC Queue with side panel, detailed User Profile View (Profile, Risk, Audit, Balance, Admin Actions), and comprehensive balance/profit management with transaction types, required notes, validation, confirmation dialogs, and full audit trails.
+- **Admin Features**: KYC Queue with side panel, detailed User Profile View (Profile, Risk, Audit, Balance, Admin Actions), and comprehensive balance/profit management with transaction types, required notes, validation, confirmation dialogs, and full audit trails. Profile fields mapped to actual onboarding schema (disclosures q1–q10, signatures consents map, professional aptSuiteNo/state). Boolean/yes-no values formatted as "Yes"/"No".
 - **Data Integrity**: Email normalization, minimal user initialization, empty state messaging, and data-only-on-action for balance/history/audit logs.
 
 ### Platform Security
