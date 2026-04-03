@@ -46,7 +46,7 @@ export default function Home() {
                   borderRadius: "50%",
                   background: "linear-gradient(180deg, #5bc5f0 0%, #0a8fd4 100%)",
                   flexShrink: 0,
-                  boxShadow: "0 0 4px rgba(54, 172, 245, 0.4)",
+                  boxShadow: "0 0 6px 2px rgba(54, 172, 245, 0.45), 0 0 12px 4px rgba(54, 172, 245, 0.2)",
                 }}
               />
               <span
@@ -135,7 +135,7 @@ export default function Home() {
                 onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#ffffff"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#9db4c7"; }}
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4" strokeWidth={2.5} />
               </button>
             </div>
           </div>
