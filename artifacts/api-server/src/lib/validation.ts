@@ -169,7 +169,7 @@ export const KycResubmitSchema = z.object({
 
 export function validate<T extends z.ZodSchema>(schema: T) {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const source = ["GET", "HEAD", "DELETE"].includes(req.method) ? req.query : req.body;
+    const source = ["GET", "HEAD"].includes(req.method) ? req.query : req.body;
     const result = schema.safeParse(source);
     if (!result.success) {
       const firstError = result.error.errors[0];
@@ -180,7 +180,7 @@ export function validate<T extends z.ZodSchema>(schema: T) {
       res.status(400).json({ error: message });
       return;
     }
-    if (["GET", "HEAD", "DELETE"].includes(req.method)) {
+    if (["GET", "HEAD"].includes(req.method)) {
       (req as Request & { validatedQuery: z.infer<T> }).validatedQuery = result.data;
     } else {
       req.body = result.data;

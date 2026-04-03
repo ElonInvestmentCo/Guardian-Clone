@@ -43,7 +43,7 @@ app.use(cors({
   origin: (origin, callback) => {
     if (!origin) { callback(null, true); return; }
     if (allowedOrigins.includes(origin)) { callback(null, true); return; }
-    console.warn(`[CORS] Rejected origin: ${origin} — IP: unknown`);
+    console.warn(`[Security] {"event":"CORS_REJECTED","origin":"${origin}","timestamp":"${new Date().toISOString()}"}`);
     callback(null, false);
   },
   credentials: true,

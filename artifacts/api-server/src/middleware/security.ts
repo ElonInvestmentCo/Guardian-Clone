@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import rateLimit from "express-rate-limit";
+import { logSecurity } from "../lib/securityLogger.js";
 
 const KNOWN_BOT_PATTERNS = [
   /googlebot/i, /bingbot/i, /slurp/i, /duckduckbot/i, /baiduspider/i,
@@ -81,7 +82,7 @@ export function botDetection(req: Request, res: Response, next: NextFunction): v
   }
 
   if (isSuspiciousUA(ua)) {
-    console.warn(`[Security] Bot blocked — IP: ${ip}, UA: ${ua}, Path: ${req.path}`);
+    logSecurity("BOT_BLOCKED", req, `UA: ${ua}`);
     const current = suspiciousIPs.get(ip) ?? { count: 0, blockedUntil: 0 };
     current.count++;
     if (current.count >= 3) {
@@ -94,7 +95,7 @@ export function botDetection(req: Request, res: Response, next: NextFunction): v
 
   const score = getSuspiciousScore(req);
   if (score >= 5) {
-    console.warn(`[Security] Suspicious client blocked — IP: ${ip}, Score: ${score}, UA: ${ua}`);
+    logSecurity("SUSPICIOUS_ACTIVITY", req, `Score: ${score}, UA: ${ua}`);
     const current = suspiciousIPs.get(ip) ?? { count: 0, blockedUntil: 0 };
     current.count++;
     if (current.count >= 3) {
@@ -156,7 +157,7 @@ export const globalRateLimit = rateLimit({
   skip: (req) => req.path === "/healthz",
   validate: { xForwardedForHeader: false },
   handler: (_req, res, _next, options) => {
-    console.warn(`[Security] Rate limit hit — IP: ${_req.ip ?? "unknown"}, Path: ${_req.path}`);
+    logSecurity("RATE_LIMIT", _req, `Global rate limit exceeded`);
     res.status(options.statusCode).json(options.message);
   },
 });
@@ -233,7 +234,7 @@ export function anomalyDetection(req: Request, res: Response, next: NextFunction
   rapidRequestTracker.set(ip, timestamps);
 
   if (timestamps.length > RAPID_MAX_REQUESTS) {
-    console.warn(`[Security] Anomaly detected: rapid requests from ${ip} (${timestamps.length} in ${RAPID_WINDOW_MS / 1000}s)`);
+    logSecurity("SUSPICIOUS_ACTIVITY", req, `Rapid requests: ${timestamps.length} in ${RAPID_WINDOW_MS / 1000}s`);
     res.status(429).json({ error: "Unusual activity detected. Please slow down." });
     return;
   }

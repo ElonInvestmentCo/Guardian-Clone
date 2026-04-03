@@ -34,16 +34,19 @@ Guardian Trading is structured as a pnpm monorepo using Node.js 24 and TypeScrip
 
 ### Platform Security
 - **Web Security**: Comprehensive security headers (CSP, X-Content-Type-Options, X-Frame-Options, HSTS via proxy, Referrer-Policy, Permissions-Policy), global error handling, bot detection (60+ patterns), rate limiting on ALL routes, strict CORS, hotlink protection, honeytrap routes, and `robots.txt` (30+ AI/SEO bots blocked).
-- **CORS**: Production-locked — only allows `guardiiantrading.com`, `www.guardiiantrading.com`, and `guardian-clone-production.up.railway.app`. Replit wildcards (`*.replit.dev`, `*.replit.app`) only allowed in development mode.
+- **CORS**: Production-locked — only allows explicit origins: `guardiiantrading.com`, `www.guardiiantrading.com`, and `guardian-clone-production.up.railway.app`. No wildcard matching. Dev mode adds exact REPLIT_DEV_DOMAIN + localhost ports only. CORS rejections logged with origin info.
 - **Admin Authentication**: JWT-based (8h TTL, `guardian-admin` issuer), bcrypt password hashing, timing-attack protection (dummy hash on wrong username), login rate limiting (5 attempts/15 min), and auto-logout on token expiry. All `/admin/*` routes (except login) protected by `requireAdmin` JWT middleware.
 - **Frontend Anti-scrape**: Comprehensive protection on all pages — blocks right-click, text selection (except form inputs), copy/cut/paste outside editable fields, image/video dragging, keyboard shortcuts (Ctrl+U/S/P/A/C/X, F12, DevTools, PrintScreen), print (@media print + beforeprint handler), and MutationObserver for dynamic images. Admin dashboard allows text selection/copying when authenticated.
-- **Rate Limiting**: Global (100/min), auth/signup/contact (30/15min), admin (120/min), admin login (5/15min), uploads (30/15min), market data (30/min), AI chat (20/min), user data (60/min).
-- **Input Validation**: All routes validate email format, field lengths, and types. Signup uses comprehensive per-step field validation. Profile uses regex patterns. Contact form uses HTML escaping and length limits. File uploads enforce MIME + extension whitelists and size limits.
-- **File Upload Security**: KYC documents (8MB max, JPG/PNG/PDF only, min 1KB), profile pictures (5MB max, JPG/PNG/WEBP only). Both validate MIME type + extension, use memory storage, and persist to PostgreSQL (not filesystem).
+- **Rate Limiting**: Global (100/15min), auth/signup/contact (30/15min), admin (120/min), admin login (5/15min), uploads (30/15min), market data (30/min), AI chat (20/min), user data (60/min). Rate limit hits logged with IP and path.
+- **Input Validation (Zod)**: All routes use Zod schema validation middleware (`validate()` in `src/lib/validation.ts`). Schemas enforce email format, field lengths, types, and patterns. GET/HEAD/DELETE validates `req.query`; POST/PUT/PATCH validates `req.body`. Validation failures return 400 with field-specific error messages and are logged with IP.
+- **Sanitization**: `src/lib/sanitize.ts` provides `sanitizeText()` (strips all HTML tags via sanitize-html), `escapeHtml()`, and `sanitizeForEmail()` (double protection: sanitize + escape). Used for all user inputs rendered in HTML emails.
+- **Security Logging**: Structured security event logger (`src/lib/securityLogger.ts`) records AUTH_FAIL, AUTH_SUCCESS, ADMIN_LOGIN_FAIL, ADMIN_LOGIN_SUCCESS, RATE_LIMIT, UPLOAD_REJECTED, CORS_REJECTED, BOT_BLOCKED, SUSPICIOUS_ACTIVITY, and HONEYTRAP events with IP, path, method, user-agent, and timestamp.
+- **Security Headers**: HSTS (`max-age=31536000; includeSubDomains; preload`), CSP, X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy, Permissions-Policy, X-DNS-Prefetch-Control, Cross-Origin-Opener-Policy, Cross-Origin-Resource-Policy. X-Powered-By header removed.
+- **File Upload Security**: KYC documents (8MB max, JPG/PNG/PDF only, min 1KB), profile pictures (5MB max, JPG/PNG/WEBP only). Both validate MIME type + extension, use memory storage, and persist to PostgreSQL (not filesystem). Upload rejections logged via securityLogger.
 - **Path Traversal Protection**: `assertSafePath()`, `path.resolve`, and `startsWith` checks for all user-derived file paths and uploads.
-- **Dependency Management**: pnpm overrides to address CVEs (lodash `>=4.18.0`).
+- **Dependency Management**: pnpm overrides to address CVEs (lodash `>=4.18.0`). Added `zod` and `sanitize-html` for backend validation/sanitization.
 - **Field-Level Encryption**: Sensitive user fields encrypted at rest (AES-256-GCM), server-side decryption only for authenticated admin access. Credentials stripped from all API responses.
-- **XSS Prevention**: Contact form HTML email uses `escapeHtml()` for all user inputs. AI responses sanitized with DOMPurify on frontend.
+- **XSS Prevention**: All user inputs in HTML emails sanitized via `sanitizeForEmail()` (sanitize-html + escapeHtml). AI responses sanitized with DOMPurify on frontend.
 - **Anti-bot Headers**: `X-Robots-Tag: noindex, nofollow, noarchive, noimageindex, nosnippet` on all API responses. `Cache-Control: no-store` prevents caching.
 
 ## External Dependencies
