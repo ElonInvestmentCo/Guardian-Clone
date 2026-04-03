@@ -10,6 +10,7 @@ import { OnboardingGuard } from "@/lib/onboarding/OnboardingGuard";
 import { ThemeProvider } from "@/context/ThemeContext";
 import AntiScrape from "@/components/AntiScrape";
 import NeedHelpCard from "@/components/NeedHelpCard";
+import { ScrollAndFormReset } from "@/components/ScrollAndFormReset";
 
 import Home from "@/pages/Home";
 import About from "@/pages/About";
@@ -145,6 +146,7 @@ function App() {
           <ThemeProvider>
             <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
               <OnboardingProvider>
+                <ScrollAndFormReset />
                 <NavigationLoader />
                 <Router />
               </OnboardingProvider>

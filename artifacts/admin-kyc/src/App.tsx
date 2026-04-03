@@ -9,6 +9,7 @@ import { LoadingProvider } from "@/context/LoadingContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { PageLoader } from "@/components/PageLoader";
 import AntiScrape from "@/components/AntiScrape";
+import { ScrollAndFormReset } from "@/components/ScrollAndFormReset";
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
   constructor(props: { children: ReactNode }) {
@@ -104,6 +105,7 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <LoadingProvider>
             <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+              <ScrollAndFormReset />
               <AppShell />
             </WouterRouter>
             <AntiScrape />
