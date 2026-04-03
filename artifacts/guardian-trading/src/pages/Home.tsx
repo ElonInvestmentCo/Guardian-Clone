@@ -34,6 +34,7 @@ export default function Home() {
               margin: "0 auto",
               height: "44px",
               padding: "0 24px",
+              borderTop: "1px solid #212e33",
               borderBottom: "1px solid #212e33",
             }}
           >
