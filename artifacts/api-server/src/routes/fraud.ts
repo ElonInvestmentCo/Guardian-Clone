@@ -2,6 +2,7 @@ import { Router, type Request, type Response, type NextFunction } from "express"
 import jwt from "jsonwebtoken";
 import { evaluateRisk, type RiskScore } from "../lib/fraud/riskEngine.js";
 import { getUserProfileData, setUserProfileMeta, readMaster } from "../lib/userDataStore.js";
+import { validate, FraudRiskSchema } from "../lib/validation.js";
 
 const router = Router();
 
@@ -27,10 +28,9 @@ function requireAuth(req: Request, res: Response, next: NextFunction): void {
   res.status(401).json({ error: "Authentication required" });
 }
 
-router.post("/api/fraud/risk-score", requireAuth, async (req: Request, res: Response): Promise<void> => {
+router.post("/api/fraud/risk-score", requireAuth, validate(FraudRiskSchema), async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email } = req.body as { email?: string };
-    if (!email) { res.status(400).json({ error: "email required" }); return; }
+    const { email } = req.body as { email: string };
 
     const result  = await evaluateRisk(email, req.ip);
     const profile = await getUserProfileData(email);

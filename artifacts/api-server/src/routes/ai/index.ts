@@ -3,16 +3,13 @@ import { getAiProvider, type AiMessage } from "../../lib/ai/aiService.js";
 import { buildSystemPrompt, getPortfolioData, getMarketData, getStakingData } from "../../lib/ai/tradingContext.js";
 import { getRecentMessages, appendMessage, clearConversation, getConversation } from "../../lib/ai/chatStore.js";
 import { aiChatLimit } from "../../middleware/security.js";
+import { validate, AiChatSchema, AuthCheckEmailSchema } from "../../lib/validation.js";
 
 const router = Router();
 
-router.post("/ai/chat", aiChatLimit, async (req: Request, res: Response): Promise<void> => {
+router.post("/ai/chat", aiChatLimit, validate(AiChatSchema), async (req: Request, res: Response): Promise<void> => {
   try {
-    const { message, email } = req.body as { message?: string; email?: string };
-    if (!message || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      res.status(400).json({ error: "Valid message and email are required" });
-      return;
-    }
+    const { message, email } = req.body as { message: string; email: string };
 
     await appendMessage(email, "user", message);
 
@@ -70,10 +67,9 @@ router.post("/ai/chat", aiChatLimit, async (req: Request, res: Response): Promis
   }
 });
 
-router.get("/ai/history", async (req: Request, res: Response): Promise<void> => {
+router.get("/ai/history", validate(AuthCheckEmailSchema), async (req: Request, res: Response): Promise<void> => {
   try {
-    const email = req.query.email as string;
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { res.status(400).json({ error: "Valid email is required" }); return; }
+    const { email } = (req as unknown as { validatedQuery: { email: string } }).validatedQuery;
 
     const conv = await getConversation(email);
     res.json({
@@ -86,10 +82,9 @@ router.get("/ai/history", async (req: Request, res: Response): Promise<void> => 
   }
 });
 
-router.post("/ai/clear", async (req: Request, res: Response): Promise<void> => {
+router.post("/ai/clear", validate(AuthCheckEmailSchema), async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email } = req.body as { email?: string };
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { res.status(400).json({ error: "Valid email is required" }); return; }
+    const { email } = req.body as { email: string };
     await clearConversation(email);
     res.json({ success: true });
   } catch (err) {

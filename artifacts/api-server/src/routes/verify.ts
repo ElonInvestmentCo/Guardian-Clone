@@ -2,6 +2,7 @@ import { Router, type Request, type Response, type NextFunction } from "express"
 import jwt from "jsonwebtoken";
 import { setUserStatus, getUserData, getUserProfileData } from "../lib/userDataStore.js";
 import { sendAccountVerifiedEmail } from "../lib/mailer.js";
+import { validate, AuthCheckEmailSchema } from "../lib/validation.js";
 
 const verifyRouter = Router();
 
@@ -27,13 +28,8 @@ function requireAdminOrInternal(req: Request, res: Response, next: NextFunction)
   res.status(403).json({ error: "This endpoint requires admin or internal authentication" });
 }
 
-verifyRouter.post("/signup/verify", requireAdminOrInternal, async (req, res) => {
-  const { email } = req.body as { email?: string };
-
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    res.status(400).json({ error: "Valid email is required" });
-    return;
-  }
+verifyRouter.post("/signup/verify", requireAdminOrInternal, validate(AuthCheckEmailSchema), async (req, res) => {
+  const { email } = req.body as { email: string };
 
   const user = await getUserData(email);
   if (!user) {
@@ -56,13 +52,8 @@ verifyRouter.post("/signup/verify", requireAdminOrInternal, async (req, res) => 
   }
 });
 
-verifyRouter.get("/signup/status", async (req, res) => {
-  const email = req.query["email"] as string | undefined;
-
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    res.status(400).json({ error: "Valid email is required" });
-    return;
-  }
+verifyRouter.get("/signup/status", validate(AuthCheckEmailSchema), async (req, res) => {
+  const { email } = (req as unknown as { validatedQuery: { email: string } }).validatedQuery;
 
   const user = await getUserData(email);
   if (!user) {

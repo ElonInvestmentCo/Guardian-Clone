@@ -9,6 +9,7 @@ import {
   getStoredPasswordHash,
 } from "../lib/userDataStore.js";
 import { sensitiveEndpointLimit } from "../middleware/security.js";
+import { validate, AuthCheckEmailSchema, TwoFATokenSchema, TwoFADisableSchema } from "../lib/validation.js";
 
 const twoFARouter = Router();
 
@@ -51,13 +52,9 @@ function generateBackupCodes(count = 8): string[] {
   return codes;
 }
 
-twoFARouter.get("/user/2fa/status", sensitiveEndpointLimit, async (req, res) => {
+twoFARouter.get("/user/2fa/status", sensitiveEndpointLimit, validate(AuthCheckEmailSchema), async (req, res) => {
   try {
-    const email = req.query["email"] as string | undefined;
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      res.status(400).json({ error: "Valid email is required" });
-      return;
-    }
+    const { email } = (req as unknown as { validatedQuery: { email: string } }).validatedQuery;
     const data = await get2FAData(email);
     res.json({ enabled: data.enabled });
   } catch (err) {
@@ -66,13 +63,9 @@ twoFARouter.get("/user/2fa/status", sensitiveEndpointLimit, async (req, res) => 
   }
 });
 
-twoFARouter.post("/user/2fa/setup", sensitiveEndpointLimit, async (req, res) => {
+twoFARouter.post("/user/2fa/setup", sensitiveEndpointLimit, validate(AuthCheckEmailSchema), async (req, res) => {
   try {
-    const { email } = req.body as { email?: string };
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      res.status(400).json({ error: "Valid email is required" });
-      return;
-    }
+    const { email } = req.body as { email: string };
 
     const existing = await get2FAData(email);
     if (existing.enabled) {
@@ -93,17 +86,9 @@ twoFARouter.post("/user/2fa/setup", sensitiveEndpointLimit, async (req, res) => 
   }
 });
 
-twoFARouter.post("/user/2fa/enable", sensitiveEndpointLimit, async (req, res) => {
+twoFARouter.post("/user/2fa/enable", sensitiveEndpointLimit, validate(TwoFATokenSchema), async (req, res) => {
   try {
-    const { email, token } = req.body as { email?: string; token?: string };
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      res.status(400).json({ error: "Valid email is required" });
-      return;
-    }
-    if (!token || token.length !== 6) {
-      res.status(400).json({ error: "A 6-digit OTP code is required" });
-      return;
-    }
+    const { email, token } = req.body as { email: string; token: string };
 
     const profile = await getUserProfileData(email);
     const pending = profile["_2faPending"] as { secret?: string } | undefined;
@@ -137,21 +122,9 @@ twoFARouter.post("/user/2fa/enable", sensitiveEndpointLimit, async (req, res) =>
   }
 });
 
-twoFARouter.post("/user/2fa/disable", sensitiveEndpointLimit, async (req, res) => {
+twoFARouter.post("/user/2fa/disable", sensitiveEndpointLimit, validate(TwoFADisableSchema), async (req, res) => {
   try {
-    const { email, password, token } = req.body as { email?: string; password?: string; token?: string };
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      res.status(400).json({ error: "Valid email is required" });
-      return;
-    }
-    if (!password) {
-      res.status(400).json({ error: "Current password is required" });
-      return;
-    }
-    if (!token || token.length !== 6) {
-      res.status(400).json({ error: "A 6-digit OTP code is required" });
-      return;
-    }
+    const { email, password, token } = req.body as { email: string; password: string; token: string };
 
     const storedHash = await getStoredPasswordHash(email);
     if (!storedHash) {
@@ -186,17 +159,9 @@ twoFARouter.post("/user/2fa/disable", sensitiveEndpointLimit, async (req, res) =
   }
 });
 
-twoFARouter.post("/user/2fa/verify", sensitiveEndpointLimit, async (req, res) => {
+twoFARouter.post("/user/2fa/verify", sensitiveEndpointLimit, validate(TwoFATokenSchema), async (req, res) => {
   try {
-    const { email, token } = req.body as { email?: string; token?: string };
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      res.status(400).json({ error: "Valid email is required" });
-      return;
-    }
-    if (!token) {
-      res.status(400).json({ error: "OTP token is required" });
-      return;
-    }
+    const { email, token } = req.body as { email: string; token: string };
 
     const data = await get2FAData(email);
     if (!data.enabled || !data.secret) {

@@ -7,6 +7,7 @@ import {
 } from "../lib/userDataStore.js";
 import { getPool } from "../lib/db.js";
 import { uploadLimit } from "../middleware/security.js";
+import { logSecurity } from "../lib/securityLogger.js";
 
 const uploadRouter = Router();
 
@@ -55,6 +56,7 @@ uploadRouter.post(
     const ext = path.extname(req.file.originalname).toLowerCase();
 
     if (req.file.size < 1024) {
+      logSecurity("UPLOAD_REJECTED", req, "File too small", email);
       res.status(400).json({ error: "File too small (minimum 1 KB)" });
       return;
     }
@@ -92,6 +94,7 @@ uploadRouter.use(
   ) => {
     if (err instanceof MulterError) {
       if (err.code === "LIMIT_FILE_SIZE") {
+        logSecurity("UPLOAD_REJECTED", _req, "File exceeds 8 MB limit");
         res.status(400).json({ error: "File exceeds 8 MB limit" });
         return;
       }

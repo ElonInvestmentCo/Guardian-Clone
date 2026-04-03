@@ -5,15 +5,12 @@ import {
   markAllNotificationsRead,
 } from "../lib/userDataStore.js";
 import { userDataLimit } from "../middleware/security.js";
+import { validate, AuthCheckEmailSchema, NotificationReadSchema } from "../lib/validation.js";
 
 const notificationsRouter = Router();
 
-notificationsRouter.get("/notifications", userDataLimit, async (req, res) => {
-  const email = req.query["email"] as string | undefined;
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    res.status(400).json({ error: "Valid email is required" });
-    return;
-  }
+notificationsRouter.get("/notifications", userDataLimit, validate(AuthCheckEmailSchema), async (req, res) => {
+  const { email } = (req as unknown as { validatedQuery: { email: string } }).validatedQuery;
   const notifications = await getNotifications(email);
   const unreadCount = (notifications as Array<Record<string, unknown>>).filter(
     (n) => !n["read"]
@@ -21,12 +18,8 @@ notificationsRouter.get("/notifications", userDataLimit, async (req, res) => {
   res.json({ notifications, unreadCount });
 });
 
-notificationsRouter.post("/notifications/read", userDataLimit, async (req, res) => {
-  const { email, ids } = req.body as { email?: string; ids?: string[] };
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    res.status(400).json({ error: "Valid email is required" });
-    return;
-  }
+notificationsRouter.post("/notifications/read", userDataLimit, validate(NotificationReadSchema), async (req, res) => {
+  const { email, ids } = req.body as { email: string; ids?: string[] };
   if (ids && ids.length > 0) {
     await markNotificationsRead(email, ids);
   } else {

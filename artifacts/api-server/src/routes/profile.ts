@@ -50,13 +50,9 @@ const upload = multer({
   },
 });
 
-profileRouter.get("/user/me", userDataLimit, async (req, res) => {
+profileRouter.get("/user/me", userDataLimit, validate(AuthCheckEmailSchema), async (req, res) => {
   try {
-    const email = req.query["email"] as string | undefined;
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      res.status(400).json({ error: "Valid email is required" });
-      return;
-    }
+    const { email } = (req as unknown as { validatedQuery: { email: string } }).validatedQuery;
 
     const userData = await getUserData(email);
     if (!userData) {
@@ -286,13 +282,9 @@ profileRouter.get("/user/kyc-status/:email", userDataLimit, async (req, res) => 
   }
 });
 
-profileRouter.post("/user/kyc-resubmit", userDataLimit, async (req, res) => {
+profileRouter.post("/user/kyc-resubmit", userDataLimit, validate(KycResubmitSchema), async (req, res) => {
   try {
-    const { email, data: stepData } = req.body as { email?: string; data?: Record<string, Record<string, unknown>> };
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      res.status(400).json({ error: "Valid email is required" });
-      return;
-    }
+    const { email, data: stepData } = req.body as { email: string; data?: Record<string, Record<string, unknown>> };
     const userData = await getUserData(email);
     if (!userData) {
       res.status(404).json({ error: "User not found" });
