@@ -291,7 +291,7 @@ export default function UserPanel({ user, onClose, onAction, onOpenProfile }: Pr
                           {formatDate(entry.timestamp)} · {entry.actor}
                         </div>
                         <div style={{ fontWeight: "600", fontSize: "12px", color: "#111827" }}>
-                          {entry.actionType.replace(/_/g, " ")}
+                          {(entry.actionType ?? "Unknown").replace(/_/g, " ")}
                         </div>
                         {entry.note && <div style={{ fontSize: "11px", color: "#6B7280", marginTop: "2px" }}>Note: {entry.note}</div>}
                         {entry.reason && <div style={{ fontSize: "11px", color: "#6B7280", marginTop: "2px" }}>Reason: {entry.reason}</div>}
