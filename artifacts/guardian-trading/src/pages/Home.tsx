@@ -9,10 +9,10 @@ import monitorPlatform from "@assets/IMG_7969_1773721659915.png";
 import stockBorrows from "@assets/IMG_7970_1773721659915.png";
 import dasLogo from "@assets/DAS-icon-50x50_1773948931248.png";
 import sterlingLogo from "@assets/sterling-icon-50x50_1773948931249.png";
-import benzingaBadge from "@assets/IMG_7973_1773721659915.png";
+
 import bgVector from "@assets/img-background-vector-1_1773948931248.png";
 import heroPattern from "@assets/pattern_1773965291387.png";
-import benzingaBannerImg from "@assets/img-benzinga-short-selling-review-1-846x218-1_1773952971025.jpg";
+
 import infraIcon from "@assets/ico-our-infrastructure-132x72_1773948931248.png";
 
 export default function Home() {
@@ -109,23 +109,14 @@ export default function Home() {
       </section>
 
       {/* ── BENZINGA AWARD BANNER ── */}
-      <section className="bg-[#151515] py-8 px-4">
-        <div className="max-w-[1100px] mx-auto">
-          <a
-            href="https://www.guardiiantrading.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block"
-          >
-            <img
-              src={benzingaBannerImg}
-              alt="Reviewed by Benzinga 2024 — Preferred Broker for Short Selling"
-              className="block w-full h-auto"
-              style={{ imageRendering: "auto", filter: "brightness(1.05) contrast(1.05)" }}
-            />
-          </a>
-        </div>
-      </section>
+      <img
+        src={`${import.meta.env.BASE_URL}benzinga-review.jpg`}
+        alt="Reviewed by Benzinga 2024 — Preferred Broker for Short Selling"
+        width={846}
+        height={218}
+        loading="lazy"
+        style={{ display: "block", width: "846px", maxWidth: "100%", height: "auto", aspectRatio: "846 / 218", margin: "0 auto" }}
+      />
 
       {/* ── WHY DO ACTIVE TRADERS USE GUARDIAN? ── */}
       <section id="services" className="bg-[#222222] py-20 px-4">
