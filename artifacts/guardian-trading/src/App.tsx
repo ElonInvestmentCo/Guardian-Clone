@@ -42,6 +42,8 @@ import DashboardPortfolio from "@/pages/dashboard/Portfolio";
 import DashboardStatements from "@/pages/dashboard/Statements";
 import DashboardNotifications from "@/pages/dashboard/Notifications";
 import DashboardSettings from "@/pages/dashboard/Settings";
+import KycResubmit from "@/pages/KycResubmit";
+import KycReviewing from "@/pages/KycReviewing";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/analytics/Dashboard";
 import Projects from "@/pages/analytics/Projects";
@@ -107,6 +109,10 @@ function Router() {
       <Route path="/application-submitted" component={ApplicationSubmitted} />
       <Route path="/application-pending" component={ApplicationPending} />
       <Route path="/account-verified" component={AccountVerified} />
+
+      {/* ── KYC lifecycle ──────────────────────────────────────────────── */}
+      <Route path="/kyc/resubmit" component={KycResubmit} />
+      <Route path="/kyc/reviewing" component={KycReviewing} />
 
       {/* ── Dashboard ─────────────────────────────────────────────────── */}
       <Route path="/dashboard" component={DashboardOverview} />

@@ -258,6 +258,8 @@ router.post("/admin/approve-user", async (req: Request, res: Response): Promise<
     const auditLog = (profile._auditLog as unknown[]) ?? [];
     auditLog.push({ actionType: "ADMIN_APPROVE", actor: "admin", note: adminNote ?? null, timestamp: new Date().toISOString() });
     await setUserProfileMeta(email, "_auditLog", auditLog);
+    await setUserProfileMeta(email, "_resubmitFields", []);
+    await setUserProfileMeta(email, "_resubmitReason", null);
 
     await addNotification(email, {
       type: "kyc",
@@ -305,21 +307,22 @@ router.post("/admin/request-resubmission", async (req: Request, res: Response): 
     if (!email) { res.status(400).json({ error: "email required" }); return; }
     if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
 
-    await setUserStatus(email, "resubmit");
+    await setUserStatus(email, "resubmit_required");
     const profile  = await getUserProfileData(email);
     const auditLog = (profile._auditLog as unknown[]) ?? [];
     auditLog.push({ actionType: "ADMIN_REQUEST_RESUBMIT", actor: "admin", fields: fields ?? [], note: adminNote ?? null, timestamp: new Date().toISOString() });
     await setUserProfileMeta(email, "_auditLog", auditLog);
     await setUserProfileMeta(email, "_resubmitFields", fields ?? []);
+    await setUserProfileMeta(email, "_resubmitReason", adminNote ?? "Please update the requested information.");
 
     await addNotification(email, {
       type: "kyc",
       title: "Documents Resubmission Required",
-      message: "Some of your submitted documents need to be updated. Please log in and re-upload the requested items.",
-      actionUrl: "/settings",
+      message: "Some of your submitted information needs to be updated. Please log in to review and correct the requested fields.",
+      actionUrl: "/kyc/resubmit",
     });
     console.log(`[Admin] RESUBMIT requested for: ${email}`);
-    res.json({ success: true, email, status: "resubmit", fields: fields ?? [] });
+    res.json({ success: true, email, status: "resubmit_required", fields: fields ?? [] });
   } catch (err) {
     console.error("[Admin] request-resubmission error:", err);
     res.status(500).json({ error: "Failed to request resubmission" });

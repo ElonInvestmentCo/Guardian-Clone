@@ -50,10 +50,19 @@ Guardian Trading is structured as a pnpm monorepo, utilizing Node.js 24 and Type
 - **Rate Limiting**: IP-based login rate limiting with lockout after repeated failures.
 - **Cache Behavior**: Credentials are cached in memory on server startup; API server must be restarted to pick up credential changes.
 
-### User Status Flow
-- **Status lifecycle**: `pending` → `approved` (admin manually approves via KYC dashboard) → dashboard access granted.
-- **Intermediate states**: `verified` (under review, no dashboard access), `rejected`, `resubmit`.
-- **Only `approved` grants dashboard access** — enforced in `DashboardLayout.tsx`, `Login.tsx`, and `ApplicationPending.tsx`.
+### User Status Flow & KYC Lifecycle
+- **Status lifecycle**: `pending` → `verified` (KYC submitted) → `approved` / `rejected` / `resubmit_required`.
+- **Resubmission lifecycle**: `resubmit_required` → (user corrects fields at `/kyc/resubmit`) → `reviewing` → `approved` (admin approves).
+- **Only `approved` grants dashboard access** — enforced in `DashboardLayout.tsx`, `Login.tsx`, `ApplicationPending.tsx`, and dedicated route guards.
+- **Route guards**:
+  - `resubmit_required` / `resubmit` → redirected to `/kyc/resubmit`
+  - `reviewing` → redirected to `/kyc/reviewing`
+  - Non-`approved` → blocked from `/dashboard`
+- **KYC Resubmit page** (`/kyc/resubmit`): Dynamically renders only the fields the admin requested, shows rejection reason, pre-fills existing data, and submits corrections to `POST /api/user/kyc-resubmit`.
+- **KYC Reviewing page** (`/kyc/reviewing`): Locked read-only state with polling every 8 seconds. Auto-redirects to dashboard on `approved` status.
+- **Resubmission data integrity**: Backend whitelists updates to only admin-requested step fields, clears resubmit metadata on submission, and logs all transitions to the audit trail.
+- **Admin resubmission**: `POST /admin/request-resubmission` sets status to `resubmit_required`, stores `_resubmitFields` and `_resubmitReason` in profile metadata.
+- **Public KYC endpoints**: `GET /api/user/kyc-status/:email` (polling), `POST /api/user/kyc-resubmit` (submission).
 - **No auto-approval**: The `complete-step` route never changes user status, even on final step completion.
 
 ### Email Validation & Forgot Password

@@ -110,7 +110,7 @@ export default function Home() {
 
       {/* ── BENZINGA AWARD BANNER ── */}
       <img
-        src={`${import.meta.env.BASE_URL}benzinga-review.jpg`}
+        src="/benzinga-review.jpg"
         alt="Reviewed by Benzinga 2024 — Preferred Broker for Short Selling"
         width={846}
         height={218}

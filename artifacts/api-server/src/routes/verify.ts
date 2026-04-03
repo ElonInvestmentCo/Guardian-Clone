@@ -76,7 +76,7 @@ verifyRouter.get("/signup/status", async (req, res) => {
     verifiedAt: user["verifiedAt"] ?? null,
   };
 
-  if (userStatus === "rejected" || userStatus === "resubmit") {
+  if (userStatus === "rejected" || userStatus === "resubmit" || userStatus === "resubmit_required" || userStatus === "reviewing") {
     const profile = await getUserProfileData(email);
     const auditLog = (profile._auditLog as Array<Record<string, unknown>>) ?? [];
 
@@ -87,11 +87,12 @@ verifyRouter.get("/signup/status", async (req, res) => {
       }
     }
 
-    if (userStatus === "resubmit") {
+    if (userStatus === "resubmit" || userStatus === "resubmit_required") {
       const resubmitEntry = [...auditLog].reverse().find((e) => e.actionType === "ADMIN_REQUEST_RESUBMIT");
       const metaFields = (profile._resubmitFields as string[]) ?? [];
       const auditFields = (resubmitEntry?.fields as string[]) ?? [];
       response.resubmitFields = metaFields.length > 0 ? metaFields : auditFields;
+      response.resubmitReason = (profile._resubmitReason as string) ?? null;
       if (resubmitEntry) {
         response.resubmitNote = resubmitEntry.note ?? null;
       }

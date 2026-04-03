@@ -20,7 +20,7 @@ interface Props {
 
 type Tab = "overview" | "risk" | "audit";
 
-const KYC_STATUSES = ["approved", "rejected", "resubmit"] as const;
+const KYC_STATUSES = ["approved", "rejected", "resubmit", "resubmit_required", "reviewing"] as const;
 type KycDecision = typeof KYC_STATUSES[number];
 
 function isKycDecision(s: string): s is KycDecision {
@@ -398,7 +398,7 @@ export default function UserPanel({ user, onClose, onAction, onOpenProfile }: Pr
             loading={resubmitMut.isPending}
             activeColor="#2563EB"
             hoverColor="#1D4ED8"
-            isActive={currentStatus === "resubmit"}
+            isActive={currentStatus === "resubmit" || currentStatus === "resubmit_required"}
             isDisabled={hasDecision}
             anyPending={anyPending}
           />

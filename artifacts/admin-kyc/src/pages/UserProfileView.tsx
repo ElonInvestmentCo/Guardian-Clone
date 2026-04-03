@@ -104,7 +104,7 @@ export default function UserProfileView({ email, onBack }: Props) {
   const currentRole   = (master.role   as string) ?? (profile.role   as string) ?? "user";
   const userName      = [pf("personal", "firstName"), pf("personal", "lastName")].join(" ").trim().replace(/—/g, "").trim() || email;
 
-  const kycDecisionStatuses = ["approved", "rejected", "resubmit"] as const;
+  const kycDecisionStatuses = ["approved", "rejected", "resubmit", "resubmit_required"] as const;
   const hasKycDecision = (kycDecisionStatuses as readonly string[]).includes(currentStatus);
   const kycAnyPending = approveMut.isPending || rejectMut.isPending || resubmitMut.isPending;
 
@@ -232,6 +232,7 @@ export default function UserProfileView({ email, onBack }: Props) {
                   <Field label="City"                value={pf("professional", "city")} />
                   <Field label="Years with Employer" value={pf("professional", "yearsWithEmployer")} />
                   <Field label="Phone"               value={pf("professional", "phoneNumber")} />
+                  <Field label="Education Level"     value={pf("professional", "educationLevel")} />
                 </Card>
 
                 <Card title="Identity & Tax">
@@ -254,8 +255,10 @@ export default function UserProfileView({ email, onBack }: Props) {
                 </Card>
 
                 <Card title="Risk Tolerance">
-                  <Field label="Risk Level"       value={pf("riskTolerance", "riskTolerance")} />
-                  <Field label="Financial Education" value={pf("riskTolerance", "hasFinancialEducation")} />
+                  <Field label="Risk Level"            value={pf("riskTolerance", "riskTolerance")} />
+                  <Field label="Investment Objective"  value={pf("riskTolerance", "investmentObjective")} />
+                  <Field label="Time Horizon"          value={pf("riskTolerance", "timeHorizon")} />
+                  <Field label="Financial Education"   value={pf("riskTolerance", "hasFinancialEducation")} />
                   {(() => {
                     const priorities = (profile.riskTolerance as Record<string, unknown> | undefined)?.strategyPriorities as Record<string, string> | undefined;
                     if (!priorities || Object.keys(priorities).length === 0) return <Field label="Strategy Priorities" value="—" />;
@@ -302,17 +305,28 @@ export default function UserProfileView({ email, onBack }: Props) {
                 </Card>
 
                 <Card title="Disclosures">
-                  <Field label="Tax Withholding"    value={pf("disclosures", "taxWithholding")} />
-                  <Field label="Initial Deposit"    value={pf("disclosures", "initialDeposit")} />
-                  <Field label="Wants Margin"       value={pf("disclosures", "wantsMargin")} />
-                  <Field label="Partnership Check"  value={pf("disclosures", "partnershipCheck")} />
+                  <Field label="Tax Withholding"         value={pf("disclosures", "taxWithholding")} />
+                  <Field label="Initial Deposit"         value={pf("disclosures", "initialDeposit")} />
+                  <Field label="Wants Margin"            value={pf("disclosures", "wantsMargin")} />
+                  <Field label="Partnership Check"       value={pf("disclosures", "partnershipCheck")} />
+                  <Field label="FINRA Affiliated"        value={pf("disclosures", "finraAffiliated")} />
+                  <Field label="Political Exposure"      value={pf("disclosures", "politicallyExposed")} />
+                  <Field label="Public Company Officer"  value={pf("disclosures", "publicCompanyOfficer")} />
+                  <Field label="Director/10% Holder"     value={pf("disclosures", "director10Holder")} />
+                  <Field label="Regulatory Affiliation"  value={pf("disclosures", "regulatoryAffiliation")} />
+                  <Field label="Foreign Bank Account"    value={pf("disclosures", "foreignBankAccount")} />
+                  <Field label="Discretionary Authority" value={pf("disclosures", "discretionaryAuthority")} />
+                  <Field label="Control Person"          value={pf("disclosures", "controlPerson")} />
+                  <Field label="Senior Military Officer" value={pf("disclosures", "seniorMilitaryOfficer")} />
+                  <Field label="Tax Exempt"              value={pf("disclosures", "taxExempt")} />
                 </Card>
 
-                <Card title="Signatures">
+                <Card title="Signatures & Consents">
                   <Field label="Trading Plan"          value={pf("signatures", "tradingPlan")} />
                   <Field label="Electronic Delivery"   value={pf("signatures", "electronicDelivery")} />
                   <Field label="Has Signed"            value={pf("signatures", "hasSigned")} />
                   <Field label="Signature Name"        value={pf("signatures", "signatureName")} />
+                  <Field label="Signed At"             value={pf("signatures", "signedAt")} />
                 </Card>
 
                 <Card title="Uploaded Documents">
@@ -711,7 +725,7 @@ export default function UserProfileView({ email, onBack }: Props) {
                       onClick={() => resubmitMut.mutate()}
                       loading={resubmitMut.isPending}
                       activeColor="#2563EB" hoverColor="#1D4ED8"
-                      isActive={currentStatus === "resubmit"}
+                      isActive={currentStatus === "resubmit" || currentStatus === "resubmit_required"}
                       isDisabled={hasKycDecision}
                       anyPending={kycAnyPending}
                     />
@@ -768,9 +782,14 @@ export default function UserProfileView({ email, onBack }: Props) {
                       <strong>Rejected</strong> — user has been notified with the reason and next steps.
                     </div>
                   )}
-                  {currentStatus === "resubmit" && (
+                  {(currentStatus === "resubmit" || currentStatus === "resubmit_required") && (
                     <div style={{ marginTop: "8px", fontSize: "11px", color: "#6B7280" }}>
-                      <strong>Resubmission requested</strong> — user has been prompted to update their documents.
+                      <strong>Resubmission requested</strong> — user has been prompted to correct the requested fields.
+                    </div>
+                  )}
+                  {currentStatus === "reviewing" && (
+                    <div style={{ marginTop: "8px", fontSize: "11px", color: "#2563EB" }}>
+                      <strong>Under Review</strong> — user has resubmitted corrected information. Awaiting admin decision.
                     </div>
                   )}
                 </Card>

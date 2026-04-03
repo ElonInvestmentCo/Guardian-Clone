@@ -12,6 +12,8 @@ const STATUS_FILTERS = [
   { value: "approved",  label: "Approved" },
   { value: "rejected",  label: "Rejected" },
   { value: "resubmit",  label: "Resubmit" },
+  { value: "resubmit_required", label: "Resubmit Required" },
+  { value: "reviewing", label: "Under Review" },
   { value: "suspended", label: "Suspended" },
   { value: "banned",    label: "Banned" },
 ];

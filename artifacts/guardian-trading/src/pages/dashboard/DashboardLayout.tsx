@@ -70,11 +70,13 @@ export default function DashboardLayout({ children }: Props) {
       .then((data: UserStatus & { completedSteps?: number[] }) => {
         setUserStatus(data);
         if (data.status !== "approved") {
-          if (data.status === "verified" && data.kycComplete) {
+          if (data.status === "resubmit_required" || data.status === "resubmit") {
+            navigate("/kyc/resubmit");
+          } else if (data.status === "reviewing") {
+            navigate("/kyc/reviewing");
+          } else if (data.status === "verified" && data.kycComplete) {
             navigate("/application-pending");
           } else if (data.status === "rejected") {
-            navigate("/application-pending");
-          } else if (data.status === "resubmit") {
             navigate("/application-pending");
           } else if (data.status === "pending" && data.kycComplete) {
             navigate("/application-pending");

@@ -45,6 +45,8 @@ export function statusColors(status: UserStatus): { bg: string; text: string; bo
     case "verified":  return { bg: "#ECFDF5", text: "#059669", border: "#A7F3D0" };
     case "rejected":  return { bg: "#FEF2F2", text: "#DC2626", border: "#FECACA" };
     case "resubmit":  return { bg: "#EFF6FF", text: "#2563EB", border: "#BFDBFE" };
+    case "resubmit_required": return { bg: "#FFF7ED", text: "#EA580C", border: "#FED7AA" };
+    case "reviewing": return { bg: "#EFF6FF", text: "#1D4ED8", border: "#93C5FD" };
     case "pending":   return { bg: "#F9FAFB", text: "#374151", border: "#E5E7EB" };
     case "suspended": return { bg: "#FFF7ED", text: "#EA580C", border: "#FED7AA" };
     case "banned":    return { bg: "#FDF4FF", text: "#9333EA", border: "#E9D5FF" };
@@ -58,6 +60,8 @@ export function statusLabel(status: UserStatus): string {
     case "verified":  return "Verified";
     case "rejected":  return "Rejected";
     case "resubmit":  return "Resubmit";
+    case "resubmit_required": return "Resubmit Required";
+    case "reviewing": return "Under Review";
     case "pending":   return "Pending";
     case "suspended": return "Suspended";
     case "banned":    return "Banned";

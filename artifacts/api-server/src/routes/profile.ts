@@ -291,6 +291,101 @@ profileRouter.get("/user/balance/:email", userDataLimit, async (req, res) => {
   }
 });
 
+profileRouter.get("/user/kyc-status/:email", userDataLimit, async (req, res) => {
+  try {
+    const email = decodeURIComponent(String(req.params["email"]));
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      res.status(400).json({ error: "Valid email is required" });
+      return;
+    }
+    const userData = await getUserData(email);
+    if (!userData) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+    const status = (userData["status"] as string) ?? "pending";
+    const profile = await getUserProfileData(email);
+    const response: Record<string, unknown> = { status };
+
+    if (status === "resubmit_required" || status === "resubmit") {
+      response.resubmitFields = (profile._resubmitFields as string[]) ?? [];
+      response.resubmitReason = (profile._resubmitReason as string) ?? null;
+    }
+
+    res.json(response);
+  } catch (err) {
+    console.error("[Profile] kyc-status error:", err);
+    res.status(500).json({ error: "Failed to get KYC status" });
+  }
+});
+
+profileRouter.post("/user/kyc-resubmit", userDataLimit, async (req, res) => {
+  try {
+    const { email, data: stepData } = req.body as { email?: string; data?: Record<string, Record<string, unknown>> };
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      res.status(400).json({ error: "Valid email is required" });
+      return;
+    }
+    const userData = await getUserData(email);
+    if (!userData) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+    const currentStatus = (userData["status"] as string) ?? "pending";
+    if (currentStatus !== "resubmit_required" && currentStatus !== "resubmit") {
+      res.status(400).json({ error: "User is not in resubmit_required status" });
+      return;
+    }
+
+    const profile = await getUserProfileData(email);
+    const allowedFields = (profile._resubmitFields as string[]) ?? [];
+
+    const FIELD_TO_STEP: Record<string, string> = {
+      "Personal Details": "personal",
+      "Professional Details": "professional",
+      "ID Information": "idInformation",
+      "Income Details": "income",
+      "Risk Tolerance": "riskTolerance",
+      "Financial Situation": "financialSituation",
+      "Investment Experience": "investmentExperience",
+      "ID Proof Upload": "idProofUpload",
+      "Funding Details": "fundingDetails",
+      "Disclosures": "disclosures",
+      "Signatures": "signatures",
+    };
+    const allowedSteps = new Set(allowedFields.map((f) => FIELD_TO_STEP[f]).filter(Boolean));
+
+    if (stepData && typeof stepData === "object") {
+      const { upsertUserStep } = await import("../lib/userDataStore.js");
+      for (const [stepName, fields] of Object.entries(stepData)) {
+        if (!allowedSteps.has(stepName)) continue;
+        if (fields && typeof fields === "object") {
+          await upsertUserStep(email, stepName, fields as Record<string, unknown>);
+        }
+      }
+    }
+
+    const { setUserStatus } = await import("../lib/userDataStore.js");
+    await setUserStatus(email, "reviewing");
+
+    const auditLog = (profile._auditLog as unknown[]) ?? [];
+    auditLog.push({
+      actionType: "USER_RESUBMIT",
+      actor: email,
+      fieldsUpdated: allowedFields,
+      timestamp: new Date().toISOString(),
+    });
+    await setUserProfileMeta(email, "_auditLog", auditLog);
+    await setUserProfileMeta(email, "_resubmitFields", []);
+    await setUserProfileMeta(email, "_resubmitReason", null);
+
+    res.json({ success: true, status: "reviewing" });
+  } catch (err) {
+    console.error("[Profile] kyc-resubmit error:", err);
+    res.status(500).json({ error: "Failed to process resubmission" });
+  }
+});
+
 profileRouter.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   if (err instanceof multer.MulterError) {
     if (err.code === "LIMIT_FILE_SIZE") {

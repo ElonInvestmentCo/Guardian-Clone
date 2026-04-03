@@ -101,7 +101,7 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export type RiskLevel  = "low" | "medium" | "high" | "critical";
-export type UserStatus = "pending" | "approved" | "rejected" | "resubmit" | "suspended" | "banned" | "verified";
+export type UserStatus = "pending" | "approved" | "rejected" | "resubmit" | "resubmit_required" | "reviewing" | "suspended" | "banned" | "verified";
 
 export interface KycUser {
   email: string;

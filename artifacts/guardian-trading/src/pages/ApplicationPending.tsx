@@ -34,7 +34,7 @@ const STEP_PATHS = [
   "/funding-details", "/disclosures", "/signatures",
 ];
 
-type AppStatus = "pending" | "verified" | "approved" | "rejected" | "resubmit" | "checking";
+type AppStatus = "pending" | "verified" | "approved" | "rejected" | "resubmit" | "resubmit_required" | "reviewing" | "checking";
 
 export default function ApplicationPending() {
   const [, navigate] = useLocation();
@@ -62,7 +62,17 @@ export default function ApplicationPending() {
       return true;
     }
 
-    if (s === "verified" || s === "rejected" || s === "resubmit" || s === "pending") {
+    if (s === "resubmit_required" || s === "resubmit") {
+      navigate("/kyc/resubmit");
+      return false;
+    }
+
+    if (s === "reviewing") {
+      navigate("/kyc/reviewing");
+      return false;
+    }
+
+    if (s === "verified" || s === "rejected" || s === "pending") {
       setStatus(s);
     } else {
       setStatus("pending");
