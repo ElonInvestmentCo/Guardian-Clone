@@ -64,7 +64,7 @@ export default function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  color: "#36acf5",
+                  color: "#76d1f5",
                   fontSize: "13px",
                   fontWeight: 500,
                   whiteSpace: "nowrap",
