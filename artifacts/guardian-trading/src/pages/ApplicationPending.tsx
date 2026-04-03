@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "wouter";
-import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
+import spinnerImg from "@assets/spinner-clean.png";
 import { checkApplicationStatus } from "@/lib/saveStep";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";

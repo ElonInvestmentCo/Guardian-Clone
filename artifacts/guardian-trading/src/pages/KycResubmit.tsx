@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
 import { getApiBase } from "@/lib/api";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
-import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
+import spinnerImg from "@assets/spinner-clean.png";
 
 const FIELD_TO_STEP: Record<string, { step: string; fields: { key: string; label: string; type?: string; options?: string[] }[] }> = {
   "Personal Details": {

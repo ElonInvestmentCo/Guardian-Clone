@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils"
-import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
+import spinnerImg from "@assets/spinner-clean.png";
 
 function Spinner({ className, ...props }: React.ComponentProps<"img">) {
   return (

@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from "react";
 import { Link, useLocation } from "wouter";
 import { getApiBase } from "@/lib/api";
-import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
+import spinnerImg from "@assets/spinner-clean.png";
 
 export default function Signup() {
   const [email, setEmail] = useState("");

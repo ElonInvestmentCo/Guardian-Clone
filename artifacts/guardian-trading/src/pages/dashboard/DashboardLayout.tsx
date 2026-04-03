@@ -1,7 +1,7 @@
 import { useLocation, Link } from "wouter";
 import { useState, useEffect } from "react";
 import { getApiBase } from "@/lib/api";
-import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
+import spinnerImg from "@assets/spinner-clean.png";
 import {
   LayoutDashboard, Briefcase, ShoppingCart, PieChart,
   FileText, Settings, LogOut, Sun, Moon, Search, Bell,

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
-import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
+import spinnerImg from "@assets/spinner-clean.png";
 import { getApiBase } from "@/lib/api";
 
 const RESEND_COOLDOWN = 180;

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
+import spinnerImg from "@assets/spinner-clean.png";
 import {
   ResponsiveContainer, ComposedChart, Bar, XAxis, YAxis,
   CartesianGrid, Tooltip, Line, AreaChart, Area,

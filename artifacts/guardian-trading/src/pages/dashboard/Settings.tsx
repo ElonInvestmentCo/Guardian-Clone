@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { getApiBase } from "@/lib/api";
-import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
+import spinnerImg from "@assets/spinner-clean.png";
 import { User, Lock, BellRing, ChevronRight, Eye, EyeOff, Check, Shield, Copy, Download, AlertTriangle } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme, type ThemeColors } from "@/context/ThemeContext";

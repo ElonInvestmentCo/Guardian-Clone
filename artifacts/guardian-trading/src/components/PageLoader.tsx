@@ -1,6 +1,6 @@
 import { useLoading } from "@/context/LoadingContext";
 import { useEffect } from "react";
-import spinnerImg from "@assets/bazaart-image_(1)_1775255690400.png";
+import spinnerImg from "@assets/spinner-clean.png";
 
 export function PageLoader() {
   const { isLoading } = useLoading();
