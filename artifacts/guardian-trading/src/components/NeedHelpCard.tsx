@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import supportCardImg from "@assets/support-card.png";
 
 declare global {
   interface Window {
@@ -22,8 +23,6 @@ export default function NeedHelpCard() {
       return false;
     }
   });
-
-  const basePath = import.meta.env.BASE_URL || "/";
 
   useEffect(() => {
     if (dismissed) return;
@@ -194,7 +193,7 @@ export default function NeedHelpCard() {
         </button>
         <img
           className="need-help-card__img"
-          src={`${basePath}support-card.png`}
+          src={supportCardImg}
           alt="Need help? Click here and start chatting with us"
           loading="lazy"
           draggable={false}

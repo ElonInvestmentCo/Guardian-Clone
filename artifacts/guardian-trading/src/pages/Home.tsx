@@ -14,6 +14,7 @@ import bgVector from "@assets/img-background-vector-1_1773948931248.png";
 import heroPattern from "@assets/pattern_1773965291387.png";
 
 import infraIcon from "@assets/ico-our-infrastructure-132x72_1773948931248.png";
+import benzingaReview from "@assets/benzinga-review.jpg";
 
 export default function Home() {
   const [newsBannerVisible, setNewsBannerVisible] = useState(true);
@@ -191,7 +192,7 @@ export default function Home() {
       {/* ── BENZINGA AWARD BANNER ── */}
       <div style={{ backgroundColor: "#141414" }}>
         <img
-          src="/benzinga-review.jpg"
+          src={benzingaReview}
           alt="Reviewed by Benzinga 2024 — Preferred Broker for Short Selling"
           width={846}
           height={218}
