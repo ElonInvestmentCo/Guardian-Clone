@@ -23,7 +23,7 @@ export default function Home() {
     <Layout>
       {/* ── NEWS / BLOG ANNOUNCEMENT BAR ── */}
       {newsBannerVisible && (
-        <div style={{ backgroundColor: "#141414", marginTop: "65px" }}>
+        <div style={{ backgroundColor: "#141414", marginTop: "78px" }}>
           <div
             className="flex items-center justify-between"
             style={{
@@ -143,7 +143,7 @@ export default function Home() {
       <section
         className="relative overflow-hidden"
         style={{
-          paddingTop: newsBannerVisible ? "60px" : "125px",
+          paddingTop: newsBannerVisible ? "60px" : "138px",
           paddingBottom: "80px",
           backgroundColor: "#141414",
           minHeight: "520px",

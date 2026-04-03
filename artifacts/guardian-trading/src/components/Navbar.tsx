@@ -45,7 +45,7 @@ export function Navbar() {
       >
         <div
           className="w-full flex items-center justify-between"
-          style={{ height: "65px", paddingLeft: "clamp(16px, 4vw, 56px)", paddingRight: "clamp(16px, 4vw, 44px)" }}
+          style={{ height: "78px", paddingLeft: "clamp(16px, 4vw, 56px)", paddingRight: "clamp(16px, 4vw, 44px)" }}
         >
           <Link href="/" className="flex items-center flex-shrink-0">
             <img
@@ -172,7 +172,7 @@ export function Navbar() {
       {isOpen && (
         <div
           className="fixed inset-0 z-40 flex flex-col lg:hidden"
-          style={{ background: "#151515", paddingTop: "65px" }}
+          style={{ background: "#151515", paddingTop: "78px" }}
         >
           <div className="flex flex-col px-8 py-4 gap-0">
             {navLinks.map((link) => (
