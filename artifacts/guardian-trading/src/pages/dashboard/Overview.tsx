@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback, memo } from "react";
 import { getApiBase } from "@/lib/api";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -8,8 +8,13 @@ import { ArrowUpRight, ArrowDownRight, Wallet, TrendingUp, BarChart3, ArrowRight
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
 
-function generateLiveData(base: number, count = 40): { time: string; price: number }[] {
-  const arr: { time: string; price: number }[] = [];
+interface LivePoint {
+  time: string;
+  price: number;
+}
+
+function generateLiveData(base: number, count = 40): LivePoint[] {
+  const arr: LivePoint[] = [];
   let price = base * (0.98 + Math.random() * 0.02);
   const now = Date.now();
   for (let i = count - 1; i >= 0; i--) {
@@ -54,13 +59,135 @@ function EmptyState({ icon: Icon, title, message }: { icon: React.ElementType; t
   );
 }
 
+const OVERVIEW_CHART_MARGIN = { top: 4, right: 16, bottom: 0, left: 8 } as const;
+const AUTO_DOMAIN = ["auto", "auto"] as const;
+
+interface LiveChartAreaProps {
+  data: LivePoint[];
+}
+
+const LiveChartArea = memo(function LiveChartArea({ data }: LiveChartAreaProps) {
+  const { colors } = useTheme();
+
+  const xTickStyle = useMemo(() => ({ fontSize: 10, fill: colors.textMuted }), [colors.textMuted]);
+  const yTickStyle = useMemo(() => ({ fontSize: 10, fill: colors.textMuted }), [colors.textMuted]);
+  const xAxisLine = useMemo(() => ({ stroke: colors.divider }), [colors.divider]);
+  const cursorStyle = useMemo(() => ({
+    stroke: colors.textMuted, strokeWidth: 1, strokeDasharray: "4 4", opacity: 0.5,
+  }), [colors.textMuted]);
+  const activeDotStyle = useMemo(() => ({
+    r: 5, fill: colors.accent, stroke: colors.card, strokeWidth: 2,
+  }), [colors.accent, colors.card]);
+  const yTickFormatter = useCallback((v: number) => v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v.toFixed(0)}`, []);
+
+  return (
+    <ResponsiveContainer width="100%" height={220}>
+      <AreaChart data={data} margin={OVERVIEW_CHART_MARGIN}>
+        <defs>
+          <linearGradient id="portfolioGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={colors.accent} stopOpacity={0.25} />
+            <stop offset="50%" stopColor={colors.accent} stopOpacity={0.08} />
+            <stop offset="100%" stopColor={colors.accent} stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" stroke={colors.divider} vertical={false} opacity={0.4} />
+        <XAxis dataKey="time" tick={xTickStyle} axisLine={xAxisLine} tickLine={false} />
+        <YAxis tick={yTickStyle} axisLine={false} tickLine={false}
+          domain={["auto", "auto"]} width={60} tickFormatter={yTickFormatter} />
+        <Tooltip content={<ChartTooltip />} cursor={cursorStyle} />
+        <Area type="monotone" dataKey="price" stroke={colors.accent} strokeWidth={2}
+          fill="url(#portfolioGrad)" dot={false} activeDot={activeDotStyle} isAnimationActive={false} />
+      </AreaChart>
+    </ResponsiveContainer>
+  );
+});
+
+interface PortfolioChartProps {
+  initialBalance: number;
+}
+
+const PortfolioChart = memo(function PortfolioChart({ initialBalance }: PortfolioChartProps) {
+  const { colors } = useTheme();
+  const [liveData, setLiveData] = useState<LivePoint[]>(() => generateLiveData(initialBalance));
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [timeRange, setTimeRange] = useState<"1D" | "1W" | "1M" | "1Y">("1D");
+
+  useEffect(() => {
+    setLiveData(generateLiveData(initialBalance));
+  }, [initialBalance]);
+
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      setLiveData(prev => {
+        const last = prev[prev.length - 1];
+        if (!last) return prev;
+        const delta = (Math.random() - 0.49) * Math.max(last.price, 1) * 0.001;
+        const newPoint: LivePoint = {
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          price: parseFloat((last.price + delta).toFixed(2)),
+        };
+        const next = prev.length >= 60 ? [...prev.slice(1), newPoint] : [...prev, newPoint];
+        return next;
+      });
+    }, 3000);
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, []);
+
+  const latestPrice = liveData.length > 0 ? liveData[liveData.length - 1]!.price : 0;
+  const startPrice = liveData.length > 0 ? liveData[0]!.price : 0;
+  const priceDelta = latestPrice - startPrice;
+  const pricePct = startPrice > 0 ? (priceDelta / startPrice) * 100 : 0;
+  const isUp = priceDelta >= 0;
+
+  return (
+    <div className="rounded-xl mb-6" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
+      <div style={{ padding: "20px 24px 0" }}>
+        <div className="flex items-center justify-between mb-1">
+          <div>
+            <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary }}>Portfolio Performance</p>
+            <p style={{ fontSize: "11px", color: colors.textMuted, marginTop: "2px" }}>Equity curve over time</p>
+          </div>
+          <div className="flex gap-1 p-0.5 rounded-lg" style={{ background: colors.filterBar }}>
+            {(["1D", "1W", "1M", "1Y"] as const).map(r => (
+              <button key={r} onClick={() => setTimeRange(r)} style={{
+                padding: "5px 12px", fontSize: "11px", fontWeight: 600, borderRadius: "6px",
+                border: "none", cursor: "pointer", transition: "all 0.15s ease",
+                background: timeRange === r ? colors.accent : "transparent",
+                color: timeRange === r ? "#fff" : colors.filterInactiveText,
+              }}>{r}</button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-baseline gap-3 mb-4 mt-3">
+          <span style={{ fontSize: "32px", fontWeight: 800, color: colors.textPrimary, letterSpacing: "-0.03em", fontVariantNumeric: "tabular-nums" }}>
+            ${latestPrice.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+          </span>
+          {initialBalance > 0 && (
+            <span className="flex items-center gap-1" style={{ fontSize: "14px", fontWeight: 600, color: isUp ? colors.green : colors.red }}>
+              {isUp ? "▲" : "▼"}
+              {priceDelta >= 0 ? "+" : ""}${Math.abs(priceDelta).toFixed(0)} ({priceDelta >= 0 ? "+" : ""}{pricePct.toFixed(2)}%)
+            </span>
+          )}
+          <span className="flex items-center gap-1 ml-auto" style={{ fontSize: "11px", color: colors.green, fontWeight: 600 }}>
+            <span className="inline-block rounded-full" style={{ width: "6px", height: "6px", background: colors.green, animation: "pulse 1.5s infinite" }} />
+            LIVE
+          </span>
+        </div>
+      </div>
+      <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}`}</style>
+
+      <div style={{ padding: "0 8px 16px 0" }}>
+        <LiveChartArea data={liveData} />
+      </div>
+    </div>
+  );
+});
+
 export default function Overview() {
   const { colors } = useTheme();
   const email = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("signupEmail") ?? "" : "";
 
-  const [liveData, setLiveData] = useState(() => generateLiveData(0));
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const [timeRange, setTimeRange] = useState<"1D" | "1W" | "1M" | "1Y">("1D");
   const [balance, setBalance] = useState(0);
   const [profit, setProfit] = useState(0);
 
@@ -75,35 +202,22 @@ export default function Overview() {
       .then((d: { balance?: number; profit?: number }) => {
         setBalance(d.balance ?? 0);
         setProfit(d.profit ?? 0);
-        setLiveData(generateLiveData(d.balance ?? 1000));
       })
       .catch((err) => {
         console.warn("[Overview] Could not load balance:", err);
       });
   }, [email]);
 
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setLiveData(prev => {
-        const arr = [...prev];
-        const last = arr[arr.length - 1];
-        if (!last) return arr;
-        const delta = (Math.random() - 0.49) * Math.max(last.price, 1) * 0.001;
-        arr.push({
-          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          price: parseFloat((last.price + delta).toFixed(2)),
-        });
-        if (arr.length > 60) arr.shift();
-        return arr;
-      });
-    }, 3000);
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, []);
-
   const currentVal = balance;
   const pChange = profit;
   const pPct = balance > 0 && (balance - profit) > 0 ? (profit / (balance - profit)) * 100 : 0;
-  const isPositive = pChange >= 0;
+
+  const statCards = useMemo(() => [
+    { icon: Wallet, label: "Portfolio Value", value: `$${currentVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, sub: balance > 0 ? `${pChange >= 0 ? "+" : ""}${pPct.toFixed(2)}% total return` : "No activity yet", positive: pChange >= 0, gradient: "linear-gradient(135deg, #3b82f6, #1d4ed8)" },
+    { icon: TrendingUp, label: "Today's P&L", value: balance > 0 ? `${pChange >= 0 ? "+" : ""}$${Math.abs(pChange).toFixed(2)}` : "--", sub: balance > 0 ? "Total profit/loss" : "No trades yet", positive: pChange >= 0, gradient: "linear-gradient(135deg, #10b981, #059669)" },
+    { icon: BarChart3, label: "Buying Power", value: balance > 0 ? `$${currentVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}` : "--", sub: balance > 0 ? "Available balance" : "Fund your account", positive: true, gradient: "linear-gradient(135deg, #8b5cf6, #6d28d9)" },
+    { icon: ArrowRightLeft, label: "Open Trades", value: "0", sub: "No active positions", positive: true, gradient: "linear-gradient(135deg, #f59e0b, #d97706)" },
+  ], [currentVal, balance, pChange, pPct]);
 
   return (
     <DashboardLayout>
@@ -111,12 +225,7 @@ export default function Overview() {
         <div className="flex-1 overflow-y-auto" style={{ padding: "24px 20px" }}>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {[
-              { icon: Wallet, label: "Portfolio Value", value: `$${currentVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, sub: balance > 0 ? `${pChange >= 0 ? "+" : ""}${pPct.toFixed(2)}% total return` : "No activity yet", positive: pChange >= 0, gradient: "linear-gradient(135deg, #3b82f6, #1d4ed8)" },
-              { icon: TrendingUp, label: "Today's P&L", value: balance > 0 ? `${pChange >= 0 ? "+" : ""}$${Math.abs(pChange).toFixed(2)}` : "--", sub: balance > 0 ? "Total profit/loss" : "No trades yet", positive: pChange >= 0, gradient: "linear-gradient(135deg, #10b981, #059669)" },
-              { icon: BarChart3, label: "Buying Power", value: balance > 0 ? `$${currentVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}` : "--", sub: balance > 0 ? "Available balance" : "Fund your account", positive: true, gradient: "linear-gradient(135deg, #8b5cf6, #6d28d9)" },
-              { icon: ArrowRightLeft, label: "Open Trades", value: "0", sub: "No active positions", positive: true, gradient: "linear-gradient(135deg, #f59e0b, #d97706)" },
-            ].map((c) => (
+            {statCards.map((c) => (
               <div key={c.label} className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, overflow: "hidden" }}>
                 <div style={{ padding: "16px 18px" }}>
                   <div className="flex items-center justify-between mb-3">
@@ -135,66 +244,7 @@ export default function Overview() {
             ))}
           </div>
 
-          <div className="rounded-xl mb-6" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-            <div style={{ padding: "20px 24px 0" }}>
-              <div className="flex items-center justify-between mb-1">
-                <div>
-                  <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary }}>Portfolio Performance</p>
-                  <p style={{ fontSize: "11px", color: colors.textMuted, marginTop: "2px" }}>Equity curve over time</p>
-                </div>
-                <div className="flex gap-1 p-0.5 rounded-lg" style={{ background: colors.filterBar }}>
-                  {(["1D", "1W", "1M", "1Y"] as const).map(r => (
-                    <button key={r} onClick={() => setTimeRange(r)} style={{
-                      padding: "5px 12px", fontSize: "11px", fontWeight: 600, borderRadius: "6px",
-                      border: "none", cursor: "pointer", transition: "all 0.15s ease",
-                      background: timeRange === r ? colors.accent : "transparent",
-                      color: timeRange === r ? "#fff" : colors.filterInactiveText,
-                    }}>{r}</button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex items-baseline gap-3 mb-4 mt-3">
-                <span style={{ fontSize: "32px", fontWeight: 800, color: colors.textPrimary, letterSpacing: "-0.03em", fontVariantNumeric: "tabular-nums" }}>
-                  ${currentVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                </span>
-                {balance > 0 && (
-                  <span className="flex items-center gap-1" style={{ fontSize: "14px", fontWeight: 600, color: isPositive ? colors.green : colors.red }}>
-                    {isPositive ? "▲" : "▼"}
-                    {pChange >= 0 ? "+" : ""}${Math.abs(pChange).toFixed(0)} ({pChange >= 0 ? "+" : ""}{pPct.toFixed(2)}%)
-                  </span>
-                )}
-                <span className="flex items-center gap-1 ml-auto" style={{ fontSize: "11px", color: colors.green, fontWeight: 600 }}>
-                  <span className="inline-block rounded-full" style={{ width: "6px", height: "6px", background: colors.green, animation: "pulse 1.5s infinite" }} />
-                  LIVE
-                </span>
-              </div>
-            </div>
-            <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}`}</style>
-
-            <div style={{ padding: "0 8px 16px 0" }}>
-              <ResponsiveContainer width="100%" height={220}>
-                <AreaChart data={liveData} margin={{ top: 4, right: 16, bottom: 0, left: 8 }}>
-                  <defs>
-                    <linearGradient id="portfolioGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={colors.accent} stopOpacity={0.25} />
-                      <stop offset="50%" stopColor={colors.accent} stopOpacity={0.08} />
-                      <stop offset="100%" stopColor={colors.accent} stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke={colors.divider} vertical={false} opacity={0.4} />
-                  <XAxis dataKey="time" tick={{ fontSize: 10, fill: colors.textMuted }} axisLine={{ stroke: colors.divider }} tickLine={false} />
-                  <YAxis tick={{ fontSize: 10, fill: colors.textMuted }} axisLine={false} tickLine={false}
-                    domain={["auto", "auto"]} width={60}
-                    tickFormatter={(v: number) => v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v.toFixed(0)}`} />
-                  <Tooltip content={<ChartTooltip />} cursor={{ stroke: colors.textMuted, strokeWidth: 1, strokeDasharray: "4 4", opacity: 0.5 }} />
-                  <Area type="monotone" dataKey="price" stroke={colors.accent} strokeWidth={2}
-                    fill="url(#portfolioGrad)" dot={false}
-                    activeDot={{ r: 5, fill: colors.accent, stroke: colors.card, strokeWidth: 2 }} isAnimationActive={false} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+          <PortfolioChart initialBalance={balance} />
 
           <div className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "20px" }}>
             <div className="flex items-center justify-between mb-4">

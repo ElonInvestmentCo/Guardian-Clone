@@ -61,13 +61,18 @@ export default function Markets() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
-  const [selectedCoin, setSelectedCoin] = useState<CoinData | null>(null);
+  const [selectedCoinId, setSelectedCoinId] = useState<string | null>(null);
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [chartLoading, setChartLoading] = useState(false);
   const [timeframe, setTimeframe] = useState("1");
 
-  const selectedCoinRef = useRef(selectedCoin);
-  selectedCoinRef.current = selectedCoin;
+  const selectedCoinIdRef = useRef(selectedCoinId);
+  selectedCoinIdRef.current = selectedCoinId;
+
+  const selectedCoin = useMemo(
+    () => coins.find((c) => c.id === selectedCoinId) ?? null,
+    [coins, selectedCoinId],
+  );
 
   const fetchPrices = useCallback(() => {
     setLoading(true);
@@ -78,10 +83,10 @@ export default function Markets() {
         return r.json();
       })
       .then((data: CoinData[] | { data: CoinData[]; stale: boolean }) => {
-        const coins = Array.isArray(data) ? data : data.data;
-        setCoins(coins);
+        const list = Array.isArray(data) ? data : data.data;
+        setCoins(list);
         setLoading(false);
-        if (!selectedCoinRef.current && coins.length > 0) setSelectedCoin(coins[0]!);
+        if (!selectedCoinIdRef.current && list.length > 0) setSelectedCoinId(list[0]!.id);
       })
       .catch(() => {
         setError("Failed to fetch market data. Please try again.");
@@ -96,9 +101,9 @@ export default function Markets() {
   }, [fetchPrices]);
 
   useEffect(() => {
-    if (!selectedCoin) return;
+    if (!selectedCoinId) return;
     setChartLoading(true);
-    fetch(`${API}/api/market/chart/${selectedCoin.id}?days=${timeframe}`)
+    fetch(`${API}/api/market/chart/${selectedCoinId}?days=${timeframe}`)
       .then((r) => r.json())
       .then((data: number[][]) => {
         const ohlc: ChartDataPoint[] = data.map((d) => ({
@@ -116,7 +121,7 @@ export default function Markets() {
         setChartLoading(false);
       })
       .catch(() => setChartLoading(false));
-  }, [selectedCoin, timeframe]);
+  }, [selectedCoinId, timeframe]);
 
   const filtered = useMemo(() => coins.filter(
     (c) =>
@@ -200,7 +205,7 @@ export default function Markets() {
                     return (
                       <tr
                         key={coin.id}
-                        onClick={() => setSelectedCoin(coin)}
+                        onClick={() => setSelectedCoinId(coin.id)}
                         style={{
                           borderBottom: `1px solid ${colors.inputBorder}`,
                           background: isSelected ? (colors.accent + "10") : "transparent",

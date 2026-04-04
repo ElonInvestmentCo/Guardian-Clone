@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useState, useRef, memo } from "react";
+import { useMemo, useCallback, useRef, memo } from "react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, type TooltipProps,
@@ -124,14 +124,97 @@ function decimateData(data: ChartDataPoint[]): ChartDataPoint[] {
   return result;
 }
 
+interface ChartAreaProps {
+  chartData: ChartDataPoint[];
+  accentColor: string;
+  gradientId: string;
+  minPrice: number;
+  maxPrice: number;
+  onHoverPrice: (price: number | null) => void;
+}
+
+const CHART_MARGIN = { top: 8, right: 16, bottom: 0, left: 8 } as const;
+
+const ChartArea = memo(function ChartArea({
+  chartData, accentColor, gradientId, minPrice, maxPrice, onHoverPrice,
+}: ChartAreaProps) {
+  const { colors } = useTheme();
+  const lastHoverRef = useRef<number | null>(null);
+  const rafRef = useRef<number>(0);
+  const isInitialRender = useRef(true);
+
+  const shouldAnimate = isInitialRender.current;
+  if (isInitialRender.current && chartData.length > 0) {
+    isInitialRender.current = false;
+  }
+
+  const handleMouseMove = useCallback((e: { activePayload?: Array<{ payload: ChartDataPoint }> }) => {
+    const price = e?.activePayload?.[0]?.payload?.close;
+    if (price == null || price === lastHoverRef.current) return;
+    lastHoverRef.current = price;
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => onHoverPrice(price));
+  }, [onHoverPrice]);
+
+  const handleMouseLeave = useCallback(() => {
+    lastHoverRef.current = null;
+    cancelAnimationFrame(rafRef.current);
+    onHoverPrice(null);
+  }, [onHoverPrice]);
+
+  const xTickStyle = useMemo(() => ({ fontSize: 10, fill: colors.textMuted, fontWeight: 400 as const }), [colors.textMuted]);
+  const yTickStyle = useMemo(() => ({ fontSize: 10, fill: colors.textMuted, fontWeight: 400 as const }), [colors.textMuted]);
+  const xAxisLine = useMemo(() => ({ stroke: colors.divider, strokeWidth: 1 }), [colors.divider]);
+  const cursorStyle = useMemo(() => ({
+    stroke: colors.textMuted, strokeWidth: 1, strokeDasharray: "4 4", opacity: 0.5,
+  }), [colors.textMuted]);
+  const activeDotStyle = useMemo(() => ({
+    r: 5, fill: accentColor, stroke: colors.card, strokeWidth: 2,
+  }), [accentColor, colors.card]);
+  const yDomain = useMemo(() => [minPrice, maxPrice] as [number, number], [minPrice, maxPrice]);
+
+  return (
+    <ResponsiveContainer width="100%" height={320}>
+      <AreaChart
+        data={chartData}
+        margin={CHART_MARGIN}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
+        <defs>
+          <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={accentColor} stopOpacity={0.25} />
+            <stop offset="50%" stopColor={accentColor} stopOpacity={0.08} />
+            <stop offset="100%" stopColor={accentColor} stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" stroke={colors.divider} vertical={false} opacity={0.4} />
+        <XAxis
+          dataKey="time" tick={xTickStyle} axisLine={xAxisLine}
+          tickLine={false} interval="preserveStartEnd" minTickGap={50}
+        />
+        <YAxis
+          domain={yDomain} tick={yTickStyle} axisLine={false}
+          tickLine={false} width={65} tickFormatter={formatAxisPrice} tickCount={6}
+        />
+        <Tooltip content={<ChartTooltipContent />} cursor={cursorStyle} isAnimationActive={false} />
+        <Area
+          type="monotone" dataKey="close" stroke={accentColor} strokeWidth={2}
+          fill={`url(#${gradientId})`} dot={false} activeDot={activeDotStyle}
+          isAnimationActive={shouldAnimate} animationDuration={800} animationEasing="ease-out"
+        />
+      </AreaChart>
+    </ResponsiveContainer>
+  );
+});
+
 function TradingChartInner({
   data, loading, coinName, coinSymbol, currentPrice,
   priceChange, coinImage, timeframe, onTimeframeChange, spinnerImg,
 }: TradingChartProps) {
   const { colors } = useTheme();
-  const [hoveredPrice, setHoveredPrice] = useState<number | null>(null);
-  const lastHoverRef = useRef<number | null>(null);
-  const rafRef = useRef<number>(0);
+  const hoverPriceRef = useRef<HTMLSpanElement>(null);
+  const hoverLabelRef = useRef<HTMLSpanElement>(null);
 
   const chartData = useMemo(() => decimateData(data), [data]);
 
@@ -154,21 +237,16 @@ function TradingChartInner({
     return { minPrice: min - pad, maxPrice: max + pad };
   }, [chartData]);
 
-  const displayPrice = hoveredPrice ?? currentPrice ?? (chartData.length > 0 ? chartData[chartData.length - 1]!.close : 0);
+  const basePrice = currentPrice ?? (chartData.length > 0 ? chartData[chartData.length - 1]!.close : 0);
 
-  const handleMouseMove = useCallback((e: { activePayload?: Array<{ payload: ChartDataPoint }> }) => {
-    const price = e?.activePayload?.[0]?.payload?.close;
-    if (price == null || price === lastHoverRef.current) return;
-    lastHoverRef.current = price;
-    cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => setHoveredPrice(price));
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    lastHoverRef.current = null;
-    cancelAnimationFrame(rafRef.current);
-    setHoveredPrice(null);
-  }, []);
+  const handleHoverPrice = useCallback((price: number | null) => {
+    if (hoverPriceRef.current) {
+      hoverPriceRef.current.textContent = formatCurrency(price ?? basePrice);
+    }
+    if (hoverLabelRef.current) {
+      hoverLabelRef.current.style.display = price !== null ? "inline" : "none";
+    }
+  }, [basePrice]);
 
   return (
     <div style={{
@@ -219,11 +297,14 @@ function TradingChartInner({
         </div>
 
         <div style={{ display: "flex", alignItems: "baseline", gap: "10px", marginBottom: "16px", marginTop: "8px" }}>
-          <span style={{
-            fontSize: "32px", fontWeight: 800, color: colors.textPrimary,
-            letterSpacing: "-0.03em", fontVariantNumeric: "tabular-nums",
-          }}>
-            {formatCurrency(displayPrice)}
+          <span
+            ref={hoverPriceRef}
+            style={{
+              fontSize: "32px", fontWeight: 800, color: colors.textPrimary,
+              letterSpacing: "-0.03em", fontVariantNumeric: "tabular-nums",
+            }}
+          >
+            {formatCurrency(basePrice)}
           </span>
           {priceChange != null && (
             <span style={{
@@ -234,90 +315,37 @@ function TradingChartInner({
               {priceChange >= 0 ? "▲" : "▼"} {Math.abs(priceChange).toFixed(2)}%
             </span>
           )}
-          {hoveredPrice !== null && (
-            <span style={{ fontSize: "11px", color: colors.textMuted, fontWeight: 500 }}>
-              (hover)
-            </span>
-          )}
+          <span
+            ref={hoverLabelRef}
+            style={{ fontSize: "11px", color: colors.textMuted, fontWeight: 500, display: "none" }}
+          >
+            (hover)
+          </span>
         </div>
       </div>
 
-      <div style={{ padding: "0 8px 16px 0" }}>
-        {loading ? (
-          <div style={{ height: "320px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ padding: "0 8px 16px 0", position: "relative" }}>
+        {loading && (
+          <div style={{
+            position: "absolute", inset: 0, zIndex: 2,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            background: `${colors.card}cc`, borderRadius: "0 0 12px 12px",
+          }}>
             {spinnerImg ? (
               <img src={spinnerImg} alt="Loading" className="spinner-img-rotate" style={{ width: 28, height: 28 }} />
             ) : (
               <span style={{ color: colors.textMuted, fontSize: "13px" }}>Loading chart...</span>
             )}
           </div>
-        ) : (
-          <ResponsiveContainer width="100%" height={320}>
-            <AreaChart
-              data={chartData}
-              margin={{ top: 8, right: 16, bottom: 0, left: 8 }}
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-            >
-              <defs>
-                <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={accentColor} stopOpacity={0.25} />
-                  <stop offset="50%" stopColor={accentColor} stopOpacity={0.08} />
-                  <stop offset="100%" stopColor={accentColor} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke={colors.divider}
-                vertical={false}
-                opacity={0.4}
-              />
-              <XAxis
-                dataKey="time"
-                tick={{ fontSize: 10, fill: colors.textMuted, fontWeight: 400 }}
-                axisLine={{ stroke: colors.divider, strokeWidth: 1 }}
-                tickLine={false}
-                interval="preserveStartEnd"
-                minTickGap={50}
-              />
-              <YAxis
-                domain={[minPrice, maxPrice]}
-                tick={{ fontSize: 10, fill: colors.textMuted, fontWeight: 400 }}
-                axisLine={false}
-                tickLine={false}
-                width={65}
-                tickFormatter={formatAxisPrice}
-                tickCount={6}
-              />
-              <Tooltip
-                content={<ChartTooltipContent />}
-                cursor={{
-                  stroke: colors.textMuted,
-                  strokeWidth: 1,
-                  strokeDasharray: "4 4",
-                  opacity: 0.5,
-                }}
-                isAnimationActive={false}
-              />
-              <Area
-                type="monotone"
-                dataKey="close"
-                stroke={accentColor}
-                strokeWidth={2}
-                fill={`url(#${gradientId})`}
-                dot={false}
-                activeDot={{
-                  r: 5,
-                  fill: accentColor,
-                  stroke: colors.card,
-                  strokeWidth: 2,
-                }}
-                animationDuration={800}
-                animationEasing="ease-out"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
         )}
+        <ChartArea
+          chartData={chartData}
+          accentColor={accentColor}
+          gradientId={gradientId}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          onHoverPrice={handleHoverPrice}
+        />
       </div>
     </div>
   );
