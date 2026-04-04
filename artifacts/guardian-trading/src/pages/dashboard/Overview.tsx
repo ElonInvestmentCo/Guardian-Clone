@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { getApiBase } from "@/lib/api";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, TooltipProps,
+  ResponsiveContainer, type TooltipProps,
 } from "recharts";
 import { ArrowUpRight, ArrowDownRight, Wallet, TrendingUp, BarChart3, ArrowRightLeft, InboxIcon } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
@@ -21,10 +21,22 @@ function generateLiveData(base: number, count = 40): { time: string; price: numb
 }
 
 function ChartTooltip({ active, payload }: TooltipProps<number, string>) {
+  const { colors } = useTheme();
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: "#1e293b", color: "#e2e8f0", borderRadius: "8px", padding: "6px 12px", fontSize: "12px", fontWeight: 600, border: "1px solid #334155" }}>
-      ${((payload[0].value as number)).toLocaleString()}
+    <div style={{
+      background: colors.sidebar,
+      color: colors.textPrimary,
+      borderRadius: "8px",
+      padding: "8px 14px",
+      fontSize: "13px",
+      fontWeight: 700,
+      border: `1px solid ${colors.cardBorder}`,
+      boxShadow: "0 8px 24px rgba(0,0,0,0.3)",
+      fontVariantNumeric: "tabular-nums",
+      letterSpacing: "-0.01em",
+    }}>
+      ${((payload[0]!.value as number)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
     </div>
   );
 }
@@ -91,12 +103,7 @@ export default function Overview() {
   const currentVal = balance;
   const pChange = profit;
   const pPct = balance > 0 && (balance - profit) > 0 ? (profit / (balance - profit)) * 100 : 0;
-
-  const statusColors: Record<string, { bg: string; text: string }> = {
-    Open:      { bg: colors.greenBg, text: colors.green },
-    Closed:    { bg: colors.purpleBg, text: colors.purple },
-    Cancelled: { bg: colors.redBg, text: colors.red },
-  };
+  const isPositive = pChange >= 0;
 
   return (
     <DashboardLayout>
@@ -128,60 +135,65 @@ export default function Overview() {
             ))}
           </div>
 
-          <div className="rounded-xl mb-6" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "20px" }}>
-            <div className="flex items-center justify-between mb-1">
-              <div>
-                <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary }}>Portfolio Performance</p>
-                <p style={{ fontSize: "11px", color: colors.textMuted, marginTop: "2px" }}>Equity curve over time</p>
+          <div className="rounded-xl mb-6" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
+            <div style={{ padding: "20px 24px 0" }}>
+              <div className="flex items-center justify-between mb-1">
+                <div>
+                  <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary }}>Portfolio Performance</p>
+                  <p style={{ fontSize: "11px", color: colors.textMuted, marginTop: "2px" }}>Equity curve over time</p>
+                </div>
+                <div className="flex gap-1 p-0.5 rounded-lg" style={{ background: colors.filterBar }}>
+                  {(["1D", "1W", "1M", "1Y"] as const).map(r => (
+                    <button key={r} onClick={() => setTimeRange(r)} style={{
+                      padding: "5px 12px", fontSize: "11px", fontWeight: 600, borderRadius: "6px",
+                      border: "none", cursor: "pointer", transition: "all 0.15s ease",
+                      background: timeRange === r ? colors.accent : "transparent",
+                      color: timeRange === r ? "#fff" : colors.filterInactiveText,
+                    }}>{r}</button>
+                  ))}
+                </div>
               </div>
-              <div className="flex gap-1 p-0.5 rounded-lg" style={{ background: colors.filterBar }}>
-                {(["1D", "1W", "1M", "1Y"] as const).map(r => (
-                  <button key={r} onClick={() => setTimeRange(r)} style={{
-                    padding: "4px 10px", fontSize: "11px", fontWeight: 600, borderRadius: "5px",
-                    border: "none", cursor: "pointer",
-                    background: timeRange === r ? colors.accent : "transparent",
-                    color: timeRange === r ? "#fff" : colors.filterInactiveText,
-                  }}>{r}</button>
-                ))}
-              </div>
-            </div>
 
-            <div className="flex items-baseline gap-3 mb-4 mt-3">
-              <span style={{ fontSize: "28px", fontWeight: 800, color: colors.textPrimary, letterSpacing: "-0.03em" }}>
-                ${currentVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-              </span>
-              {balance > 0 && (
-                <span className="flex items-center gap-1" style={{ fontSize: "13px", fontWeight: 600, color: pChange >= 0 ? colors.green : colors.red }}>
-                  {pChange >= 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
-                  {pChange >= 0 ? "+" : ""}${Math.abs(pChange).toFixed(0)} ({pChange >= 0 ? "+" : ""}{pPct.toFixed(2)}%)
+              <div className="flex items-baseline gap-3 mb-4 mt-3">
+                <span style={{ fontSize: "32px", fontWeight: 800, color: colors.textPrimary, letterSpacing: "-0.03em", fontVariantNumeric: "tabular-nums" }}>
+                  ${currentVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </span>
-              )}
-              <span className="flex items-center gap-1 ml-auto" style={{ fontSize: "11px", color: colors.green, fontWeight: 600 }}>
-                <span className="inline-block rounded-full" style={{ width: "6px", height: "6px", background: colors.green, animation: "pulse 1.5s infinite" }} />
-                LIVE
-              </span>
+                {balance > 0 && (
+                  <span className="flex items-center gap-1" style={{ fontSize: "14px", fontWeight: 600, color: isPositive ? colors.green : colors.red }}>
+                    {isPositive ? "▲" : "▼"}
+                    {pChange >= 0 ? "+" : ""}${Math.abs(pChange).toFixed(0)} ({pChange >= 0 ? "+" : ""}{pPct.toFixed(2)}%)
+                  </span>
+                )}
+                <span className="flex items-center gap-1 ml-auto" style={{ fontSize: "11px", color: colors.green, fontWeight: 600 }}>
+                  <span className="inline-block rounded-full" style={{ width: "6px", height: "6px", background: colors.green, animation: "pulse 1.5s infinite" }} />
+                  LIVE
+                </span>
+              </div>
             </div>
             <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}`}</style>
 
-            <ResponsiveContainer width="100%" height={200}>
-              <AreaChart data={liveData} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
-                <defs>
-                  <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={colors.accent} stopOpacity={0.2} />
-                    <stop offset="100%" stopColor={colors.accent} stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke={colors.divider} vertical={false} />
-                <XAxis dataKey="time" tick={{ fontSize: 10, fill: colors.textMuted }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: colors.textMuted }} axisLine={false} tickLine={false}
-                  domain={["auto", "auto"]} width={50}
-                  tickFormatter={(v: number) => v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v.toFixed(0)}`} />
-                <Tooltip content={<ChartTooltip />} cursor={{ stroke: colors.divider, strokeWidth: 1 }} />
-                <Area type="monotone" dataKey="price" stroke={colors.accent} strokeWidth={2}
-                  fill="url(#areaGrad)" dot={false}
-                  activeDot={{ r: 4, fill: colors.accent, stroke: colors.card, strokeWidth: 2 }} isAnimationActive={false} />
-              </AreaChart>
-            </ResponsiveContainer>
+            <div style={{ padding: "0 8px 16px 0" }}>
+              <ResponsiveContainer width="100%" height={220}>
+                <AreaChart data={liveData} margin={{ top: 4, right: 16, bottom: 0, left: 8 }}>
+                  <defs>
+                    <linearGradient id="portfolioGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={colors.accent} stopOpacity={0.25} />
+                      <stop offset="50%" stopColor={colors.accent} stopOpacity={0.08} />
+                      <stop offset="100%" stopColor={colors.accent} stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke={colors.divider} vertical={false} opacity={0.4} />
+                  <XAxis dataKey="time" tick={{ fontSize: 10, fill: colors.textMuted }} axisLine={{ stroke: colors.divider }} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: colors.textMuted }} axisLine={false} tickLine={false}
+                    domain={["auto", "auto"]} width={60}
+                    tickFormatter={(v: number) => v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v.toFixed(0)}`} />
+                  <Tooltip content={<ChartTooltip />} cursor={{ stroke: colors.textMuted, strokeWidth: 1, strokeDasharray: "4 4", opacity: 0.5 }} />
+                  <Area type="monotone" dataKey="price" stroke={colors.accent} strokeWidth={2}
+                    fill="url(#portfolioGrad)" dot={false}
+                    activeDot={{ r: 5, fill: colors.accent, stroke: colors.card, strokeWidth: 2 }} isAnimationActive={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
           <div className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "20px" }}>

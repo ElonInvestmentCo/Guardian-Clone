@@ -1,0 +1,103 @@
+Convert the provided trading chart into a production-grade Next.js component for a high-performance trading dashboard.
+
+========================
+TECH STACK REQUIREMENTS
+========================
+
+- Framework: Next.js (App Router)
+- Chart Library: Recharts (AreaChart ONLY)
+- Styling: Tailwind CSS ONLY (no external CSS files)
+- UI Components: shadcn/ui (Card, Select, etc.)
+- TypeScript REQUIRED
+
+========================
+CORE FEATURES
+========================
+
+1. CHART DESIGN (PROFESSIONAL LEVEL)
+- Match UI quality similar to TradingView / Bloomberg terminals
+- Clean, minimal, data-focused design
+- Smooth gradient area fill
+- Subtle gridlines
+- Proper spacing and padding
+
+2. PERFORMANCE OPTIMIZATION
+- Must handle large datasets (10k+ points)
+- Use memoization (useMemo, useCallback)
+- Avoid unnecessary re-renders
+- Use ResponsiveContainer efficiently
+- Throttle or debounce tooltip updates if needed
+
+3. RESPONSIVE DESIGN
+- Fully responsive across:
+  - Mobile
+  - Tablet
+  - Desktop
+- Adjust:
+  - Chart height
+  - Axis visibility
+  - Font sizes
+
+4. DARK MODE (IMPORTANT)
+- Use Tailwind dark mode classes ONLY
+- No CSS variables
+- Ensure proper contrast for:
+  - Grid
+  - Tooltip
+  - Lines
+  - Background
+
+========================
+CHART FUNCTIONALITY
+========================
+
+- Use AreaChart with:
+  - Smooth curve (monotone)
+  - Gradient fill (green for gains, red for losses optional)
+- X-axis:
+  - Format as trading dates (e.g. Jan 12, 09:30)
+- Y-axis:
+  - Proper number formatting (currency format)
+
+- Tooltip:
+  - Show:
+    - Price
+    - Volume (if available)
+  - Styled like financial dashboards
+  - No lag
+
+- Add time range selector:
+  - 1D / 1W / 1M / 3M / 1Y
+  - Use shadcn Select or Tabs
+
+========================
+UX ENHANCEMENTS
+========================
+
+- Smooth chart animation on load
+- Hover crosshair effect (if possible in Recharts)
+- Highlight active data point
+- Subtle transitions (not excessive)
+
+========================
+CODE QUALITY
+========================
+
+- Clean, reusable component
+- Proper TypeScript types
+- No placeholder or dummy code
+- Modular structure:
+  - Chart component
+  - Tooltip component
+  - Utils (date + number formatting)
+
+========================
+OUTPUT FORMAT
+========================
+
+Return:
+
+1. Full production-ready component file
+2. Fully working code (no pseudo code)
+3. Proper imports
+4. No explanations — code only

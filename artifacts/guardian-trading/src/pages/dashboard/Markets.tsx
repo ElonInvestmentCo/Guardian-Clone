@@ -1,12 +1,12 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import spinnerImg from "@assets/spinner-clean.png";
 import {
-  ResponsiveContainer, ComposedChart, Bar, XAxis, YAxis,
-  CartesianGrid, Tooltip, Line, AreaChart, Area,
+  ResponsiveContainer, AreaChart, Area,
 } from "recharts";
 import { TrendingUp, TrendingDown, Search, RefreshCw } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
+import TradingChart, { type ChartDataPoint } from "@/components/TradingChart";
 
 import { getApiBase } from "@/lib/api";
 const API = getApiBase();
@@ -25,22 +25,6 @@ interface CoinData {
   sparkline_in_7d: { price: number[] };
 }
 
-interface OhlcPoint {
-  time: string;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-}
-
-const TIMEFRAMES = [
-  { label: "1D", days: "1" },
-  { label: "7D", days: "7" },
-  { label: "30D", days: "30" },
-  { label: "90D", days: "90" },
-  { label: "1Y", days: "365" },
-];
-
 function formatPrice(n: number): string {
   if (n >= 1) return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 6 });
@@ -54,7 +38,7 @@ function formatMarketCap(n: number): string {
 }
 
 function Sparkline({ data, positive }: { data: number[]; positive: boolean }) {
-  const sampled = data.filter((_, i) => i % 4 === 0).map((p, i) => ({ i, p }));
+  const sampled = useMemo(() => data.filter((_, i) => i % 4 === 0).map((p, i) => ({ i, p })), [data]);
   return (
     <ResponsiveContainer width={100} height={32}>
       <AreaChart data={sampled}>
@@ -65,7 +49,7 @@ function Sparkline({ data, positive }: { data: number[]; positive: boolean }) {
           </linearGradient>
         </defs>
         <Area type="monotone" dataKey="p" stroke={positive ? "#10b981" : "#ef4444"} strokeWidth={1.5}
-          fill={`url(#${positive ? "sparkGreen" : "sparkRed"})`} dot={false} />
+          fill={`url(#${positive ? "sparkGreen" : "sparkRed"})`} dot={false} isAnimationActive={false} />
       </AreaChart>
     </ResponsiveContainer>
   );
@@ -78,9 +62,12 @@ export default function Markets() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [selectedCoin, setSelectedCoin] = useState<CoinData | null>(null);
-  const [chartData, setChartData] = useState<OhlcPoint[]>([]);
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [chartLoading, setChartLoading] = useState(false);
   const [timeframe, setTimeframe] = useState("1");
+
+  const selectedCoinRef = useRef(selectedCoin);
+  selectedCoinRef.current = selectedCoin;
 
   const fetchPrices = useCallback(() => {
     setLoading(true);
@@ -94,7 +81,7 @@ export default function Markets() {
         const coins = Array.isArray(data) ? data : data.data;
         setCoins(coins);
         setLoading(false);
-        if (!selectedCoin && coins.length > 0) setSelectedCoin(coins[0]!);
+        if (!selectedCoinRef.current && coins.length > 0) setSelectedCoin(coins[0]!);
       })
       .catch(() => {
         setError("Failed to fetch market data. Please try again.");
@@ -114,7 +101,8 @@ export default function Markets() {
     fetch(`${API}/api/market/chart/${selectedCoin.id}?days=${timeframe}`)
       .then((r) => r.json())
       .then((data: number[][]) => {
-        const ohlc = data.map((d) => ({
+        const ohlc: ChartDataPoint[] = data.map((d) => ({
+          timestamp: d[0]!,
           time: new Date(d[0]!).toLocaleString("en-US", {
             month: "short", day: "numeric",
             ...(timeframe === "1" ? { hour: "numeric", minute: "2-digit" } : {}),
@@ -130,11 +118,11 @@ export default function Markets() {
       .catch(() => setChartLoading(false));
   }, [selectedCoin, timeframe]);
 
-  const filtered = coins.filter(
+  const filtered = useMemo(() => coins.filter(
     (c) =>
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.symbol.toLowerCase().includes(search.toLowerCase())
-  );
+  ), [coins, search]);
 
   return (
     <DashboardLayout>
@@ -164,67 +152,19 @@ export default function Markets() {
         </div>
 
         {selectedCoin && (
-          <div style={{
-            background: colors.card ?? "#fff", border: `1px solid ${colors.inputBorder}`,
-            borderRadius: "12px", padding: "20px", marginBottom: "20px",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <img src={selectedCoin.image} alt={selectedCoin.name} style={{ width: "36px", height: "36px", borderRadius: "50%" }} />
-                <div>
-                  <span style={{ fontSize: "18px", fontWeight: 700, color: colors.textPrimary }}>{selectedCoin.name}</span>
-                  <span style={{ fontSize: "13px", color: colors.textMuted, marginLeft: "8px", textTransform: "uppercase" }}>{selectedCoin.symbol}</span>
-                </div>
-                <span style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary, marginLeft: "16px" }}>
-                  ${formatPrice(selectedCoin.current_price)}
-                </span>
-                <span style={{
-                  fontSize: "13px", fontWeight: 600, marginLeft: "8px",
-                  color: selectedCoin.price_change_percentage_24h >= 0 ? "#10b981" : "#ef4444",
-                  display: "flex", alignItems: "center", gap: "4px",
-                }}>
-                  {selectedCoin.price_change_percentage_24h >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                  {selectedCoin.price_change_percentage_24h?.toFixed(2)}%
-                </span>
-              </div>
-              <div style={{ display: "flex", gap: "4px" }}>
-                {TIMEFRAMES.map((tf) => (
-                  <button key={tf.days} onClick={() => setTimeframe(tf.days)} style={{
-                    padding: "6px 12px", borderRadius: "6px", fontSize: "11px", fontWeight: 600, cursor: "pointer",
-                    background: timeframe === tf.days ? colors.accent : colors.inputBg,
-                    color: timeframe === tf.days ? "#fff" : colors.textSub,
-                    border: timeframe === tf.days ? "none" : `1px solid ${colors.inputBorder}`,
-                  }}>
-                    {tf.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {chartLoading ? (
-              <div style={{ height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <img src={spinnerImg} alt="Loading" className="spinner-img-rotate" style={{ width: 24, height: 24 }} />
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height={300}>
-                <ComposedChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={colors.inputBorder} opacity={0.5} />
-                  <XAxis dataKey="time" tick={{ fontSize: 10, fill: colors.textMuted }} interval="preserveStartEnd" />
-                  <YAxis domain={["auto", "auto"]} tick={{ fontSize: 10, fill: colors.textMuted }}
-                    tickFormatter={(v: number) => `$${v >= 1000 ? (v / 1000).toFixed(1) + "k" : v.toFixed(0)}`} />
-                  <Tooltip
-                    contentStyle={{
-                      background: colors.card ?? "#fff", border: `1px solid ${colors.inputBorder}`,
-                      borderRadius: "8px", fontSize: "12px",
-                    }}
-                    formatter={(value: number, name: string) => [`$${formatPrice(value)}`, name.charAt(0).toUpperCase() + name.slice(1)]}
-                  />
-                  <Bar dataKey="high" fill={colors.accent} opacity={0.1} />
-                  <Line type="monotone" dataKey="close" stroke={colors.accent} strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="open" stroke={colors.textMuted} strokeWidth={1} dot={false} strokeDasharray="4 4" />
-                </ComposedChart>
-              </ResponsiveContainer>
-            )}
+          <div style={{ marginBottom: "20px" }}>
+            <TradingChart
+              data={chartData}
+              loading={chartLoading}
+              coinName={selectedCoin.name}
+              coinSymbol={selectedCoin.symbol}
+              currentPrice={selectedCoin.current_price}
+              priceChange={selectedCoin.price_change_percentage_24h}
+              coinImage={selectedCoin.image}
+              timeframe={timeframe}
+              onTimeframeChange={setTimeframe}
+              spinnerImg={spinnerImg}
+            />
           </div>
         )}
 
