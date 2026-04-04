@@ -93,7 +93,7 @@ const LiveChartArea = memo(function LiveChartArea({ data }: LiveChartAreaProps) 
         <CartesianGrid strokeDasharray="3 3" stroke={colors.divider} vertical={false} opacity={0.4} />
         <XAxis dataKey="time" tick={xTickStyle} axisLine={xAxisLine} tickLine={false} />
         <YAxis tick={yTickStyle} axisLine={false} tickLine={false}
-          domain={["auto", "auto"]} width={60} tickFormatter={yTickFormatter} />
+          domain={AUTO_DOMAIN} width={60} tickFormatter={yTickFormatter} />
         <Tooltip content={<ChartTooltip />} cursor={cursorStyle} />
         <Area type="monotone" dataKey="price" stroke={colors.accent} strokeWidth={2}
           fill="url(#portfolioGrad)" dot={false} activeDot={activeDotStyle} isAnimationActive={false} />
