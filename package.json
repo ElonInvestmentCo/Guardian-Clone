@@ -4,7 +4,6 @@
   "license": "MIT",
   "packageManager": "pnpm@10.26.1",
   "scripts": {
-    "preinstall": "node -e \"if (process.platform !== 'win32') { require('fs').unlinkSync('package-lock.json'); require('fs').unlinkSync('yarn.lock'); } if (!process.env.npm_config_user_agent?.includes('pnpm')) { console.error('Use pnpm instead'); process.exit(1); }\"",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
