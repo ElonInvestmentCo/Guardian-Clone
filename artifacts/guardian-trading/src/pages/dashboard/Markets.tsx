@@ -1,58 +1,41 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import spinnerImg from "@assets/spinner-clean.png";
-import {
-  ResponsiveContainer, AreaChart, Area,
-} from "recharts";
-import { TrendingUp, TrendingDown, Search, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
-import TradingChart, { type ChartDataPoint } from "@/components/TradingChart";
 
 import { getApiBase } from "@/lib/api";
 const API = getApiBase();
 
 interface CoinData {
-  id: string;
-  symbol: string;
   name: string;
-  image: string;
-  current_price: number;
-  price_change_percentage_24h: number;
-  price_change_percentage_1h_in_currency: number;
-  price_change_percentage_7d_in_currency: number;
+  symbol: string;
+  price: number;
+  percent_change_24h: number;
   market_cap: number;
-  total_volume: number;
-  sparkline_in_7d: { price: number[] };
+  volume_24h: number;
 }
 
-function formatPrice(n: number): string {
-  if (n >= 1) return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 6 });
+function formatPrice(price: number): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: price < 1 ? 6 : 2,
+    maximumFractionDigits: price < 1 ? 6 : 2,
+  }).format(price);
 }
 
-function formatMarketCap(n: number): string {
-  if (n >= 1e12) return `$${(n / 1e12).toFixed(2)}T`;
-  if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
-  if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
-  return `$${n.toLocaleString()}`;
+function formatMarketCap(cap: number): string {
+  if (cap >= 1e12) return `$${(cap / 1e12).toFixed(2)}T`;
+  if (cap >= 1e9) return `$${(cap / 1e9).toFixed(2)}B`;
+  if (cap >= 1e6) return `$${(cap / 1e6).toFixed(2)}M`;
+  return `$${cap.toLocaleString()}`;
 }
 
-function Sparkline({ data, positive }: { data: number[]; positive: boolean }) {
-  const sampled = useMemo(() => data.filter((_, i) => i % 4 === 0).map((p, i) => ({ i, p })), [data]);
-  return (
-    <ResponsiveContainer width={100} height={32}>
-      <AreaChart data={sampled}>
-        <defs>
-          <linearGradient id={positive ? "sparkGreen" : "sparkRed"} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={positive ? "#10b981" : "#ef4444"} stopOpacity={0.3} />
-            <stop offset="100%" stopColor={positive ? "#10b981" : "#ef4444"} stopOpacity={0} />
-          </linearGradient>
-        </defs>
-        <Area type="monotone" dataKey="p" stroke={positive ? "#10b981" : "#ef4444"} strokeWidth={1.5}
-          fill={`url(#${positive ? "sparkGreen" : "sparkRed"})`} dot={false} isAnimationActive={false} />
-      </AreaChart>
-    </ResponsiveContainer>
-  );
+function formatVolume(volume: number): string {
+  if (volume >= 1e9) return `$${(volume / 1e9).toFixed(2)}B`;
+  if (volume >= 1e6) return `$${(volume / 1e6).toFixed(2)}M`;
+  return `$${volume.toLocaleString()}`;
 }
 
 export default function Markets() {
@@ -60,74 +43,30 @@ export default function Markets() {
   const [coins, setCoins] = useState<CoinData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [search, setSearch] = useState("");
-  const [selectedCoinId, setSelectedCoinId] = useState<string | null>(null);
-  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
-  const [chartLoading, setChartLoading] = useState(false);
-  const [timeframe, setTimeframe] = useState("1");
 
-  const selectedCoinIdRef = useRef(selectedCoinId);
-  selectedCoinIdRef.current = selectedCoinId;
-
-  const selectedCoin = useMemo(
-    () => coins.find((c) => c.id === selectedCoinId) ?? null,
-    [coins, selectedCoinId],
-  );
-
-  const fetchPrices = useCallback(() => {
+  const fetchMarkets = useCallback(() => {
     setLoading(true);
     setError("");
-    fetch(`${API}/api/market/prices`)
+    fetch(`${API}/api/markets`)
       .then((r) => {
-        if (!r.ok) throw new Error("Failed");
+        if (!r.ok) throw new Error("Failed to fetch market data");
         return r.json();
       })
-      .then((data: CoinData[] | { data: CoinData[]; stale: boolean }) => {
-        const list = Array.isArray(data) ? data : data.data;
-        setCoins(list);
+      .then((data: CoinData[]) => {
+        setCoins(data);
         setLoading(false);
-        if (!selectedCoinIdRef.current && list.length > 0) setSelectedCoinId(list[0]!.id);
       })
-      .catch(() => {
-        setError("Failed to fetch market data. Please try again.");
+      .catch((err) => {
+        setError(err.message || "Failed to fetch market data. Please try again.");
         setLoading(false);
       });
   }, []);
 
   useEffect(() => {
-    fetchPrices();
-    const interval = setInterval(fetchPrices, 60000);
+    fetchMarkets();
+    const interval = setInterval(fetchMarkets, 30000); // 30 seconds
     return () => clearInterval(interval);
-  }, [fetchPrices]);
-
-  useEffect(() => {
-    if (!selectedCoinId) return;
-    setChartLoading(true);
-    fetch(`${API}/api/market/chart/${selectedCoinId}?days=${timeframe}`)
-      .then((r) => r.json())
-      .then((data: number[][]) => {
-        const ohlc: ChartDataPoint[] = data.map((d) => ({
-          timestamp: d[0]!,
-          time: new Date(d[0]!).toLocaleString("en-US", {
-            month: "short", day: "numeric",
-            ...(timeframe === "1" ? { hour: "numeric", minute: "2-digit" } : {}),
-          }),
-          open: d[1]!,
-          high: d[2]!,
-          low: d[3]!,
-          close: d[4]!,
-        }));
-        setChartData(ohlc);
-        setChartLoading(false);
-      })
-      .catch(() => setChartLoading(false));
-  }, [selectedCoinId, timeframe]);
-
-  const filtered = useMemo(() => coins.filter(
-    (c) =>
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.symbol.toLowerCase().includes(search.toLowerCase())
-  ), [coins, search]);
+  }, [fetchMarkets]);
 
   return (
     <DashboardLayout>
@@ -135,43 +74,17 @@ export default function Markets() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
           <div>
             <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary, margin: 0 }}>Crypto Markets</h1>
-            <p style={{ fontSize: "13px", color: colors.textMuted, margin: "4px 0 0" }}>Live cryptocurrency prices and charts</p>
+            <p style={{ fontSize: "13px", color: colors.textMuted, margin: "4px 0 0" }}>Live cryptocurrency prices</p>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <div style={{
-              display: "flex", alignItems: "center", gap: "8px", padding: "7px 14px",
-              background: colors.inputBg, border: `1px solid ${colors.inputBorder}`, borderRadius: "8px",
-            }}>
-              <Search size={14} color={colors.textMuted} />
-              <input value={search} onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search coins..."
-                style={{ border: "none", outline: "none", background: "transparent", fontSize: "12.5px", color: colors.inputText, width: "140px" }} />
-            </div>
-            <button onClick={fetchPrices} style={{
-              padding: "8px", borderRadius: "8px", border: `1px solid ${colors.inputBorder}`,
-              background: colors.inputBg, color: colors.textSub, cursor: "pointer",
-            }}>
-              <RefreshCw size={14} />
-            </button>
-          </div>
+          <button onClick={fetchMarkets} style={{
+            padding: "8px", borderRadius: "8px", border: `1px solid ${colors.inputBorder}`,
+            background: colors.inputBg, color: colors.textSub, cursor: "pointer",
+            display: "flex", alignItems: "center", gap: "4px"
+          }}>
+            <RefreshCw size={14} />
+            Refresh
+          </button>
         </div>
-
-        {selectedCoin && (
-          <div style={{ marginBottom: "20px" }}>
-            <TradingChart
-              data={chartData}
-              loading={chartLoading}
-              coinName={selectedCoin.name}
-              coinSymbol={selectedCoin.symbol}
-              currentPrice={selectedCoin.current_price}
-              priceChange={selectedCoin.price_change_percentage_24h}
-              coinImage={selectedCoin.image}
-              timeframe={timeframe}
-              onTimeframeChange={setTimeframe}
-              spinnerImg={spinnerImg}
-            />
-          </div>
-        )}
 
         {error && (
           <div style={{ padding: "16px", background: "#FEF2F2", border: "1px solid #FECACA", borderRadius: "8px", marginBottom: "16px", color: "#DC2626", fontSize: "13px" }}>
@@ -189,67 +102,41 @@ export default function Markets() {
             borderRadius: "12px", overflow: "hidden",
           }}>
             <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "700px" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "600px" }}>
                 <thead>
                   <tr style={{ borderBottom: `1px solid ${colors.inputBorder}` }}>
-                    {["#", "Coin", "Price", "1h %", "24h %", "7d %", "Market Cap", "Volume (24h)", "7D Chart"].map((h) => (
-                      <th key={h} style={{ padding: "12px 14px", fontSize: "11px", fontWeight: 600, color: colors.textMuted, textAlign: h === "Coin" ? "left" : "right", whiteSpace: "nowrap" }}>
+                    {["Coin", "Price", "24h Change", "Market Cap", "Volume (24h)"].map((h) => (
+                      <th key={h} style={{ padding: "12px 14px", fontSize: "11px", fontWeight: 600, color: colors.textMuted, textAlign: "left" }}>
                         {h}
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((coin, i) => {
-                    const isSelected = selectedCoin?.id === coin.id;
-                    return (
-                      <tr
-                        key={coin.id}
-                        onClick={() => setSelectedCoinId(coin.id)}
-                        style={{
-                          borderBottom: `1px solid ${colors.inputBorder}`,
-                          background: isSelected ? (colors.accent + "10") : "transparent",
-                          cursor: "pointer",
-                          transition: "background 0.15s",
-                        }}
-                        onMouseEnter={(e) => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = colors.inputBg; }}
-                        onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
-                      >
-                        <td style={{ padding: "12px 14px", fontSize: "12px", color: colors.textMuted, textAlign: "right" }}>{i + 1}</td>
-                        <td style={{ padding: "12px 14px" }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                            <img src={coin.image} alt={coin.name} style={{ width: "28px", height: "28px", borderRadius: "50%" }} />
-                            <div>
-                              <span style={{ fontSize: "13px", fontWeight: 600, color: colors.textPrimary }}>{coin.name}</span>
-                              <span style={{ fontSize: "11px", color: colors.textMuted, marginLeft: "6px", textTransform: "uppercase" }}>{coin.symbol}</span>
-                            </div>
-                          </div>
-                        </td>
-                        <td style={{ padding: "12px 14px", fontSize: "13px", fontWeight: 600, color: colors.textPrimary, textAlign: "right" }}>
-                          ${formatPrice(coin.current_price)}
-                        </td>
-                        {[coin.price_change_percentage_1h_in_currency, coin.price_change_percentage_24h, coin.price_change_percentage_7d_in_currency].map((pct, j) => (
-                          <td key={j} style={{
-                            padding: "12px 14px", fontSize: "12px", fontWeight: 600, textAlign: "right",
-                            color: (pct ?? 0) >= 0 ? "#10b981" : "#ef4444",
-                          }}>
-                            {pct != null ? `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%` : "—"}
-                          </td>
-                        ))}
-                        <td style={{ padding: "12px 14px", fontSize: "12px", color: colors.textPrimary, textAlign: "right" }}>
-                          {formatMarketCap(coin.market_cap)}
-                        </td>
-                        <td style={{ padding: "12px 14px", fontSize: "12px", color: colors.textPrimary, textAlign: "right" }}>
-                          {formatMarketCap(coin.total_volume)}
-                        </td>
-                        <td style={{ padding: "12px 14px", textAlign: "right" }}>
-                          {coin.sparkline_in_7d?.price && (
-                            <Sparkline data={coin.sparkline_in_7d.price} positive={(coin.price_change_percentage_7d_in_currency ?? 0) >= 0} />
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {coins.map((coin, index) => (
+                    <tr key={coin.symbol} style={{ borderBottom: index < coins.length - 1 ? `1px solid ${colors.inputBorder}` : "none" }}>
+                      <td style={{ padding: "12px 14px", fontSize: "14px", color: colors.textPrimary }}>
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                          <span style={{ fontWeight: 600 }}>{coin.name}</span>
+                          <span style={{ fontSize: "12px", color: colors.textMuted }}>{coin.symbol.toUpperCase()}</span>
+                        </div>
+                      </td>
+                      <td style={{ padding: "12px 14px", fontSize: "14px", color: colors.textPrimary, textAlign: "left" }}>
+                        {formatPrice(coin.price)}
+                      </td>
+                      <td style={{ padding: "12px 14px", fontSize: "14px", textAlign: "left" }}>
+                        <span style={{ color: coin.percent_change_24h >= 0 ? "#10b981" : "#ef4444", fontWeight: 600 }}>
+                          {coin.percent_change_24h >= 0 ? "+" : ""}{coin.percent_change_24h.toFixed(2)}%
+                        </span>
+                      </td>
+                      <td style={{ padding: "12px 14px", fontSize: "14px", color: colors.textPrimary, textAlign: "left" }}>
+                        {formatMarketCap(coin.market_cap)}
+                      </td>
+                      <td style={{ padding: "12px 14px", fontSize: "14px", color: colors.textPrimary, textAlign: "left" }}>
+                        {formatVolume(coin.volume_24h)}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

@@ -60,7 +60,7 @@ function EmptyState({ icon: Icon, title, message }: { icon: React.ElementType; t
 }
 
 const OVERVIEW_CHART_MARGIN = { top: 4, right: 16, bottom: 0, left: 8 } as const;
-const AUTO_DOMAIN = ["auto", "auto"] as const;
+const AUTO_DOMAIN = ["auto", "auto"];
 
 interface LiveChartAreaProps {
   data: LivePoint[];

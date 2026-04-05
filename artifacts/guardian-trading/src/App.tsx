@@ -144,7 +144,7 @@ function App() {
       <TooltipProvider>
         <LoadingProvider>
           <ThemeProvider>
-            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+            <WouterRouter base={import.meta.env.BASE_URL?.replace(/\/$/, "") ?? "/"}>
               <OnboardingProvider>
                 <ScrollAndFormReset />
                 <NavigationLoader />
