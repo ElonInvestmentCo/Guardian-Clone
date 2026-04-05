@@ -17,6 +17,60 @@ modules = ["nodejs-20", "web", "bash"]
   env = { "CI" = "true" }
 
   [workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "API Server"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Admin KYC"
+
+[[workflows.workflow]]
+name = "API Server"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "PORT=3000 pnpm --filter @workspace/api-server run dev"
+waitForPort = 3000
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "PORT=5000 API_PORT=3000 pnpm --filter @workspace/guardian-trading run dev"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Admin KYC"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "PORT=8080 API_PORT=3000 pnpm --filter @workspace/admin-kyc run dev"
+waitForPort = 8080
+
+[workflows.workflow.metadata]
+outputType = "webview"
 
   [agent]
   stack = "PNPM_WORKSPACE"
@@ -35,6 +89,8 @@ channel = "stable-25_05"
   [userenv.shared]
 USER_DATA_KEY = "a4ad8bf066b8560745779d7c544b986a112e1405a904b4a614a62a918e92a820"
 PG_DATABASE_URL = "postgresql://postgres:qOuCtBfXRfVNLEjTJsjcmMBbOJVViTSZ@interchange.proxy.rlwy.net:15191/railway"
+ADMIN_JWT_SECRET = "a397c03f3f42f625f6a71f7a5667281c9da407607b431c5db6ea0c80f46a5c0cb7f5f6a288b2a074548d70c8495c61d8"
+INTERNAL_API_KEY = "f6056e1403d64da0cdd9c4e527347a5ca5ccfc42619b8984b5047356d26cd0f1"
 
 [userenv.development]
   
