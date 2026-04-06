@@ -234,7 +234,7 @@ export default function Home() {
       </section>
 
       {/* ── PRICING CARDS ── */}
-      <section id="pricing" className="bg-[#222222] py-10 px-4">
+      <section id="pricing" className="bg-[#1c1c1c] py-10 px-4">
         <div className="max-w-[1100px] mx-auto">
           {/* Single dark card — heading left, pricing right */}
           <div className="bg-[#181818] flex flex-col lg:flex-row">
@@ -369,7 +369,7 @@ export default function Home() {
       </section>
 
       {/* ── TRADING TECHNOLOGY ── */}
-      <section className="relative bg-[#222222] py-16 px-4 overflow-hidden">
+      <section className="relative bg-[#1c1c1c] py-16 px-4 overflow-hidden">
         {/* Background vector chart lines */}
         <img
           src={bgVector}
