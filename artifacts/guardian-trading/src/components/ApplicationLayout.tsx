@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { Menu, Phone } from "lucide-react";
-import guardianLogo from "@assets/IMG_7934_1773719077190.png";
+const LOGO_URL = "https://assets.guardiiantrading.com/logo.svg";
 
 const NAV_LINKS = [
   { name: "About", href: "/about" },
@@ -32,7 +32,7 @@ export function ApplicationLayout({ children }: { children: React.ReactNode }) {
       <nav className="bg-[#151515] border-b border-white/5">
         <div className="px-4 flex items-center justify-between h-[52px]">
           <Link href="/" className="flex items-center">
-            <img src={guardianLogo} alt="Guardian Trading" className="h-8 w-auto object-contain" />
+            <img src={LOGO_URL} alt="Guardian Trading Logo" className="h-10 w-auto object-contain" />
           </Link>
           <div className="flex items-center gap-3">
             <button className="border border-[#4a7fbd] text-white text-sm px-4 py-1.5 hover:bg-[#4a7fbd]/20 transition-colors">
@@ -76,7 +76,7 @@ export function ApplicationLayout({ children }: { children: React.ReactNode }) {
       <footer className="bg-[#1a1a1a] pt-10 pb-6 mt-8">
         <div className="px-5 max-w-sm mx-auto">
           <div className="flex items-center gap-2 mb-8">
-            <img src={guardianLogo} alt="Guardian Trading" className="h-8 w-auto object-contain" />
+            <img src={LOGO_URL} alt="Guardian Trading Logo" className="h-10 w-auto object-contain" />
           </div>
           <div className="grid grid-cols-2 gap-8 mb-8">
             <div>

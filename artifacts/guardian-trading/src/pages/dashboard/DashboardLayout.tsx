@@ -8,8 +8,9 @@ import {
   TrendingUp, TrendingDown, ChevronDown, BarChart3,
   MessageCircle,
 } from "lucide-react";
-import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import { useTheme } from "@/context/ThemeContext";
+
+const LOGO_URL = "https://assets.guardiiantrading.com/logo.svg";
 
 const NAV = [
   { icon: LayoutDashboard, label: "Dashboard",     href: "/dashboard"     },
@@ -147,7 +148,7 @@ export default function DashboardLayout({ children }: Props) {
       <aside className="hidden md:flex flex-col flex-shrink-0" style={{ width: "240px", background: colors.sidebar, borderRight: `1px solid ${colors.sidebarBorder}` }}>
         <div style={{ padding: "20px 20px 16px" }}>
           <Link href="/dashboard">
-            <img src={guardianLogo} alt="Guardian Trading" style={{ height: "30px", width: "auto", cursor: "pointer", opacity: 0.95 }} />
+            <img src={LOGO_URL} alt="Guardian Trading Logo" style={{ height: "32px", width: "auto", cursor: "pointer", opacity: 0.95 }} />
           </Link>
         </div>
 
