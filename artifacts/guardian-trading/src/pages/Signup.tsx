@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from "react";
 import { Link, useLocation } from "wouter";
 import { getApiBase } from "@/lib/api";
-import spinnerImg from "@assets/spinner-clean.png";
+import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -347,5 +347,5 @@ export default function Signup() {
 }
 
 function Spinner() {
-  return <img src={spinnerImg} alt="" className="spinner-img-rotate" style={{ width: 14, height: 14 }} />;
+  return <img src={loaderGif} alt="" draggable={false} style={{ width: 14, height: 14, objectFit: "contain" }} />;
 }

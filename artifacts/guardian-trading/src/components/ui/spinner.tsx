@@ -1,18 +1,19 @@
-import { cn } from "@/lib/utils"
-import spinnerImg from "@assets/spinner-clean.png";
+import { cn } from "@/lib/utils";
+import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
 
-function Spinner({ className, ...props }: React.ComponentProps<"img">) {
+function Spinner({ className, style, ...props }: React.ComponentProps<"img">) {
   return (
     <img
-      src={spinnerImg}
+      src={loaderGif}
       role="status"
       aria-label="Loading"
       alt=""
       draggable={false}
-      className={cn("size-4 spinner-img-rotate", className)}
+      className={cn("size-4", className)}
+      style={{ objectFit: "contain", ...style }}
       {...props}
     />
-  )
+  );
 }
 
-export { Spinner }
+export { Spinner };

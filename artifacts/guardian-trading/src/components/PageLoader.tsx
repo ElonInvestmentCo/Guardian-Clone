@@ -1,57 +1,39 @@
 import { useLoading } from "@/context/LoadingContext";
 import { useEffect } from "react";
-import spinnerImg from "@assets/spinner-clean.png";
+import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
 
 export function PageLoader() {
   const { isLoading } = useLoading();
 
   useEffect(() => {
-    if (isLoading) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
+    document.body.style.overflow = isLoading ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
   }, [isLoading]);
 
   return (
     <div
       aria-hidden={!isLoading}
       style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 9999,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.65)",
+        backdropFilter: "blur(4px)",
+        WebkitBackdropFilter: "blur(4px)",
         opacity: isLoading ? 1 : 0,
         pointerEvents: isLoading ? "all" : "none",
         transition: "opacity 250ms ease-in-out",
       }}
-      className="fixed inset-0 z-[9999] flex items-center justify-center"
     >
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          backgroundColor: "rgba(0,0,0,0.70)",
-          backdropFilter: "blur(6px)",
-          WebkitBackdropFilter: "blur(6px)",
-        }}
+      <img
+        src={loaderGif}
+        alt="Loading"
+        draggable={false}
+        style={{ width: 100, height: 100, objectFit: "contain" }}
       />
-      <div
-        style={{
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "14px",
-        }}
-      >
-        <img
-          src={spinnerImg}
-          alt="Loading"
-          className="spinner-img-rotate"
-          style={{ width: 48, height: 48 }}
-          draggable={false}
-        />
-      </div>
     </div>
   );
 }

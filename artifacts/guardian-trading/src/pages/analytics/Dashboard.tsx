@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import spinnerImg from "@assets/spinner-clean.png";
+import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
+import { LoadingOverlay } from "@/components/LoadingOverlay";
 import AnalyticsLayout from "@/components/analytics/AnalyticsLayout";
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -213,16 +214,13 @@ export default function Dashboard() {
               ))}
             </div>
             <button onClick={() => void load()} className="text-white/40 hover:text-white transition-colors">
-              {loading ? <img src={spinnerImg} alt="" className="spinner-img-rotate" style={{ width: 16, height: 16 }} /> : <RefreshCw size={16} />}
+              {loading ? <img src={loaderGif} alt="" draggable={false} style={{ width: 16, height: 16, objectFit: "contain" }} /> : <RefreshCw size={16} />}
             </button>
           </div>
         </div>
 
-        {loading && !overview ? (
-          <div className="flex items-center justify-center py-20">
-            <img src={spinnerImg} alt="Loading" className="spinner-img-rotate" style={{ width: 32, height: 32 }} />
-          </div>
-        ) : (
+        <div style={{ position: "relative" }}>
+          <LoadingOverlay loading={loading && !overview} />
           <>
             <div className="grid grid-cols-4 gap-4">
               <StatCard label="Unique Visitors" value={(overview?.visitors ?? 0).toLocaleString()} icon={Users} color="bg-blue-500/20" sub="Total unique visitors" />
@@ -449,7 +447,7 @@ export default function Dashboard() {
               </div>
             </div>
           </>
-        )}
+        </div>
       </div>
     </AnalyticsLayout>
   );

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import spinnerImg from "@assets/spinner-clean.png";
+import { LoadingOverlay } from "@/components/LoadingOverlay";
 import { RefreshCw } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
@@ -92,11 +92,8 @@ export default function Markets() {
           </div>
         )}
 
-        {loading ? (
-          <div style={{ display: "flex", justifyContent: "center", padding: "60px 0" }}>
-            <img src={spinnerImg} alt="Loading" className="spinner-img-rotate" style={{ width: 32, height: 32 }} />
-          </div>
-        ) : (
+        <div style={{ position: "relative", minHeight: "200px" }}>
+          <LoadingOverlay loading={loading} />
           <div style={{
             background: colors.card ?? "#fff", border: `1px solid ${colors.inputBorder}`,
             borderRadius: "12px", overflow: "hidden",
@@ -141,7 +138,7 @@ export default function Markets() {
               </table>
             </div>
           </div>
-        )}
+        </div>
       </div>
     </DashboardLayout>
   );

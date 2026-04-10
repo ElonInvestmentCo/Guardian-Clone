@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Bell, Check, CheckCheck, ExternalLink } from "lucide-react";
-import spinnerImg from "@assets/spinner-clean.png";
+import { LoadingOverlay } from "@/components/LoadingOverlay";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
 import { useLocation } from "wouter";
@@ -103,11 +103,9 @@ export default function NotificationsPage() {
           )}
         </div>
 
-        {loading ? (
-          <div style={{ display: "flex", justifyContent: "center", padding: "60px 0" }}>
-            <img src={spinnerImg} alt="Loading" className="spinner-img-rotate" style={{ width: 32, height: 32 }} />
-          </div>
-        ) : notifications.length === 0 ? (
+        <div style={{ position: "relative", minHeight: "120px" }}>
+          <LoadingOverlay loading={loading} />
+          {!loading && notifications.length === 0 ? (
           <div style={{ textAlign: "center", padding: "60px 20px" }}>
             <Bell size={48} color={colors.textMuted} style={{ margin: "0 auto 16px", opacity: 0.3 }} />
             <p style={{ fontSize: "16px", fontWeight: 600, color: colors.textPrimary, margin: "0 0 8px" }}>No notifications yet</p>
@@ -177,6 +175,7 @@ export default function NotificationsPage() {
             })}
           </div>
         )}
+        </div>
       </div>
     </DashboardLayout>
   );
