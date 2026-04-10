@@ -1,50 +1,9 @@
-import { useState, useEffect, useRef, useMemo, useCallback, memo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { getApiBase } from "@/lib/api";
-import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, type TooltipProps,
-} from "recharts";
 import { ArrowUpRight, ArrowDownRight, Wallet, TrendingUp, BarChart3, ArrowRightLeft, InboxIcon } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
-
-interface LivePoint {
-  time: string;
-  price: number;
-}
-
-function generateLiveData(base: number, count = 40): LivePoint[] {
-  const arr: LivePoint[] = [];
-  let price = base * (0.98 + Math.random() * 0.02);
-  const now = Date.now();
-  for (let i = count - 1; i >= 0; i--) {
-    const ts = new Date(now - i * 3000);
-    price += (Math.random() - 0.49) * price * 0.002;
-    arr.push({ time: ts.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), price: parseFloat(price.toFixed(2)) });
-  }
-  return arr;
-}
-
-function ChartTooltip({ active, payload }: TooltipProps<number, string>) {
-  const { colors } = useTheme();
-  if (!active || !payload?.length) return null;
-  return (
-    <div style={{
-      background: colors.sidebar,
-      color: colors.textPrimary,
-      borderRadius: "8px",
-      padding: "8px 14px",
-      fontSize: "13px",
-      fontWeight: 700,
-      border: `1px solid ${colors.cardBorder}`,
-      boxShadow: "0 8px 24px rgba(0,0,0,0.3)",
-      fontVariantNumeric: "tabular-nums",
-      letterSpacing: "-0.01em",
-    }}>
-      ${((payload[0]!.value as number)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-    </div>
-  );
-}
+import TradingViewChart from "@/components/TradingViewChart";
 
 function EmptyState({ icon: Icon, title, message }: { icon: React.ElementType; title: string; message: string }) {
   const { colors } = useTheme();
@@ -59,130 +18,6 @@ function EmptyState({ icon: Icon, title, message }: { icon: React.ElementType; t
   );
 }
 
-const OVERVIEW_CHART_MARGIN = { top: 4, right: 16, bottom: 0, left: 8 } as const;
-const AUTO_DOMAIN = ["auto", "auto"];
-
-interface LiveChartAreaProps {
-  data: LivePoint[];
-}
-
-const LiveChartArea = memo(function LiveChartArea({ data }: LiveChartAreaProps) {
-  const { colors } = useTheme();
-
-  const xTickStyle = useMemo(() => ({ fontSize: 10, fill: colors.textMuted }), [colors.textMuted]);
-  const yTickStyle = useMemo(() => ({ fontSize: 10, fill: colors.textMuted }), [colors.textMuted]);
-  const xAxisLine = useMemo(() => ({ stroke: colors.divider }), [colors.divider]);
-  const cursorStyle = useMemo(() => ({
-    stroke: colors.textMuted, strokeWidth: 1, strokeDasharray: "4 4", opacity: 0.5,
-  }), [colors.textMuted]);
-  const activeDotStyle = useMemo(() => ({
-    r: 5, fill: colors.accent, stroke: colors.card, strokeWidth: 2,
-  }), [colors.accent, colors.card]);
-  const yTickFormatter = useCallback((v: number) => v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v.toFixed(0)}`, []);
-
-  return (
-    <ResponsiveContainer width="100%" height={220}>
-      <AreaChart data={data} margin={OVERVIEW_CHART_MARGIN}>
-        <defs>
-          <linearGradient id="portfolioGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={colors.accent} stopOpacity={0.25} />
-            <stop offset="50%" stopColor={colors.accent} stopOpacity={0.08} />
-            <stop offset="100%" stopColor={colors.accent} stopOpacity={0} />
-          </linearGradient>
-        </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke={colors.divider} vertical={false} opacity={0.4} />
-        <XAxis dataKey="time" tick={xTickStyle} axisLine={xAxisLine} tickLine={false} />
-        <YAxis tick={yTickStyle} axisLine={false} tickLine={false}
-          domain={AUTO_DOMAIN} width={60} tickFormatter={yTickFormatter} />
-        <Tooltip content={<ChartTooltip />} cursor={cursorStyle} />
-        <Area type="monotone" dataKey="price" stroke={colors.accent} strokeWidth={2}
-          fill="url(#portfolioGrad)" dot={false} activeDot={activeDotStyle} isAnimationActive={false} />
-      </AreaChart>
-    </ResponsiveContainer>
-  );
-});
-
-interface PortfolioChartProps {
-  initialBalance: number;
-}
-
-const PortfolioChart = memo(function PortfolioChart({ initialBalance }: PortfolioChartProps) {
-  const { colors } = useTheme();
-  const [liveData, setLiveData] = useState<LivePoint[]>(() => generateLiveData(initialBalance));
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const [timeRange, setTimeRange] = useState<"1D" | "1W" | "1M" | "1Y">("1D");
-
-  useEffect(() => {
-    setLiveData(generateLiveData(initialBalance));
-  }, [initialBalance]);
-
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setLiveData(prev => {
-        const last = prev[prev.length - 1];
-        if (!last) return prev;
-        const delta = (Math.random() - 0.49) * Math.max(last.price, 1) * 0.001;
-        const newPoint: LivePoint = {
-          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          price: parseFloat((last.price + delta).toFixed(2)),
-        };
-        const next = prev.length >= 60 ? [...prev.slice(1), newPoint] : [...prev, newPoint];
-        return next;
-      });
-    }, 3000);
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, []);
-
-  const latestPrice = liveData.length > 0 ? liveData[liveData.length - 1]!.price : 0;
-  const startPrice = liveData.length > 0 ? liveData[0]!.price : 0;
-  const priceDelta = latestPrice - startPrice;
-  const pricePct = startPrice > 0 ? (priceDelta / startPrice) * 100 : 0;
-  const isUp = priceDelta >= 0;
-
-  return (
-    <div className="rounded-xl mb-6" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-      <div style={{ padding: "20px 24px 0" }}>
-        <div className="flex items-center justify-between mb-1">
-          <div>
-            <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary }}>Portfolio Performance</p>
-            <p style={{ fontSize: "11px", color: colors.textMuted, marginTop: "2px" }}>Equity curve over time</p>
-          </div>
-          <div className="flex gap-1 p-0.5 rounded-lg" style={{ background: colors.filterBar }}>
-            {(["1D", "1W", "1M", "1Y"] as const).map(r => (
-              <button key={r} onClick={() => setTimeRange(r)} style={{
-                padding: "5px 12px", fontSize: "11px", fontWeight: 600, borderRadius: "6px",
-                border: "none", cursor: "pointer", transition: "all 0.15s ease",
-                background: timeRange === r ? colors.accent : "transparent",
-                color: timeRange === r ? "#fff" : colors.filterInactiveText,
-              }}>{r}</button>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex items-baseline gap-3 mb-4 mt-3">
-          <span style={{ fontSize: "32px", fontWeight: 800, color: colors.textPrimary, letterSpacing: "-0.03em", fontVariantNumeric: "tabular-nums" }}>
-            ${latestPrice.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-          </span>
-          {initialBalance > 0 && (
-            <span className="flex items-center gap-1" style={{ fontSize: "14px", fontWeight: 600, color: isUp ? colors.green : colors.red }}>
-              {isUp ? "▲" : "▼"}
-              {priceDelta >= 0 ? "+" : ""}${Math.abs(priceDelta).toFixed(0)} ({priceDelta >= 0 ? "+" : ""}{pricePct.toFixed(2)}%)
-            </span>
-          )}
-          <span className="flex items-center gap-1 ml-auto" style={{ fontSize: "11px", color: colors.green, fontWeight: 600 }}>
-            <span className="inline-block rounded-full" style={{ width: "6px", height: "6px", background: colors.green, animation: "pulse 1.5s infinite" }} />
-            LIVE
-          </span>
-        </div>
-      </div>
-      <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}`}</style>
-
-      <div style={{ padding: "0 8px 16px 0" }}>
-        <LiveChartArea data={liveData} />
-      </div>
-    </div>
-  );
-});
 
 export default function Overview() {
   const { colors } = useTheme();
@@ -244,7 +79,13 @@ export default function Overview() {
             ))}
           </div>
 
-          <PortfolioChart initialBalance={balance} />
+          <div className="rounded-xl mb-6" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, overflow: "hidden" }}>
+            <div style={{ padding: "16px 20px 12px" }}>
+              <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary }}>Market Chart</p>
+              <p style={{ fontSize: "11px", color: colors.textMuted, marginTop: "2px" }}>AAPL — Advanced Chart</p>
+            </div>
+            <TradingViewChart />
+          </div>
 
           <div className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "20px" }}>
             <div className="flex items-center justify-between mb-4">
