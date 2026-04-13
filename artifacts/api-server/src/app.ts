@@ -20,8 +20,21 @@ app.set("trust proxy", 1);
 const allowedOrigins = [
   "https://guardiiantrading.com",
   "https://www.guardiiantrading.com",
+  "https://guardiantrading.com",
+  "https://www.guardiantrading.com",
   "https://guardian-clone-production.up.railway.app",
+  "https://guardian-trading.vercel.app",
+  "https://guardian-clone-admin-kyc.vercel.app",
 ];
+
+// Allow additional origins via ALLOWED_ORIGINS env var (comma-separated)
+const extraOrigins = process.env.ALLOWED_ORIGINS;
+if (extraOrigins) {
+  extraOrigins.split(",").forEach((o) => {
+    const trimmed = o.trim();
+    if (trimmed && !allowedOrigins.includes(trimmed)) allowedOrigins.push(trimmed);
+  });
+}
 
 const IS_DEV = process.env.NODE_ENV !== "production";
 
