@@ -3,8 +3,7 @@ import { Link, useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
 import clientPortalBtn from "@assets/Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443.png";
 import createAccountBtn from "@assets/Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345.png";
-
-const LOGO_URL = "https://assets.guardiiantrading.com/logo.svg";
+import logoSrc from "@assets/guardian_logo_transparent.png";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -50,7 +49,7 @@ export function Navbar() {
         >
           <Link href="/" className="flex items-center flex-shrink-0">
             <img
-              src={LOGO_URL}
+              src={logoSrc}
               alt="Guardian Trading Logo"
               className="h-[40px] sm:h-[48px]"
               style={{ width: "auto", objectFit: "contain" }}
