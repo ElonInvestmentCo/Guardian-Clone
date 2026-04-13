@@ -3,7 +3,8 @@ import { Link, useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
 import clientPortalBtn from "@assets/Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443.png";
 import createAccountBtn from "@assets/Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345.png";
-import logoSrc from "@assets/guardian_logo_transparent.png";
+import logoSrc from "@assets/guardian_logo_reversed.png";
+import logoMobileSrc from "@assets/guardian_mobile_logo.png";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,9 +52,16 @@ export function Navbar() {
             <img
               src={logoSrc}
               alt="Guardian Trading Logo"
-              className="h-[40px] sm:h-[48px]"
+              className="hidden sm:block h-[40px]"
               style={{ width: "auto", objectFit: "contain" }}
               data-testid="img-logo"
+            />
+            <img
+              src={logoMobileSrc}
+              alt="Guardian Trading Logo"
+              className="block sm:hidden h-[36px]"
+              style={{ width: "auto", objectFit: "contain" }}
+              data-testid="img-logo-mobile"
             />
           </Link>
 
