@@ -4,8 +4,9 @@ services:
     runtime: node
     region: oregon
     plan: free
-    buildCommand: pnpm install && pnpm --filter @workspace/api-server run build
+    buildCommand: pnpm install && bash scripts/build-production.sh
     startCommand: pnpm --filter @workspace/api-server run start
+    healthCheckPath: /api/healthz
     envVars:
       - key: NODE_ENV
         value: production
@@ -18,4 +19,4 @@ services:
       - key: RESEND_API_KEY
         sync: false
       - key: ALLOWED_ORIGINS
-        value: https://guardian-trading.vercel.app,https://guardian-clone-admin-kyc.vercel.app
+        value: https://guardiiantrading.com,https://www.guardiiantrading.com,https://api.guardiiantrading.com,https://guardian-trading.vercel.app,https://guardian-clone-admin-kyc.vercel.app

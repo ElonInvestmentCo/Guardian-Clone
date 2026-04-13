@@ -2,10 +2,11 @@
   command = "pnpm --filter @workspace/guardian-trading run build"
   publish = "artifacts/guardian-trading/dist/public"
 
-  # VITE_API_URL must be set in Netlify → Site settings → Environment variables.
-  # Point it at your deployed backend, e.g.:
-  #   VITE_API_URL = "https://your-api-server.replit.app"
-  # Without this, API calls will fail on Netlify (it's a static host with no Node backend).
+  # VITE_API_URL must be set in Netlify → Site settings → Environment variables
+  # when the backend is deployed separately, e.g.:
+  #   VITE_API_URL = "https://api.guardiiantrading.com"
+  # Without this, API calls use the same origin, which only works when the
+  # Express server serves both the frontend and /api routes.
   [build.environment]
     NODE_VERSION = "20"
 
