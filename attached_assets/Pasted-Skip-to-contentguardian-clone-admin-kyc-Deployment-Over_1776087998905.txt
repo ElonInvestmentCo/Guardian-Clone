@@ -1,0 +1,143 @@
+Skip to contentguardian-clone-admin-kyc – Deployment Overview – Vercel
+
+Find…
+F
+Other
+Overview
+Deployments
+Logs
+Analytics
+Speed Insights
+Observability
+Firewall
+CDN
+Domains
+Integrations
+Storage
+Flags
+Agent
+AI Gateway
+Sandboxes
+Usage
+Support
+Settings
+Vercel Agent
+Code reviews that catch bugs before they reach production.
+Get started with $100 in free credit.
+
+Avatar for guardiian
+Elon
+
+Deployments
+BkdLq54R5
+Deployment
+Logs
+Resources
+Source
+Open Graph
+Deployment Details
+Build Failed
+No Output Directory named "public" found after the Build completed. Configure the Output Directory in your Project Settings. Alternatively, configure vercel.json#outputDirectory.
+Created
+github/ElonInvestmentCo
+ElonInvestmentCo
+3m ago
+Status
+Error
+Latest
+Duration
+33s
+2m ago
+Environment
+Production
+Domains
+guardian-clone-admi-git-e6b7ee-samandar000890220-5531s-projects.vercel.app
+guardian-clone-admin-jf0in95r7-samandar000890220-5531s-projects.vercel.app
+Source
+master
+8d5e3cc
+nn
+
+Deployment Settings
+3 Recommendations
+Recommendations
+Build Multiple Deployments Simultaneously
+Never wait for a queued build.
+Get builds up to 40% faster
+Switch to a bigger build machine.
+Prevent Frontend-Backend Mismatches
+Automatically sync client and server versions to avoid deployment conflicts.
+Build Settings
+On-Demand Concurrent Builds
+Disabled
+Build Machine
+Standard
+4 vCPU
+8 GB Memory
+Prioritize Production Builds
+Enabled
+Runtime Settings
+Fluid Compute
+Enabled
+Function CPU
+Standard
+1 vCPU
+2 GB Memory
+Node.js Version
+24.x
+Deployment Protection
+Standard Protection
+Skew Protection
+Disabled
+Cold Start Prevention
+Function Region
+iad1
+Build Logs
+33s
+1 line selected
+Find in logs
+CtrlF
+dist/public/assets/Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png      6.30 kB
+dist/public/assets/Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png      6.83 kB
+dist/public/assets/IMG_7934_1773719077190-CLq6B01D.png                                                   8.48 kB
+dist/public/assets/IMG_7968_1773721659915-C53aLAjV.png                                                  16.66 kB
+dist/public/assets/reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249-D20vD-H5.png               30.29 kB
+dist/public/assets/support-card-CwKQW0e3.png                                                            39.42 kB
+dist/public/assets/benzinga-review-B97T-03b.jpg                                                         54.99 kB
+dist/public/assets/IMG_7967_1773721659915-Bdj3jXlG.png                                                  80.20 kB
+dist/public/assets/IMG_7970_1773721659915-BzHzYT_4.png                                                  83.70 kB
+dist/public/assets/IMG_7969_1773721659915-gt229R3v.png                                                  85.70 kB
+dist/public/assets/img-background-vector-1_1773948931248-kdCdaMwT.png                                  104.76 kB
+dist/public/assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246-Cbmt2YzL.gif                     110.90 kB
+dist/public/assets/pattern_1773965291387-CNruTbwj.png                                                  200.94 kB
+dist/public/assets/index-C96O6yUs.css                                                                  116.18 kB │ gzip:  19.14 kB
+dist/public/assets/index-BZ0nT-vr.js                                                                 1,294.99 kB │ gzip: 369.43 kB
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 6.76s
+Error: No Output Directory named "public" found after the Build completed. Configure the Output Directory in your Project Settings. Alternatively, configure vercel.json#outputDirectory.
+Learn More: https://vercel.link/missing-public-directory
+Deployment Summary
+Deployment Checks
+Assigning Custom Domains
+Runtime Logs
+
+View and debug runtime logs & errors
+
+Observability
+
+Monitor app health & performance
+
+Speed Insights
+
+Not Enabled
+Performance metrics from real users
+
+Web Analytics
+
+Not Enabled
+Analyze visitors & traffic in real-time
+
+13
