@@ -3,7 +3,7 @@
  * Uses JWT Bearer token authentication — no plain-text keys.
  */
 
-const REPLIT_API_URL = "https://3852c4b7-3e98-4a08-b3dd-1dc4a06f50df-00-2t872hawkvq6j.spock.replit.dev";
+const REPLIT_API_URL = "https://guardian-trading-api.onrender.com";
 
 const API_BASE_URL = (
   (import.meta as any).env?.VITE_API_URL ||

@@ -25,7 +25,7 @@ const allowedOrigins = [
   "https://guardian-clone-production.up.railway.app",
   "https://guardian-trading.vercel.app",
   "https://guardian-clone-admin-kyc.vercel.app",
-  "https://3852c4b7-3e98-4a08-b3dd-1dc4a06f50df-00-2t872hawkvq6j.spock.replit.dev",
+  "https://guardian-trading-api.onrender.com",
 ];
 
 // Allow additional origins via ALLOWED_ORIGINS env var (comma-separated)
