@@ -5,7 +5,7 @@ import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
 const port = Number(process.env.PORT) || 3000;
-const basePath = process.env.BASE_PATH || "/admin-kyc/";
+const basePath = process.env.BASE_PATH || (process.env.NODE_ENV === "production" ? "/" : "/admin-kyc/");
 const apiPort = Number(process.env.API_PORT) || 3000;
 
 export default defineConfig({
