@@ -3,9 +3,11 @@
  * Uses JWT Bearer token authentication — no plain-text keys.
  */
 
+const REPLIT_API_URL = "https://3852c4b7-3e98-4a08-b3dd-1dc4a06f50df-00-2t872hawkvq6j.spock.replit.dev";
+
 const API_BASE_URL = (
   (import.meta as any).env?.VITE_API_URL ||
-  (import.meta.env.DEV ? "" : "https://guardian-clone-production.up.railway.app")
+  (import.meta.env.DEV ? "" : REPLIT_API_URL)
 ).replace(/\/$/, "");
 
 const API_ROOT = `${API_BASE_URL}/api`;
