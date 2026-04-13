@@ -7,11 +7,8 @@
  *  2. Relative path — works when Express serves both frontend + API from the
  *     same origin (Replit deployment, or via the Vite dev proxy).
  */
-const REPLIT_API_URL = "https://guardian-trading-api.onrender.com";
-
 export function getApiBase(): string {
   const explicit = import.meta.env["VITE_API_URL"] as string | undefined;
   if (explicit) return explicit.replace(/\/$/, "");
-  if (import.meta.env.DEV) return "";
-  return REPLIT_API_URL;
+  return "";
 }
