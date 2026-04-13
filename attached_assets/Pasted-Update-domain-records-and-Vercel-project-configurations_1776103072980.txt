@@ -1,0 +1,886 @@
+Update domain records and Vercel project configurations
+
+
+
+Show previous messages
+
+3 messages & 49 actions
+
+Checkpoint made
+3 hours ago
+
+Worked for 7 minutes
+
+Attached Image
+
+branding-1776090559086.json
+
+Not Found
+
+
+Attached Image
+this link shows the preview of the attached screenshot
+
+https://guardian-trading-api.onrender.com/api/health
+
+how do i connect them both to my domain from zoho?
+
+3 hours ago
+
+2 messages & 3 actions
+
+Worked for 28 seconds
+how do i connect them both to my domain from zoho?
+
+3 hours ago
+
+1 message & 1 action
+fix the preview issues and please note, i don't want to use Replit.
+
+3 hours ago
+
+5 messages & 38 actions
+
+Checkpoint made
+3 hours ago
+
+Worked for 27 minutes
+im using render and vercel
+
+3 hours ago
+
+2 messages & 10 actions
+
+Checkpoint made
+3 hours ago
+
+Worked for 37 seconds
+how do i point the main site to Vercel In Zoho?
+
+3 hours ago
+In Zoho, you point your main site to Vercel by editing your domain’s DNS records.
+
+1. Add the domain in Vercel first
+In Vercel:
+
+Open your project.
+Go to Settings → Domains.
+Add:
+guardiiantrading.com
+www.guardiiantrading.com
+
+Vercel will show the DNS records it expects.
+
+2. Open Zoho DNS Manager
+In Zoho:
+
+Go to your domain manager.
+Open the DNS settings for:
+guardiiantrading.com
+
+Look for existing website records for:
+@
+www
+Remove old website records that point to Render, Netlify, Railway, Replit, etc.
+
+Do not remove Zoho email records like MX, SPF, DKIM, or DMARC.
+
+3. Add Vercel records in Zoho
+For the root domain:
+
+Type: A
+Host / Name: @
+Value / Points to: 76.76.21.21
+TTL: Automatic or 3600
+
+For www:
+
+Type: CNAME
+Host / Name: www
+Value / Points to: cname.vercel-dns.com
+TTL: Automatic or 3600
+
+4. Keep API pointed to Render
+Since you use Render for the API, add or keep this record too:
+
+Type: CNAME
+Host / Name: api
+Value / Points to: guardian-trading-api.onrender.com
+TTL: Automatic or 3600
+
+Then in Render, make sure you add:
+
+api.guardiiantrading.com
+
+as a custom domain.
+
+5. Set the API URL in Vercel
+In Vercel:
+
+Go to Project → Settings → Environment Variables.
+Add:
+VITE_API_URL=https://api.guardiiantrading.com
+
+Redeploy the Vercel project.
+Final result
+Your website:
+
+https://guardiiantrading.com
+https://www.guardiiantrading.com
+
+Your API:
+
+https://api.guardiiantrading.com/api/healthz
+
+DNS can take a few minutes to a few hours to fully update.
+
+Add Domain
+Add a domain to connect it to a project. After being connected, the domain will be aliased to the most recent deployment in that environment.
+guardiiantrading.com
+​
+Connect to an environment
+
+Production
+​
+Redirect to Another Domain
+
+307 Temporary Redirect
+No Redirect
+
+3 hours ago
+For guardiiantrading.com, choose:
+
+Production
+No Redirect
+
+That connects the root domain directly to your Vercel production site.
+
+Then add the second domain too:
+
+www.guardiiantrading.com
+
+For that one, you can choose either:
+
+Recommended
+Redirect www to the root domain:
+
+www.guardiiantrading.com
+→ 307 Temporary Redirect
+→ guardiiantrading.com
+
+This makes your main site:
+
+https://guardiiantrading.com
+
+Alternative
+Use both domains without redirect:
+
+www.guardiiantrading.com
+→ No Redirect
+
+Either works, but I recommend redirecting www to the root domain to avoid duplicate versions of the site.
+
+After adding the domains in Vercel, Vercel will show DNS records. Then add those records in Zoho:
+
+A     @      76.76.21.21
+CNAME www    cname.vercel-dns.com
+
+Keep your API separate on Render:
+
+CNAME api    guardian-trading-api.onrender.com
+
+
+Attached Image
+what to do?
+
+3 hours ago
+On this Vercel screen, do this:
+
+Keep this checked:
+Redirect guardiiantrading.com to www.guardiiantrading.com
+
+That means your main public website will be:
+
+https://www.guardiiantrading.com
+
+Keep this selected:
+Connect to an environment
+Production
+
+Do not select “Redirect to Another Domain” in the lower section.
+
+Click:
+
+Save
+
+After saving, Vercel will show DNS instructions. In Zoho, add the records Vercel gives you.
+
+Most likely you will need:
+
+A
+Host: @
+Value: 76.76.21.21
+
+and:
+
+CNAME
+Host: www
+Value: cname.vercel-dns.com
+
+Also keep your API record for Render:
+
+CNAME
+Host: api
+Value: guardian-trading-api.onrender.com
+
+So final setup will be:
+
+www.guardiiantrading.com  → Vercel website
+guardiiantrading.com      → redirects to www.guardiiantrading.com
+api.guardiiantrading.com  → Render API
+
+
+Checkpoint made
+3 hours ago
+
+Attached Image
+should i do thesame for the admin kyc project?
+
+3 hours ago
+Yes — but only if the Admin KYC is a separate Vercel project.
+
+You have two choices:
+
+Option 1 — Recommended: use a subdomain for Admin KYC
+Use:
+
+www.guardiiantrading.com       → main website on Vercel
+admin.guardiiantrading.com     → Admin KYC project on Vercel
+api.guardiiantrading.com       → API on Render
+
+For the Admin KYC Vercel project, add this domain:
+
+admin.guardiiantrading.com
+
+Then in Zoho DNS, add:
+
+Type: CNAME
+Name: admin
+Value: cname.vercel-dns.com
+
+or use the exact value Vercel gives you.
+
+Also in the Admin KYC Vercel project, add the environment variable:
+
+VITE_API_URL=https://api.guardiiantrading.com
+
+Then redeploy the Admin KYC project.
+
+Option 2 — If Admin KYC is inside the same Vercel project
+If you want Admin KYC at:
+
+www.guardiiantrading.com/admin-kyc
+
+then you do not add another domain in Vercel or Zoho.
+
+But based on your setup, it sounds like Admin KYC is likely a separate Vercel project, so use Option 1.
+
+For the screen you showed
+Your main domain is not verified yet. First finish these in Zoho:
+
+A
+Name: @
+Value: 216.198.79.1
+
+CNAME
+Name: www
+Value: 1910c6a5b461c509.vercel-dns-017.com
+
+Use the exact values shown in your Vercel screen.
+
+Then for Admin KYC, add a new domain in the Admin KYC Vercel project:
+
+admin.guardiiantrading.com
+
+And in Zoho:
+
+CNAME
+Name: admin
+Value: cname.vercel-dns.com
+
+or the exact Vercel-provided value.
+
+
+Checkpoint made
+3 hours ago
+should i put all three in the kyc ptoject?
+
+www.guardiiantrading.com → main website on Vercel
+admin.guardiiantrading.com → Admin KYC project on Vercel
+api.guardiiantrading.com → API on Render
+
+3 hours ago
+No — don’t put all three in the KYC project.
+
+Set them up like this:
+
+Main website Vercel project
+Only add:
+
+guardiiantrading.com
+www.guardiiantrading.com
+
+This project is for the public website.
+
+Admin KYC Vercel project
+Only add:
+
+admin.guardiiantrading.com
+
+This project is for the admin dashboard.
+
+Also add this environment variable inside the Admin KYC Vercel project:
+
+VITE_API_URL=https://api.guardiiantrading.com
+
+Render API project
+Only add:
+
+api.guardiiantrading.com
+
+This belongs in Render, not Vercel.
+
+Summary
+Main website Vercel project:
+- guardiiantrading.com
+- www.guardiiantrading.com
+Admin KYC Vercel project:
+- admin.guardiiantrading.com
+Render API project:
+- api.guardiiantrading.com
+
+In Zoho DNS, you will have DNS records for all of them, but in Vercel/Render each domain should go to the correct project.
+
+
+Attached Image
+like this right?
+
+And tell me what to select
+
+2 hours ago
+Yes, that is correct for the Admin KYC Vercel project.
+
+You typed:
+
+admin.guardiiantrading.com
+
+That is the right domain.
+
+Select:
+
+Connect to an environment
+Production
+
+Do not select:
+
+Redirect to Another Domain
+
+Leave redirect as:
+
+No Redirect
+
+Then click:
+
+Save
+
+After saving, Vercel will show you the DNS record for admin. In Zoho, add the record Vercel gives you. It will most likely be:
+
+Type: CNAME
+Name: admin
+Value: cname.vercel-dns.com
+
+or a custom Vercel DNS value.
+
+Also make sure the Admin KYC Vercel project has this environment variable:
+
+VITE_API_URL=https://api.guardiiantrading.com
+
+Then redeploy the Admin KYC project.
+
+
+Checkpoint made
+2 hours ago
+
+Attached Image
+
+Attached Image
+what to do next?
+
+2 hours ago
+Next you need to add the DNS records in Zoho exactly as Vercel is showing.
+
+1. Main website DNS records in Zoho
+For your main website Vercel project, add these in Zoho:
+
+Root domain
+Type: A
+Name/Host: @
+Value/Points to: 216.198.79.1
+
+WWW domain
+Type: CNAME
+Name/Host: www
+Value/Points to: 1910c6a5b461c509.vercel-dns-017.com
+
+Use the exact values from your Vercel screen.
+
+2. Admin KYC DNS record in Zoho
+Open the Admin KYC domain row in Vercel or click Learn more / Edit to see the required DNS record for:
+
+admin.guardiiantrading.com
+
+Most likely it will be:
+
+Type: CNAME
+Name/Host: admin
+Value/Points to: cname.vercel-dns.com
+
+or a custom Vercel DNS value.
+
+Add that in Zoho too.
+
+3. API DNS record in Zoho for Render
+For Render, add:
+
+Type: CNAME
+Name/Host: api
+Value/Points to: guardian-trading-api.onrender.com
+
+Then in Render, add this custom domain to the API service:
+
+api.guardiiantrading.com
+
+4. Do not delete Zoho email records
+Keep these if you see them:
+
+MX
+SPF
+DKIM
+DMARC
+Zoho TXT verification
+
+Only remove/replace old website records for:
+
+@
+www
+admin
+api
+
+if they already point somewhere else.
+
+5. After adding records
+Go back to Vercel and click Refresh for each invalid domain:
+
+guardiiantrading.com
+www.guardiiantrading.com
+admin.guardiiantrading.com
+
+DNS can take a few minutes to a few hours. When done, Vercel will show Valid Configuration.
+
+
+Checkpoint made
+2 hours ago
+direct link to this in zoho
+
+2 hours ago
+
+1 message & 1 action
+
+Attached Image
+
+Attached Image
+what to do?
+
+2 hours ago
+You are in the wrong Zoho area for website DNS records.
+
+You’re currently inside Zoho Mail Admin Console. That mainly manages email records like SPF, DKIM, MX, etc.
+
+For your website records, use the DNS URL shown on your screen:
+
+https://manage.opensrs.net/?domain=guardiiantrading.com&user=19185973450
+
+Click that blue DNS URL link.
+
+Then do this
+After the DNS page opens, look for something like:
+
+DNS Records
+Manage DNS
+Zone Records
+Advanced DNS
+
+Then add these records.
+
+Main website to Vercel
+Type: A
+Host/Name: @
+Value/Points to: 216.198.79.1
+
+Type: CNAME
+Host/Name: www
+Value/Points to: 1910c6a5b461c509.vercel-dns-017.com
+
+Admin KYC to Vercel
+Type: CNAME
+Host/Name: admin
+Value/Points to: cname.vercel-dns.com
+
+If Vercel shows a different value for admin, use the value from Vercel.
+
+API to Render
+Type: CNAME
+Host/Name: api
+Value/Points to: guardian-trading-api.onrender.com
+
+Important
+Do not change/delete email records like:
+
+MX
+SPF
+DKIM
+DMARC
+
+Those are for Zoho Mail.
+
+Right now, click the blue DNS URL link on the registration information page. That is the next step.
+
+
+Checkpoint made
+2 hours ago
+
+Attached Image
+what's next to do?
+
+40 minutes ago
+You are on the right page. Next you need to replace the old website DNS records with the Vercel ones.
+
+1. Change the existing www A record
+I can see this existing record:
+
+A Record
+www → 34.111.179.208
+
+That is not Vercel.
+
+Remove that www A record.
+
+Then add this under CNAME Records:
+
+Subdomain: www
+Hostname: 1910c6a5b461c509.vercel-dns-017.com
+
+Then click Add Record.
+
+2. Add the root domain A record
+Under A Records, add:
+
+Subdomain: @
+IP Address: 216.198.79.1
+
+If this DNS panel does not accept @, leave the subdomain field blank.
+
+So either:
+
+Subdomain: @
+IP Address: 216.198.79.1
+
+or:
+
+Subdomain: [blank]
+IP Address: 216.198.79.1
+
+Then click Add Record.
+
+3. Add Admin KYC CNAME
+Under CNAME Records, add:
+
+Subdomain: admin
+Hostname: cname.vercel-dns.com
+
+If Vercel showed a special value for admin, use that instead.
+
+Then click Add Record.
+
+4. Add API CNAME for Render
+Under CNAME Records, add:
+
+Subdomain: api
+Hostname: guardian-trading-api.onrender.com
+
+Then click Add Record.
+
+5. Keep these records
+Do not remove these:
+
+MX Records
+TXT Records for Zoho
+TXT Records for Resend
+DKIM
+DMARC
+SPF
+
+Those are for email.
+
+6. Remove old website TXT records if needed
+I see old TXT records like:
+
+railway-verify
+www
+
+You can leave them for now, but if Vercel still says invalid after the main DNS records are added, remove old verification TXT records related to Railway.
+
+7. Save
+After adding/removing records, click:
+
+Save DNS Zone
+
+Then go back to Vercel and click Refresh for:
+
+guardiiantrading.com
+www.guardiiantrading.com
+admin.guardiiantrading.com
+
+DNS can take a few minutes to update.
+
+
+Checkpoint made
+39 minutes ago
+
+Attached Image
+what to do?
+
+33 minutes ago
+The error says:
+
+CNAME hostname(label) must be unique for zone
+
+That means you tried to add a CNAME for a subdomain that already exists.
+
+Most likely you tried to add www, but there is already another www record lower on the page.
+
+What to do now
+Click:
+
+Modify DNS Zone
+
+Then check the existing records.
+
+For www
+You should have only one www record.
+
+Remove the old one if it exists, especially if you see:
+
+A Record
+www → 34.111.179.208
+
+or any old:
+
+CNAME
+www → something else
+
+Then add the Vercel www record:
+
+CNAME
+Subdomain: www
+Hostname: 1910c6a5b461c509.vercel-dns-017.com
+
+Important rule
+A subdomain cannot have both:
+
+A www
+
+and:
+
+CNAME www
+
+So for www, delete the old A record first, then add the CNAME.
+
+Then add the others
+For the root domain:
+
+A
+Subdomain: blank or @
+IP Address: 216.198.79.1
+
+For Admin KYC:
+
+CNAME
+Subdomain: admin
+Hostname: cname.vercel-dns.com
+
+For API:
+
+CNAME
+Subdomain: api
+Hostname: guardian-trading-api.onrender.com
+
+Then click:
+
+Save DNS Zone
+
+If it errors again, it means that specific subdomain already exists somewhere on the page — remove the old record for that same subdomain first.
+
+
+Checkpoint made
+33 minutes ago
+what to put for A Records?
+
+30 minutes ago
+For A Records, only use it for the root domain:
+
+A Record
+Subdomain: [blank]
+IP Address: 216.198.79.1
+
+If the system does not allow blank, use:
+
+Subdomain: @
+IP Address: 216.198.79.1
+
+That connects:
+
+guardiiantrading.com
+
+to Vercel.
+
+Do not put www in A Records
+For www, use CNAME Records, not A Records:
+
+CNAME
+Subdomain: www
+Hostname: 1910c6a5b461c509.vercel-dns-017.com
+
+Summary
+Use this in A Records:
+
+Subdomain: blank or @
+IP Address: 216.198.79.1
+
+Remove any old A record like:
+
+www → 34.111.179.208
+
+because www should be a CNAME for Vercel.
+
+what to put for CNAME Records?
+
+27 minutes ago
+For CNAME Records, put these:
+
+1. Main website www to Vercel
+Subdomain: www
+Hostname: 1910c6a5b461c509.vercel-dns-017.com
+
+This connects:
+
+www.guardiiantrading.com
+
+to your main Vercel website.
+
+2. Admin KYC to Vercel
+Subdomain: admin
+Hostname: cname.vercel-dns.com
+
+This connects:
+
+admin.guardiiantrading.com
+
+to your Admin KYC Vercel project.
+
+If Vercel shows a special value for admin, use that special Vercel value instead of cname.vercel-dns.com.
+
+3. API to Render
+Subdomain: api
+Hostname: guardian-trading-api.onrender.com
+
+This connects:
+
+api.guardiiantrading.com
+
+to your Render API.
+
+Keep existing mail CNAME
+You already have:
+
+Subdomain: mail
+Hostname: business.zoho.com
+
+Keep that. Do not delete it.
+
+Important
+Before adding www, remove any old www record from A Records or old CNAME Records. You can only have one www record.
+
+it shows:
+
+DNS Zone could not be set for guardiiantrading.com. (CNAME hostname(label) must be unique for zone)
+
+26 minutes ago
+That error means one of the CNAME subdomains you entered is duplicated.
+
+Most likely you already have a www CNAME or mail CNAME, and you tried to add another record with the same subdomain.
+
+Fix it like this
+Go back to Modify DNS Zone and check CNAME Records.
+
+You should have only these CNAME records:
+
+mail   → business.zoho.com
+www    → 1910c6a5b461c509.vercel-dns-017.com
+admin  → cname.vercel-dns.com
+api    → guardian-trading-api.onrender.com
+
+Each left-side value must appear only once:
+
+mail
+www
+admin
+api
+
+Remove duplicates
+If you see two www records, remove one.
+
+If you see this old TXT or CNAME-like record:
+
+www → something.railway.app
+
+remove it.
+
+Also check A Records. If you still have:
+
+www → 34.111.179.208
+
+remove it. www should only be a CNAME now.
+
+Important
+Do not add this as a CNAME:
+
+guardiiantrading.com
+
+For the root domain, use A Record, not CNAME:
+
+A Record
+Subdomain: blank or @
+IP Address: 216.198.79.1
+
+Final records should be
+A Records
+blank or @ → 216.198.79.1
+
+CNAME Records
+mail  → business.zoho.com
+www   → 1910c6a5b461c509.vercel-dns-017.com
+admin → cname.vercel-dns.com
+api   → guardian-trading-api.onrender.com
+
+Then click Save DNS Zone.
