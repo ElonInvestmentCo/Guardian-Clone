@@ -25,7 +25,7 @@ Guardian Trading is structured as a pnpm monorepo using Node.js 24 and TypeScrip
 - **KYC Flow Gate**: Manages user access based on KYC status, redirecting users through onboarding, pending, or dashboard views.
 - **Notifications System**: Real-time notifications with polling for unread counts.
 - **AI Trading Assistant**: A floating chat widget with streaming SSE messages, using an `AiProvider` abstraction layer for Grok (xAI) and OpenAI, building prompts with contextual data.
-- **Admin Authentication**: JWT-based session, IP-based rate limiting, and bcrypt-hashed credentials (from env vars or `admin.json`).
+- **Admin Authentication**: JWT-based session, IP-based rate limiting, and bcrypt-hashed credentials (from env vars or `admin.json`). In development, a missing `ADMIN_JWT_SECRET` is generated once into `data/admin.jwt-secret`; production still requires `ADMIN_JWT_SECRET` as a secret.
 - **KYC Lifecycle**: User status transitions from `pending` to `verified`, `approved`, `rejected`, or `resubmit_required`, with route guards enforcing access based on status. Resubmission allows users to correct specific fields requested by admin.
 - **Email & Password Management**: Real-time duplicate email detection, email normalization, and a complete forgot password flow with timed reset codes.
 - **Deployment**: External production uses Render for the Express API server and Vercel for the Vite frontend(s). Render builds only `@workspace/api-server`, exposes API routes under `/api`, and uses `/api/healthz` for health checks. Vercel builds the customer frontend from `artifacts/guardian-trading`; Vercel projects must set `VITE_API_URL` to the Render API domain, such as `https://api.guardiiantrading.com`.

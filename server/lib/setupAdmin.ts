@@ -3,13 +3,12 @@
  *
  * Priority order:
  *   1. ADMIN_USERNAME / ADMIN_PASSWORD_HASH env vars (override username/hash)
- *      combined with ADMIN_JWT_SECRET env var (always required for the JWT secret)
+ *      combined with ADMIN_JWT_SECRET env var (required in production)
  *   2. data/admin.json (auto-generated on first run, persisted across restarts)
- *      NOTE: jwtSecret is NEVER stored in admin.json — it must always be supplied
- *      via the ADMIN_JWT_SECRET environment variable / secret.
+ *      NOTE: jwtSecret is NEVER stored in admin.json.
  *   3. Generates new credentials on first launch and saves username+hash to data/admin.json.
  *
- * ADMIN_JWT_SECRET must always be set as an environment secret.
+ * ADMIN_JWT_SECRET must be set as an environment secret in production.
  * The auto-generated password is printed to the server console on first run ONLY.
  */
 
@@ -31,13 +30,61 @@ interface AdminFileData {
 }
 
 const ADMIN_FILE_NAME = "admin.json";
+const ADMIN_JWT_SECRET_FILE_NAME = "admin.jwt-secret";
 
 function getAdminFilePath(): string {
   return path.join(getDataDir(), ADMIN_FILE_NAME);
 }
 
+function getAdminJwtSecretFilePath(): string {
+  return path.join(getDataDir(), ADMIN_JWT_SECRET_FILE_NAME);
+}
+
 function generateJwtSecret(): string {
   return crypto.randomBytes(48).toString("hex");
+}
+
+function readPersistedDevJwtSecret(): string | null {
+  const p = getAdminJwtSecretFilePath();
+  if (!fs.existsSync(p)) return null;
+  try {
+    const raw = fs.readFileSync(p, "utf8").trim();
+    return raw.length >= 64 ? raw : null;
+  } catch {
+    return null;
+  }
+}
+
+function writePersistedDevJwtSecret(secret: string): void {
+  const p = getAdminJwtSecretFilePath();
+  const dir = path.dirname(p);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  fs.writeFileSync(p, secret, { mode: 0o600 });
+}
+
+function getJwtSecret(): string {
+  const fromEnv = process.env.ADMIN_JWT_SECRET;
+  if (fromEnv) return fromEnv;
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "[Admin] ADMIN_JWT_SECRET environment variable is required in production. " +
+      "Add it as a Replit secret before starting the server."
+    );
+  }
+
+  const existing = readPersistedDevJwtSecret();
+  if (existing) return existing;
+
+  const generated = generateJwtSecret();
+  writePersistedDevJwtSecret(generated);
+  console.warn(
+    "[Admin] ADMIN_JWT_SECRET not set — generated a development-only JWT secret in data/admin.jwt-secret. " +
+    "Set ADMIN_JWT_SECRET as a secret before production use."
+  );
+  return generated;
 }
 
 async function generatePasswordHash(password: string): Promise<string> {
@@ -78,13 +125,7 @@ let _cachedCreds: AdminCredentials | null = null;
 export async function setupAdminCredentials(): Promise<AdminCredentials> {
   if (_cachedCreds) return _cachedCreds;
 
-  const jwtSecret = process.env.ADMIN_JWT_SECRET;
-  if (!jwtSecret) {
-    throw new Error(
-      "[Admin] ADMIN_JWT_SECRET environment variable is required but not set. " +
-      "Add it as a Replit secret before starting the server."
-    );
-  }
+  const jwtSecret = getJwtSecret();
 
   const envUsername = process.env.ADMIN_USERNAME;
   const envHash     = process.env.ADMIN_PASSWORD_HASH;
