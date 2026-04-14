@@ -11,6 +11,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import AntiScrape from "@/components/AntiScrape";
 import NeedHelpCard from "@/components/NeedHelpCard";
 import { ScrollAndFormReset } from "@/components/ScrollAndFormReset";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import Home from "@/pages/Home";
 import About from "@/pages/About";
@@ -155,7 +156,7 @@ function App() {
             <AntiScrape />
             <PageLoader />
             <Toaster />
-
+            <SpeedInsights />
           </ThemeProvider>
         </LoadingProvider>
       </TooltipProvider>
