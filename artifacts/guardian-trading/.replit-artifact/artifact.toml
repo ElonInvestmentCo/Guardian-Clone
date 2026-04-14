@@ -1,32 +1,32 @@
 kind = "web"
-  previewPath = "/"
-  title = "Guardian Trading"
-  version = "1.0.0"
-  id = "artifacts/guardian-trading"
-  router = "path"
+previewPath = "/"
+title = "Guardian Trading"
+version = "1.0.0"
+id = "artifacts/guardian-trading"
+router = "path"
 
-  [[integratedSkills]]
-  name = "react-vite"
-  version = "1.0.0"
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
 
-  [[services]]
-  localPort = 3000
-  name = "web"
-  paths = ["/"]
+[[services]]
+localPort = 3000
+name = "web"
+paths = ["/"]
 
-  [services.development]
-  run = "pnpm run dev:client"
+[services.env]
+PORT = "3000"
+BASE_PATH = "/"
+API_PORT = "3001"
 
-  [services.env]
-  PORT = "3000"
-  BASE_PATH = "/"
+[services.development]
+run = "pnpm --filter @workspace/guardian-trading run dev"
 
-  [services.production]
-  build = ["pnpm", "run", "build:client"]
-  publicDir = "dist"
-  serve = "static"
+[services.production]
+build = ["pnpm", "--filter", "@workspace/guardian-trading", "run", "build"]
+publicDir = "artifacts/guardian-trading/dist/public"
+serve = "static"
 
-  [[services.production.rewrites]]
-  from = "/*"
-  to = "/index.html"
-  
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"

@@ -1,32 +1,32 @@
 kind = "web"
-  previewPath = "/admin-kyc/"
-  title = "Guardian Admin — KYC Dashboard"
-  version = "1.0.0"
-  id = "artifacts/admin-kyc"
-  router = "path"
+previewPath = "/admin-kyc/"
+title = "Guardian Admin — KYC Dashboard"
+version = "1.0.0"
+id = "artifacts/admin-kyc"
+router = "path"
 
-  [[integratedSkills]]
-  name = "react-vite"
-  version = "1.0.0"
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
 
-  [[services]]
-  name = "web"
-  paths = [ "/admin-kyc/" ]
-  localPort = 8080
+[[services]]
+localPort = 8080
+name = "web"
+paths = ["/admin-kyc/"]
 
-  [services.development]
-  run = "pnpm run dev:admin"
+[services.env]
+PORT = "8080"
+BASE_PATH = "/admin-kyc/"
+API_PORT = "3001"
 
-  [services.production]
-  build = [ "pnpm", "run", "build:admin" ]
-  publicDir = "dist/admin-kyc"
-  serve = "static"
+[services.development]
+run = "pnpm --filter @workspace/admin-kyc run dev"
 
-  [[services.production.rewrites]]
-  from = "/*"
-  to = "/index.html"
+[services.production]
+build = ["pnpm", "--filter", "@workspace/admin-kyc", "run", "build"]
+publicDir = "artifacts/admin-kyc/dist/public"
+serve = "static"
 
-  [services.env]
-  PORT = "8080"
-  BASE_PATH = "/admin-kyc/"
-  
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
