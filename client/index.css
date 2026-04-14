@@ -1,0 +1,179 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Condensed:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: 'Roboto', sans-serif;
+  --font-display: 'Roboto Condensed', sans-serif;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-border: hsl(var(--border));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+}
+
+:root {
+  /* Real Guardian Trading brand: #151515 bg, #76D0F4 accent */
+  --background: 0 0% 8%;
+  --foreground: 0 0% 100%;
+  --primary: 201 84% 71%;
+  --primary-foreground: 0 0% 0%;
+  --card: 0 0% 11%;
+  --card-foreground: 0 0% 100%;
+  --border: 0 0% 18%;
+  --muted: 0 0% 14%;
+  --muted-foreground: 0 0% 60%;
+  --accent: 201 84% 71%;
+  --accent-foreground: 0 0% 0%;
+  --secondary: 0 0% 14%;
+  --secondary-foreground: 0 0% 100%;
+  --destructive: 0 63% 45%;
+  --destructive-foreground: 0 0% 100%;
+  --input: 0 0% 18%;
+  --ring: 201 84% 71%;
+
+  --sidebar: 0 0% 8%;
+  --sidebar-foreground: 0 0% 100%;
+  --sidebar-border: 0 0% 18%;
+  --sidebar-primary: 201 84% 71%;
+  --sidebar-primary-foreground: 0 0% 0%;
+  --sidebar-accent: 0 0% 14%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-ring: 201 84% 71%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground selection:bg-primary/30;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-card/60 backdrop-blur-md border border-white/5 shadow-2xl shadow-black/50;
+  }
+
+  .btn-outline-white {
+    @apply border border-white text-white px-6 py-2.5 text-sm font-medium hover:bg-white hover:text-black transition-colors;
+  }
+
+  .btn-primary-blue {
+    @apply bg-[#4a7fbd] hover:bg-[#3d6fad] text-white px-5 py-2 text-sm font-medium transition-colors;
+  }
+
+  .section-label {
+    @apply text-xs font-bold tracking-widest uppercase text-muted-foreground;
+  }
+
+  .dot-pattern {
+    background-image: radial-gradient(circle, rgba(118,208,244,0.15) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+}
+
+@media (max-width: 767px) {
+  #guardian-ai-widget {
+    bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
+    max-width: calc(100vw - 32px) !important;
+    right: 16px !important;
+  }
+}
+
+@keyframes spinner-bars-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.spinner-bars-rotate {
+  animation: spinner-bars-rotate 1s steps(12) infinite;
+}
+
+@keyframes spinner-img-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.spinner-img-rotate {
+  animation: spinner-img-spin 1s linear infinite;
+}
+
+.gt-nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding-top: 8px;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+.gt-nav-link:hover,
+.gt-nav-link:focus {
+  color: #999999 !important;
+}
+.gt-nav-link::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: top;
+  width: 44px;
+  height: 6px;
+  background: #76d0f4;
+  border-radius: 0;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.gt-nav-link:hover::before,
+.gt-nav-link:focus::before {
+  transform: translateX(-50%) scaleY(1);
+}
+
+.gt-input-wrap {
+  position: relative;
+}
+.gt-input-wrap::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #4a7fbd;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+  pointer-events: none;
+  border-radius: 0 0 3px 3px;
+}
+.gt-input-wrap:focus-within::after {
+  transform: scaleX(1);
+}
