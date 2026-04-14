@@ -1,28 +1,29 @@
 kind = "api"
-previewPath = "/api"
-title = "API Server"
-version = "1.0.0"
-id = "3B4_FFSkEVBkAeYMFRJ2e"
+  previewPath = "/api"
+  title = "API Server"
+  version = "1.0.0"
+  id = "3B4_FFSkEVBkAeYMFRJ2e"
 
-[[services]]
-localPort = 3001
-name = "API Server"
-paths = ["/api"]
+  [[services]]
+  localPort = 3001
+  name = "API Server"
+  paths = ["/api"]
 
-[services.development]
-run = "PORT=3001 pnpm --filter @workspace/api-server run dev"
+  [services.development]
+  run = "PORT=3001 pnpm run dev:server"
 
-[services.env]
-PORT = "3001"
+  [services.env]
+  PORT = "3001"
 
-[services.production]
-build = "pnpm --filter @workspace/api-server run build"
+  [services.production]
+  build = "pnpm run build"
 
-[services.production.run]
-args = ["node", "artifacts/api-server/dist/index.cjs"]
+  [services.production.run]
+  args = ["pnpm", "run", "start"]
 
-[services.production.run.env]
-PORT = "3000"
+  [services.production.run.env]
+  PORT = "3000"
 
-[services.production.health.startup]
-path = "/api/healthz"
+  [services.production.health.startup]
+  path = "/api/healthz"
+  
