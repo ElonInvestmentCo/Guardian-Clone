@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, Component, type ReactNode, type ErrorInfo } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Analytics } from "@vercel/analytics/react";
 import KycDashboard from "@/pages/KycDashboard";
 import NotFound from "@/pages/not-found";
 import AdminLoginModal from "@/components/AdminKeyModal";
@@ -113,6 +114,7 @@ function App() {
           </LoadingProvider>
         </QueryClientProvider>
       </ThemeProvider>
+      <Analytics />
     </ErrorBoundary>
   );
 }
