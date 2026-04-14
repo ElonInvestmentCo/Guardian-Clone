@@ -6,7 +6,7 @@ const marketRouter = Router();
 const CACHE_TTL = 60_000; // 60 seconds
 let marketsCache: { data: unknown; ts: number } | null = null;
 
-marketRouter.get("/api/markets", marketDataLimit, async (_req, res) => {
+marketRouter.get("/markets", marketDataLimit, async (_req, res) => {
   try {
     if (marketsCache && Date.now() - marketsCache.ts < CACHE_TTL) {
       res.json(marketsCache.data);

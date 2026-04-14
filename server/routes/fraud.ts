@@ -28,7 +28,7 @@ function requireAuth(req: Request, res: Response, next: NextFunction): void {
   res.status(401).json({ error: "Authentication required" });
 }
 
-router.post("/api/fraud/risk-score", requireAuth, validate(FraudRiskSchema), async (req: Request, res: Response): Promise<void> => {
+router.post("/fraud/risk-score", requireAuth, validate(FraudRiskSchema), async (req: Request, res: Response): Promise<void> => {
   try {
     const { email } = req.body as { email: string };
 
@@ -48,7 +48,7 @@ router.post("/api/fraud/risk-score", requireAuth, validate(FraudRiskSchema), asy
   }
 });
 
-router.get("/api/fraud/risk-events", requireAuth, async (req: Request, res: Response): Promise<void> => {
+router.get("/fraud/risk-events", requireAuth, async (req: Request, res: Response): Promise<void> => {
   try {
     const minScore = parseInt(String(req.query.minScore ?? "0"));
     const level    = req.query.level as string | undefined;
