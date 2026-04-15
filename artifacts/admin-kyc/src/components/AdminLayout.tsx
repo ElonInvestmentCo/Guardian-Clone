@@ -135,23 +135,6 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
 
         <div style={{ flex: 1, minWidth: 0 }} />
 
-        <div className="header-search">
-          <i className="bi bi-search" />
-          <input
-            type="text"
-            placeholder="Search..."
-            disabled
-          />
-        </div>
-
-        <button
-          className="header-icon-btn header-search-toggle"
-          onClick={() => setSearchOpen(true)}
-          aria-label="Open search"
-        >
-          <i className="bi bi-search" />
-        </button>
-
         <button
           className="theme-toggle-btn"
           onClick={toggleTheme}
