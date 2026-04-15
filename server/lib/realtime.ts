@@ -1,13 +1,15 @@
 import type { IncomingMessage } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 
-interface RealtimeEvent {
-  type: "new_event" | "ping";
+export interface RealtimeEvent {
+  type: "new_event" | "ping" | "NEW_USER_REGISTRATION" | "APPLICATION_COMPLETE";
   projectId?: string;
   data?: Record<string, unknown>;
 }
 
 const projectSubscribers = new Map<string, Set<WebSocket>>();
+
+export const ADMIN_CHANNEL = "guardian-admin";
 
 export function subscribe(projectId: string, ws: WebSocket): void {
   if (!projectSubscribers.has(projectId)) {
@@ -29,6 +31,10 @@ export function broadcast(projectId: string, event: RealtimeEvent): void {
       ws.send(payload);
     }
   }
+}
+
+export function broadcastAdmin(event: RealtimeEvent): void {
+  broadcast(ADMIN_CHANNEL, event);
 }
 
 export function createWebSocketServer(server: import("http").Server): WebSocketServer {

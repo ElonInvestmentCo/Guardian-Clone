@@ -6,6 +6,8 @@ import { saveUserCredentials, getStoredPasswordHash, getUserData } from "../lib/
 import { sensitiveEndpointLimit } from "../middleware/security.js";
 import { validate, AuthLoginSchema, AuthRegisterSchema, AuthCheckEmailSchema, AuthSendVerificationSchema, AuthVerifyCodeSchema, AuthResetPasswordSchema } from "../lib/validation.js";
 import { logSecurity } from "../lib/securityLogger.js";
+import { query } from "../lib/db.js";
+import { broadcastAdmin } from "../lib/realtime.js";
 
 const authRouter = Router();
 
@@ -75,6 +77,33 @@ authRouter.post("/auth/register", sensitiveEndpointLimit, validate(AuthRegisterS
     }
     const hash = await hashPassword(password);
     await saveUserCredentials(email, hash);
+
+    const ipAddress = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? req.ip ?? "unknown";
+    const registeredAt = new Date();
+    const formattedAt = new Intl.DateTimeFormat("en-US", {
+      month: "long", day: "numeric", year: "numeric",
+      hour: "2-digit", minute: "2-digit",
+    }).format(registeredAt);
+
+    try {
+      await query(
+        `INSERT INTO registration_log (email, ip_address, registered_at) VALUES ($1, $2, $3)`,
+        [email, ipAddress, registeredAt.toISOString()]
+      );
+    } catch (dbErr) {
+      console.error("[Auth] registration_log insert failed:", dbErr);
+    }
+
+    broadcastAdmin({
+      type: "NEW_USER_REGISTRATION",
+      data: {
+        email,
+        registeredAt: registeredAt.toISOString(),
+        formattedAt,
+        ipAddress,
+      },
+    });
+
     logAttempt("REGISTER", email, "success — credentials persisted to database");
     res.json({ success: true });
   } catch (err) {

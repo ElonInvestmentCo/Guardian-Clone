@@ -620,4 +620,69 @@ router.get("/admin/user-document-file/:email/:role", async (req: Request, res: R
   }
 });
 
+router.get("/admin/registration-log", securityHeaders, requireAdmin, adminRateLimit, async (_req, res) => {
+  try {
+    const result = await getPool().query<{
+      id: number;
+      email: string;
+      display_name: string | null;
+      referrer: string | null;
+      product: string | null;
+      registration_type: string | null;
+      ip_address: string | null;
+      registered_at: string;
+    }>(`
+      SELECT id, email, display_name, referrer, product, registration_type, ip_address, registered_at
+      FROM registration_log
+      ORDER BY registered_at DESC
+      LIMIT 5000
+    `);
+    res.json({ entries: result.rows });
+  } catch (err) {
+    console.error("[Admin] registration-log error:", err);
+    res.status(500).json({ error: "Failed to retrieve registration log" });
+  }
+});
+
+router.get("/admin/registration-log/export", securityHeaders, requireAdmin, adminRateLimit, async (_req, res) => {
+  try {
+    const result = await getPool().query<{
+      id: number;
+      email: string;
+      display_name: string | null;
+      referrer: string | null;
+      product: string | null;
+      registration_type: string | null;
+      ip_address: string | null;
+      registered_at: string;
+    }>(`
+      SELECT id, email, display_name, referrer, product, registration_type, ip_address, registered_at
+      FROM registration_log
+      ORDER BY registered_at DESC
+    `);
+
+    const fmt = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const header = ["ID", "Email", "Display Name", "Referrer", "Product", "Registration Type", "IP Address", "Registered At"].map(fmt).join(",");
+    const rows = result.rows.map(r => [
+      r.id,
+      r.email,
+      r.display_name ?? "",
+      r.referrer ?? "",
+      r.product ?? "",
+      r.registration_type ?? "",
+      r.ip_address ?? "",
+      new Date(r.registered_at).toLocaleString("en-US", { month: "long", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" }),
+    ].map(fmt).join(","));
+
+    const csv = [header, ...rows].join("\n");
+    const filename = `registrations-${new Date().toISOString().slice(0, 10)}.csv`;
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.send(csv);
+  } catch (err) {
+    console.error("[Admin] registration-log export error:", err);
+    res.status(500).json({ error: "Failed to export registration log" });
+  }
+});
+
 export default router;

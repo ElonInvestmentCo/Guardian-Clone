@@ -83,6 +83,26 @@ export async function initDatabase(): Promise<void> {
     CREATE INDEX IF NOT EXISTS idx_user_docs_email ON user_documents (email);
   `);
 
+  await p.query(`
+    CREATE TABLE IF NOT EXISTS registration_log (
+      id                SERIAL PRIMARY KEY,
+      email             TEXT NOT NULL,
+      display_name      TEXT,
+      referrer          TEXT,
+      product           TEXT,
+      registration_type TEXT,
+      ip_address        TEXT,
+      registered_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+
+  await p.query(`
+    CREATE INDEX IF NOT EXISTS idx_reg_log_email ON registration_log (email);
+  `);
+  await p.query(`
+    CREATE INDEX IF NOT EXISTS idx_reg_log_time ON registration_log (registered_at DESC);
+  `);
+
   console.log("[DB] Database tables initialized successfully");
 }
 

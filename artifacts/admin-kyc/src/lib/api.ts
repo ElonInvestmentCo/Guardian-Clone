@@ -306,3 +306,22 @@ export async function fetchDocumentBlobUrl(email: string, role: string): Promise
   const blob = await resp.blob();
   return URL.createObjectURL(blob);
 }
+
+export interface RegistrationLogEntry {
+  id: number;
+  email: string;
+  display_name: string | null;
+  referrer: string | null;
+  product: string | null;
+  registration_type: string | null;
+  ip_address: string | null;
+  registered_at: string;
+}
+
+export interface RegistrationLogResponse {
+  entries: RegistrationLogEntry[];
+}
+
+export async function getRegistrationLog(): Promise<RegistrationLogResponse> {
+  return request<RegistrationLogResponse>("GET", "/admin/registration-log");
+}
