@@ -7,6 +7,7 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 const port = Number(process.env.PORT) || 3000;
 const basePath = process.env.BASE_PATH || "/";
 const apiPort = Number(process.env.API_PORT) || 3001;
+const adminPort = Number(process.env.ADMIN_PORT) || 8080;
 
 export default defineConfig({
   base: basePath,
@@ -54,6 +55,11 @@ export default defineConfig({
     proxy: {
       "/api": {
         target: `http://localhost:${apiPort}`,
+        changeOrigin: true,
+        secure: false,
+      },
+      "/admin-kyc": {
+        target: `http://localhost:${adminPort}`,
         changeOrigin: true,
         secure: false,
       },
