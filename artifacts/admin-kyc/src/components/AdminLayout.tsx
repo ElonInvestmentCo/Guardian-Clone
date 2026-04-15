@@ -25,7 +25,9 @@ interface Props {
 export default function AdminLayout({ activeView, setActiveView, children }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
+  const mobileSearchRef = useRef<HTMLInputElement>(null);
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -39,6 +41,17 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [profileOpen]);
+
+  useEffect(() => {
+    if (searchOpen) {
+      setTimeout(() => mobileSearchRef.current?.focus(), 50);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setSearchOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [searchOpen]);
 
   const handleLogout = () => {
     clearSession();
@@ -90,8 +103,29 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
         </div>
       </aside>
 
+      {searchOpen && (
+        <div className="admin-search-overlay" onClick={() => setSearchOpen(false)}>
+          <div className="admin-search-overlay-inner" onClick={e => e.stopPropagation()}>
+            <i className="bi bi-search admin-search-overlay-icon" />
+            <input
+              ref={mobileSearchRef}
+              type="text"
+              placeholder="Search..."
+              className="admin-search-overlay-input"
+            />
+            <button
+              className="admin-search-overlay-close"
+              onClick={() => setSearchOpen(false)}
+              aria-label="Close search"
+            >
+              <i className="bi bi-x-lg" />
+            </button>
+          </div>
+        </div>
+      )}
+
       <header className="safee-header">
-        <button className="mobile-sidebar-toggle" onClick={() => setSidebarOpen(true)}>
+        <button className="mobile-sidebar-toggle" onClick={() => setSidebarOpen(true)} aria-label="Open navigation">
           <i className="bi bi-list" />
         </button>
 
@@ -102,13 +136,21 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
         <div style={{ flex: 1, minWidth: 0 }} />
 
         <div className="header-search">
+          <i className="bi bi-search" />
           <input
             type="text"
             placeholder="Search..."
             disabled
           />
-          <i className="bi bi-search" />
         </div>
+
+        <button
+          className="header-icon-btn header-search-toggle"
+          onClick={() => setSearchOpen(true)}
+          aria-label="Open search"
+        >
+          <i className="bi bi-search" />
+        </button>
 
         <button
           className="theme-toggle-btn"
