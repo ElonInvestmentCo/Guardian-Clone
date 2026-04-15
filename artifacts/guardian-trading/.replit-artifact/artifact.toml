@@ -1,13 +1,13 @@
 kind = "api"
-previewPath = "/guardian-trading-internal"
-title = "Guardian Trading (Dev Server)"
+previewPath = "/"
+title = "Guardian Trading"
 version = "1.0.0"
 id = "artifacts/guardian-trading"
 
 [[services]]
 localPort = 3000
 name = "web"
-paths = ["/guardian-trading-internal"]
+paths = ["/"]
 
 [services.env]
 PORT = "3000"
@@ -15,4 +15,4 @@ BASE_PATH = "/"
 API_PORT = "3001"
 
 [services.development]
-run = "echo '[DISABLED] Use the named Guardian Trading workflow instead.' && sleep infinity"
+run = "pnpm --filter @workspace/guardian-trading run dev"
