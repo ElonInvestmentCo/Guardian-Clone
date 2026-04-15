@@ -68,12 +68,27 @@
     @apply border-border;
   }
 
+  html {
+    color-scheme: dark;
+    background: #060b14;
+  }
+
+  html[data-theme="light"] {
+    color-scheme: light;
+    background: #f1f5f9;
+  }
+
   body {
     @apply font-sans antialiased bg-background text-foreground selection:bg-primary/30;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
+  }
+
+  #root {
+    min-height: 100vh;
   }
 }
 
@@ -107,6 +122,70 @@
     max-width: calc(100vw - 32px) !important;
     right: 16px !important;
   }
+}
+
+/* ── Dashboard Icon Buttons ──────────────────────────────────── */
+.gt-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  outline: none;
+  flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+}
+.gt-icon-btn:focus-visible {
+  box-shadow: 0 0 0 2px #3b82f6;
+}
+.gt-icon-btn:active {
+  transform: scale(0.94);
+}
+
+/* ── Notification Badge Pulse ─────────────────────────────────── */
+@keyframes gt-badge-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(246,70,93,0.7); }
+  70%  { box-shadow: 0 0 0 5px rgba(246,70,93,0); }
+  100% { box-shadow: 0 0 0 0 rgba(246,70,93,0); }
+}
+.gt-badge-pulse {
+  animation: gt-badge-pulse 2s ease-out infinite;
+}
+
+/* ── Notification Dropdown ────────────────────────────────────── */
+@keyframes gt-dropdown-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+.gt-dropdown {
+  animation: gt-dropdown-in 0.18s cubic-bezier(0.22,1,0.36,1) forwards;
+  transform-origin: top right;
+}
+
+/* ── Search Overlay ───────────────────────────────────────────── */
+@keyframes gt-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes gt-search-slide {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+.gt-search-overlay {
+  animation: gt-overlay-in 0.18s ease forwards;
+}
+.gt-search-modal {
+  animation: gt-search-slide 0.2s cubic-bezier(0.22,1,0.36,1) forwards;
+}
+
+/* ── Search input expand ──────────────────────────────────────── */
+.gt-search-wrap {
+  transition: box-shadow 0.2s ease;
+}
+.gt-search-wrap:focus-within {
+  box-shadow: 0 0 0 1.5px #3b82f6;
 }
 
 @keyframes spinner-bars-rotate {

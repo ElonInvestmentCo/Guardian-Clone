@@ -179,6 +179,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       localStorage.setItem("guardianTheme", theme);
+      document.documentElement.setAttribute("data-theme", theme);
+      document.documentElement.style.background = theme === "light" ? "#f1f5f9" : "#060b14";
+      document.documentElement.style.colorScheme = theme === "light" ? "light" : "dark";
     } catch {}
   }, [theme]);
 

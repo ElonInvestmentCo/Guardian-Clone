@@ -1,12 +1,12 @@
 import { useLocation, Link } from "wouter";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { getApiBase } from "@/lib/api";
 import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
 import {
   LayoutDashboard, Briefcase, ShoppingCart, PieChart,
   FileText, Settings, LogOut, Sun, Moon, Search, Bell,
   TrendingUp, TrendingDown, ChevronDown, BarChart3,
-  MessageCircle,
+  X, CheckCheck, ExternalLink,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -42,6 +42,16 @@ const INITIAL_TICKERS: TickerItem[] = [
   { symbol: "QQQ",  price: 447.80, change: 0.56 },
 ];
 
+interface Notification {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+  actionUrl?: string;
+}
+
 interface Props {
   children: React.ReactNode;
 }
@@ -64,10 +74,34 @@ export default function DashboardLayout({ children }: Props) {
   const [userStatus, setUserStatus] = useState<UserStatus | null>(null);
   const [gateChecked, setGateChecked] = useState(false);
 
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const desktopSearchRef = useRef<HTMLInputElement>(null);
+
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifLoading, setNotifLoading] = useState(false);
+  const notifRef = useRef<HTMLDivElement>(null);
+
+  const API = getApiBase();
+
+  const fetchNotifications = useCallback(() => {
+    if (!email) return;
+    setNotifLoading(true);
+    fetch(`${API}/api/notifications?email=${encodeURIComponent(email)}`)
+      .then((r) => r.json())
+      .then((d: { notifications?: Notification[]; unreadCount?: number }) => {
+        setNotifications(d.notifications ?? []);
+        setUnreadCount(d.unreadCount ?? 0);
+        setNotifLoading(false);
+      })
+      .catch(() => setNotifLoading(false));
+  }, [email, API]);
+
   useEffect(() => {
     if (!email) { navigate("/login"); return; }
-    const base = getApiBase();
-    fetch(`${base}/api/user/me?email=${encodeURIComponent(email)}`)
+    fetch(`${API}/api/user/me?email=${encodeURIComponent(email)}`)
       .then((r) => r.json())
       .then((data: UserStatus & { completedSteps?: number[] }) => {
         setUserStatus(data);
@@ -101,17 +135,10 @@ export default function DashboardLayout({ children }: Props) {
 
   useEffect(() => {
     if (!email) return;
-    const base = getApiBase();
-    const fetchNotifs = () => {
-      fetch(`${base}/api/notifications?email=${encodeURIComponent(email)}`)
-        .then((r) => r.json())
-        .then((d: { unreadCount?: number }) => setUnreadCount(d.unreadCount ?? 0))
-        .catch(() => {});
-    };
-    fetchNotifs();
-    const interval = setInterval(fetchNotifs, 30000);
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 30000);
     return () => clearInterval(interval);
-  }, [email]);
+  }, [fetchNotifications]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -125,6 +152,45 @@ export default function DashboardLayout({ children }: Props) {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (searchOpen) {
+      setTimeout(() => searchInputRef.current?.focus(), 50);
+    }
+  }, [searchOpen]);
+
+  useEffect(() => {
+    if (notifOpen) fetchNotifications();
+  }, [notifOpen]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSearchOpen(false);
+        setNotifOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+        setNotifOpen(false);
+      }
+    };
+    if (notifOpen) document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [notifOpen]);
+
+  const markAllRead = () => {
+    fetch(`${API}/api/notifications/read`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    }).then(() => fetchNotifications()).catch(() => {});
+  };
+
   if (!gateChecked) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: colors.bg }}>
@@ -134,7 +200,7 @@ export default function DashboardLayout({ children }: Props) {
   }
 
   const profilePicUrl = userStatus?.profilePicture
-    ? `${getApiBase()}/api/user/profile-picture/${userStatus.profilePicture}`
+    ? `${API}/api/user/profile-picture/${userStatus.profilePicture}`
     : null;
 
   const handleLogout = () => {
@@ -142,9 +208,71 @@ export default function DashboardLayout({ children }: Props) {
     navigate("/login");
   };
 
+  const recentNotifs = notifications.slice(0, 5);
+  const iconBtnStyle = (extraBg?: string): React.CSSProperties => ({
+    width: "44px",
+    height: "44px",
+    borderRadius: "8px",
+    border: `1px solid ${colors.inputBorder}`,
+    background: extraBg ?? colors.inputBg,
+    color: colors.textSub,
+    cursor: "pointer",
+    flexShrink: 0,
+    transition: "background 0.15s ease, color 0.15s ease, border-color 0.15s ease",
+  });
+
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: colors.bg, fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
 
+      {/* ── Mobile Search Overlay ──────────────────────────────────── */}
+      {searchOpen && (
+        <div
+          className="gt-search-overlay fixed inset-0 z-[200] flex flex-col"
+          style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}
+          onClick={(e) => { if (e.target === e.currentTarget) setSearchOpen(false); }}
+        >
+          <div
+            className="gt-search-modal"
+            style={{
+              background: colors.topBar,
+              borderBottom: `1px solid ${colors.topBarBorder}`,
+              padding: "12px 16px",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <Search size={18} color={colors.textMuted} style={{ flexShrink: 0 }} />
+            <input
+              ref={searchInputRef}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search markets, assets, symbols..."
+              aria-label="Search"
+              style={{
+                flex: 1, border: "none", outline: "none",
+                fontSize: "16px", color: colors.inputText,
+                background: "transparent",
+              }}
+            />
+            <button
+              className="gt-icon-btn"
+              aria-label="Close search"
+              onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
+              style={{ ...iconBtnStyle(), border: "none", background: "transparent", color: colors.textSub }}
+            >
+              <X size={18} />
+            </button>
+          </div>
+          {searchQuery && (
+            <div style={{ padding: "12px 16px", color: colors.textMuted, fontSize: "13px" }}>
+              Searching for &ldquo;<strong style={{ color: colors.textPrimary }}>{searchQuery}</strong>&rdquo;&hellip;
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Sidebar ───────────────────────────────────────────────── */}
       <aside className="hidden md:flex flex-col flex-shrink-0" style={{ width: "240px", background: colors.sidebar, borderRight: `1px solid ${colors.sidebarBorder}` }}>
         <div style={{ padding: "20px 20px 16px" }}>
           <Link href="/dashboard">
@@ -170,7 +298,15 @@ export default function DashboardLayout({ children }: Props) {
                 >
                   <Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />
                   <span style={{ fontSize: "13.5px", fontWeight: isActive ? 600 : 400, letterSpacing: "-0.01em" }}>{label}</span>
-                  {isActive && <div style={{ marginLeft: "auto", width: "4px", height: "4px", borderRadius: "50%", background: colors.sidebarItemActive }} />}
+                  {label === "Notifications" && unreadCount > 0 && (
+                    <span className="ml-auto flex items-center justify-center rounded-full text-white text-[9px] font-bold"
+                      style={{ width: "18px", height: "18px", background: colors.red, flexShrink: 0 }}>
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                  {label !== "Notifications" && isActive && (
+                    <div style={{ marginLeft: "auto", width: "4px", height: "4px", borderRadius: "50%", background: colors.sidebarItemActive }} />
+                  )}
                 </div>
               </Link>
             );
@@ -189,8 +325,9 @@ export default function DashboardLayout({ children }: Props) {
         <div style={{ padding: "8px 12px 16px", borderTop: `1px solid ${colors.sidebarBorder}` }}>
           <button
             onClick={handleLogout}
+            aria-label="Log out"
             className="flex items-center gap-3 w-full rounded-lg"
-            style={{ padding: "10px 12px", background: "transparent", border: "none", color: colors.sidebarTextMuted, cursor: "pointer", fontSize: "13px" }}
+            style={{ padding: "10px 12px", background: "transparent", border: "none", color: colors.sidebarTextMuted, cursor: "pointer", fontSize: "13px", transition: "color 0.15s, background 0.15s" }}
             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = colors.red; (e.currentTarget as HTMLElement).style.background = colors.redBg; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = colors.sidebarTextMuted; (e.currentTarget as HTMLElement).style.background = "transparent"; }}
           >
@@ -200,8 +337,10 @@ export default function DashboardLayout({ children }: Props) {
         </div>
       </aside>
 
+      {/* ── Main Content Area ─────────────────────────────────────── */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
 
+        {/* Ticker Bar — desktop only */}
         <div className="hidden md:block overflow-hidden flex-shrink-0" style={{ background: colors.topBar, borderBottom: `1px solid ${colors.topBarBorder}` }}>
           <div className="flex items-center" style={{ padding: "0 8px", height: "32px" }}>
             <div className="flex items-center gap-6 overflow-hidden" style={{ animation: "tickerScroll 30s linear infinite" }}>
@@ -220,105 +359,284 @@ export default function DashboardLayout({ children }: Props) {
           <style>{`@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}`}</style>
         </div>
 
-        <div className="flex items-center justify-between flex-shrink-0" style={{
-          padding: "12px 20px",
-          borderBottom: `1px solid ${colors.topBarBorder}`,
-          background: colors.topBar,
-        }}>
+        {/* ── Top Bar ───────────────────────────────────────────────── */}
+        <div
+          className="flex items-center justify-between flex-shrink-0"
+          style={{ padding: "8px 16px", borderBottom: `1px solid ${colors.topBarBorder}`, background: colors.topBar, minHeight: "60px" }}
+        >
+          {/* Desktop Search */}
           <div className="hidden md:flex items-center flex-1 max-w-md">
-            <div className="flex items-center gap-2 w-full rounded-lg" style={{
-              padding: "7px 14px",
-              background: colors.inputBg,
-              border: `1px solid ${colors.inputBorder}`,
-            }}>
-              <Search size={14} color={colors.textMuted} />
-              <input placeholder="Search markets, assets..." style={{
-                flex: 1, border: "none", outline: "none", fontSize: "12.5px",
-                color: colors.inputText, background: "transparent",
-              }} />
+            <div
+              className="gt-search-wrap flex items-center gap-2 w-full rounded-lg cursor-text"
+              style={{
+                padding: "9px 14px",
+                background: colors.inputBg,
+                border: `1px solid ${colors.inputBorder}`,
+                borderRadius: "8px",
+              }}
+              onClick={() => desktopSearchRef.current?.focus()}
+            >
+              <Search size={14} color={colors.textMuted} style={{ flexShrink: 0 }} />
+              <input
+                ref={desktopSearchRef}
+                placeholder="Search markets, assets..."
+                aria-label="Search markets and assets"
+                style={{
+                  flex: 1, border: "none", outline: "none", fontSize: "12.5px",
+                  color: colors.inputText, background: "transparent",
+                }}
+              />
             </div>
           </div>
 
-          <div className="flex items-center gap-3 ml-auto">
+          {/* Right-side actions */}
+          <div className="flex items-center gap-2 ml-auto">
+
+            {/* Mobile search button */}
             <button
-              onClick={toggleTheme}
-              className="flex items-center justify-center"
-              title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
-              style={{
-                width: "34px", height: "34px", borderRadius: "8px",
-                border: `1px solid ${colors.inputBorder}`,
-                background: colors.inputBg,
-                color: colors.textSub,
-                cursor: "pointer",
-              }}
+              className="gt-icon-btn md:hidden"
+              aria-label="Open search"
+              onClick={() => setSearchOpen(true)}
+              style={iconBtnStyle()}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = colors.cardHover; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = colors.inputBg; }}
             >
-              {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
+              <Search size={16} />
             </button>
 
-            <div className="relative">
-              <Link href="/notifications">
-                <button className="flex items-center justify-center" style={{
-                  width: "34px", height: "34px", borderRadius: "8px",
-                  border: `1px solid ${colors.inputBorder}`,
-                  background: colors.inputBg,
-                  color: colors.bellColor,
-                  cursor: "pointer",
-                }}>
-                  <Bell size={15} />
-                </button>
-              </Link>
+            {/* Theme toggle */}
+            <button
+              className="gt-icon-btn"
+              aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+              onClick={toggleTheme}
+              style={iconBtnStyle()}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = colors.cardHover; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = colors.inputBg; }}
+            >
+              {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
+            </button>
+
+            {/* Notification Bell + Dropdown */}
+            <div className="relative" ref={notifRef}>
+              <button
+                className="gt-icon-btn"
+                aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
+                aria-haspopup="true"
+                aria-expanded={notifOpen}
+                onClick={() => setNotifOpen((o) => !o)}
+                style={iconBtnStyle(notifOpen ? colors.cardHover : undefined)}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = colors.cardHover; }}
+                onMouseLeave={(e) => { if (!notifOpen) (e.currentTarget as HTMLButtonElement).style.background = colors.inputBg; }}
+              >
+                <Bell size={16} color={unreadCount > 0 ? colors.accent : colors.bellColor} />
+              </button>
+
+              {/* Badge */}
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex items-center justify-center rounded-full text-white"
-                  style={{ width: "16px", height: "16px", background: colors.red, fontSize: "9px", fontWeight: 700 }}>
+                <span
+                  className={`absolute -top-1 -right-1 flex items-center justify-center rounded-full text-white pointer-events-none ${unreadCount > 0 ? "gt-badge-pulse" : ""}`}
+                  style={{ width: "18px", height: "18px", background: colors.red, fontSize: "9px", fontWeight: 700, zIndex: 1 }}
+                >
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               )}
+
+              {/* Notification Dropdown */}
+              {notifOpen && (
+                <div
+                  className="gt-dropdown absolute right-0 top-[calc(100%+8px)] z-[100] rounded-xl shadow-2xl overflow-hidden"
+                  style={{
+                    width: "340px",
+                    background: colors.card,
+                    border: `1px solid ${colors.cardBorder}`,
+                    boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+                  }}
+                  role="dialog"
+                  aria-label="Notifications panel"
+                >
+                  <div className="flex items-center justify-between" style={{ padding: "14px 16px", borderBottom: `1px solid ${colors.divider}` }}>
+                    <span style={{ fontSize: "13px", fontWeight: 700, color: colors.textPrimary }}>Notifications</span>
+                    <div className="flex items-center gap-2">
+                      {unreadCount > 0 && (
+                        <button
+                          onClick={markAllRead}
+                          style={{
+                            fontSize: "11px", color: colors.accent, background: "none", border: "none",
+                            cursor: "pointer", display: "flex", alignItems: "center", gap: "4px",
+                            padding: "4px 8px", borderRadius: "4px", transition: "background 0.15s",
+                          }}
+                          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = `${colors.accent}18`; }}
+                          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "none"; }}
+                        >
+                          <CheckCheck size={12} />
+                          Mark all read
+                        </button>
+                      )}
+                      <Link href="/notifications">
+                        <button
+                          onClick={() => setNotifOpen(false)}
+                          style={{
+                            fontSize: "11px", color: colors.textMuted, background: "none", border: "none",
+                            cursor: "pointer", padding: "4px 8px", borderRadius: "4px", transition: "background 0.15s, color 0.15s",
+                          }}
+                          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = colors.textPrimary; (e.currentTarget as HTMLButtonElement).style.background = colors.inputBg; }}
+                          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = colors.textMuted; (e.currentTarget as HTMLButtonElement).style.background = "none"; }}
+                        >
+                          View all
+                        </button>
+                      </Link>
+                    </div>
+                  </div>
+
+                  <div style={{ maxHeight: "320px", overflowY: "auto" }}>
+                    {notifLoading ? (
+                      <div style={{ padding: "32px 16px", textAlign: "center", color: colors.textMuted, fontSize: "13px" }}>
+                        Loading…
+                      </div>
+                    ) : recentNotifs.length === 0 ? (
+                      <div style={{ padding: "32px 16px", textAlign: "center" }}>
+                        <Bell size={28} color={colors.textMuted} style={{ margin: "0 auto 8px" }} />
+                        <p style={{ fontSize: "13px", color: colors.textMuted, margin: 0 }}>You're all caught up</p>
+                      </div>
+                    ) : (
+                      recentNotifs.map((n) => (
+                        <div
+                          key={n.id}
+                          style={{
+                            padding: "12px 16px",
+                            borderBottom: `1px solid ${colors.divider}`,
+                            background: n.read ? "transparent" : `${colors.accent}08`,
+                            transition: "background 0.15s",
+                            cursor: "pointer",
+                          }}
+                          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = colors.tableRowHoverBg; }}
+                          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = n.read ? "transparent" : `${colors.accent}08`; }}
+                          onClick={() => {
+                            if (n.actionUrl) { navigate(n.actionUrl); setNotifOpen(false); }
+                          }}
+                        >
+                          <div className="flex items-start gap-3">
+                            <div
+                              style={{
+                                width: "8px", height: "8px", borderRadius: "50%",
+                                background: n.read ? colors.textMuted : colors.accent,
+                                flexShrink: 0, marginTop: "4px",
+                              }}
+                            />
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div className="flex items-start justify-between gap-2">
+                                <p style={{ fontSize: "12.5px", fontWeight: n.read ? 400 : 600, color: colors.textPrimary, margin: 0, lineHeight: 1.4 }}>{n.title}</p>
+                                {n.actionUrl && <ExternalLink size={11} color={colors.textMuted} style={{ flexShrink: 0, marginTop: "2px" }} />}
+                              </div>
+                              <p style={{ fontSize: "11.5px", color: colors.textSub, margin: "2px 0 0", lineHeight: 1.4, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as const }}>{n.message}</p>
+                              <p style={{ fontSize: "10px", color: colors.textMuted, margin: "4px 0 0" }}>
+                                {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(n.createdAt))}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  {recentNotifs.length > 0 && (
+                    <div style={{ padding: "10px 16px", borderTop: `1px solid ${colors.divider}` }}>
+                      <Link href="/notifications">
+                        <button
+                          onClick={() => setNotifOpen(false)}
+                          style={{
+                            width: "100%", padding: "8px", borderRadius: "6px",
+                            background: `${colors.accent}14`, color: colors.accent,
+                            border: "none", cursor: "pointer", fontSize: "12px", fontWeight: 600,
+                            transition: "background 0.15s",
+                          }}
+                          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = `${colors.accent}28`; }}
+                          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = `${colors.accent}14`; }}
+                        >
+                          View all notifications
+                        </button>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
-            <div className="hidden sm:flex items-center gap-2 rounded-lg cursor-pointer" style={{
-              padding: "5px 12px 5px 5px",
-              border: `1px solid ${colors.inputBorder}`,
-              background: colors.inputBg,
-            }}>
+            {/* User Profile Chip */}
+            <div
+              className="hidden sm:flex items-center gap-2 rounded-lg cursor-pointer"
+              style={{
+                padding: "5px 12px 5px 5px",
+                border: `1px solid ${colors.inputBorder}`,
+                background: colors.inputBg,
+                height: "44px",
+                transition: "background 0.15s, border-color 0.15s",
+              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = colors.cardHover; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = colors.inputBg; }}
+            >
               {profilePicUrl ? (
                 <img src={profilePicUrl} alt={displayName}
-                  style={{ width: "28px", height: "28px", borderRadius: "6px", objectFit: "cover" }} />
+                  style={{ width: "32px", height: "32px", borderRadius: "6px", objectFit: "cover" }} />
               ) : (
                 <div className="flex items-center justify-center rounded-md font-bold text-white"
-                  style={{ width: "28px", height: "28px", background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", fontSize: "12px", borderRadius: "6px" }}>
+                  style={{ width: "32px", height: "32px", background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", fontSize: "12px", borderRadius: "6px", flexShrink: 0 }}>
                   {displayName[0]?.toUpperCase() ?? "U"}
                 </div>
               )}
               <div className="hidden lg:block">
-                <p style={{ fontSize: "12px", fontWeight: 600, color: colors.textPrimary, lineHeight: 1.2 }}>{displayName}</p>
-                <p style={{ fontSize: "10px", color: colors.textMuted, lineHeight: 1.2 }}>Pro Account</p>
+                <p style={{ fontSize: "12px", fontWeight: 600, color: colors.textPrimary, lineHeight: 1.2, margin: 0 }}>{displayName}</p>
+                <p style={{ fontSize: "10px", color: colors.textMuted, lineHeight: 1.2, margin: 0 }}>Pro Account</p>
               </div>
               <ChevronDown size={12} color={colors.textMuted} className="hidden lg:block" />
             </div>
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto" style={{
-          scrollbarWidth: "thin",
-          scrollbarColor: `${colors.scrollbar} transparent`,
-        }}>
+        {/* ── Page Content ──────────────────────────────────────────── */}
+        <div
+          className="flex-1 overflow-y-auto"
+          style={{ scrollbarWidth: "thin", scrollbarColor: `${colors.scrollbar} transparent` }}
+        >
           {children}
         </div>
 
-
-        <nav className="flex md:hidden flex-shrink-0" style={{
-          borderTop: `1px solid ${colors.topBarBorder}`,
-          background: colors.sidebar,
-          paddingBottom: "env(safe-area-inset-bottom, 0px)",
-        }}>
+        {/* ── Mobile Bottom Nav ─────────────────────────────────────── */}
+        <nav
+          className="flex md:hidden flex-shrink-0"
+          style={{
+            borderTop: `1px solid ${colors.topBarBorder}`,
+            background: colors.sidebar,
+            paddingBottom: "env(safe-area-inset-bottom, 0px)",
+          }}
+        >
           {NAV.map(({ icon: Icon, label, href }) => {
             const isActive = location === href || (href !== "/dashboard" && location.startsWith(href));
             return (
-              <Link key={label} href={href}
-                className="flex flex-1 flex-col items-center gap-0.5 py-2"
-                style={{ color: isActive ? colors.accent : colors.textMuted, textDecoration: "none", background: "none" }}>
+              <Link
+                key={label}
+                href={href}
+                className="flex flex-1 flex-col items-center gap-0.5 py-2 relative"
+                style={{
+                  color: isActive ? colors.accent : colors.textMuted,
+                  textDecoration: "none",
+                  background: "none",
+                  minHeight: "52px",
+                  transition: "color 0.15s",
+                }}
+                aria-label={label}
+                aria-current={isActive ? "page" : undefined}
+              >
                 <Icon size={18} strokeWidth={isActive ? 2.2 : 1.5} />
                 <span style={{ fontSize: "9px", fontWeight: isActive ? 700 : 400 }}>{label}</span>
+                {label === "Notifications" && unreadCount > 0 && (
+                  <span
+                    className="absolute top-1 right-[calc(50%-16px)] flex items-center justify-center rounded-full text-white"
+                    style={{ width: "14px", height: "14px", background: colors.red, fontSize: "8px", fontWeight: 700 }}
+                  >
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
               </Link>
             );
           })}

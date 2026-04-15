@@ -8,6 +8,34 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Critical: prevent white flash before JS loads -->
+    <style>
+      html, body, #root {
+        background: #060b14;
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+      }
+      html {
+        color-scheme: dark;
+      }
+    </style>
+
+    <!-- Theme init: apply saved theme before first paint -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('guardianTheme');
+          var bg = t === 'light' ? '#f1f5f9' : '#060b14';
+          var scheme = t === 'light' ? 'light' : 'dark';
+          document.documentElement.style.background = bg;
+          document.documentElement.style.colorScheme = scheme;
+          document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+        } catch (e) {}
+      })();
+    </script>
+
     <style>
       *, *::before, *::after {
         -webkit-user-select: none !important;
