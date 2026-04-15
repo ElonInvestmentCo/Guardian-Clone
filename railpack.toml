@@ -1,0 +1,7 @@
+[phases.build]
+cmds = [
+  "bash scripts/build-production.sh"
+]
+
+[deploy]
+cmd = "node artifacts/api-server/dist/index.cjs"

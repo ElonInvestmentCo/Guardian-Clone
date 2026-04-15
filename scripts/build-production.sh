@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "==> Building shared libraries..."
-pnpm run typecheck:libs
-
 echo "==> Building guardian-trading frontend..."
 PORT=3000 BASE_PATH=/ pnpm --filter @workspace/guardian-trading run build
 

@@ -1,0 +1,298 @@
+2026-04-15T06:43:58.297794005Z [inf]  Starting Container
+2026-04-15T06:43:59.014027062Z [inf]  
+2026-04-15T06:43:59.014040127Z [inf]  > @workspace/api-server@0.0.0 start /app/artifacts/api-server
+2026-04-15T06:43:59.014041411Z [err]    '/app/artifacts/admin-kyc/dist/public'
+2026-04-15T06:43:59.014049512Z [inf]  > node dist/index.cjs
+2026-04-15T06:43:59.014051412Z [err]  ]
+2026-04-15T06:43:59.014058682Z [err]  [Static] guardian-trading: no dist found! Checked: [
+2026-04-15T06:43:59.014061826Z [err]      at xe (/app/artifacts/api-server/dist/index.cjs:59:30269)
+2026-04-15T06:43:59.014071998Z [err]    '/app/artifacts/api-server/artifacts/guardian-trading/dist/public',
+2026-04-15T06:43:59.014073384Z [err]      at vE (/app/artifacts/api-server/dist/index.cjs:59:30600)
+2026-04-15T06:43:59.014076668Z [inf]  
+2026-04-15T06:43:59.014079653Z [err]    '/app/artifacts/guardian-trading/dist/public'
+2026-04-15T06:43:59.014087436Z [err]  ]
+2026-04-15T06:43:59.014089690Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-15T06:43:59.014094091Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-15T06:43:59.014094120Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-15T06:43:59.014100654Z [err]      at QZ (/app/artifacts/api-server/dist/index.cjs:542:3424)
+2026-04-15T06:43:59.014101095Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-15T06:43:59.014101327Z [err]  [Static] admin-kyc: no dist found! Checked: [
+2026-04-15T06:43:59.014104431Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-15T06:43:59.014112045Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3645)
+2026-04-15T06:43:59.014112436Z [err]    '/app/artifacts/api-server/artifacts/admin-kyc/dist/public',
+2026-04-15T06:43:59.014112478Z [inf]  /app/artifacts/api-server:
+2026-04-15T06:43:59.014112667Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-15T06:43:59.014121990Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-15T06:43:59.014124694Z [inf]   ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/api-server@0.0.0 start: `node dist/index.cjs`
+2026-04-15T06:43:59.014130810Z [inf]  Exit status 1
+2026-04-15T06:43:59.014131931Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-15T06:43:59.389089147Z [inf]  
+2026-04-15T06:43:59.389096412Z [inf]  > @workspace/api-server@0.0.0 start /app/artifacts/api-server
+2026-04-15T06:43:59.389102890Z [inf]  > node dist/index.cjs
+2026-04-15T06:43:59.389107805Z [inf]  
+2026-04-15T06:43:59.663949777Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-15T06:43:59.723392582Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-15T06:43:59.723396993Z [err]  [Static] admin-kyc: no dist found! Checked: [
+2026-04-15T06:43:59.723404872Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-15T06:43:59.723409361Z [err]    '/app/artifacts/api-server/artifacts/admin-kyc/dist/public',
+2026-04-15T06:43:59.723417019Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-15T06:43:59.723418256Z [err]    '/app/artifacts/admin-kyc/dist/public'
+2026-04-15T06:43:59.723425749Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-15T06:43:59.723428990Z [err]  ]
+2026-04-15T06:43:59.723434740Z [err]  [Static] guardian-trading: no dist found! Checked: [
+2026-04-15T06:43:59.723440974Z [err]    '/app/artifacts/api-server/artifacts/guardian-trading/dist/public',
+2026-04-15T06:43:59.723448076Z [err]    '/app/artifacts/guardian-trading/dist/public'
+2026-04-15T06:43:59.723453642Z [err]  ]
+2026-04-15T06:43:59.723459474Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-15T06:43:59.723464978Z [err]      at xe (/app/artifacts/api-server/dist/index.cjs:59:30269)
+2026-04-15T06:43:59.723471103Z [err]      at vE (/app/artifacts/api-server/dist/index.cjs:59:30600)
+2026-04-15T06:43:59.723474901Z [err]      at QZ (/app/artifacts/api-server/dist/index.cjs:542:3424)
+2026-04-15T06:43:59.723478629Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3645)
+2026-04-15T06:43:59.723482563Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-15T06:43:59.723486974Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-15T06:43:59.997438287Z [inf]  /app/artifacts/api-server:
+2026-04-15T06:43:59.997442693Z [inf]   ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/api-server@0.0.0 start: `node dist/index.cjs`
+2026-04-15T06:43:59.997448638Z [inf]  Exit status 1
+2026-04-15T06:44:01.014475604Z [inf]  
+2026-04-15T06:44:01.014481947Z [inf]  > @workspace/api-server@0.0.0 start /app/artifacts/api-server
+2026-04-15T06:44:01.014487988Z [inf]  > node dist/index.cjs
+2026-04-15T06:44:01.014493995Z [inf]  
+2026-04-15T06:44:01.014499029Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-15T06:44:01.069364595Z [err]  [Static] admin-kyc: no dist found! Checked: [
+2026-04-15T06:44:01.069372623Z [err]    '/app/artifacts/api-server/artifacts/admin-kyc/dist/public',
+2026-04-15T06:44:01.069377672Z [err]    '/app/artifacts/admin-kyc/dist/public'
+2026-04-15T06:44:01.069382775Z [err]  ]
+2026-04-15T06:44:01.069387925Z [err]  [Static] guardian-trading: no dist found! Checked: [
+2026-04-15T06:44:01.069393009Z [err]    '/app/artifacts/api-server/artifacts/guardian-trading/dist/public',
+2026-04-15T06:44:01.069397717Z [err]    '/app/artifacts/guardian-trading/dist/public'
+2026-04-15T06:44:01.069402482Z [err]  ]
+2026-04-15T06:44:01.069407112Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-15T06:44:01.069412224Z [err]      at xe (/app/artifacts/api-server/dist/index.cjs:59:30269)
+2026-04-15T06:44:01.069416813Z [err]      at vE (/app/artifacts/api-server/dist/index.cjs:59:30600)
+2026-04-15T06:44:01.069425797Z [err]      at QZ (/app/artifacts/api-server/dist/index.cjs:542:3424)
+2026-04-15T06:44:01.069430193Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3645)
+2026-04-15T06:44:01.069434544Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-15T06:44:01.069439059Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-15T06:44:01.069444545Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-15T06:44:01.069449754Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-15T06:44:01.069454619Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-15T06:44:01.069459477Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-15T06:44:01.110521386Z [inf]  /app/artifacts/api-server:
+2026-04-15T06:44:01.110531184Z [inf]   ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/api-server@0.0.0 start: `node dist/index.cjs`
+2026-04-15T06:44:01.110538069Z [inf]  Exit status 1
+2026-04-15T06:44:02.074029904Z [inf]  
+2026-04-15T06:44:02.074035715Z [inf]  > @workspace/api-server@0.0.0 start /app/artifacts/api-server
+2026-04-15T06:44:02.074041211Z [inf]  > node dist/index.cjs
+2026-04-15T06:44:02.074046436Z [inf]  
+2026-04-15T06:44:02.252643147Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-15T06:44:02.395592996Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-15T06:44:02.395603496Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-15T06:44:02.395603965Z [err]  [Static] admin-kyc: no dist found! Checked: [
+2026-04-15T06:44:02.395610321Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-15T06:44:02.395614105Z [err]    '/app/artifacts/api-server/artifacts/admin-kyc/dist/public',
+2026-04-15T06:44:02.395617492Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-15T06:44:02.395623526Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-15T06:44:02.395624007Z [err]    '/app/artifacts/admin-kyc/dist/public'
+2026-04-15T06:44:02.395630402Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-15T06:44:02.395633040Z [err]  ]
+2026-04-15T06:44:02.395638376Z [err]  [Static] guardian-trading: no dist found! Checked: [
+2026-04-15T06:44:02.395643792Z [err]    '/app/artifacts/api-server/artifacts/guardian-trading/dist/public',
+2026-04-15T06:44:02.395651300Z [err]    '/app/artifacts/guardian-trading/dist/public'
+2026-04-15T06:44:02.395656879Z [err]  ]
+2026-04-15T06:44:02.395662471Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-15T06:44:02.395668002Z [err]      at xe (/app/artifacts/api-server/dist/index.cjs:59:30269)
+2026-04-15T06:44:02.395674707Z [err]      at vE (/app/artifacts/api-server/dist/index.cjs:59:30600)
+2026-04-15T06:44:02.395680518Z [err]      at QZ (/app/artifacts/api-server/dist/index.cjs:542:3424)
+2026-04-15T06:44:02.395697512Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3645)
+2026-04-15T06:44:02.420519532Z [inf]  /app/artifacts/api-server:
+2026-04-15T06:44:02.420525703Z [inf]   ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/api-server@0.0.0 start: `node dist/index.cjs`
+2026-04-15T06:44:02.420532003Z [inf]  Exit status 1
+2026-04-15T06:44:03.499071302Z [inf]  
+2026-04-15T06:44:03.499076344Z [inf]  > @workspace/api-server@0.0.0 start /app/artifacts/api-server
+2026-04-15T06:44:03.499080404Z [inf]  > node dist/index.cjs
+2026-04-15T06:44:03.499084452Z [inf]  
+2026-04-15T06:44:03.718718824Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-15T06:44:04.073366499Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-15T06:44:04.073377025Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-15T06:44:04.073382140Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-15T06:44:04.073386887Z [inf]  /app/artifacts/api-server:
+2026-04-15T06:44:04.073391876Z [inf]   ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/api-server@0.0.0 start: `node dist/index.cjs`
+2026-04-15T06:44:04.073417612Z [err]  [Static] admin-kyc: no dist found! Checked: [
+2026-04-15T06:44:04.073421729Z [err]    '/app/artifacts/api-server/artifacts/admin-kyc/dist/public',
+2026-04-15T06:44:04.073426367Z [err]    '/app/artifacts/admin-kyc/dist/public'
+2026-04-15T06:44:04.073430860Z [err]  ]
+2026-04-15T06:44:04.073434662Z [err]  [Static] guardian-trading: no dist found! Checked: [
+2026-04-15T06:44:04.073438427Z [err]    '/app/artifacts/api-server/artifacts/guardian-trading/dist/public',
+2026-04-15T06:44:04.073442514Z [err]    '/app/artifacts/guardian-trading/dist/public'
+2026-04-15T06:44:04.073447890Z [err]  ]
+2026-04-15T06:44:04.073451989Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-15T06:44:04.073456735Z [err]      at xe (/app/artifacts/api-server/dist/index.cjs:59:30269)
+2026-04-15T06:44:04.073460246Z [err]      at vE (/app/artifacts/api-server/dist/index.cjs:59:30600)
+2026-04-15T06:44:04.073464033Z [err]      at QZ (/app/artifacts/api-server/dist/index.cjs:542:3424)
+2026-04-15T06:44:04.073468142Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3645)
+2026-04-15T06:44:04.073471974Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-15T06:44:04.073476126Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-15T06:44:04.073480191Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-15T06:44:04.073981647Z [inf]  Exit status 1
+2026-04-15T06:44:05.174979150Z [inf]  
+2026-04-15T06:44:05.174993988Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-15T06:44:05.175001513Z [err]  [Static] admin-kyc: no dist found! Checked: [
+2026-04-15T06:44:05.175007359Z [err]    '/app/artifacts/api-server/artifacts/admin-kyc/dist/public',
+2026-04-15T06:44:05.175014055Z [err]    '/app/artifacts/admin-kyc/dist/public'
+2026-04-15T06:44:05.175019110Z [err]  ]
+2026-04-15T06:44:05.175024987Z [err]  [Static] guardian-trading: no dist found! Checked: [
+2026-04-15T06:44:05.175029551Z [err]    '/app/artifacts/api-server/artifacts/guardian-trading/dist/public',
+2026-04-15T06:44:05.175034166Z [err]    '/app/artifacts/guardian-trading/dist/public'
+2026-04-15T06:44:05.175039051Z [err]  ]
+2026-04-15T06:44:05.175044016Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-15T06:44:05.175049502Z [err]      at xe (/app/artifacts/api-server/dist/index.cjs:59:30269)
+2026-04-15T06:44:05.175053885Z [err]      at vE (/app/artifacts/api-server/dist/index.cjs:59:30600)
+2026-04-15T06:44:05.175059310Z [err]      at QZ (/app/artifacts/api-server/dist/index.cjs:542:3424)
+2026-04-15T06:44:05.175063500Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3645)
+2026-04-15T06:44:05.175068228Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-15T06:44:05.175072881Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-15T06:44:05.175077967Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-15T06:44:05.175081963Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-15T06:44:05.175093713Z [inf]  
+2026-04-15T06:44:05.175098475Z [inf]  > @workspace/api-server@0.0.0 start /app/artifacts/api-server
+2026-04-15T06:44:05.175104386Z [inf]  > node dist/index.cjs
+2026-04-15T06:44:05.175225430Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-15T06:44:05.175229970Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-15T06:44:05.176633484Z [inf]  /app/artifacts/api-server:
+2026-04-15T06:44:05.176641893Z [inf]   ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/api-server@0.0.0 start: `node dist/index.cjs`
+2026-04-15T06:44:05.176648955Z [inf]  Exit status 1
+2026-04-15T06:44:06.188490309Z [inf]  
+2026-04-15T06:44:06.188496030Z [inf]  > @workspace/api-server@0.0.0 start /app/artifacts/api-server
+2026-04-15T06:44:06.188501513Z [inf]  > node dist/index.cjs
+2026-04-15T06:44:06.188507317Z [inf]  
+2026-04-15T06:44:06.267779017Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-15T06:44:06.411953939Z [err]    '/app/artifacts/admin-kyc/dist/public'
+2026-04-15T06:44:06.411965543Z [err]  ]
+2026-04-15T06:44:06.411974335Z [err]  [Static] guardian-trading: no dist found! Checked: [
+2026-04-15T06:44:06.411977567Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-15T06:44:06.411982787Z [err]    '/app/artifacts/api-server/artifacts/guardian-trading/dist/public',
+2026-04-15T06:44:06.411983833Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-15T06:44:06.411990461Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-15T06:44:06.411990514Z [err]    '/app/artifacts/guardian-trading/dist/public'
+2026-04-15T06:44:06.411998154Z [err]  ]
+2026-04-15T06:44:06.412008570Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-15T06:44:06.412016480Z [err]      at xe (/app/artifacts/api-server/dist/index.cjs:59:30269)
+2026-04-15T06:44:06.412024240Z [err]      at vE (/app/artifacts/api-server/dist/index.cjs:59:30600)
+2026-04-15T06:44:06.412028221Z [err]  [Static] admin-kyc: no dist found! Checked: [
+2026-04-15T06:44:06.412035058Z [err]      at QZ (/app/artifacts/api-server/dist/index.cjs:542:3424)
+2026-04-15T06:44:06.412035260Z [err]    '/app/artifacts/api-server/artifacts/admin-kyc/dist/public',
+2026-04-15T06:44:06.412043318Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3645)
+2026-04-15T06:44:06.412051207Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-15T06:44:06.412058227Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-15T06:44:06.412065004Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-15T06:44:06.434425622Z [inf]  /app/artifacts/api-server:
+2026-04-15T06:44:06.434435413Z [inf]   ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/api-server@0.0.0 start: `node dist/index.cjs`
+2026-04-15T06:44:06.434440876Z [inf]  Exit status 1
+2026-04-15T06:44:07.386932476Z [inf]  
+2026-04-15T06:44:07.386939519Z [inf]  > @workspace/api-server@0.0.0 start /app/artifacts/api-server
+2026-04-15T06:44:07.386945947Z [inf]  > node dist/index.cjs
+2026-04-15T06:44:07.386952947Z [inf]  
+2026-04-15T06:44:07.560736029Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-15T06:44:07.732510908Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-15T06:44:07.732523805Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-15T06:44:07.732529153Z [err]  [Static] admin-kyc: no dist found! Checked: [
+2026-04-15T06:44:07.732533914Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-15T06:44:07.732540490Z [err]    '/app/artifacts/api-server/artifacts/admin-kyc/dist/public',
+2026-04-15T06:44:07.732542926Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-15T06:44:07.732548497Z [err]    '/app/artifacts/admin-kyc/dist/public'
+2026-04-15T06:44:07.732554364Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-15T06:44:07.732556079Z [err]  ]
+2026-04-15T06:44:07.732562003Z [err]  [Static] guardian-trading: no dist found! Checked: [
+2026-04-15T06:44:07.732566739Z [err]    '/app/artifacts/api-server/artifacts/guardian-trading/dist/public',
+2026-04-15T06:44:07.732571367Z [err]    '/app/artifacts/guardian-trading/dist/public'
+2026-04-15T06:44:07.732576262Z [err]  ]
+2026-04-15T06:44:07.732580601Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-15T06:44:07.732585033Z [err]      at xe (/app/artifacts/api-server/dist/index.cjs:59:30269)
+2026-04-15T06:44:07.732591531Z [err]      at vE (/app/artifacts/api-server/dist/index.cjs:59:30600)
+2026-04-15T06:44:07.732597082Z [err]      at QZ (/app/artifacts/api-server/dist/index.cjs:542:3424)
+2026-04-15T06:44:07.732601921Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3645)
+2026-04-15T06:44:07.732607436Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-15T06:44:07.775096014Z [inf]  /app/artifacts/api-server:
+2026-04-15T06:44:07.775106744Z [inf]   ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/api-server@0.0.0 start: `node dist/index.cjs`
+2026-04-15T06:44:07.775113184Z [inf]  Exit status 1
+2026-04-15T06:44:08.762530336Z [inf]  
+2026-04-15T06:44:08.762536817Z [inf]  > @workspace/api-server@0.0.0 start /app/artifacts/api-server
+2026-04-15T06:44:08.762542618Z [inf]  > node dist/index.cjs
+2026-04-15T06:44:08.762548137Z [inf]  
+2026-04-15T06:44:08.905309168Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-15T06:44:09.328880035Z [err]  [Static] guardian-trading: no dist found! Checked: [
+2026-04-15T06:44:09.328890136Z [err]    '/app/artifacts/api-server/artifacts/guardian-trading/dist/public',
+2026-04-15T06:44:09.328897311Z [err]    '/app/artifacts/guardian-trading/dist/public'
+2026-04-15T06:44:09.328902759Z [err]  ]
+2026-04-15T06:44:09.328907678Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-15T06:44:09.328913529Z [err]      at xe (/app/artifacts/api-server/dist/index.cjs:59:30269)
+2026-04-15T06:44:09.328921281Z [err]      at vE (/app/artifacts/api-server/dist/index.cjs:59:30600)
+2026-04-15T06:44:09.328926739Z [err]      at QZ (/app/artifacts/api-server/dist/index.cjs:542:3424)
+2026-04-15T06:44:09.328931741Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3645)
+2026-04-15T06:44:09.328936549Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-15T06:44:09.328941238Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-15T06:44:09.328945949Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-15T06:44:09.328950618Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-15T06:44:09.328955497Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-15T06:44:09.328960437Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-15T06:44:09.328964870Z [inf]  /app/artifacts/api-server:
+2026-04-15T06:44:09.328970990Z [inf]   ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/api-server@0.0.0 start: `node dist/index.cjs`
+2026-04-15T06:44:09.328971053Z [err]  [Static] admin-kyc: no dist found! Checked: [
+2026-04-15T06:44:09.328976012Z [err]    '/app/artifacts/api-server/artifacts/admin-kyc/dist/public',
+2026-04-15T06:44:09.328980328Z [err]    '/app/artifacts/admin-kyc/dist/public'
+2026-04-15T06:44:09.328985407Z [err]  ]
+2026-04-15T06:44:09.329625487Z [inf]  Exit status 1
+2026-04-15T06:44:10.381597521Z [inf]  
+2026-04-15T06:44:10.381611181Z [inf]  > @workspace/api-server@0.0.0 start /app/artifacts/api-server
+2026-04-15T06:44:10.381619605Z [inf]  > node dist/index.cjs
+2026-04-15T06:44:10.381626445Z [inf]  
+2026-04-15T06:44:10.381632498Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-15T06:44:10.394556812Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-15T06:44:10.394565691Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-15T06:44:10.394572483Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-15T06:44:10.394578168Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-15T06:44:10.394582778Z [err]  [Static] admin-kyc: no dist found! Checked: [
+2026-04-15T06:44:10.394584289Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-15T06:44:10.394591557Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-15T06:44:10.394591917Z [err]    '/app/artifacts/api-server/artifacts/admin-kyc/dist/public',
+2026-04-15T06:44:10.394598536Z [err]    '/app/artifacts/admin-kyc/dist/public'
+2026-04-15T06:44:10.394602396Z [err]  ]
+2026-04-15T06:44:10.394606421Z [err]  [Static] guardian-trading: no dist found! Checked: [
+2026-04-15T06:44:10.394610575Z [err]    '/app/artifacts/api-server/artifacts/guardian-trading/dist/public',
+2026-04-15T06:44:10.394614483Z [err]    '/app/artifacts/guardian-trading/dist/public'
+2026-04-15T06:44:10.394618779Z [err]  ]
+2026-04-15T06:44:10.394622310Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-15T06:44:10.394626215Z [err]      at xe (/app/artifacts/api-server/dist/index.cjs:59:30269)
+2026-04-15T06:44:10.394630508Z [err]      at vE (/app/artifacts/api-server/dist/index.cjs:59:30600)
+2026-04-15T06:44:10.394634950Z [err]      at QZ (/app/artifacts/api-server/dist/index.cjs:542:3424)
+2026-04-15T06:44:10.394639596Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3645)
+2026-04-15T06:44:10.419104018Z [inf]  /app/artifacts/api-server:
+2026-04-15T06:44:10.419110774Z [inf]   ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/api-server@0.0.0 start: `node dist/index.cjs`
+2026-04-15T06:44:10.419125528Z [inf]  Exit status 1
+2026-04-15T06:44:11.525041500Z [inf]  
+2026-04-15T06:44:11.525046405Z [inf]  > @workspace/api-server@0.0.0 start /app/artifacts/api-server
+2026-04-15T06:44:11.525051150Z [inf]  > node dist/index.cjs
+2026-04-15T06:44:11.525057042Z [inf]  
+2026-04-15T06:44:11.567309277Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-15T06:44:11.724823726Z [err]      at Object..js (node:internal/modules/cjs/loader:1838:10)
+2026-04-15T06:44:11.724833012Z [err]  [Static] admin-kyc: no dist found! Checked: [
+2026-04-15T06:44:11.724833044Z [err]      at Module.load (node:internal/modules/cjs/loader:1441:32)
+2026-04-15T06:44:11.724839844Z [err]      at Function._load (node:internal/modules/cjs/loader:1263:12)
+2026-04-15T06:44:11.724843976Z [err]    '/app/artifacts/api-server/artifacts/admin-kyc/dist/public',
+2026-04-15T06:44:11.724845489Z [err]      at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-04-15T06:44:11.724851865Z [err]      at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+2026-04-15T06:44:11.724853460Z [err]    '/app/artifacts/admin-kyc/dist/public'
+2026-04-15T06:44:11.724860655Z [err]  ]
+2026-04-15T06:44:11.724866157Z [err]  [Static] guardian-trading: no dist found! Checked: [
+2026-04-15T06:44:11.724871643Z [err]    '/app/artifacts/api-server/artifacts/guardian-trading/dist/public',
+2026-04-15T06:44:11.724877202Z [err]    '/app/artifacts/guardian-trading/dist/public'
+2026-04-15T06:44:11.724883100Z [err]  ]
+2026-04-15T06:44:11.724888197Z [err]  [Startup] Failed to start server: Error: [DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)
+2026-04-15T06:44:11.724901025Z [err]      at xe (/app/artifacts/api-server/dist/index.cjs:59:30269)
+2026-04-15T06:44:11.724907700Z [err]      at vE (/app/artifacts/api-server/dist/index.cjs:59:30600)
+2026-04-15T06:44:11.724913520Z [err]      at QZ (/app/artifacts/api-server/dist/index.cjs:542:3424)
+2026-04-15T06:44:11.724919217Z [err]      at Object.<anonymous> (/app/artifacts/api-server/dist/index.cjs:542:3645)
+2026-04-15T06:44:11.724924185Z [err]      at Module._compile (node:internal/modules/cjs/loader:1705:14)
+2026-04-15T06:44:11.766716709Z [inf]  /app/artifacts/api-server:
+2026-04-15T06:44:11.766724935Z [inf]   ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/api-server@0.0.0 start: `node dist/index.cjs`
+2026-04-15T06:44:11.766729542Z [inf]  Exit status 1
