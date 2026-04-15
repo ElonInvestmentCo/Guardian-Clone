@@ -1,18 +1,13 @@
-kind = "web"
-previewPath = "/"
-title = "Guardian Trading"
+kind = "api"
+previewPath = "/guardian-trading-internal"
+title = "Guardian Trading (Dev Server)"
 version = "1.0.0"
 id = "artifacts/guardian-trading"
-router = "path"
-
-[[integratedSkills]]
-name = "react-vite"
-version = "1.0.0"
 
 [[services]]
 localPort = 3000
 name = "web"
-paths = ["/"]
+paths = ["/guardian-trading-internal"]
 
 [services.env]
 PORT = "3000"
@@ -20,13 +15,4 @@ BASE_PATH = "/"
 API_PORT = "3001"
 
 [services.development]
-run = "echo '[LOCKED] Dev server managed exclusively by the named Guardian Trading workflow. This artifact-triggered instance is disabled.' && sleep infinity"
-
-[services.production]
-build = ["pnpm", "--filter", "@workspace/guardian-trading", "run", "build"]
-publicDir = "artifacts/guardian-trading/dist/public"
-serve = "static"
-
-[[services.production.rewrites]]
-from = "/*"
-to = "/index.html"
+run = "echo '[DISABLED] Use the named Guardian Trading workflow instead.' && sleep infinity"

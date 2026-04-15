@@ -1,11 +1,5 @@
 modules = ["nodejs-20", "web", "bash"]
 
-  [[artifacts]]
-  id = "artifacts/api-server"
-
-  [[artifacts]]
-  id = "artifacts/mockup-sandbox"
-
   [deployment]
   router = "application"
   deploymentTarget = "vm"
@@ -93,4 +87,8 @@ INTERNAL_API_KEY = "73AHAx-Y769PLG8IxI8ZESu31YyCPPSTXQT3TNbu6QE"
 USER_DATA_KEY = "wAGr2NpKH7OVcB0AOvO71jWyjeTCprmpy6tz4RFPBpmhZ7B2qu2-uw"
 
 [userenv.development]
+
+[[ports]]
+localPort = 3000
+externalPort = 3000
   

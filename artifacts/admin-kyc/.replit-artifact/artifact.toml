@@ -1,18 +1,13 @@
-kind = "web"
-previewPath = "/admin-kyc/"
-title = "Guardian Admin — KYC Dashboard"
+kind = "api"
+previewPath = "/admin-kyc-internal"
+title = "Guardian Admin — KYC (Dev Server)"
 version = "1.0.0"
 id = "artifacts/admin-kyc"
-router = "path"
-
-[[integratedSkills]]
-name = "react-vite"
-version = "1.0.0"
 
 [[services]]
 localPort = 8080
 name = "web"
-paths = ["/admin-kyc/"]
+paths = ["/admin-kyc-internal"]
 
 [services.env]
 PORT = "8080"
@@ -20,13 +15,4 @@ BASE_PATH = "/admin-kyc/"
 API_PORT = "3001"
 
 [services.development]
-run = "echo '[LOCKED] Dev server managed exclusively by the named Admin KYC workflow (console). This artifact-triggered instance is disabled.' && sleep infinity"
-
-[services.production]
-build = ["pnpm", "--filter", "@workspace/admin-kyc", "run", "build"]
-publicDir = "artifacts/admin-kyc/dist/public"
-serve = "static"
-
-[[services.production.rewrites]]
-from = "/*"
-to = "/index.html"
+run = "echo '[DISABLED] Use the named Admin KYC workflow instead.' && sleep infinity"
