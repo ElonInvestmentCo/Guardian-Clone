@@ -71,7 +71,7 @@ function getJwtSecret(): string {
   if (process.env.NODE_ENV === "production") {
     throw new Error(
       "[Admin] ADMIN_JWT_SECRET environment variable is required in production. " +
-      "Add it as a Replit secret before starting the server."
+      "Add it as an environment variable in your deployment platform."
     );
   }
 
