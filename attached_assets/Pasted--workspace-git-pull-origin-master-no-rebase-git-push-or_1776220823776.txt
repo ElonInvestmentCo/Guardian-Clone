@@ -1,0 +1,43 @@
+~/workspace$ git pull origin master --no-rebase && git push origin master
+From https://github.com/ElonInvestmentCo/Guardian-Clone
+ * branch            master     -> FETCH_HEAD
+Already up to date.
+Enumerating objects: 88, done.
+Counting objects: 100% (51/51), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (16/16), done.
+Writing objects: 100% (16/16), 7.78 KiB | 7.78 MiB/s, done.
+Total 16 (delta 14), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (14/14), completed with 12 local objects.
+remote: error: GH013: Repository rule violations found for refs/heads/master.
+remote: 
+remote: - GITHUB PUSH PROTECTION
+remote:   —————————————————————————————————————————
+remote:     Resolve the following violations before pushing again
+remote: 
+remote:     - Push cannot contain secrets
+remote: 
+remote:     
+remote:      (?) Learn how to resolve a blocked push
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push
+remote:     
+remote:      (?) This repository does not have Secret Scanning enabled, but is eligible. Enable Secret Scanning to view and manage detected secrets.
+remote:      Visit the repository settings page, https://github.com/ElonInvestmentCo/Guardian-Clone/settings/security_analysis
+remote:     
+remote:     
+remote:       —— xAI API Key ———————————————————————————————————————
+remote:        locations:
+remote:          - commit: 091367627b2baa20ecb95bc78481a9be27ef6523
+remote:            path: .replit:89
+remote:          - commit: 9e56ca95e3c0eccc0ce4744ef763a77313129711
+remote:            path: .replit:89
+remote:     
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+remote:        https://github.com/ElonInvestmentCo/Guardian-Clone/security/secret-scanning/unblock-secret/3CNJt0XrIT9o5i5FX8lC49yFzwe
+remote:     
+remote: 
+remote: 
+To https://github.com/ElonInvestmentCo/Guardian-Clone
+ ! [remote rejected] master -> master (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/ElonInvestmentCo/Guardian-Clone'
+~/workspace$
