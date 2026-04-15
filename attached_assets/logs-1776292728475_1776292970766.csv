@@ -1,0 +1,21 @@
+id,created_at,api_key_id,user_agent,method,endpoint,response_status
+04ee4784-aac7-4ffd-b388-8a31839abeb7,2026-04-14 22:55:25.909529+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,curl/8.14.1,GET,/domains,401
+49749736-c967-46ef-b465-6774ca1749de,2026-04-14 22:55:42.12181+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,,GET,/domains,401
+e356384d-e85f-4013-bdaa-aede8944242f,2026-04-14 23:01:07.550221+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,resend-node:6.9.1,POST,/emails,200
+604c5d8a-1bf9-4fb6-8592-094bea72dd82,2026-04-14 23:01:13.580642+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,resend-node:6.9.1,POST,/emails,200
+c839f84d-f353-4545-b583-e9741fdd904b,2026-04-14 23:01:18.079432+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,resend-node:6.9.1,POST,/emails,200
+baf34788-7709-4d66-b5cd-c4ce03e1369f,2026-04-14 23:50:17.385387+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,curl/8.14.1,POST,/emails,200
+3ef7f35f-963b-4b3b-88f7-93b947ab0cb0,2026-04-15 02:55:43.909895+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,python-requests/2.33.0,GET,/emails/0,401
+2eb4ec15-820c-49c7-9e47-c60abf306714,2026-04-15 02:55:43.983114+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,python-requests/2.33.0,GET,/emails/0,401
+c010d916-bc0f-4192-9aee-be49b7735e16,2026-04-15 02:55:43.992711+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,python-requests/2.33.0,GET,/emails/0,401
+4dece301-5ffd-45a9-b48c-312a894e6f3e,2026-04-15 02:55:44.046472+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,python-requests/2.33.0,GET,/emails/0,401
+7c1aafcc-2d86-47ed-8d72-85baf2c96a68,2026-04-15 02:57:04.075756+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,python-requests/2.33.0,GET,/emails/0,401
+842cdd5e-51df-4cc1-90fe-f3218627fb5c,2026-04-15 02:59:01.356907+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,python-requests/2.33.0,GET,/emails/0,401
+eeeb6c4c-3af8-4d69-8878-4dbbf43299e5,2026-04-15 03:01:00.418536+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,python-requests/2.33.0,GET,/emails/0,401
+859b9925-c82b-4ca6-9601-cbc9320e71b1,2026-04-15 03:11:14.875834+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,python-requests/2.33.0,GET,/emails/0,401
+050a59e9-ea12-44f3-9706-452c1acee1f2,2026-04-15 03:31:00.712557+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,python-requests/2.33.0,GET,/emails/0,401
+643a0549-f1cd-453f-81b3-acc8d3e9d206,2026-04-15 03:51:14.574833+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,python-requests/2.33.0,GET,/emails/0,401
+549fe1fa-960b-43f5-a48e-7ac849271c8c,2026-04-15 04:51:04.341494+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,python-requests/2.33.0,GET,/emails/0,401
+3b1a1c7f-cc4e-45ed-b938-7e225b64f998,2026-04-15 06:51:21.921393+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,python-requests/2.33.0,GET,/emails/0,401
+7b3e1cab-3445-4e28-bd03-6e829a2ba665,2026-04-15 10:51:11.322035+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,python-requests/2.33.0,GET,/emails/0,401
+5507b366-8ed9-4b52-89d6-6127f04b086d,2026-04-15 18:51:14.976606+00,081337ed-d1e9-4e49-9ffa-fab83e27fdff,python-requests/2.33.0,GET,/emails/0,401
