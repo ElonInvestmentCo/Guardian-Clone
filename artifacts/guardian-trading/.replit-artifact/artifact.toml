@@ -20,7 +20,7 @@ BASE_PATH = "/"
 API_PORT = "3001"
 
 [services.development]
-run = "pnpm --filter @workspace/guardian-trading run dev"
+run = "echo '[LOCKED] Dev server managed exclusively by the named Guardian Trading workflow. This artifact-triggered instance is disabled.' && sleep infinity"
 
 [services.production]
 build = ["pnpm", "--filter", "@workspace/guardian-trading", "run", "build"]

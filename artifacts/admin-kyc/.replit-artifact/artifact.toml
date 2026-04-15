@@ -20,7 +20,7 @@ BASE_PATH = "/admin-kyc/"
 API_PORT = "3001"
 
 [services.development]
-run = "pnpm --filter @workspace/admin-kyc run dev"
+run = "echo '[LOCKED] Dev server managed exclusively by the named Admin KYC workflow (console). This artifact-triggered instance is disabled.' && sleep infinity"
 
 [services.production]
 build = ["pnpm", "--filter", "@workspace/admin-kyc", "run", "build"]
