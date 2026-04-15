@@ -1,4 +1,4 @@
-import { Router, type IRouter } from "express";
+import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
 import healthRouter from "./health.js";
 import authRouter from "./auth.js";
 import signupRouter from "./signup.js";
@@ -15,10 +15,24 @@ import marketRouter from "./market.js";
 import profileRouter from "./profile.js";
 import twoFARouter from "./twofa.js";
 import contactRouter from "./contact.js";
+import { isDatabaseAvailable } from "../lib/db.js";
 
 const router: IRouter = Router();
 
 router.use(healthRouter);
+
+function requireDatabase(_req: Request, res: Response, next: NextFunction): void {
+  if (!isDatabaseAvailable()) {
+    res.status(503).json({
+      error: "Service temporarily unavailable",
+      detail: "Database connection is not configured or failed to initialize.",
+    });
+    return;
+  }
+  next();
+}
+
+router.use(requireDatabase);
 router.use(authRouter);
 router.use(signupRouter);
 router.use(uploadRouter);

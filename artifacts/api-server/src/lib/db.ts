@@ -3,6 +3,11 @@ import pg from "pg";
 const { Pool } = pg;
 
 let pool: pg.Pool | null = null;
+let dbAvailable = false;
+
+export function isDatabaseAvailable(): boolean {
+  return dbAvailable;
+}
 
 export function getPool(): pg.Pool {
   if (!pool) {
@@ -13,9 +18,15 @@ export function getPool(): pg.Pool {
     if (!connectionString) {
       throw new Error("[DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)");
     }
+    const isRemote =
+      connectionString.includes("railway") ||
+      connectionString.includes("render") ||
+      connectionString.includes("supabase") ||
+      connectionString.includes("neon") ||
+      process.env.NODE_ENV === "production";
     pool = new Pool({
       connectionString,
-      ssl: false,
+      ssl: isRemote ? { rejectUnauthorized: false } : false,
       max: 10,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,
@@ -83,6 +94,7 @@ export async function initDatabase(): Promise<void> {
     CREATE INDEX IF NOT EXISTS idx_user_docs_email ON user_documents (email);
   `);
 
+  dbAvailable = true;
   console.log("[DB] Database tables initialized successfully");
 }
 
@@ -90,6 +102,7 @@ export async function shutdownDatabase(): Promise<void> {
   if (pool) {
     await pool.end();
     pool = null;
+    dbAvailable = false;
     console.log("[DB] Connection pool closed");
   }
 }

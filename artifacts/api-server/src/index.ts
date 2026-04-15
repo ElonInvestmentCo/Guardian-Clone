@@ -18,11 +18,21 @@ if (Number.isNaN(port) || port <= 0) {
 }
 
 async function start() {
-  await initDatabase();
-  console.log("[Startup] Database initialized");
+  try {
+    await initDatabase();
+    console.log("[Startup] Database initialized");
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`[Startup] Database unavailable — API routes requiring a database will return 503. Reason: ${msg}`);
+  }
 
-  await setupAdminCredentials();
-  console.log("[Startup] Admin credentials configured");
+  try {
+    await setupAdminCredentials();
+    console.log("[Startup] Admin credentials configured");
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.warn(`[Startup] Could not configure admin credentials: ${msg}`);
+  }
 
   const server = http.createServer(app);
   createWebSocketServer(server);
@@ -32,6 +42,6 @@ async function start() {
 }
 
 start().catch((err) => {
-  console.error("[Startup] Failed to start server:", err);
+  console.error("[Startup] Fatal error:", err);
   process.exit(1);
 });
