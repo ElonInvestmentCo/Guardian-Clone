@@ -57,6 +57,7 @@ export default defineConfig({
         target: `http://localhost:${apiPort}`,
         changeOrigin: true,
         secure: false,
+        ws: true,
       },
       "/admin-kyc": {
         target: `http://localhost:${adminPort}`,
