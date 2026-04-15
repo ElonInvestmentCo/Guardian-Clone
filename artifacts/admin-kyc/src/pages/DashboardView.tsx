@@ -1,8 +1,22 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState, useCallback } from "react";
 import { getKycQueue, getAllUsers, getGlobalAudit } from "@/lib/api";
 import { formatDate, actionTypeLabel, actionTypeColor } from "@/lib/utils";
+import { useAdminRealtime, type RegistrationEvent } from "@/hooks/useAdminRealtime";
+
+interface LiveToast {
+  id: number;
+  email: string;
+  formattedAt: string;
+}
+
+let toastCounter = 0;
 
 export default function DashboardView() {
+  const queryClient = useQueryClient();
+  const [liveToasts, setLiveToasts] = useState<LiveToast[]>([]);
+  const [newRegistrations, setNewRegistrations] = useState(0);
+
   const { data: queueData, isLoading: queueLoading } = useQuery({
     queryKey: ["dashboard-queue"],
     queryFn: () => getKycQueue({ limit: 100 }),
@@ -21,11 +35,25 @@ export default function DashboardView() {
     staleTime: 30_000,
   });
 
+  const handleNewRegistration = useCallback((event: RegistrationEvent) => {
+    setNewRegistrations(c => c + 1);
+
+    const id = ++toastCounter;
+    const toast: LiveToast = { id, email: event.email, formattedAt: event.formattedAt };
+    setLiveToasts(prev => [toast, ...prev].slice(0, 5));
+    setTimeout(() => setLiveToasts(prev => prev.filter(t => t.id !== id)), 8000);
+
+    queryClient.invalidateQueries({ queryKey: ["dashboard-users"] });
+    queryClient.invalidateQueries({ queryKey: ["dashboard-queue"] });
+  }, [queryClient]);
+
+  const { status } = useAdminRealtime({ onNewRegistration: handleNewRegistration });
+
   const users = usersData?.users ?? [];
   const queueUsers = queueData?.users ?? [];
   const recentActivity = auditData?.entries ?? [];
 
-  const totalUsers = usersData?.total ?? 0;
+  const totalUsers = (usersData?.total ?? 0) + newRegistrations;
   const pendingCount = queueUsers.filter(u => u.status === "pending").length;
   const approvedCount = users.filter(u => u.status === "approved" || u.status === "verified").length;
   const riskCount = queueUsers.filter(u => u.riskScore >= 50).length;
@@ -44,6 +72,52 @@ export default function DashboardView() {
 
   return (
     <div>
+      <div style={{ position: "fixed", top: 72, right: 20, zIndex: 9999, display: "flex", flexDirection: "column", gap: 8, pointerEvents: "none" }}>
+        {liveToasts.map(toast => (
+          <div key={toast.id} style={{
+            background: "#0D6EFD", color: "#fff", borderRadius: 8,
+            padding: "10px 16px", fontSize: 13, fontWeight: 500,
+            boxShadow: "0 4px 16px rgba(13,110,253,0.35)",
+            display: "flex", alignItems: "center", gap: 10,
+            animation: "slideIn 0.3s ease",
+            maxWidth: 320,
+          }}>
+            <span style={{ fontSize: 18 }}>👤</span>
+            <div>
+              <div style={{ fontWeight: 700, marginBottom: 2 }}>New Registration</div>
+              <div style={{ opacity: 0.9, fontSize: 12 }}>{toast.email}</div>
+              <div style={{ opacity: 0.7, fontSize: 11 }}>{toast.formattedAt}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+        <span style={{
+          display: "inline-flex", alignItems: "center", gap: 6,
+          background: status === "connected" ? "#F0FDF4" : "#F9FAFB",
+          color: status === "connected" ? "#16A34A" : "#9CA3AF",
+          border: `1px solid ${status === "connected" ? "#BBF7D0" : "#E5E7EB"}`,
+          borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 600,
+        }}>
+          <span style={{
+            width: 7, height: 7, borderRadius: "50%",
+            background: status === "connected" ? "#16A34A" : "#D1D5DB",
+            animation: status === "connected" ? "pulse 2s infinite" : "none",
+          }} />
+          {status === "connected" ? "Live sync active" : status === "connecting" ? "Connecting..." : "Disconnected — retrying"}
+        </span>
+        {newRegistrations > 0 && (
+          <span style={{
+            background: "#EFF6FF", color: "#2563EB",
+            border: "1px solid #BFDBFE",
+            borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 600,
+          }}>
+            +{newRegistrations} new registration{newRegistrations !== 1 ? "s" : ""} since page load
+          </span>
+        )}
+      </div>
+
       <div className="row g-3 mb-4">
         <div className="col-12 col-sm-6 col-xl-3">
           <div className="stat-card" style={{ background: "linear-gradient(135deg, #0D6EFD, #0B5ED7)" }}>
@@ -196,9 +270,7 @@ export default function DashboardView() {
                           <span style={{ fontWeight: 600, fontSize: 13 }}>{item.email}</span>
                         </td>
                         <td>
-                          <span style={{
-                            display: "inline-flex", alignItems: "center", gap: 6,
-                          }}>
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
                             <span style={{ width: 7, height: 7, borderRadius: "50%", background: colors.dot, flexShrink: 0 }} />
                             <span style={{ fontWeight: 600, color: colors.text, fontSize: 12 }}>
                               {actionTypeLabel(entry.actionType ?? "")}
@@ -218,6 +290,17 @@ export default function DashboardView() {
           )}
         </div>
       </div>
+
+      <style>{`
+        @keyframes slideIn {
+          from { transform: translateX(100%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+      `}</style>
     </div>
   );
 }
