@@ -631,13 +631,59 @@ router.get("/admin/registration-log", securityHeaders, requireAdmin, adminRateLi
       registration_type: string | null;
       ip_address: string | null;
       registered_at: string;
+      profile_data: Record<string, unknown> | null;
     }>(`
-      SELECT id, email, display_name, referrer, product, registration_type, ip_address, registered_at
-      FROM registration_log
-      ORDER BY registered_at DESC
+      SELECT
+        rl.id,
+        rl.email,
+        rl.display_name,
+        rl.referrer,
+        rl.product,
+        rl.registration_type,
+        rl.ip_address,
+        rl.registered_at,
+        up.data AS profile_data
+      FROM registration_log rl
+      LEFT JOIN user_profiles up ON rl.email = up.email
+      ORDER BY rl.registered_at DESC
       LIMIT 5000
     `);
-    res.json({ entries: result.rows });
+
+    const entries = result.rows.map(row => {
+      const raw = row.profile_data ?? {};
+      const profile = decryptSensitiveProfile(raw);
+      return {
+        id: row.id,
+        email: row.email,
+        display_name: row.display_name,
+        referrer: row.referrer,
+        product: row.product,
+        registration_type: row.registration_type,
+        ip_address: row.ip_address,
+        registered_at: row.registered_at,
+        kyc_status: (profile["status"] as string) ?? "pending",
+        kyc_completed_steps: ((profile["_completedStepNumbers"] as number[]) ?? []).length,
+        profile: {
+          status: profile["status"],
+          createdAt: profile["createdAt"],
+          updatedAt: profile["updatedAt"],
+          completedStepNumbers: profile["_completedStepNumbers"] ?? [],
+          documents: profile["documents"] ?? {},
+          general: profile["general"] ?? {},
+          personal: profile["personal"] ?? {},
+          professional: profile["professional"] ?? {},
+          idInformation: profile["idInformation"] ?? {},
+          income: profile["income"] ?? {},
+          riskTolerance: profile["riskTolerance"] ?? {},
+          financialSituation: profile["financialSituation"] ?? {},
+          investmentExperience: profile["investmentExperience"] ?? {},
+          fundingDetails: profile["fundingDetails"] ?? {},
+          disclosures: profile["disclosures"] ?? {},
+        },
+      };
+    });
+
+    res.json({ entries });
   } catch (err) {
     console.error("[Admin] registration-log error:", err);
     res.status(500).json({ error: "Failed to retrieve registration log" });

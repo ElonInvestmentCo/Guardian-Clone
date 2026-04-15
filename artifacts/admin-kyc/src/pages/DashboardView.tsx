@@ -2,20 +2,27 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useCallback } from "react";
 import { getKycQueue, getAllUsers, getGlobalAudit } from "@/lib/api";
 import { formatDate, actionTypeLabel, actionTypeColor } from "@/lib/utils";
-import { useAdminRealtime, type RegistrationEvent } from "@/hooks/useAdminRealtime";
-
-interface LiveToast {
-  id: number;
-  email: string;
-  formattedAt: string;
-}
+import {
+  useAdminRealtime,
+  type RegistrationEvent,
+  type ApplicationCompleteEvent,
+} from "@/hooks/useAdminRealtime";
+import AdminToast, { type ToastItem } from "@/components/AdminToast";
 
 let toastCounter = 0;
 
 export default function DashboardView() {
   const queryClient = useQueryClient();
-  const [liveToasts, setLiveToasts] = useState<LiveToast[]>([]);
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [newRegistrations, setNewRegistrations] = useState(0);
+
+  const pushToast = useCallback((t: Omit<ToastItem, "id">) => {
+    setToasts(prev => [...prev, { ...t, id: ++toastCounter }].slice(-5));
+  }, []);
+
+  const dismissToast = useCallback((id: number) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  }, []);
 
   const { data: queueData, isLoading: queueLoading } = useQuery({
     queryKey: ["dashboard-queue"],
@@ -37,17 +44,30 @@ export default function DashboardView() {
 
   const handleNewRegistration = useCallback((event: RegistrationEvent) => {
     setNewRegistrations(c => c + 1);
-
-    const id = ++toastCounter;
-    const toast: LiveToast = { id, email: event.email, formattedAt: event.formattedAt };
-    setLiveToasts(prev => [toast, ...prev].slice(0, 5));
-    setTimeout(() => setLiveToasts(prev => prev.filter(t => t.id !== id)), 8000);
-
     queryClient.invalidateQueries({ queryKey: ["dashboard-users"] });
     queryClient.invalidateQueries({ queryKey: ["dashboard-queue"] });
-  }, [queryClient]);
+    pushToast({
+      type: "registration",
+      title: "New User Registered",
+      message: event.email,
+      subtext: event.formattedAt,
+    });
+  }, [queryClient, pushToast]);
 
-  const { status } = useAdminRealtime({ onNewRegistration: handleNewRegistration });
+  const handleApplicationComplete = useCallback((event: ApplicationCompleteEvent) => {
+    queryClient.invalidateQueries({ queryKey: ["dashboard-queue"] });
+    pushToast({
+      type: "kyc_complete",
+      title: "KYC Application Complete",
+      message: event.email,
+      subtext: `All ${event.totalSteps} steps submitted · ${event.formattedAt}`,
+    });
+  }, [queryClient, pushToast]);
+
+  const { status } = useAdminRealtime({
+    onNewRegistration: handleNewRegistration,
+    onApplicationComplete: handleApplicationComplete,
+  });
 
   const users = usersData?.users ?? [];
   const queueUsers = queueData?.users ?? [];
@@ -72,25 +92,7 @@ export default function DashboardView() {
 
   return (
     <div>
-      <div style={{ position: "fixed", top: 72, right: 20, zIndex: 9999, display: "flex", flexDirection: "column", gap: 8, pointerEvents: "none" }}>
-        {liveToasts.map(toast => (
-          <div key={toast.id} style={{
-            background: "#0D6EFD", color: "#fff", borderRadius: 8,
-            padding: "10px 16px", fontSize: 13, fontWeight: 500,
-            boxShadow: "0 4px 16px rgba(13,110,253,0.35)",
-            display: "flex", alignItems: "center", gap: 10,
-            animation: "slideIn 0.3s ease",
-            maxWidth: 320,
-          }}>
-            <span style={{ fontSize: 18 }}>👤</span>
-            <div>
-              <div style={{ fontWeight: 700, marginBottom: 2 }}>New Registration</div>
-              <div style={{ opacity: 0.9, fontSize: 12 }}>{toast.email}</div>
-              <div style={{ opacity: 0.7, fontSize: 11 }}>{toast.formattedAt}</div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <AdminToast toasts={toasts} onDismiss={dismissToast} />
 
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
         <span style={{
@@ -113,7 +115,7 @@ export default function DashboardView() {
             border: "1px solid #BFDBFE",
             borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 600,
           }}>
-            +{newRegistrations} new registration{newRegistrations !== 1 ? "s" : ""} since page load
+            +{newRegistrations} new since page load
           </span>
         )}
       </div>
@@ -292,10 +294,6 @@ export default function DashboardView() {
       </div>
 
       <style>{`
-        @keyframes slideIn {
-          from { transform: translateX(100%); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
-        }
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.4; }

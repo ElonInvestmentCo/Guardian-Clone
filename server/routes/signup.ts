@@ -7,6 +7,7 @@ import {
 } from "../lib/userDataStore.js";
 import { userDataLimit, sensitiveEndpointLimit } from "../middleware/security.js";
 import { validate, SignupSaveStepSchema, SignupCompleteStepSchema, SignupGetProgressSchema } from "../lib/validation.js";
+import { broadcastAdmin } from "../lib/realtime.js";
 
 const signupRouter = Router();
 
@@ -363,6 +364,37 @@ signupRouter.post("/signup/complete-step", sensitiveEndpointLimit, validate(Sign
       completedSteps,
     });
     console.log(`[Signup] Step completed: step=${stepKey} (#${stepNumber}) email=${email} total=${completedSteps.length}/12`);
+
+    broadcastAdmin({
+      type: "new_event",
+      data: {
+        eventType: "STEP_COMPLETED",
+        email,
+        stepKey,
+        stepNumber,
+        totalCompleted: completedSteps.length,
+        totalSteps: ONBOARDING_STEPS.length,
+      },
+    });
+
+    if (completedSteps.length >= ONBOARDING_STEPS.length) {
+      const now = new Date();
+      const formattedAt = new Intl.DateTimeFormat("en-US", {
+        month: "long", day: "numeric", year: "numeric",
+        hour: "2-digit", minute: "2-digit",
+      }).format(now);
+
+      broadcastAdmin({
+        type: "APPLICATION_COMPLETE",
+        data: {
+          email,
+          completedAt: now.toISOString(),
+          formattedAt,
+          totalSteps: ONBOARDING_STEPS.length,
+        },
+      });
+      console.log(`[Signup] APPLICATION_COMPLETE broadcast sent for ${email}`);
+    }
 
     res.json({ success: true, completedSteps });
   } catch (err) {

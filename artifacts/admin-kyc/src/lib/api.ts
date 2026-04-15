@@ -307,6 +307,24 @@ export async function fetchDocumentBlobUrl(email: string, role: string): Promise
   return URL.createObjectURL(blob);
 }
 
+export interface KycProfileData {
+  status?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  completedStepNumbers?: number[];
+  documents?: Record<string, string>;
+  general?: Record<string, unknown>;
+  personal?: Record<string, unknown>;
+  professional?: Record<string, unknown>;
+  idInformation?: Record<string, unknown>;
+  income?: Record<string, unknown>;
+  riskTolerance?: Record<string, unknown>;
+  financialSituation?: Record<string, unknown>;
+  investmentExperience?: Record<string, unknown>;
+  fundingDetails?: Record<string, unknown>;
+  disclosures?: Record<string, unknown>;
+}
+
 export interface RegistrationLogEntry {
   id: number;
   email: string;
@@ -316,6 +334,9 @@ export interface RegistrationLogEntry {
   registration_type: string | null;
   ip_address: string | null;
   registered_at: string;
+  kyc_status?: string;
+  kyc_completed_steps?: number;
+  profile?: KycProfileData;
 }
 
 export interface RegistrationLogResponse {
