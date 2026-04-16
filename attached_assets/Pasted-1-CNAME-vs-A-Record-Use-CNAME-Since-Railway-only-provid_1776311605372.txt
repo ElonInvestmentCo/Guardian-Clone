@@ -1,0 +1,87 @@
+1. CNAME vs A Record
+Use CNAME. Since Railway only provides guardian-trading-api-production.up.railway.app (not an IP), you must use CNAME. This is the correct approach.
+
+2 & 3. EXACT DNS Records to ADD in OpenSRS
+Type	Host	Value	TTL
+CNAME	www	guardian-trading-api-production.up.railway.app	3600
+That's it. One record.
+
+4. Records to DELETE
+Delete ALL of these from OpenSRS (if they exist):
+
+Any A records on @ (root domain)
+Any A records on www
+Any CNAME records on @ (root domain) — OpenSRS doesn't allow this anyway
+Any old/test records pointing to other services
+Any records with typos or incorrect values
+Important: Root Domain Limitation
+⚠️ You cannot use CNAME on the root domain (guardiiantrading.com without www). OpenSRS doesn't support it.
+
+This means:
+
+www.guardiiantrading.com → Will work with the CNAME above
+guardiiantrading.com (root) → Will NOT work with CNAME
+Solution for root domain: If you need the root domain to work, you have two options:
+
+Option A: Use URL redirect (Recommended)
+
+Keep CNAME on www
+Add a redirect rule in OpenSRS or your app to forward guardiiantrading.com → www.guardiiantrading.com
+Option B: Use ANAME/ALIAS record (if OpenSRS supports it)
+
+Some registrars offer ANAME/ALIAS records that work like CNAME on root
+Check if OpenSRS has this feature
+Step-by-Step Fix
+Step 1: Delete Old Records
+In OpenSRS control panel:
+
+Go to DNS management for guardiiantrading.com
+Delete any A records
+Delete any CNAME records
+Delete any other records related to this domain (except MX, TXT if you use email)
+Step 2: Add the CNAME Record
+Click "Add Record"
+Fill in:
+Type: CNAME
+Host: www
+Value: guardian-trading-api-production.up.railway.app
+TTL: 3600
+Save
+Step 3: Wait for Propagation
+Wait 5-15 minutes (OpenSRS can be slow)
+Do NOT refresh Railway yet
+Step 4: Verify DNS Propagation
+Run this in your terminal:
+
+nslookup www.guardiiantrading.com
+You should see:
+
+Name:   www.guardiiantrading.com
+Address: [some IP]
+Canonical Name: guardian-trading-api-production.up.railway.app
+Step 5: Force Railway to Re-verify
+Go to Railway dashboard
+Go to your service → Networking/Domains
+Click the three dots next to guardiiantrading.com
+Select "Remove" or "Delete"
+Wait 30 seconds
+Click "Add Domain"
+Enter www.guardiiantrading.com (with www)
+Railway should verify within 2-5 minutes
+Final Configuration Summary
+What to add in OpenSRS:
+
+Type:  CNAME
+Host:  www
+Value: guardian-trading-api-production.up.railway.app
+TTL:   3600
+What to delete in OpenSRS:
+
+All A records
+All CNAME records (except the one you just added)
+All old/test records
+What to do in Railway:
+
+Remove guardiiantrading.com
+Add www.guardiiantrading.com instead
+Do this now and report back. This will work.
