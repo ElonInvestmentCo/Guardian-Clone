@@ -1,94 +1,275 @@
 import { Layout } from "@/components/Layout";
-import { motion } from "framer-motion";
-import { Monitor, Layers, Crosshair, BarChart } from "lucide-react";
+
+const BG2 = "https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image-2.png";
+
+const DAS_ICON = "https://www.guardiantrading.com/wp-content/uploads/2025/07/DAS-icon-50x50.png";
+const STERLING_ICON = "https://www.guardiantrading.com/wp-content/uploads/2025/07/sterling-icon-50x50.png";
+const RIVAL_ICON = "https://www.guardiantrading.com/wp-content/uploads/2025/07/ico-rival-one-50x50-1-50x50.png";
+const BLOOMBERG_ICON = "https://www.guardiantrading.com/wp-content/uploads/2025/07/ico-bloomberg-50x50-1-50x50.png";
+
+const DAS_SCREENS = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-das-trader-screens-538x364-1-538x364.png";
+const STERLING_SCREENS = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-sterling-screens-454x402-1-454x402.png";
+const RIVAL_SCREENS = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-rival-one-screens-566x357-1-566x357.png";
+const BLOOMBERG_SCREENS = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-bloomberg-screens-425x334-1-425x334.png";
+
+const BENZINGA = "https://www.guardiantrading.com/wp-content/uploads/2026/01/reviewed-by-benzinga-2024-200x166-1-320x266.png";
+
+const OutlineBtn = ({ href, children, primary }: { href?: string; children: React.ReactNode; primary?: boolean }) => (
+  <a
+    href={href ?? "#"}
+    className="inline-block text-white text-[13px] font-semibold px-5 py-2 tracking-wide transition-colors border"
+    style={primary
+      ? { backgroundColor: "#4a7fbd", borderColor: "#4a7fbd" }
+      : { borderColor: "#4a7fbd", backgroundColor: "transparent" }
+    }
+  >
+    {children}
+  </a>
+);
+
+const Bullet = ({ children }: { children: React.ReactNode }) => (
+  <li style={{ display: "flex", alignItems: "center", gap: "10px" }} className="text-white text-[14px] leading-snug">
+    <span style={{
+      display: "inline-block",
+      width: 0,
+      height: 0,
+      borderTop: "4px solid transparent",
+      borderBottom: "4px solid transparent",
+      borderLeft: "8px solid #76d1f5",
+      flexShrink: 0,
+    }} />
+    <span>{children}</span>
+  </li>
+);
 
 export default function Platforms() {
   return (
     <Layout title="Trading Platforms | Guardian Trading">
-      <section className="pt-32 pb-20 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-primary/20 blur-[150px] -z-10 rounded-full" />
-        
-        <div className="container mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-5xl lg:text-7xl font-display font-bold mb-6"
-            >
-              Professional <span className="text-gradient-primary">DMA</span> Platforms
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-xl text-muted-foreground"
-            >
-              Experience ultra-low latency, complete customizability, and advanced order types with our suite of desktop trading software.
-            </motion.p>
-          </div>
 
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="w-full glass-panel rounded-2xl overflow-hidden shadow-2xl shadow-primary/20 max-w-5xl mx-auto border-white/10"
+      {/* ── HERO ── */}
+      <section
+        className="relative flex items-center justify-center text-center overflow-hidden"
+        style={{
+          marginTop: "78px",
+          minHeight: "260px",
+          backgroundColor: "#0d0d0d",
+          backgroundImage: `url('${BG2}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0" style={{ backgroundColor: "rgba(5,10,18,0.78)" }} />
+        <div className="relative z-10 py-14 px-4">
+          <h1 className="text-4xl lg:text-5xl font-display font-bold text-white tracking-tight">
+            Platforms
+          </h1>
+        </div>
+      </section>
+
+      {/* ── DAS TRADER PRO ── text left / screen right */}
+      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4 border-b border-white/5">
+        <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
+          {/* Text */}
+          <div className="flex-1 order-2 lg:order-1">
+            <div className="flex items-center gap-3 mb-4">
+              <img src={DAS_ICON} alt="DAS" style={{ width: "36px", height: "36px", objectFit: "contain" }} />
+              <h2 className="text-2xl font-display font-bold text-white">DAS Trader Pro</h2>
+            </div>
+            <p className="text-white text-[14px] leading-relaxed mb-5">
+              Manage your trader efficiently with one of the best institutional and live market data solutions. This professional
+              platform has features to efficiently support Level 2 Equity Trading, Routing, and both options.
+            </p>
+            <ul className="space-y-2 mb-6">
+              {[
+                "Fast Trade Execution",
+                "Multiple Stop Types",
+                "Real-Time Data Feed",
+                "Sub-Millisecond Confirmation",
+                "Multiple routes, Algos, Dark Pools, and Liquidity Providers",
+                "Advanced Level 2 Real-time stock sharing",
+                "Integration with our stock locate and borrowing technology",
+              ].map((f) => <Bullet key={f}>{f}</Bullet>)}
+            </ul>
+            <div className="flex items-center gap-3 flex-wrap">
+              <OutlineBtn>+ DAS Trader Details</OutlineBtn>
+              <OutlineBtn href="/pricing">Pricing Details</OutlineBtn>
+              <OutlineBtn primary>Start &amp; Try Free</OutlineBtn>
+            </div>
+          </div>
+          {/* Screen */}
+          <div className="flex-shrink-0 w-full lg:w-[480px] order-1 lg:order-2">
+            <img src={DAS_SCREENS} alt="DAS Trader Pro Screens" className="w-full h-auto object-contain" />
+          </div>
+        </div>
+      </section>
+
+      {/* ── STERLING TRADER PRO ── screen left / text right */}
+      <section style={{ backgroundColor: "#1c1c1c" }} className="py-16 px-4 border-b border-white/5">
+        <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
+          {/* Screen */}
+          <div className="flex-shrink-0 w-full lg:w-[440px]">
+            <img src={STERLING_SCREENS} alt="Sterling Trader Pro Screens" className="w-full h-auto object-contain" />
+          </div>
+          {/* Text */}
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-4">
+              <img src={STERLING_ICON} alt="Sterling" style={{ width: "36px", height: "36px", objectFit: "contain" }} />
+              <h2 className="text-2xl font-display font-bold text-white">Sterling Trader® Pro</h2>
+            </div>
+            <p className="text-white text-[14px] leading-relaxed mb-5">
+              Enjoy multi-asset class trading from a single platform. This platform has been designed to meet the needs of
+              active equity, option and futures traders.
+            </p>
+            <ul className="space-y-2 mb-6">
+              {[
+                "Real-Time Data",
+                "Position & Portfolio Management",
+                "Basket Trading",
+                "Advanced Charting",
+                "Stop Orders",
+                "Fully-Configurable Hot Keys",
+                "Custom Alerts",
+                "Real-Time Level 2 Market access to exchanges and ECNs",
+                "Integration with our stock locate and borrowing technology",
+              ].map((f) => <Bullet key={f}>{f}</Bullet>)}
+            </ul>
+            <div className="flex items-center gap-3 flex-wrap">
+              <OutlineBtn>+ Sterling Trader® Pro Details</OutlineBtn>
+              <OutlineBtn href="/pricing">Pricing Details</OutlineBtn>
+              <OutlineBtn primary>Start &amp; Try Free</OutlineBtn>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── RIVAL ONE ── text left / screen right */}
+      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4 border-b border-white/5">
+        <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
+          {/* Text */}
+          <div className="flex-1 order-2 lg:order-1">
+            <div className="flex items-center gap-3 mb-2">
+              <img src={RIVAL_ICON} alt="Rival One" style={{ width: "36px", height: "36px", objectFit: "contain" }} />
+              <div>
+                <h2 className="text-2xl font-display font-bold text-white leading-tight">Rival One: Multi-Asset</h2>
+                <h2 className="text-2xl font-display font-bold text-white">Trading</h2>
+              </div>
+            </div>
+            <p className="text-white text-[14px] leading-relaxed mb-5">
+              Trade Across Asset Classes &amp; Exchanges from a Single Platform. Equities, Futures &amp; Options.
+            </p>
+            <ul className="space-y-2 mb-6">
+              {[
+                "Normalized Market Data",
+                "Ultra-Low Latency Engine",
+                "Executions &amp; Order Routing",
+                "Order &amp; Position Management",
+                "Low-Latency Spreader",
+                "Exchange Simulation",
+                "Cloud-based, Fully Hosted",
+              ].map((f) => <Bullet key={f}>{f}</Bullet>)}
+            </ul>
+            <div className="flex items-center gap-3 flex-wrap">
+              <OutlineBtn>+ Rival One Platform Details</OutlineBtn>
+              <OutlineBtn href="/pricing">Pricing Details</OutlineBtn>
+              <OutlineBtn primary>Start &amp; Try Free</OutlineBtn>
+            </div>
+          </div>
+          {/* Screen */}
+          <div className="flex-shrink-0 w-full lg:w-[500px] order-1 lg:order-2">
+            <img src={RIVAL_SCREENS} alt="Rival One Screens" className="w-full h-auto object-contain" />
+          </div>
+        </div>
+      </section>
+
+      {/* ── BLOOMBERG EMSX ── screen left / text right */}
+      <section style={{ backgroundColor: "#1c1c1c" }} className="py-16 px-4 border-b border-white/5">
+        <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
+          {/* Screen */}
+          <div className="flex-shrink-0 w-full lg:w-[420px]">
+            <img src={BLOOMBERG_SCREENS} alt="Bloomberg EMSX Screens" className="w-full h-auto object-contain" />
+          </div>
+          {/* Text */}
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-4">
+              <img src={BLOOMBERG_ICON} alt="Bloomberg" style={{ width: "36px", height: "36px", objectFit: "contain" }} />
+              <h2 className="text-2xl font-display font-bold text-white">Bloomberg EMSX</h2>
+            </div>
+            <p className="text-white text-[14px] leading-relaxed mb-6">
+              The EMSX solution is a powerful multi-asset order management system that offers buy-side and buy-side trading
+              firms access to over $2,100 brokers, 175 DMA algorithms and other Regulatory tools needed to trade proficiently.
+            </p>
+            <div className="flex items-center gap-3 flex-wrap">
+              <OutlineBtn>+ Bloomberg EMSX Details</OutlineBtn>
+              <OutlineBtn href="/pricing">Pricing Details</OutlineBtn>
+              <OutlineBtn primary>Start &amp; Try Free</OutlineBtn>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CBOE SILEXX ── text left / screen right */}
+      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4 border-b border-white/5">
+        <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
+          {/* Text */}
+          <div className="flex-1 order-2 lg:order-1">
+            <div className="flex items-center gap-3 mb-4">
+              <h2 className="text-2xl font-display font-bold text-white">Silexx CBOE Silexx</h2>
+            </div>
+            <p className="text-white text-[14px] leading-relaxed mb-5">
+              Silexx is a comprehensive and technology-driven order management system (OMS) that caters to the professional marketplace.
+            </p>
+            <ul className="space-y-2 mb-6">
+              {[
+                "Streamlined Execution",
+                "Automated Algorithms",
+                "Risk Management",
+                "Strategy-Based Complex Order Tickets",
+                "Single-Click Trading",
+                "Transferable System Layouts",
+                "Scenario Analysis",
+              ].map((f) => <Bullet key={f}>{f}</Bullet>)}
+            </ul>
+            <div className="flex items-center gap-3 flex-wrap">
+              <OutlineBtn>+ Silexx OMS by CBOE Details</OutlineBtn>
+              <OutlineBtn href="/pricing">Pricing Details</OutlineBtn>
+              <OutlineBtn primary>Start &amp; Try Free</OutlineBtn>
+            </div>
+          </div>
+          {/* Placeholder screen — no image provided for Silexx */}
+          <div className="flex-shrink-0 w-full lg:w-[440px] order-1 lg:order-2 bg-[#1a1a1a] border border-white/10 flex items-center justify-center" style={{ minHeight: "260px" }}>
+            <span className="text-white/20 text-[13px]">Silexx Platform View</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TRADING PLATFORM EXPERTISE ── */}
+      <section style={{ backgroundColor: "#1c1c1c" }} className="py-20 px-4 text-center border-b border-white/5">
+        <div className="max-w-[700px] mx-auto">
+          <h2 className="text-2xl lg:text-3xl font-display font-bold text-white mb-4">
+            Trading Platform Expertise
+          </h2>
+          <p className="text-white text-[15px] mb-8">
+            Not seeing your trading platform here? Questions regarding DAS?
+          </p>
+          <a
+            href="/contact"
+            className="inline-block border text-white text-[14px] font-semibold px-8 py-3 tracking-wide transition-colors hover:bg-white/10"
+            style={{ borderColor: "#4a7fbd" }}
           >
-            <img 
-              src={`${import.meta.env.BASE_URL}images/platform-preview.png`} 
-              alt="DMA Trading Platform" 
-              className="w-full h-auto"
-            />
-          </motion.div>
+            Get Platform Support
+          </a>
         </div>
       </section>
 
-      <section className="py-24 bg-black/40 border-y border-white/5">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12">
-            
-            <div className="glass-panel p-10 rounded-2xl">
-              <div className="w-14 h-14 bg-primary/20 rounded-xl flex items-center justify-center mb-6">
-                <Layers className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">Level 2 & Level 1 Quotes</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                View complete market depth with fully integrated Level 2 quote windows. Track market maker movement, identify liquidity pools, and spot hidden support and resistance before the chart updates.
-              </p>
-            </div>
-
-            <div className="glass-panel p-10 rounded-2xl">
-              <div className="w-14 h-14 bg-primary/20 rounded-xl flex items-center justify-center mb-6">
-                <Crosshair className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">Advanced Order Routing</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Take control of your execution. Route orders directly to ARCA, NSDQ, EDGX, or use our intelligent smart-routers to hunt for hidden liquidity and price improvement.
-              </p>
-            </div>
-
-            <div className="glass-panel p-10 rounded-2xl">
-              <div className="w-14 h-14 bg-primary/20 rounded-xl flex items-center justify-center mb-6">
-                <Monitor className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">Custom Layouts & Hotkeys</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Millisecond reactions require perfect setups. Build your ultimate workspace across multiple monitors and map complex order macros to single keystrokes.
-              </p>
-            </div>
-
-            <div className="glass-panel p-10 rounded-2xl">
-              <div className="w-14 h-14 bg-primary/20 rounded-xl flex items-center justify-center mb-6">
-                <BarChart className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">Integrated Charting</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Analyze price action with dozens of built-in indicators, drawing tools, and multi-timeframe synchronization without needing a separate charting subscription.
-              </p>
-            </div>
-
-          </div>
+      {/* ── BENZINGA ── */}
+      <section style={{ backgroundColor: "#141414" }} className="py-12 px-4">
+        <div className="max-w-[1100px] mx-auto flex justify-center">
+          <a href="https://www.benzinga.com/money/guardian-trading-review" target="_blank" rel="noopener noreferrer">
+            <img src={BENZINGA} alt="Reviewed by Benzinga 2024" style={{ width: "120px", height: "auto" }} />
+          </a>
         </div>
       </section>
+
     </Layout>
   );
 }
