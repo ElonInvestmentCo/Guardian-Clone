@@ -239,7 +239,7 @@ export default function Home() {
           <div className="bg-[#181818] flex flex-col lg:flex-row">
             {/* Left: heading */}
             <div className="flex-shrink-0 lg:w-[280px] px-10 py-10 flex items-center">
-              <h2 className="text-2xl font-bold text-[#93c5fd] leading-snug">
+              <h2 className="text-2xl font-bold text-white leading-snug">
                 Control Your Costs With Customized Commissions
               </h2>
             </div>
@@ -248,28 +248,28 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row flex-1">
               {/* Options Contracts */}
               <div className="flex-1 px-10 py-10">
-                <p className="text-[#93c5fd] font-bold text-[17px] mb-1">Options Contracts</p>
-                <p className="text-[11px] text-[#93c5fd] uppercase tracking-[0.18em] mb-4">AS LOW AS:</p>
-                <p className="font-bold leading-none text-[#93c5fd] mb-4" style={{ fontSize: "clamp(52px,7vw,80px)" }}>
+                <p className="text-white font-bold text-[17px] mb-1">Options Contracts</p>
+                <p className="text-[11px] text-white uppercase tracking-[0.18em] mb-4">AS LOW AS:</p>
+                <p className="font-bold leading-none mb-4" style={{ fontSize: "clamp(52px,7vw,80px)", color: "#76d1f5" }}>
                   <sup className="text-[40%] align-super">$</sup>0.15
                 </p>
-                <p className="text-[11px] text-[#93c5fd] uppercase tracking-[0.18em]">PER CONTRACT*</p>
+                <p className="text-[11px] text-white uppercase tracking-[0.18em]">PER CONTRACT*</p>
               </div>
 
               {/* Equities Commissions */}
               <div className="flex-1 px-10 py-10">
-                <p className="text-[#93c5fd] font-bold text-[17px] mb-1">Equities Commissions</p>
-                <p className="text-[11px] text-[#93c5fd] uppercase tracking-[0.18em] mb-4">AS LOW AS:</p>
-                <p className="font-bold leading-none text-[#93c5fd] mb-4" style={{ fontSize: "clamp(52px,7vw,80px)" }}>
+                <p className="text-white font-bold text-[17px] mb-1">Equities Commissions</p>
+                <p className="text-[11px] text-white uppercase tracking-[0.18em] mb-4">AS LOW AS:</p>
+                <p className="font-bold leading-none mb-4" style={{ fontSize: "clamp(52px,7vw,80px)", color: "#76d1f5" }}>
                   <sup className="text-[40%] align-super">$</sup>0.0005
                 </p>
-                <p className="text-[11px] text-[#93c5fd] uppercase tracking-[0.18em]">PER SHARE</p>
+                <p className="text-[11px] text-white uppercase tracking-[0.18em]">PER SHARE</p>
               </div>
             </div>
           </div>
 
           {/* Disclaimer */}
-          <p className="text-[12px] text-[#aaa] mt-5 leading-relaxed">
+          <p className="text-[12px] text-white mt-5 leading-relaxed">
             *Options commission does not include standard pass-through fees such as the Options Reporting Fee, Options
             Clearing Corporation or exchange fees on index contracts, etc.*
           </p>
