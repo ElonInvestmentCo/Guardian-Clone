@@ -14,6 +14,7 @@ import bgVector from "@assets/img-background-vector-1_1773948931248.png";
 import heroPattern from "@assets/pattern_1773965291387.png";
 
 import infraIcon from "@assets/ico-our-infrastructure-132x72_1773948931248.png";
+import arrowBtn from "@assets/Guardian_Trading_-_Google_Chrome_4_15_2026_3_12_55_PM-fotor-bg_1776473551675.png";
 import benzingaReview from "@assets/benzinga-review.jpg";
 
 export default function Home() {
@@ -364,19 +365,12 @@ export default function Home() {
                 >
                   Stock Locates And Borrows
                 </span>
-                <span
-                  className="flex-shrink-0 flex items-center justify-center transition-colors group-hover:bg-[#1e6fc4]"
-                  style={{
-                    width: "34px",
-                    height: "34px",
-                    background: "#1e5fa0",
-                    marginLeft: "24px",
-                  }}
-                >
-                  <svg width="12" height="12" viewBox="0 0 11 11" fill="white">
-                    <polygon points="2,1 10,5.5 2,10" />
-                  </svg>
-                </span>
+                <img
+                  src={arrowBtn}
+                  alt=""
+                  aria-hidden="true"
+                  style={{ width: "46px", height: "46px", objectFit: "contain", marginLeft: "24px", flexShrink: 0 }}
+                />
               </Link>
             </div>
             {/* Stock borrows screenshot — bottom on mobile, left on desktop */}
