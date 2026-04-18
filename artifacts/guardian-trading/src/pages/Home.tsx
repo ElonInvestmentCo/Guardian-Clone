@@ -142,10 +142,13 @@ export default function Home() {
       <section
         className="relative overflow-hidden"
         style={{
-          paddingTop: newsBannerVisible ? "60px" : "138px",
-          paddingBottom: "80px",
           backgroundColor: "#141414",
-          minHeight: "520px",
+          minHeight: newsBannerVisible ? "calc(100vh - 122px)" : "calc(100vh - 78px)",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          paddingTop: "40px",
+          paddingBottom: "40px",
         }}
       >
         {/* Dotted bar-chart pattern — right-side section background */}
@@ -157,7 +160,7 @@ export default function Home() {
           style={{ opacity: 0.55, filter: "brightness(1.15) saturate(1.1)" }}
         />
 
-        <div className="max-w-[1200px] mx-auto px-4 relative z-10">
+        <div className="max-w-[1200px] mx-auto px-4 relative z-10 w-full">
           <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
             {/* Left column */}
             <div className="flex-1 max-w-[520px]">
@@ -186,6 +189,16 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── BENZINGA AWARD BANNER ── */}
+      <div style={{ backgroundColor: "#141414" }}>
+        <img
+          src="/images/img-benzinga-banner.jpg"
+          alt="Reviewed by Benzinga 2024 — Preferred Broker for Short Selling"
+          loading="lazy"
+          style={{ display: "block", width: "846px", maxWidth: "100%", height: "auto", margin: "0 auto" }}
+        />
+      </div>
 
       {/* ── WHY DO ACTIVE TRADERS USE GUARDIAN? ── */}
       <section id="services" className="bg-[#1c1c1c] py-20 px-4">
