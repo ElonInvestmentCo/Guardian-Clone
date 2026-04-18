@@ -1,0 +1,44 @@
+Replicate this webpage using **pixel-perfect accuracy**, ensuring every element matches the original design precisely:
+
+https://www.guardiantrading.com/about/
+
+This must be a **true visual and structural replica**, not an approximation.
+
+REQUIREMENTS:
+
+* Match all spacing, margins, and padding exactly
+* Use identical layout structure and section order
+* Precisely replicate typography (font sizes, weights, line heights)
+* Ensure all elements (images, icons, text blocks) are aligned exactly as in the original
+* Maintain exact proportions and positioning across the entire page
+
+DESIGN PRECISION:
+
+* Follow a strict pixel-perfect approach for desktop, tablet, and mobile
+* Match section heights, widths, and grid behavior exactly
+* Replicate hover states, overlays, and visual effects where present
+* No redesigning, no reinterpretation — only accurate reproduction
+
+IMAGES (use these exact URLs):
+https://www.guardiantrading.com/wp-content/uploads/2025/07/img-technology-171x146.png
+https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image-1.png
+https://www.guardiantrading.com/wp-content/uploads/2025/07/logo-velocity-clearing-white-298x75.png
+https://www.guardiantrading.com/wp-content/uploads/2026/01/reviewed-by-benzinga-2024-200x166-1-320x266.png
+https://www.guardiantrading.com/wp-content/uploads/2026/03/img-guardian-reversed-291x63-1-291x63.png
+https://www.guardiantrading.com/wp-content/uploads/2025/07/ico-our-infrastructure-1-524x284-1-524x284.png
+https://www.guardiantrading.com/wp-content/uploads/2025/07/img-client-support-174x174.png
+https://www.guardiantrading.com/wp-content/uploads/2025/07/img-competitive-pricing-175x141.png
+https://www.guardiantrading.com/wp-content/uploads/2023/03/img-guardian-reversed-291x63-1.png
+https://www.guardiantrading.com/wp-content/uploads/2026/01/reviewed-by-benzinga-2024-200x166-1-320x266.png
+
+TECHNICAL EXPECTATIONS:
+
+* Use clean, production-ready code
+* Ensure responsive behavior mirrors the original exactly
+* Use precise layout tools (CSS Grid/Flexbox) for accuracy
+* Optimize for performance without altering visual fidelity
+
+FINAL OUTPUT:
+
+* A fully functional webpage that is visually indistinguishable from the original
+* No creative changes — only exact replication
