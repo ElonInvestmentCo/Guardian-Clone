@@ -23,14 +23,18 @@ export default function About() {
 
       {/* ── HERO ── */}
       <section
-        className="flex items-center justify-center text-center"
+        className="relative flex items-center justify-center text-center overflow-hidden"
         style={{
           minHeight: "320px",
           marginTop: "78px",
           backgroundColor: "#141414",
+          backgroundImage: "url('https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image-1.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
-        <div className="py-20 px-4">
+        <div className="absolute inset-0" style={{ backgroundColor: "rgba(10,10,10,0.72)" }} />
+        <div className="relative z-10 py-20 px-4">
           <h1 className="text-4xl lg:text-5xl font-display font-bold text-white">
             About Guardian
           </h1>
@@ -232,9 +236,10 @@ export default function About() {
           </div>
 
           {/* Memberships & Certifications */}
-          <h2 className="text-2xl font-display font-bold text-white mb-10">
+          <h2 className="text-2xl font-display font-bold text-white mb-4">
             Memberships and Certifications
           </h2>
+          <div style={{ borderBottom: "1px dashed rgba(255,255,255,0.25)", marginBottom: "36px" }} />
           <div className="flex flex-col lg:flex-row gap-16">
             {/* Left col */}
             <div className="flex-1">
