@@ -1,0 +1,117 @@
+Replicate the following webpages using **pixel-perfect accuracy**, ensuring every element matches the original designs exactly:
+
+https://www.guardiantrading.com/blog/
+https://www.guardiantrading.com/contact-us/
+
+This must be a **true visual and structural replication**, not an approximation or redesign.
+
+CORE REQUIREMENTS:
+
+* Match layout, spacing, margins, and padding EXACTLY
+* Replicate typography precisely (font sizes, weights, line heights, letter spacing)
+* Maintain identical section order and structure
+* Ensure all elements are positioned and aligned exactly as in the original
+* Preserve exact proportions across all sections
+
+DESIGN PRECISION:
+
+* Follow a strict pixel-perfect approach across:
+
+  * Desktop
+  * Tablet
+  * Mobile
+* Match section heights, widths, and grid systems exactly
+* Replicate all UI elements:
+
+  * Cards
+  * Forms
+  * Buttons
+  * Images
+  * Icons
+  * Backgrounds
+* Ensure hover states, transitions, and interactions behave identically
+
+---
+
+ASSET HANDLING (CRITICAL):
+
+* Automatically **scan both pages and extract ALL assets**, including:
+
+  * Images
+  * Icons
+  * Background images
+  * Logos
+* Download all assets locally or store them properly in the project
+* Use the **exact same assets** in the correct positions
+* Do NOT replace or approximate any asset
+* Maintain original image sizes, aspect ratios, and quality
+
+---
+
+PAGE-SPECIFIC STRUCTURE:
+
+1. BLOG PAGE
+
+* Hero/header section (match exact spacing and typography)
+* Blog listing grid:
+
+  * Card layout must match exactly
+  * Image sizes and ratios must be identical
+  * Titles, excerpts, and spacing must align perfectly
+* Pagination or load behavior (if present) must match
+* Sidebar (if present) must be replicated exactly
+
+2. CONTACT US PAGE
+
+* Hero/header section (exact match)
+* Contact form:
+
+  * Input fields aligned perfectly
+  * Exact spacing between fields
+  * Button styling must match
+* Contact information section:
+
+  * Icons + text alignment must be exact
+* Map/embed section (if present) must match size and placement exactly
+
+---
+
+NAVIGATION LINKING (IMPORTANT):
+
+* Ensure navbar buttons link correctly:
+
+  * "Blog" → /blog
+  * "Contact Us" → /contact-us
+* Maintain exact navbar styling and active states
+* Ensure routing works properly across all pages
+
+---
+
+TECHNICAL REQUIREMENTS:
+
+* Use clean, production-ready code (React + Tailwind CSS preferred)
+* Use reusable components where possible WITHOUT altering design
+* Use CSS Grid/Flexbox for precise layout control
+* Ensure responsiveness mirrors the original exactly
+* Optimize performance without changing visual output
+
+---
+
+STRICT INSTRUCTIONS:
+
+* Do NOT redesign anything
+* Do NOT “improve” spacing or layout
+* Do NOT change fonts, colors, or structure
+* Do NOT substitute any assets
+* Do NOT skip any sections or elements
+* Only replicate exactly what exists
+
+---
+
+FINAL OUTPUT:
+
+* Two fully functional webpages (/blog and /contact-us)
+* All assets properly downloaded and used
+* Navbar correctly linked between pages
+* Pixel-perfect match to the originals
+* Visually indistinguishable from the source pages
