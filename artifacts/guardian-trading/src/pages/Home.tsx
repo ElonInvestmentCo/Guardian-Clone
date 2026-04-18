@@ -350,9 +350,33 @@ export default function Home() {
               </ul>
               <Link
                 href="/platforms"
-                className="inline-block border border-primary text-primary text-sm px-5 py-2 hover:bg-primary hover:text-black transition-colors"
+                className="group flex items-center justify-between w-full"
+                style={{
+                  backgroundColor: "#0d0d0d",
+                  padding: "18px 22px",
+                  textDecoration: "none",
+                  maxWidth: "420px",
+                }}
               >
-                Stock Locates and Borrows
+                <span
+                  className="text-white font-bold group-hover:text-[#1ab8d4] transition-colors"
+                  style={{ fontSize: "15px", letterSpacing: "0.01em" }}
+                >
+                  Stock Locates And Borrows
+                </span>
+                <span
+                  className="flex-shrink-0 flex items-center justify-center transition-colors group-hover:bg-[#1e6fc4]"
+                  style={{
+                    width: "34px",
+                    height: "34px",
+                    background: "#1e5fa0",
+                    marginLeft: "24px",
+                  }}
+                >
+                  <svg width="12" height="12" viewBox="0 0 11 11" fill="white">
+                    <polygon points="2,1 10,5.5 2,10" />
+                  </svg>
+                </span>
               </Link>
             </div>
             {/* Stock borrows screenshot — bottom on mobile, left on desktop */}
