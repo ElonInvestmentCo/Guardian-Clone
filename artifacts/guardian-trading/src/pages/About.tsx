@@ -18,18 +18,14 @@ export default function About() {
 
       {/* ── HERO ── */}
       <section
-        className="relative flex items-center justify-center text-center overflow-hidden"
+        className="flex items-center justify-center text-center"
         style={{
           minHeight: "320px",
           marginTop: "78px",
           backgroundColor: "#141414",
-          backgroundImage: "url('/images/background-image-about.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0" style={{ backgroundColor: "rgba(10,10,10,0.72)" }} />
-        <div className="relative z-10 py-20 px-4">
+        <div className="py-20 px-4">
           <h1 className="text-4xl lg:text-5xl font-display font-bold text-white">
             About Guardian
           </h1>
