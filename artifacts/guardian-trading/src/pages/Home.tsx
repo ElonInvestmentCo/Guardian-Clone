@@ -13,7 +13,7 @@ import bgVector from "@assets/img-background-vector-1_1773948931248.png";
 import heroPattern from "@assets/pattern_1773965291387.png";
 
 import infraIcon from "@assets/ico-our-infrastructure-132x72_1773948931248.png";
-import arrowBtn from "@assets/Guardian_Trading_-_Google_Chrome_4_15_2026_3_12_55_PM-fotor-bg_1776473765131.png";
+import arrowBtn from "@assets/Guardian_Trading_-_Google_Chrome_4_15_2026_3_12_55_PM-fotor-bg_1776475354489.png";
 export default function Home() {
   const [newsBannerVisible, setNewsBannerVisible] = useState(true);
   const [email, setEmail] = useState("");
@@ -367,7 +367,7 @@ export default function Home() {
                   src={arrowBtn}
                   alt=""
                   aria-hidden="true"
-                  style={{ width: "46px", height: "46px", objectFit: "contain", marginLeft: "24px", flexShrink: 0 }}
+                  style={{ width: "72px", height: "72px", objectFit: "contain", marginLeft: "24px", flexShrink: 0 }}
                 />
               </Link>
             </div>
