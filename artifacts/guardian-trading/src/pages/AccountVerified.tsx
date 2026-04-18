@@ -133,7 +133,7 @@ export default function AccountVerified() {
           <p className="text-[13px]" style={{ color: "#aaa" }}>All securities and transactions are handled through Velocity.</p>
         </div>
         <div className="px-5 sm:px-10 pt-6 pb-8 text-center" style={{ borderTop: "1px solid #2a2a2a" }}>
-          <Link href="/"><img src={guardianReversedLogo} alt="Guardian Trading" style={{ height: "32px", width: "auto", margin: "0 auto 16px" }} /></Link>
+          <Link href="/"><img src={guardianReversedLogo} alt="Guardian Trading" style={{ height: "54px", width: "auto", margin: "0 auto 16px" }} /></Link>
         </div>
       </footer>
     </div>
