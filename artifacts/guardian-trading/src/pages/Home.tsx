@@ -6,7 +6,6 @@ import { X, Star, ArrowRight, Play } from "lucide-react";
 import heroPlatform from "@assets/IMG_7967_1773721659915.png";
 import shieldChart from "@assets/IMG_7968_1773721659915.png";
 import monitorPlatform from "@assets/IMG_7969_1773721659915.png";
-import stockBorrows from "@assets/IMG_7970_1773721659915.png";
 import dasLogo from "@assets/DAS-icon-50x50_1773948931248.png";
 import sterlingLogo from "@assets/sterling-icon-50x50_1773948931249.png";
 
@@ -14,7 +13,7 @@ import bgVector from "@assets/img-background-vector-1_1773948931248.png";
 import heroPattern from "@assets/pattern_1773965291387.png";
 
 import infraIcon from "@assets/ico-our-infrastructure-132x72_1773948931248.png";
-import arrowBtn from "@assets/Guardian_Trading_-_Google_Chrome_4_15_2026_3_12_55_PM-fotor-bg_1776473551675.png";
+import arrowBtn from "@assets/Guardian_Trading_-_Google_Chrome_4_15_2026_3_12_55_PM-fotor-bg_1776473765131.png";
 import benzingaReview from "@assets/benzinga-review.jpg";
 
 export default function Home() {
@@ -373,14 +372,23 @@ export default function Home() {
                 />
               </Link>
             </div>
-            {/* Stock borrows screenshot — bottom on mobile, left on desktop */}
-            <div className="flex-shrink-0 w-full -mx-4 lg:mx-0 lg:w-[460px] order-2 lg:order-1">
-              <img
-                src={stockBorrows}
-                alt="Locates and Stock Borrows — Guardian Trading"
-                className="w-full h-auto object-contain rounded"
-                style={{ filter: "brightness(1.05) contrast(1.05) saturate(1.05)" }}
-              />
+            {/* Text block — left on desktop */}
+            <div className="flex-shrink-0 w-full lg:w-[420px] order-2 lg:order-1">
+              <p className="text-[11px] font-bold tracking-[0.18em] uppercase mb-4" style={{ color: "#1ab8d4" }}>
+                IN-HOUSE BORROW DESK
+              </p>
+              <h3 className="text-[22px] font-bold text-white leading-snug mb-5">
+                Fast, Reliable Locates for Short Sellers
+              </h3>
+              <p className="text-[#aaa] text-[14px] leading-relaxed mb-5">
+                Our in-house stock borrow desk operates with speed and precision, giving traders access
+                to hard-to-borrow securities without the delays of third-party locate providers.
+              </p>
+              <p className="text-[#aaa] text-[14px] leading-relaxed">
+                Whether you need locates for intraday short sales or overnight borrows for swing positions,
+                Guardian's desk handles it all under one roof — with transparent pricing and direct support
+                from our team.
+              </p>
             </div>
           </div>
         </div>
