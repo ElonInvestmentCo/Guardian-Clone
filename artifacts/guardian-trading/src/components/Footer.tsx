@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";
-import benzingaBadge from "@assets/reviewed-by-benzinga-2024-200x166-1-320x266_1773948931249.png";
+const benzingaBadge = "/images/img-benzinga-badge.png";
 
 export function Footer() {
   return (
@@ -20,7 +20,7 @@ export function Footer() {
             <img
               src={benzingaBadge}
               alt="Reviewed by Benzinga 2024"
-              className="w-[80px] h-auto object-contain"
+              className="w-[120px] h-auto object-contain"
             />
           </div>
 

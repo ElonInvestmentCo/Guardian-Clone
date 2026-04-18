@@ -14,8 +14,6 @@ import heroPattern from "@assets/pattern_1773965291387.png";
 
 import infraIcon from "@assets/ico-our-infrastructure-132x72_1773948931248.png";
 import arrowBtn from "@assets/Guardian_Trading_-_Google_Chrome_4_15_2026_3_12_55_PM-fotor-bg_1776473765131.png";
-const benzingaBadge = "/images/img-benzinga-badge.png";
-
 export default function Home() {
   const [newsBannerVisible, setNewsBannerVisible] = useState(true);
   const [email, setEmail] = useState("");
@@ -188,18 +186,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* ── BENZINGA AWARD BANNER ── */}
-      <div style={{ backgroundColor: "#141414", padding: "24px 0", display: "flex", justifyContent: "center" }}>
-        <img
-          src={benzingaBadge}
-          alt="Reviewed by Benzinga 2024 — Preferred Broker for Short Selling"
-          width={320}
-          height={266}
-          loading="lazy"
-          style={{ display: "block", width: "180px", height: "auto" }}
-        />
-      </div>
 
       {/* ── WHY DO ACTIVE TRADERS USE GUARDIAN? ── */}
       <section id="services" className="bg-[#1c1c1c] py-20 px-4">
