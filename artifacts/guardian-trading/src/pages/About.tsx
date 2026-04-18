@@ -22,7 +22,7 @@ export default function About() {
         style={{
           minHeight: "320px",
           marginTop: "78px",
-          backgroundColor: "#0d0d0d",
+          backgroundColor: "#141414",
           backgroundImage: "url('/images/background-image-about.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -187,7 +187,7 @@ export default function About() {
       </section>
 
       {/* ── ABOUT VELOCITY CLEARING ── */}
-      <section style={{ backgroundColor: "#0d0d0d" }} className="py-16 lg:py-20 px-4">
+      <section style={{ backgroundColor: "#1c1c1c" }} className="py-16 lg:py-20 px-4">
         <div className="max-w-[1100px] mx-auto">
 
           {/* Two-col intro */}

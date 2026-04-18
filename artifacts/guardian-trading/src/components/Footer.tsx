@@ -4,7 +4,7 @@ const benzingaBadge = "/images/img-benzinga-badge.png";
 
 export function Footer() {
   return (
-    <footer className="bg-[#0d0d0d]">
+    <footer className="bg-[#141414]">
       {/* Main footer content */}
       <div className="max-w-[1100px] mx-auto px-6 pt-16 pb-10">
         <div className="flex flex-col lg:flex-row gap-12">
