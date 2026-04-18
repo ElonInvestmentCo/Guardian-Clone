@@ -4,9 +4,15 @@ import { Play } from "lucide-react";
 
 const BulletItem = ({ children }: { children: React.ReactNode }) => (
   <li style={{ display: "flex", alignItems: "center", gap: "10px" }} className="text-white text-[15px] leading-snug">
-    <Play
-      style={{ width: "10px", height: "10px", minWidth: "10px", fill: "#76d1f5", color: "#76d1f5", strokeWidth: 0 }}
-    />
+    <span style={{
+      display: "inline-block",
+      width: 0,
+      height: 0,
+      borderTop: "5px solid transparent",
+      borderBottom: "5px solid transparent",
+      borderLeft: "9px solid #76d1f5",
+      flexShrink: 0,
+    }} />
     <span>{children}</span>
   </li>
 );
