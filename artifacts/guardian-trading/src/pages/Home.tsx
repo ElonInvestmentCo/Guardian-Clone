@@ -323,9 +323,7 @@ export default function Home() {
       {/* ── LOCATES & STOCK BORROWS ── */}
       <section className="bg-[#141414] py-16 lg:py-20 px-4">
         <div className="max-w-[1200px] mx-auto">
-          <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-center">
-            {/* Text — top on mobile, right on desktop */}
-            <div className="flex-1 order-1 lg:order-2">
+          <div className="max-w-[640px]">
               <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-4">
                 Locates &amp; Stock Borrows
               </h2>
@@ -371,24 +369,6 @@ export default function Home() {
                   style={{ width: "46px", height: "46px", objectFit: "contain", marginLeft: "24px", flexShrink: 0 }}
                 />
               </Link>
-            </div>
-            {/* Text block — left on desktop */}
-            <div className="flex-shrink-0 w-full lg:w-[420px] order-2 lg:order-1">
-              <p className="text-[11px] font-bold tracking-[0.18em] uppercase mb-4" style={{ color: "#1ab8d4" }}>
-                IN-HOUSE BORROW DESK
-              </p>
-              <h3 className="text-[22px] font-bold text-white leading-snug mb-5">
-                Fast, Reliable Locates for Short Sellers
-              </h3>
-              <p className="text-[#aaa] text-[14px] leading-relaxed mb-5">
-                Our in-house stock borrow desk operates with speed and precision, giving traders access
-                to hard-to-borrow securities without the delays of third-party locate providers.
-              </p>
-              <p className="text-[#aaa] text-[14px] leading-relaxed">
-                Whether you need locates for intraday short sales or overnight borrows for swing positions,
-                Guardian's desk handles it all under one roof — with transparent pricing and direct support
-                from our team.
-              </p>
             </div>
           </div>
         </div>
