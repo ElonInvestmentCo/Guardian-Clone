@@ -1,7 +1,7 @@
 import { Layout } from "@/components/Layout";
 import { Link } from "wouter";
 
-const BG = "https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image-1.png";
+const BG = "https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image-3.png";
 const IMG_ORDER = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-order-routing-174x174.png";
 const IMG_LOCATES = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-locates-borrows-174x174.png";
 const IMG_PLATFORMS = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-leading-platforms-174x174.png";
