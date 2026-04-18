@@ -3,12 +3,11 @@ import { Link } from "wouter";
 import { Play } from "lucide-react";
 
 const BulletItem = ({ children }: { children: React.ReactNode }) => (
-  <li className="flex items-start gap-3 text-white text-[15px] leading-snug">
+  <li style={{ display: "flex", alignItems: "center", gap: "10px" }} className="text-white text-[15px] leading-snug">
     <Play
-      className="w-3 h-3 text-primary flex-shrink-0 mt-[4px]"
-      style={{ fill: "currentColor", strokeWidth: 0 }}
+      style={{ width: "10px", height: "10px", minWidth: "10px", fill: "#76d1f5", color: "#76d1f5", strokeWidth: 0 }}
     />
-    {children}
+    <span>{children}</span>
   </li>
 );
 
