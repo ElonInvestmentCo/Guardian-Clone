@@ -28,7 +28,7 @@ export function Navbar() {
     { name: "About",      href: "/about" },
     { name: "Services",   href: "/services/trading-services" },
     { name: "Platforms",  href: "/platforms" },
-    { name: "Pricing",    href: "/#pricing" },
+    { name: "Pricing",    href: "/equities-options" },
     { name: "Insights",   href: "/#insights" },
     { name: "Contact Us", href: "/contact" },
   ];
