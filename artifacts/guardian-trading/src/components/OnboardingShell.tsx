@@ -51,9 +51,9 @@ export default function OnboardingShell({ currentStep, children }: OnboardingShe
       </div>
 
       <nav style={{ background: "#1c2e3e" }}>
-        <div className="flex items-center justify-between px-3 sm:px-6 h-[50px] sm:h-[54px]">
+        <div className="flex items-center justify-between px-3 sm:px-6 h-[68px] sm:h-[74px]">
           <Link href="/" className="flex items-center flex-shrink-0">
-            <img src={guardianLogo} alt="Guardian Trading" className="h-[30px] sm:h-[38px] w-auto object-contain" />
+            <img src={guardianLogo} alt="Guardian Trading" className="h-[48px] sm:h-[58px] w-auto object-contain" />
           </Link>
           <div className="hidden md:flex items-center gap-6">
             {NAV_LINKS.map((link) => (
@@ -127,7 +127,7 @@ export default function OnboardingShell({ currentStep, children }: OnboardingShe
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-10">
             <div className="flex-shrink-0 lg:w-[200px]">
               <Link href="/">
-                <img src={guardianReversedLogo} alt="Guardian Trading" style={{ height: "36px", width: "auto", objectFit: "contain" }} />
+                <img src={guardianReversedLogo} alt="Guardian Trading" style={{ height: "54px", width: "auto", objectFit: "contain" }} />
               </Link>
             </div>
             <div className="flex flex-1 flex-wrap gap-8 sm:gap-12">

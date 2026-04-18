@@ -461,7 +461,7 @@ body {
 }
 
 .sidebar-brand .sidebar-logo {
-  height: 28px;
+  height: 50px;
   width: auto;
   transition: filter 0.2s ease;
   filter: var(--sidebar-logo-filter);

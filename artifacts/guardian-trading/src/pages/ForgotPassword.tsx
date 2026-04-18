@@ -119,7 +119,7 @@ export default function ForgotPassword() {
 
           <div className="px-8 py-7">
             <div className="flex justify-center mb-6">
-              <img src={guardianLogo} alt="Guardian Trading" className="h-12 w-auto object-contain" />
+              <img src={guardianLogo} alt="Guardian Trading" className="h-[60px] w-auto object-contain" />
             </div>
 
             {step === "email" && (

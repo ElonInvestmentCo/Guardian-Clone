@@ -56,8 +56,8 @@ export default function KycReviewing() {
       </div>
 
       <nav style={{ background: "#1c2e3e" }}>
-        <div className="flex items-center justify-between px-4 sm:px-6 h-[54px]">
-          <Link href="/"><img src={guardianLogo} alt="Guardian Trading" style={{ height: "34px", width: "auto" }} /></Link>
+        <div className="flex items-center justify-between px-4 sm:px-6 h-[72px]">
+          <Link href="/"><img src={guardianLogo} alt="Guardian Trading" style={{ height: "54px", width: "auto" }} /></Link>
           <button
             onClick={handleLogout}
             className="text-white font-medium px-4 sm:px-5 py-1.5 border hover:bg-white/10"

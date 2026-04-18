@@ -52,14 +52,14 @@ export function Navbar() {
             <img
               src={logoSrc}
               alt="Guardian Trading Logo"
-              className="hidden sm:block h-[40px]"
+              className="hidden sm:block h-[58px]"
               style={{ width: "auto", objectFit: "contain" }}
               data-testid="img-logo"
             />
             <img
               src={logoMobileSrc}
               alt="Guardian Trading Logo"
-              className="block sm:hidden h-[36px]"
+              className="block sm:hidden h-[50px]"
               style={{ width: "auto", objectFit: "contain" }}
               data-testid="img-logo-mobile"
             />

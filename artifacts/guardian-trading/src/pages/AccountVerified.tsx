@@ -45,8 +45,8 @@ export default function AccountVerified() {
       </div>
 
       <nav style={{ background: "#1c2e3e" }}>
-        <div className="flex items-center justify-between px-4 sm:px-6 h-[54px]">
-          <Link href="/"><img src={guardianLogo} alt="Guardian Trading" style={{ height: "34px", width: "auto" }} /></Link>
+        <div className="flex items-center justify-between px-4 sm:px-6 h-[72px]">
+          <Link href="/"><img src={guardianLogo} alt="Guardian Trading" style={{ height: "54px", width: "auto" }} /></Link>
           <div className="hidden md:flex items-center gap-6">
             {NAV_LINKS.map((link) => (
               <Link key={link.name} href={link.href} className="flex items-center gap-0.5 text-white hover:text-[#5baad4]" style={{ fontSize: "13px", fontWeight: 500 }}>

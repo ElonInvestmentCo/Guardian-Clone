@@ -112,8 +112,8 @@ export default function ApplicationPending() {
       </div>
 
       <nav style={{ background: "#1c2e3e" }}>
-        <div className="flex items-center justify-between px-4 sm:px-6 h-[54px]">
-          <Link href="/"><img src={guardianLogo} alt="Guardian Trading" style={{ height: "34px", width: "auto" }} /></Link>
+        <div className="flex items-center justify-between px-4 sm:px-6 h-[72px]">
+          <Link href="/"><img src={guardianLogo} alt="Guardian Trading" style={{ height: "54px", width: "auto" }} /></Link>
           <div className="hidden md:flex items-center gap-6">
             {NAV_LINKS.map((link) => (
               <Link key={link.name} href={link.href} className="flex items-center gap-0.5 text-white hover:text-[#5baad4]" style={{ fontSize: "13px", fontWeight: 500 }}>
@@ -295,7 +295,7 @@ export default function ApplicationPending() {
         <div className="px-5 sm:px-10 pt-10 sm:pt-12 pb-8 sm:pb-10" style={{ borderBottom: "1px solid #2a2a2a" }}>
           <div className="flex flex-col lg:flex-row gap-8 sm:gap-10">
             <div className="flex-shrink-0 lg:w-[200px]">
-              <Link href="/"><img src={guardianReversedLogo} alt="Guardian Trading" style={{ height: "36px", width: "auto" }} /></Link>
+              <Link href="/"><img src={guardianReversedLogo} alt="Guardian Trading" style={{ height: "54px", width: "auto" }} /></Link>
             </div>
             <div className="flex flex-1 flex-wrap gap-8 sm:gap-12">
               <div>

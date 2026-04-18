@@ -14,7 +14,7 @@ export function Footer() {
               <img
                 src={guardianReversedLogo}
                 alt="Guardian Trading"
-                className="h-[36px] w-auto object-contain"
+                className="h-[54px] w-auto object-contain"
               />
             </Link>
             <img

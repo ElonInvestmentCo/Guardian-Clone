@@ -53,7 +53,7 @@ export default function AdminLoginModal({ onSuccess }: { onSuccess: () => void }
       </button>
       <div className="login-card">
         <div className="login-header">
-          <img src={`${basePath}logo-white.png`} alt="Guardian Trading" className="login-logo" style={{ height: 32 }} />
+          <img src={`${basePath}logo-white.png`} alt="Guardian Trading" className="login-logo" style={{ height: 56 }} />
           <h5 style={{ fontSize: 18, fontWeight: 700, color: "var(--login-text)", marginTop: 8, marginBottom: 4 }}>
             Guardiian Trading Admin
           </h5>
