@@ -1,0 +1,93 @@
+Replicate this webpage using **pixel-perfect accuracy**, ensuring every element matches the original design exactly:
+
+https://www.guardiantrading.com/services/trading-services/
+
+This must be a **true visual and structural clone**, not an approximation or redesign.
+
+CORE REQUIREMENTS:
+
+* Match layout, spacing, margins, and padding EXACTLY
+* Replicate typography precisely (font sizes, weights, line heights, letter spacing)
+* Maintain identical section order and structure
+* Ensure all elements are positioned and aligned exactly as in the original
+* Preserve exact proportions across all sections
+
+DESIGN PRECISION:
+
+* Follow a strict pixel-perfect approach across:
+
+  * Desktop
+  * Tablet
+  * Mobile
+* Match section heights, grid systems, and column spacing exactly
+* Replicate all visual elements:
+
+  * Icons
+  * Images
+  * Text blocks
+  * Backgrounds
+  * Overlays
+* Ensure hover states, transitions, and effects behave identically
+
+SECTION BREAKDOWN (MUST MATCH ORIGINAL):
+
+1. HERO SECTION
+
+* Full-width background
+* Exact height and overlay behavior
+* Headline and subtext positioned identically
+
+2. SERVICES / FEATURES SECTION
+
+* Grid layout with icon + title + description
+* Equal spacing and alignment across all cards
+* Icons positioned exactly relative to text
+
+3. PLATFORM / TECHNOLOGY SECTIONS
+
+* Maintain same layout structure (rows/columns)
+* Match spacing between sections precisely
+
+4. TRUST / BADGE SECTION
+
+* Correct placement of review badge
+* Maintain exact size and alignment
+
+5. FOOTER
+
+* Replicate layout, spacing, and typography exactly
+* Maintain logo placement and link structure
+
+IMAGES (USE EXACTLY AS PROVIDED — DO NOT SUBSTITUTE):
+
+https://www.guardiantrading.com/wp-content/uploads/2025/07/img-order-routing-174x174.png
+https://www.guardiantrading.com/wp-content/uploads/2025/07/img-locates-borrows-174x174.png
+https://www.guardiantrading.com/wp-content/uploads/2025/07/img-leading-platforms-174x174.png
+https://www.guardiantrading.com/wp-content/uploads/2023/03/img-guardian-reversed-291x63-1.png
+https://www.guardiantrading.com/wp-content/uploads/2026/01/reviewed-by-benzinga-2024-200x166-1-320x266.png
+
+IMAGE RULES:
+
+* Use each image in the same position and size as the original page
+* Do NOT replace, resize incorrectly, or omit any image
+* Maintain exact aspect ratios and alignment
+
+TECHNICAL REQUIREMENTS:
+
+* Use clean, production-ready code (React + Tailwind CSS preferred)
+* Use CSS Grid/Flexbox for precise layout control
+* Ensure responsiveness mirrors the original exactly
+* Optimize images without changing visual output
+
+STRICT INSTRUCTIONS:
+
+* Do NOT redesign anything
+* Do NOT “improve” spacing or layout
+* Do NOT change fonts, colors, or structure
+* Only replicate exactly what exists
+
+FINAL OUTPUT:
+
+* Fully functional webpage
+* Pixel-perfect match to the original
+* Visually indistinguishable from the source

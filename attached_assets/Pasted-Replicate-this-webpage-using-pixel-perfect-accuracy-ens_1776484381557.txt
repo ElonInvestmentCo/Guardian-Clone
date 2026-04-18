@@ -1,0 +1,112 @@
+Replicate this webpage using **pixel-perfect accuracy**, ensuring every element matches the original design exactly:
+
+https://www.guardiantrading.com/platforms/
+
+This must be a **true visual and structural clone**, not an approximation, redesign, or interpretation.
+
+CORE REQUIREMENTS:
+
+* Match layout, spacing, margins, and padding EXACTLY
+* Replicate typography precisely (font sizes, weights, line heights, letter spacing)
+* Maintain identical section order and structure
+* Ensure all elements are positioned and aligned exactly as in the original
+* Preserve exact proportions across all sections
+
+DESIGN PRECISION:
+
+* Follow a strict pixel-perfect approach across:
+
+  * Desktop
+  * Tablet
+  * Mobile
+* Match section heights, widths, and grid systems exactly
+* Replicate all visual elements:
+
+  * Platform cards
+  * Icons
+  * Images
+  * Text blocks
+  * Backgrounds and overlays
+* Ensure hover states, transitions, and interactions behave identically
+
+SECTION BREAKDOWN (MUST MATCH ORIGINAL):
+
+1. HERO SECTION
+
+* Full-width background image
+* Exact height and overlay behavior
+* Headline and subtext positioned precisely
+
+2. PLATFORM SECTIONS (DAS, Sterling, Rival One, Bloomberg)
+
+* Each section must match:
+
+  * Layout orientation (image + text positioning)
+  * Spacing between elements
+  * Image sizes and alignment
+* Alternate layouts (left/right image positioning) exactly as in original
+* Maintain consistent spacing between each platform section
+
+3. PLATFORM ICONS / LABELS
+
+* Icons must be aligned exactly with titles
+* Maintain original sizing and spacing between icon and text
+
+4. PLATFORM SCREEN IMAGES
+
+* Use exact sizes and positioning
+* Maintain aspect ratios and alignment
+* No resizing inconsistencies
+
+5. TRUST / BADGE SECTION
+
+* Correct placement of Benzinga badge
+* Maintain exact size and spacing
+
+6. FOOTER
+
+* Replicate layout, spacing, and typography exactly
+* Maintain logo placement and structure
+
+IMAGES (USE EXACTLY AS PROVIDED — DO NOT SUBSTITUTE):
+
+https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image-2.png
+
+https://www.guardiantrading.com/wp-content/uploads/2025/07/img-das-trader-screens-538x364-1-538x364.png
+https://www.guardiantrading.com/wp-content/uploads/2025/07/img-sterling-screens-454x402-1-454x402.png
+https://www.guardiantrading.com/wp-content/uploads/2025/07/img-rival-one-screens-566x357-1-566x357.png
+https://www.guardiantrading.com/wp-content/uploads/2025/07/img-bloomberg-screens-425x334-1-425x334.png
+
+https://www.guardiantrading.com/wp-content/uploads/2025/07/DAS-icon-50x50.png
+https://www.guardiantrading.com/wp-content/uploads/2025/07/sterling-icon-50x50.png
+https://www.guardiantrading.com/wp-content/uploads/2025/07/ico-rival-one-50x50-1-50x50.png
+https://www.guardiantrading.com/wp-content/uploads/2025/07/ico-bloomberg-50x50-1-50x50.png
+
+https://www.guardiantrading.com/wp-content/uploads/2026/01/reviewed-by-benzinga-2024-200x166-1-320x266.png
+
+IMAGE RULES:
+
+* Use each image in the same position and size as the original page
+* Do NOT replace, resize incorrectly, or omit any image
+* Maintain exact aspect ratios and alignment
+
+TECHNICAL REQUIREMENTS:
+
+* Use clean, production-ready code (React + Tailwind CSS preferred)
+* Use CSS Grid/Flexbox for precise layout control
+* Ensure responsiveness mirrors the original exactly
+* Optimize images without altering visual fidelity
+
+STRICT INSTRUCTIONS:
+
+* Do NOT redesign anything
+* Do NOT “improve” spacing or layout
+* Do NOT change fonts, colors, or structure
+* Do NOT substitute any assets
+* Only replicate exactly what exists
+
+FINAL OUTPUT:
+
+* Fully functional webpage
+* Pixel-perfect match to the original
+* Visually indistinguishable from the source
