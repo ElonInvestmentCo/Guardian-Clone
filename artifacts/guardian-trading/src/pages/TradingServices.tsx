@@ -27,13 +27,12 @@ export default function TradingServices() {
         style={{
           marginTop: "78px",
           minHeight: "280px",
-          backgroundColor: "#0d0d0d",
           backgroundImage: `url('${BG}')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0" style={{ backgroundColor: "rgba(5,10,18,0.78)" }} />
+        <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.35)" }} />
         <div className="relative z-10 py-16 px-4">
           <h1 className="text-4xl lg:text-5xl font-display font-bold text-white tracking-tight">
             Trading Services
