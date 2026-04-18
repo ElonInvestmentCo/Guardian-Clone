@@ -47,6 +47,8 @@ import KycResubmit from "@/pages/KycResubmit";
 import KycReviewing from "@/pages/KycReviewing";
 import TradingServices from "@/pages/TradingServices";
 import EquitiesOptions from "@/pages/EquitiesOptions";
+import Blog from "@/pages/Blog";
+import ContactUs from "@/pages/ContactUs";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/analytics/Dashboard";
 import Projects from "@/pages/analytics/Projects";
@@ -67,6 +69,8 @@ function Router() {
       <Route path="/contact" component={Contact} />
       <Route path="/services/trading-services" component={TradingServices} />
       <Route path="/equities-options" component={EquitiesOptions} />
+      <Route path="/blog" component={Blog} />
+      <Route path="/contact-us" component={ContactUs} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
       <Route path="/forgot-password" component={ForgotPassword} />

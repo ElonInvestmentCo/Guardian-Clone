@@ -29,8 +29,8 @@ export function Navbar() {
     { name: "Services",   href: "/services/trading-services" },
     { name: "Platforms",  href: "/platforms" },
     { name: "Pricing",    href: "/equities-options" },
-    { name: "Insights",   href: "/#insights" },
-    { name: "Contact Us", href: "/contact" },
+    { name: "Insights",   href: "/blog" },
+    { name: "Contact Us", href: "/contact-us" },
   ];
 
   const headerBg = scrolled ? "#000000" : "#151515";
