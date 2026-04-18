@@ -103,7 +103,6 @@ export default function About() {
           {/* Row 1 — Extensive Client Support */}
           <div
             className="flex flex-col lg:flex-row items-center gap-10 py-12"
-            style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
           >
             <div className="flex-shrink-0 w-full lg:w-[45%] flex justify-center lg:justify-start">
               <img
@@ -127,7 +126,6 @@ export default function About() {
           {/* Row 2 — Competitive Pricing */}
           <div
             className="flex flex-col lg:flex-row items-center gap-10 py-12"
-            style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
           >
             <div className="flex-shrink-0 w-full lg:w-[45%] flex justify-center lg:justify-start">
               <img
