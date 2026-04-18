@@ -351,7 +351,7 @@ export default function Home() {
                 href="/platforms"
                 className="group flex items-center justify-between w-full"
                 style={{
-                  backgroundColor: "#0d0d0d",
+                  backgroundColor: "#141414",
                   padding: "18px 22px",
                   textDecoration: "none",
                   maxWidth: "420px",
