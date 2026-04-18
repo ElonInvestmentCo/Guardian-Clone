@@ -367,7 +367,7 @@ export default function Home() {
                   src={arrowBtn}
                   alt=""
                   aria-hidden="true"
-                  style={{ width: "72px", height: "72px", objectFit: "contain", marginLeft: "24px", flexShrink: 0 }}
+                  style={{ width: "72px", height: "72px", objectFit: "contain", marginLeft: "8px", flexShrink: 0 }}
                 />
               </Link>
             </div>
