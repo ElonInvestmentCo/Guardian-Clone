@@ -35,7 +35,7 @@ export default function TradingServices() {
 
         {/* Title row */}
         <div className="relative z-10 flex items-center justify-center text-center pt-14 pb-6 px-4">
-          <h1 className="text-4xl lg:text-5xl font-display font-bold text-white tracking-tight">
+          <h1 className="text-white tracking-tight" style={{ fontSize: "50px", fontWeight: 700 }}>
             Trading Services
           </h1>
         </div>
