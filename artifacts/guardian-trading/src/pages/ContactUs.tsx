@@ -41,9 +41,10 @@ export default function ContactUs() {
         style={{
           marginTop: "78px",
           minHeight: "260px",
-          backgroundImage: `url('${BG_VECTOR}')`,
+          background: `linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('${BG_VECTOR}')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       >
         <div className="relative z-10 py-16 px-4">
@@ -59,9 +60,10 @@ export default function ContactUs() {
       {/* ── CONTENT ── */}
       <section
         style={{
-          backgroundImage: `url('${BG_VECTOR}')`,
+          background: `linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('${BG_VECTOR}')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
         className="py-14 px-6"
       >

@@ -1,0 +1,101 @@
+Fix the Contact Us page background so it matches the original Guardian Trading website exactly.
+
+ISSUE:
+
+* The background pattern (lines and nodes) is incorrectly positioned and scaled
+* It does not match the original layout, spacing, or alignment
+* The pattern appears too large, misaligned, and not properly distributed across the section
+
+---
+
+REQUIREMENTS:
+
+1. BACKGROUND IMAGE USAGE
+
+* Use the correct background image asset for the Contact Us section
+* Apply it as a CSS background (NOT an <img> tag)
+
+Example:
+background-image: url("YOUR_BACKGROUND_IMAGE_URL");
+
+---
+
+2. POSITIONING (CRITICAL)
+
+* Match the original layout exactly:
+
+  * Background should be subtly placed behind content
+  * Nodes and lines should appear partially visible (not centered or dominant)
+* Use:
+
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover;
+
+---
+
+3. OPACITY & VISUAL STYLE
+
+* Reduce visibility so it does not overpower content
+* Apply a dark overlay or opacity:
+
+Option A:
+opacity: 0.15–0.25
+
+Option B (preferred):
+Use a gradient overlay:
+
+background:
+linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)),
+url("BACKGROUND_URL");
+
+---
+
+4. SCALE & FIT
+
+* Ensure the pattern is not zoomed incorrectly
+* Adjust if needed:
+
+background-size: 120% auto;
+
+OR
+
+background-size: cover;
+
+(depending on which matches the original more closely)
+
+---
+
+5. CONTAINER CONTROL
+
+* Apply the background to the main section wrapper ONLY (not entire page unless needed)
+* Ensure content sits above it using proper z-index
+
+---
+
+6. RESPONSIVENESS
+
+* Maintain correct positioning on:
+
+  * Desktop
+  * Tablet
+  * Mobile
+* Prevent awkward cropping or zoom on smaller screens
+
+---
+
+STRICT RULES:
+
+* Do NOT distort or stretch the image
+* Do NOT place the pattern in the center if the original is offset
+* Do NOT make the background too bright or distracting
+* Match the original Guardian Trading Contact page as closely as possible (pixel-accurate feel)
+
+---
+
+FINAL RESULT:
+
+* Background pattern matches the original site visually
+* Proper alignment, scale, and opacity
+* Clean, subtle, professional look behind the form
+* No visual mismatch compared to the real Guardian Trading page
