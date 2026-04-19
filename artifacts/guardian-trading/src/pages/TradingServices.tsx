@@ -1,8 +1,6 @@
 import { Layout } from "@/components/Layout";
 import { Link } from "wouter";
 
-const IMG_HERO_CHART =
-  "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-trading-services-241x241.png";
 const IMG_ORDER =
   "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-order-routing-174x174.png";
 const IMG_LOCATES =
@@ -73,22 +71,46 @@ export default function TradingServices() {
           {/* Left: chart icon */}
           <div className="flex-shrink-0 lg:w-[240px] flex justify-start items-center">
             <div
-              className="relative"
               style={{
                 filter:
-                  "drop-shadow(0 0 28px rgba(118,209,245,0.22)) drop-shadow(0 0 8px rgba(118,209,245,0.12))",
+                  "drop-shadow(0 0 28px rgba(118,209,245,0.25)) drop-shadow(0 0 8px rgba(118,209,245,0.14))",
               }}
             >
-              <img
-                src={IMG_HERO_CHART}
-                alt="Trading Services"
-                style={{
-                  width: "200px",
-                  height: "auto",
-                  objectFit: "contain",
-                  opacity: 0.92,
-                }}
-              />
+              <svg
+                width="200"
+                height="200"
+                viewBox="0 0 200 200"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-label="Trading Services"
+              >
+                {/* Bar chart bars */}
+                <rect x="18" y="122" width="22" height="52" rx="3" fill="#76d1f5" fillOpacity="0.25" stroke="#76d1f5" strokeWidth="2"/>
+                <rect x="52" y="96" width="22" height="78" rx="3" fill="#76d1f5" fillOpacity="0.25" stroke="#76d1f5" strokeWidth="2"/>
+                <rect x="86" y="110" width="22" height="64" rx="3" fill="#76d1f5" fillOpacity="0.25" stroke="#76d1f5" strokeWidth="2"/>
+                <rect x="120" y="76" width="22" height="98" rx="3" fill="#76d1f5" fillOpacity="0.35" stroke="#76d1f5" strokeWidth="2"/>
+                <rect x="154" y="48" width="22" height="126" rx="3" fill="#76d1f5" fillOpacity="0.45" stroke="#76d1f5" strokeWidth="2.5"/>
+                {/* Trend line */}
+                <polyline
+                  points="29,118 63,88 97,100 131,66 165,38"
+                  stroke="#76d1f5"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                />
+                {/* Arrow head at end of trend line */}
+                <polyline
+                  points="152,28 165,38 155,51"
+                  stroke="#76d1f5"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                />
+                {/* Baseline */}
+                <line x1="10" y1="178" x2="190" y2="178" stroke="#76d1f5" strokeWidth="2" strokeOpacity="0.4"/>
+              </svg>
             </div>
           </div>
 
