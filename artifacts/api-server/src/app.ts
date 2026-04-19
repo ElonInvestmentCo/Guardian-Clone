@@ -20,8 +20,6 @@ app.set("trust proxy", 1);
 const allowedOrigins = [
   "https://guardiiantrading.com",
   "https://www.guardiiantrading.com",
-  "https://guardiantrading.com",
-  "https://www.guardiantrading.com",
   "https://guardian-clone-production.up.railway.app",
   "https://guardian-trading.vercel.app",
   "https://guardian-clone-admin-kyc.vercel.app",

@@ -1,10 +1,5 @@
 import { Layout } from "@/components/Layout";
 
-const BG = "https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image.png";
-const DAS_ICON = "https://www.guardiantrading.com/wp-content/uploads/2026/04/DAS-icon-50x50.png";
-const STERLING_ICON = "https://www.guardiantrading.com/wp-content/uploads/2026/04/sterling-icon-50x50.png";
-const SILEXX_ICON = "https://www.guardiantrading.com/wp-content/uploads/2026/04/Silexx_hor_rgb_rev-118x50-1-118x50.png";
-const BENZINGA = "https://www.guardiantrading.com/wp-content/uploads/2026/01/reviewed-by-benzinga-2024-200x166-1-320x266.png";
 
 const ContactBtn = () => (
   <a href="/contact" className="inline-block hover:opacity-90 transition-opacity">
@@ -59,9 +54,7 @@ export default function EquitiesOptions() {
         style={{
           marginTop: "78px",
           minHeight: "260px",
-          backgroundImage: `url('${BG}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundColor: "#141414",
         }}
       >
         <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.15)" }} />
@@ -88,10 +81,6 @@ export default function EquitiesOptions() {
           <div className="bg-[#1a1a1a] border border-white/10 p-6 mb-6 inline-block w-full max-w-[600px]">
             <div className="flex items-center gap-3 mb-5">
               <span className="text-white text-[14px] font-semibold">Guardian Equity Rate Table</span>
-            </div>
-            <div className="flex items-center gap-4 mb-5">
-              <img src={DAS_ICON} alt="DAS Trader" style={{ width: "50px", height: "50px", objectFit: "contain" }} />
-              <img src={STERLING_ICON} alt="Sterling Trader" style={{ width: "50px", height: "50px", objectFit: "contain" }} />
             </div>
             <RateTable
               headers={["MONTHLY", "COMMISSION FEES", "MIN. ORDER FEE"]}
@@ -122,11 +111,6 @@ export default function EquitiesOptions() {
           <div className="bg-[#1a1a1a] border border-white/10 p-6 mb-6 inline-block w-full max-w-[600px]">
             <div className="flex items-center gap-3 mb-5">
               <span className="text-white text-[14px] font-semibold">Guardian Options Rate Table</span>
-            </div>
-            <div className="flex items-center gap-4 mb-5">
-              <img src={DAS_ICON} alt="DAS Trader" style={{ width: "50px", height: "50px", objectFit: "contain" }} />
-              <img src={STERLING_ICON} alt="Sterling Trader" style={{ width: "50px", height: "50px", objectFit: "contain" }} />
-              <img src={SILEXX_ICON} alt="Silexx" style={{ height: "40px", width: "auto", objectFit: "contain" }} />
             </div>
             <RateTable
               headers={["VOLUME (Contract per Month)", "PRICE PER CONTRACT"]}
@@ -166,9 +150,6 @@ export default function EquitiesOptions() {
           <div className="bg-[#1a1a1a] border border-white/10 p-6 mb-6 inline-block w-full max-w-[480px]">
             <div className="flex items-center gap-3 mb-5">
               <span className="text-white text-[14px] font-semibold">Guardian Futures Rate Table</span>
-            </div>
-            <div className="flex items-center gap-4 mb-5">
-              <img src={DAS_ICON} alt="DAS Trader" style={{ width: "50px", height: "50px", objectFit: "contain" }} />
             </div>
             <RateTable
               headers={["VOLUME", "PRICE PER SIDE"]}
@@ -245,14 +226,6 @@ export default function EquitiesOptions() {
         </div>
       </section>
 
-      {/* ── BENZINGA ── */}
-      <section style={{ backgroundColor: "#1c1c1c" }} className="py-12 px-4">
-        <div className="max-w-[1100px] mx-auto flex justify-center">
-          <a href="https://www.benzinga.com/money/guardian-trading-review" target="_blank" rel="noopener noreferrer">
-            <img src={BENZINGA} alt="Reviewed by Benzinga 2024" style={{ width: "120px", height: "auto" }} />
-          </a>
-        </div>
-      </section>
 
     </Layout>
   );

@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 
-const PATTERN_BG = "https://www.guardiantrading.com/wp-content/themes/gate39media/public/img/img-blog-background-pattern.png";
-
 const CATEGORIES = ["All Blogs", "DAS Hotkeys", "Margin", "Risk Management", "Short Selling", "Tools"];
 
 const POSTS = [
@@ -95,17 +93,6 @@ export default function Blog() {
           minHeight: "280px",
         }}
       >
-        <div
-          className="absolute inset-y-0 right-0 pointer-events-none"
-          style={{
-            width: "340px",
-            backgroundImage: `url('${PATTERN_BG}')`,
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "right center",
-            backgroundSize: "contain",
-            opacity: 0.55,
-          }}
-        />
         <div className="relative z-10 max-w-[1100px] mx-auto px-6 py-12">
           <div className="flex items-center gap-4 mb-4">
             <span style={{ fontSize: "12px", fontWeight: 700, color: "#ffffff", letterSpacing: "0.12em" }}>

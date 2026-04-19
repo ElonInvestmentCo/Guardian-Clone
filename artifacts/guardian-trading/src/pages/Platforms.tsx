@@ -1,18 +1,5 @@
 import { Layout } from "@/components/Layout";
 
-const BG2 = "https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image-2.png";
-
-const DAS_ICON = "https://www.guardiantrading.com/wp-content/uploads/2025/07/DAS-icon-50x50.png";
-const STERLING_ICON = "https://www.guardiantrading.com/wp-content/uploads/2025/07/sterling-icon-50x50.png";
-const RIVAL_ICON = "https://www.guardiantrading.com/wp-content/uploads/2025/07/ico-rival-one-50x50-1-50x50.png";
-const BLOOMBERG_ICON = "https://www.guardiantrading.com/wp-content/uploads/2025/07/ico-bloomberg-50x50-1-50x50.png";
-
-const DAS_SCREENS = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-das-trader-screens-538x364-1-538x364.png";
-const STERLING_SCREENS = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-sterling-screens-454x402-1-454x402.png";
-const RIVAL_SCREENS = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-rival-one-screens-566x357-1-566x357.png";
-const BLOOMBERG_SCREENS = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-bloomberg-screens-425x334-1-425x334.png";
-
-const BENZINGA = "https://www.guardiantrading.com/wp-content/uploads/2026/01/reviewed-by-benzinga-2024-200x166-1-320x266.png";
 
 const PlusBtn = ({ href }: { href?: string }) => (
   <a href={href ?? "#"} className="inline-block hover:opacity-80 transition-opacity">
@@ -63,9 +50,7 @@ export default function Platforms() {
         style={{
           marginTop: "78px",
           minHeight: "260px",
-          backgroundImage: `url('${BG2}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundColor: "#141414",
         }}
       >
         <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.15)" }} />
@@ -82,7 +67,6 @@ export default function Platforms() {
           {/* Text */}
           <div className="flex-1 order-2 lg:order-1">
             <div className="flex items-center gap-3 mb-4">
-              <img src={DAS_ICON} alt="DAS" style={{ width: "36px", height: "36px", objectFit: "contain" }} />
               <h2 className="text-2xl font-display font-bold text-white">DAS Trader Pro</h2>
             </div>
             <p className="text-white text-[14px] leading-relaxed mb-5">
@@ -106,24 +90,15 @@ export default function Platforms() {
               <StartBtn />
             </div>
           </div>
-          {/* Screen */}
-          <div className="flex-shrink-0 w-full lg:w-[480px] order-1 lg:order-2">
-            <img src={DAS_SCREENS} alt="DAS Trader Pro Screens" className="w-full h-auto object-contain" />
-          </div>
         </div>
       </section>
 
       {/* ── STERLING TRADER PRO ── screen left / text right */}
       <section style={{ backgroundColor: "#1c1c1c" }} className="py-16 px-4 border-b border-white/5">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
-          {/* Screen */}
-          <div className="flex-shrink-0 w-full lg:w-[440px]">
-            <img src={STERLING_SCREENS} alt="Sterling Trader Pro Screens" className="w-full h-auto object-contain" />
-          </div>
           {/* Text */}
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-4">
-              <img src={STERLING_ICON} alt="Sterling" style={{ width: "36px", height: "36px", objectFit: "contain" }} />
               <h2 className="text-2xl font-display font-bold text-white">Sterling Trader® Pro</h2>
             </div>
             <p className="text-white text-[14px] leading-relaxed mb-5">
@@ -158,7 +133,6 @@ export default function Platforms() {
           {/* Text */}
           <div className="flex-1 order-2 lg:order-1">
             <div className="flex items-center gap-3 mb-2">
-              <img src={RIVAL_ICON} alt="Rival One" style={{ width: "36px", height: "36px", objectFit: "contain" }} />
               <div>
                 <h2 className="text-2xl font-display font-bold text-white leading-tight">Rival One: Multi-Asset</h2>
                 <h2 className="text-2xl font-display font-bold text-white">Trading</h2>
@@ -184,24 +158,15 @@ export default function Platforms() {
               <StartBtn />
             </div>
           </div>
-          {/* Screen */}
-          <div className="flex-shrink-0 w-full lg:w-[500px] order-1 lg:order-2">
-            <img src={RIVAL_SCREENS} alt="Rival One Screens" className="w-full h-auto object-contain" />
-          </div>
         </div>
       </section>
 
       {/* ── BLOOMBERG EMSX ── screen left / text right */}
       <section style={{ backgroundColor: "#1c1c1c" }} className="py-16 px-4 border-b border-white/5">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
-          {/* Screen */}
-          <div className="flex-shrink-0 w-full lg:w-[420px]">
-            <img src={BLOOMBERG_SCREENS} alt="Bloomberg EMSX Screens" className="w-full h-auto object-contain" />
-          </div>
           {/* Text */}
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-4">
-              <img src={BLOOMBERG_ICON} alt="Bloomberg" style={{ width: "36px", height: "36px", objectFit: "contain" }} />
               <h2 className="text-2xl font-display font-bold text-white">Bloomberg EMSX</h2>
             </div>
             <p className="text-white text-[14px] leading-relaxed mb-6">
@@ -265,14 +230,6 @@ export default function Platforms() {
         </div>
       </section>
 
-      {/* ── BENZINGA ── */}
-      <section style={{ backgroundColor: "#141414" }} className="py-12 px-4">
-        <div className="max-w-[1100px] mx-auto flex justify-center">
-          <a href="https://www.benzinga.com/money/guardian-trading-review" target="_blank" rel="noopener noreferrer">
-            <img src={BENZINGA} alt="Reviewed by Benzinga 2024" style={{ width: "120px", height: "auto" }} />
-          </a>
-        </div>
-      </section>
 
     </Layout>
   );

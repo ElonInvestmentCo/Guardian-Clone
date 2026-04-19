@@ -1,10 +1,6 @@
 import { Layout } from "@/components/Layout";
 import { Link } from "wouter";
 
-const BG = "https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image-3.png";
-const IMG_ORDER = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-order-routing-174x174.png";
-const IMG_LOCATES = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-locates-borrows-174x174.png";
-const IMG_PLATFORMS = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-leading-platforms-174x174.png";
 
 const OutlineBtn = ({ href, children }: { href?: string; children: React.ReactNode }) => (
   <a
@@ -25,9 +21,7 @@ export default function TradingServices() {
         className="relative overflow-hidden"
         style={{
           marginTop: "78px",
-          backgroundImage: `url('${BG}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundColor: "#141414",
         }}
       >
         <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.15)" }} />
@@ -92,9 +86,6 @@ export default function TradingServices() {
       {/* ── ORDER ROUTING ── */}
       <section style={{ backgroundColor: "#141414" }} className="py-16 px-4">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row items-center gap-12">
-          <div className="flex-shrink-0 flex justify-center lg:justify-start lg:w-[220px]">
-            <img src={IMG_ORDER} alt="Order Routing" style={{ width: "174px", height: "174px", objectFit: "contain" }} />
-          </div>
           <div className="flex-1">
             <h2 className="text-2xl lg:text-3xl font-display font-bold text-white mb-4">Order Routing</h2>
             <p className="text-white text-[15px] leading-relaxed mb-6">
@@ -108,9 +99,6 @@ export default function TradingServices() {
       {/* ── LOCATES & STOCK BORROWS ── */}
       <section style={{ backgroundColor: "#141414" }} className="py-16 px-4">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row items-center gap-12">
-          <div className="flex-shrink-0 flex justify-center lg:justify-start lg:w-[220px]">
-            <img src={IMG_LOCATES} alt="Locates & Stock Borrows" style={{ width: "174px", height: "174px", objectFit: "contain" }} />
-          </div>
           <div className="flex-1">
             <h2 className="text-2xl lg:text-3xl font-display font-bold text-white mb-4">Locates &amp; Stock Borrows</h2>
             <p className="text-white text-[15px] leading-relaxed mb-6">
@@ -124,9 +112,6 @@ export default function TradingServices() {
       {/* ── LEADING TRADING PLATFORMS ── */}
       <section style={{ backgroundColor: "#141414" }} className="py-16 px-4">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row items-center gap-12">
-          <div className="flex-shrink-0 flex justify-center lg:justify-start lg:w-[220px]">
-            <img src={IMG_PLATFORMS} alt="Leading Trading Platforms" style={{ width: "174px", height: "174px", objectFit: "contain" }} />
-          </div>
           <div className="flex-1">
             <h2 className="text-2xl lg:text-3xl font-display font-bold text-white mb-4">Leading Trading Platforms</h2>
             <p className="text-white text-[15px] leading-relaxed mb-6">
