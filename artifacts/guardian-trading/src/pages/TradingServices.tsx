@@ -48,7 +48,7 @@ export default function TradingServices() {
             </h2>
           </div>
           <div className="flex-1">
-            <p className="text-white text-[14px] leading-relaxed">
+            <p className="text-white leading-relaxed" style={{ fontSize: "16px", fontWeight: 400 }}>
               A complete suite of trading services, tools and technology built to support professional traders.
               Guardian Trading is the active trader division of Velocity Clearing, recognized provider of clearing,
               execution and technology to institutional traders and other retail brokerage firms.
