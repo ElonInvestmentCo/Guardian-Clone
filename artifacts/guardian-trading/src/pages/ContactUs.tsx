@@ -35,37 +35,37 @@ export default function ContactUs() {
   return (
     <Layout title="Contact Us | Guardian Trading">
 
-      {/* ── HERO ── */}
-      <section
-        className="relative flex items-center justify-center text-center overflow-hidden"
+      {/* ── SINGLE BACKGROUND WRAPPER ── */}
+      <div
         style={{
           marginTop: "78px",
-          minHeight: "260px",
-          background: `linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('${BG_VECTOR}')`,
+          position: "relative",
+          backgroundImage: `url('${BG_VECTOR}')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="relative z-10 py-16 px-4">
-          <h1
-            className="font-bold text-white"
-            style={{ fontSize: "clamp(32px, 5vw, 50px)", letterSpacing: "-0.01em" }}
-          >
-            Contact Us
-          </h1>
-        </div>
-      </section>
+        {/* Dark overlay */}
+        <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.85)", zIndex: 0 }} />
 
-      {/* ── CONTENT ── */}
-      <section
-        style={{
-          background: `linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('${BG_VECTOR}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-        className="py-14 px-6"
+        {/* ── HERO ── */}
+        <section
+          className="relative flex items-center justify-center text-center"
+          style={{ minHeight: "260px", zIndex: 1 }}
+        >
+          <div className="py-16 px-4">
+            <h1
+              className="font-bold text-white"
+              style={{ fontSize: "clamp(32px, 5vw, 50px)", letterSpacing: "-0.01em" }}
+            >
+              Contact Us
+            </h1>
+          </div>
+        </section>
+
+        {/* ── CONTENT ── */}
+        <section className="py-14 px-6" style={{ position: "relative", zIndex: 1 }}
       >
         <div
           className="max-w-[1100px] mx-auto"
@@ -230,7 +230,8 @@ export default function ContactUs() {
             </form>
           </div>
         </div>
-      </section>
+        </section>
+      </div>
 
     </Layout>
   );
