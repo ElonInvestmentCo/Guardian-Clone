@@ -1,20 +1,8 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 
-function CursorShape({ flip = false }: { flip?: boolean }) {
-  return (
-    <svg
-      width="60"
-      height="120"
-      viewBox="0 0 60 120"
-      fill="none"
-      style={{ transform: flip ? "scaleX(-1)" : undefined, opacity: 0.85 }}
-    >
-      <ellipse cx="30" cy="30" rx="30" ry="30" fill="#2a6ea6" />
-      <rect x="22" y="55" width="16" height="65" rx="8" fill="#2a6ea6" />
-    </svg>
-  );
-}
+const BG_VECTOR = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-background-vector-1.png";
+const RECAPTCHA_LOGO = "https://www.gstatic.com/recaptcha/api2/logo_48.png";
 
 export default function ContactUs() {
   const [firstName, setFirstName] = useState("");
@@ -53,23 +41,11 @@ export default function ContactUs() {
         style={{
           marginTop: "78px",
           minHeight: "260px",
-          backgroundColor: "#141414",
+          backgroundImage: `url('${BG_VECTOR}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 1 }}>
-          <div style={{ position: "absolute", top: "20px", left: "50%", transform: "translateX(-50%)" }}>
-            <CursorShape />
-          </div>
-          <div style={{ position: "absolute", top: "40px", left: "18%", opacity: 0.45, transform: "scale(0.55)" }}>
-            <CursorShape />
-          </div>
-          <div style={{ position: "absolute", top: "30px", right: "16%", opacity: 0.55, transform: "scale(0.7)" }}>
-            <CursorShape flip />
-          </div>
-          <div style={{ position: "absolute", bottom: "10px", right: "8%", opacity: 0.3, transform: "scale(0.45)" }}>
-            <CursorShape flip />
-          </div>
-        </div>
         <div className="relative z-10 py-16 px-4">
           <h1
             className="font-bold text-white"
@@ -81,7 +57,14 @@ export default function ContactUs() {
       </section>
 
       {/* ── CONTENT ── */}
-      <section style={{ backgroundColor: "#141414" }} className="py-14 px-6">
+      <section
+        style={{
+          backgroundImage: `url('${BG_VECTOR}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+        className="py-14 px-6"
+      >
         <div
           className="max-w-[1100px] mx-auto"
           style={{
@@ -209,8 +192,8 @@ export default function ContactUs() {
                 <a href="#" style={{ color: "#76d1f5", textDecoration: "underline" }}>Privacy Policy</a>.
               </p>
 
-              {/* Submit */}
-              <div>
+              {/* Submit + reCAPTCHA */}
+              <div style={{ display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap" }}>
                 <button
                   type="submit"
                   style={{
@@ -230,6 +213,17 @@ export default function ContactUs() {
                 >
                   Submit
                 </button>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <img src={RECAPTCHA_LOGO} alt="reCAPTCHA" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
+                  <div>
+                    <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.5)", margin: 0, lineHeight: 1.4 }}>Protected by reCAPTCHA</p>
+                    <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.4)", margin: 0, lineHeight: 1.4 }}>
+                      <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "rgba(255,255,255,0.4)", textDecoration: "underline" }}>Privacy</a>
+                      {" · "}
+                      <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" style={{ color: "rgba(255,255,255,0.4)", textDecoration: "underline" }}>Terms</a>
+                    </p>
+                  </div>
+                </div>
               </div>
             </form>
           </div>
