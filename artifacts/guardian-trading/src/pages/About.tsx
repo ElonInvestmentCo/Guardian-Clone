@@ -40,7 +40,7 @@ export default function About() {
           <div className="max-w-[1100px] mx-auto">
             <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
               <div className="lg:w-[42%]">
-                <h3 className="text-white text-[32px] font-medium bg-[transparent]">Serving the Active
+                <h3 className="text-white text-[32px] font-medium bg-[transparent] ml-[115px] mr-[115px] pl-[0px] pr-[0px] mt-[10px] mb-[10px] pt-[1px] pb-[1px]">Serving the Active
                 Trader Community</h3>
               </div>
               <div className="flex-1">
