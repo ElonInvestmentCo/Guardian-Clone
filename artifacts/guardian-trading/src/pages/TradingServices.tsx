@@ -5,7 +5,6 @@ const BG = "https://www.guardiantrading.com/wp-content/uploads/2025/07/backgroun
 const IMG_ORDER = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-order-routing-174x174.png";
 const IMG_LOCATES = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-locates-borrows-174x174.png";
 const IMG_PLATFORMS = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-leading-platforms-174x174.png";
-const BENZINGA = "https://www.guardiantrading.com/wp-content/uploads/2026/01/reviewed-by-benzinga-2024-200x166-1-320x266.png";
 
 const OutlineBtn = ({ href, children }: { href?: string; children: React.ReactNode }) => (
   <a
@@ -157,18 +156,6 @@ export default function TradingServices() {
         </div>
       </section>
 
-      {/* ── BENZINGA ── */}
-      <section style={{ backgroundColor: "#141414" }} className="py-12 px-4">
-        <div className="max-w-[1100px] mx-auto flex justify-center">
-          <a
-            href="https://www.benzinga.com/money/guardian-trading-review"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src={BENZINGA} alt="Reviewed by Benzinga 2024" style={{ width: "120px", height: "auto" }} />
-          </a>
-        </div>
-      </section>
 
     </Layout>
   );
