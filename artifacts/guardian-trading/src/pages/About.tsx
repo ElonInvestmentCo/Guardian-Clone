@@ -44,7 +44,7 @@ export default function About() {
                 Trader Community</h3>
               </div>
               <div className="flex-1">
-                <p className="text-white text-[15px] leading-relaxed">
+                <p className="text-[16px] font-normal text-[#FFFFFF] text-left pl-[20px] pr-[20px] mt-[15px] mb-[15px] ml-[10px] mr-[10px]">
                   Guardian Trading began with a mission to deliver the trading tools, services, and technology
                   traders need to succeed and scale. Guardian Trading provides the knowledge and support active
                   traders expect to manage the entire trading cycle.
