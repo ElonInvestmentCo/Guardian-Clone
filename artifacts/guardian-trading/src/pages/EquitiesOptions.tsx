@@ -1,7 +1,6 @@
 import { Layout } from "@/components/Layout";
 
 const BG = "https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image.png";
-const BG_VECTOR = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-background-vector-1.png";
 const DAS_ICON = "https://www.guardiantrading.com/wp-content/uploads/2026/04/DAS-icon-50x50.png";
 const STERLING_ICON = "https://www.guardiantrading.com/wp-content/uploads/2026/04/sterling-icon-50x50.png";
 const SILEXX_ICON = "https://www.guardiantrading.com/wp-content/uploads/2026/04/Silexx_hor_rgb_rev-118x50-1-118x50.png";
@@ -53,7 +52,7 @@ const RateTable = ({ headers, rows }: { headers: string[]; rows: string[][] }) =
 export default function EquitiesOptions() {
   return (
     <Layout title="Pricing — Equities, Options & Futures | Guardian Trading">
-      <div style={{ backgroundImage: `url('${BG_VECTOR}')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }}>
+
       {/* ── HERO ── */}
       <section
         className="relative flex items-center justify-center text-center overflow-hidden"
@@ -77,7 +76,7 @@ export default function EquitiesOptions() {
       </section>
 
       {/* ── EQUITIES ── */}
-      <section style={{ backgroundColor: "transparent" }} className="py-16 px-4 border-b border-white/5">
+      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4 border-b border-white/5">
         <div className="max-w-[1100px] mx-auto">
           <h2 className="text-2xl font-display font-bold text-white mb-2">Equities</h2>
           <p className="text-white text-[13px] font-semibold uppercase tracking-wider mb-3">Per Share Commissions</p>
@@ -111,7 +110,7 @@ export default function EquitiesOptions() {
       </section>
 
       {/* ── OPTIONS ── */}
-      <section style={{ backgroundColor: "transparent" }} className="py-16 px-4 border-b border-white/5">
+      <section style={{ backgroundColor: "#1c1c1c" }} className="py-16 px-4 border-b border-white/5">
         <div className="max-w-[1100px] mx-auto">
           <h2 className="text-2xl font-display font-bold text-white mb-2">Options</h2>
           <p className="text-white text-[13px] font-semibold uppercase tracking-wider mb-3">Per Contract Commissions</p>
@@ -149,7 +148,7 @@ export default function EquitiesOptions() {
       </section>
 
       {/* ── FUTURES ── */}
-      <section style={{ backgroundColor: "transparent" }} className="py-16 px-4 border-b border-white/5">
+      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4 border-b border-white/5">
         <div className="max-w-[1100px] mx-auto">
           <h2 className="text-2xl font-display font-bold text-white mb-2">Futures ($20,000 Minimum Funding)</h2>
           <p className="text-white text-[15px] leading-relaxed mb-3 max-w-[700px]">
@@ -187,7 +186,7 @@ export default function EquitiesOptions() {
       </section>
 
       {/* ── REGULATORY FEES ── */}
-      <section style={{ backgroundColor: "transparent" }} className="py-16 px-4 border-b border-white/5">
+      <section style={{ backgroundColor: "#1c1c1c" }} className="py-16 px-4 border-b border-white/5">
         <div className="max-w-[1100px] mx-auto">
           <h2 className="text-2xl font-display font-bold text-white mb-8">Regulatory Fees</h2>
           <p className="text-white text-[15px] leading-relaxed mb-8 max-w-[700px]">
@@ -215,7 +214,7 @@ export default function EquitiesOptions() {
       </section>
 
       {/* ── ACCOUNT RELATED FEES ── */}
-      <section style={{ backgroundColor: "transparent" }} className="py-16 px-4 border-b border-white/5">
+      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4 border-b border-white/5">
         <div className="max-w-[1100px] mx-auto">
           <h2 className="text-2xl font-display font-bold text-white mb-8">Account Related Fees</h2>
           <div className="overflow-x-auto">
@@ -247,14 +246,14 @@ export default function EquitiesOptions() {
       </section>
 
       {/* ── BENZINGA ── */}
-      <section style={{ backgroundColor: "transparent" }} className="py-12 px-4">
+      <section style={{ backgroundColor: "#1c1c1c" }} className="py-12 px-4">
         <div className="max-w-[1100px] mx-auto flex justify-center">
           <a href="https://www.benzinga.com/money/guardian-trading-review" target="_blank" rel="noopener noreferrer">
             <img src={BENZINGA} alt="Reviewed by Benzinga 2024" style={{ width: "120px", height: "auto" }} />
           </a>
         </div>
       </section>
-      </div>
+
     </Layout>
   );
 }
