@@ -43,7 +43,7 @@ export default function TradingServices() {
         {/* Two-column text row */}
         <div className="relative z-10 max-w-[1200px] mx-auto px-6 pt-10 pb-52 flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
           <div className="lg:w-[42%] lg:pl-40">
-            <h2 className="text-2xl lg:text-[26px] font-display font-bold text-white leading-snug">
+            <h2 className="text-white leading-snug" style={{ fontSize: "32px", fontWeight: 400 }}>
               Brokerage services built for active traders
             </h2>
           </div>
