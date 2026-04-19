@@ -25,7 +25,9 @@ export default function About() {
         className="relative overflow-hidden"
         style={{
           marginTop: "78px",
-          backgroundColor: "#141414",
+          backgroundImage: "url('https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image-1.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
         <div className="absolute inset-0" style={{ backgroundColor: "rgba(10,10,10,0.15)" }} />

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 
+const BG_VECTOR = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-background-vector-1.png";
 const RECAPTCHA_LOGO = "https://www.gstatic.com/recaptcha/api2/logo_48.png";
 
 export default function ContactUs() {
@@ -39,7 +40,10 @@ export default function ContactUs() {
         style={{
           marginTop: "78px",
           position: "relative",
-          backgroundColor: "#141414",
+          backgroundImage: `url('${BG_VECTOR}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       >
         {/* Dark overlay */}
@@ -92,6 +96,10 @@ export default function ContactUs() {
               <a href="tel:8886020092" style={{ color: "#76d1f5", textDecoration: "none", fontWeight: 600 }}>
                 888-602-0092
               </a>{" "}
+              During Market Hours or email{" "}
+              <a href="mailto:info@guardiantrading.com" style={{ color: "#76d1f5", textDecoration: "none", display: "block", marginTop: "2px" }}>
+                info@guardiantrading.com
+              </a>
             </p>
           </div>
 
