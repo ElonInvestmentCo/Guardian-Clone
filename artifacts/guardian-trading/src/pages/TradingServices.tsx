@@ -61,7 +61,7 @@ export default function TradingServices() {
       </section>
 
       {/* ── PRICING ── */}
-      <section style={{ backgroundColor: "#141414" }} className="py-14 px-4">
+      <section style={{ backgroundColor: "#1c1c1c" }} className="py-14 px-4">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-12 items-start">
           {/* Left */}
           <div className="lg:w-[32%]">
