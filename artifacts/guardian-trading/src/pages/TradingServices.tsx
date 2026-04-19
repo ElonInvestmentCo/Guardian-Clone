@@ -71,7 +71,7 @@ export default function TradingServices() {
       </section>
 
       {/* ── PRICING ── */}
-      <section style={{ backgroundColor: "#1c1c1c" }} className="py-14 px-4">
+      <section style={{ backgroundColor: "#141414" }} className="py-14 px-4">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-12 items-start">
           {/* Left */}
           <div className="lg:w-[32%]">
@@ -120,7 +120,7 @@ export default function TradingServices() {
       </section>
 
       {/* ── LOCATES & STOCK BORROWS ── */}
-      <section style={{ backgroundColor: "#1c1c1c" }} className="py-16 px-4 border-b border-white/5">
+      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4 border-b border-white/5">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row items-center gap-12">
           <div className="flex-shrink-0 flex justify-center lg:justify-start lg:w-[220px]">
             <img src={IMG_LOCATES} alt="Locates & Stock Borrows" style={{ width: "174px", height: "174px", objectFit: "contain" }} />
@@ -152,7 +152,7 @@ export default function TradingServices() {
       </section>
 
       {/* ── CTA ── */}
-      <section style={{ backgroundColor: "#1c1c1c" }} className="py-20 px-4 text-center">
+      <section style={{ backgroundColor: "#141414" }} className="py-20 px-4 text-center">
         <div className="max-w-[700px] mx-auto">
           <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-4">
             Take on the Markets with Guardian.
