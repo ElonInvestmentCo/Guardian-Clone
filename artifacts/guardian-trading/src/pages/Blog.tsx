@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
-import { Link } from "wouter";
 
 const PATTERN_BG = "https://www.guardiantrading.com/wp-content/themes/gate39media/public/img/img-blog-background-pattern.png";
 
@@ -23,29 +22,29 @@ const POSTS = [
     categorySlug: "DAS Hotkeys",
     date: "04/13/2026",
     readTime: "4m",
-    title: "DAS Trader Pro \u2013 A simple guide to setting up hotkeys",
+    title: "DAS Trader Pro \u2013 A simple green light for entries",
     excerpt:
-      "Hotkeys are one of the most powerful features in DAS Trader Pro. Setting them up correctly can dramatically improve your trading speed and accuracy. In this guide we walk through the key configuration steps to get you up and running with the most useful hotkeys for active traders.",
+      "I used to struggle with forgetting some of the rules for my entries. I was able to get around it with the help of a simple solution - a green light button for entries. It is working in a few stepsCheck if my condition is metChange the color of the button to green if yes or\u2026",
   },
   {
     id: 3,
-    category: "MARGIN",
-    categorySlug: "Margin",
-    date: "03/28/2026",
-    readTime: "5m",
-    title: "Understanding Margin Requirements for Active Traders",
+    category: "DAS HOTKEYS",
+    categorySlug: "DAS Hotkeys",
+    date: "04/07/2026",
+    readTime: "3m",
+    title: "DAS Trader Pro \u2013 symbol notes",
     excerpt:
-      "Margin trading amplifies both gains and losses. Understanding the margin requirements at Guardian Trading is essential for managing your risk and keeping your account in good standing. This article covers initial margin, maintenance margin, and what happens during a margin call.",
+      "Often we need to put some notes on the symbols, being either warnings, whole trade plans, or just any other note.3 types of notesThere are 3 types of notes as of today, if I do not count any text you can write into a button by editing it. Although it is a valid way, there\u2026",
   },
   {
     id: 4,
-    category: "RISK MANAGEMENT",
-    categorySlug: "Risk Management",
-    date: "03/15/2026",
-    readTime: "7m",
-    title: "Risk Management Strategies Every Active Trader Should Know",
+    category: "DAS HOTKEYS",
+    categorySlug: "DAS Hotkeys",
+    date: "03/23/2026",
+    readTime: "5m",
+    title: "DAS Trader Pro \u2013 how to save the stop loss price value for later",
     excerpt:
-      "Effective risk management is the cornerstone of long-term trading success. From setting proper stop-loss levels to position sizing, this comprehensive guide covers the core strategies that professional traders use to protect their capital while maximizing opportunity.",
+      "Everybody has experienced it. You enter a trade having automated stop loss or update the stop loss to the value you like, but then you mis-click in the orders window and lose the stop loss. Now you are pressured to retrieve it back to stay protected.Here is the solution for such cases.setvar() and getvar() functionas\u2026",
   },
   {
     id: 5,
@@ -69,35 +68,20 @@ const POSTS = [
   },
 ];
 
-function ReadMoreArrow() {
-  return (
-    <span
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "28px",
-        height: "28px",
-        background: "#76d1f5",
-        marginLeft: "10px",
-        flexShrink: 0,
-      }}
-    >
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-        <path d="M2 6h8M6 2l4 4-4 4" stroke="#0d0d0d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </span>
-  );
-}
+const POSTS_PER_PAGE = 4;
+const TOTAL_PAGES = 6;
 
 export default function Blog() {
   const [activeCategory, setActiveCategory] = useState("All Blogs");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const featured = POSTS[0];
   const filtered =
     activeCategory === "All Blogs"
       ? POSTS
       : POSTS.filter((p) => p.categorySlug === activeCategory);
+
+  const paginated = filtered.slice(0, POSTS_PER_PAGE);
 
   return (
     <Layout title="Blog | Guardian Trading">
@@ -114,7 +98,7 @@ export default function Blog() {
         <div
           className="absolute inset-y-0 right-0 pointer-events-none"
           style={{
-            width: "320px",
+            width: "340px",
             backgroundImage: `url('${PATTERN_BG}')`,
             backgroundRepeat: "no-repeat",
             backgroundPosition: "right center",
@@ -137,26 +121,18 @@ export default function Blog() {
               {featured.readTime}
             </span>
           </div>
-          <h1 className="text-white font-bold mb-5" style={{ fontSize: "clamp(22px, 3vw, 32px)", maxWidth: "720px", lineHeight: 1.3 }}>
+          <h1
+            className="text-white font-bold mb-5"
+            style={{ fontSize: "clamp(22px, 3vw, 30px)", maxWidth: "600px", lineHeight: 1.3 }}
+          >
             {featured.title}
           </h1>
-          <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.78)", maxWidth: "760px", lineHeight: 1.7, marginBottom: "28px" }}>
+          <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.78)", maxWidth: "680px", lineHeight: 1.7, marginBottom: "28px" }}>
             {featured.excerpt}
           </p>
-          <button
-            style={{
-              border: "1.5px solid #ffffff",
-              background: "transparent",
-              color: "#ffffff",
-              padding: "10px 22px",
-              fontSize: "14px",
-              fontWeight: 600,
-              cursor: "pointer",
-              letterSpacing: "0.03em",
-            }}
-          >
-            Read More
-          </button>
+          <a href="#" className="inline-block hover:opacity-90 transition-opacity">
+            <img src="/images/btn-read-more.png" alt="Read More" className="h-auto" />
+          </a>
         </div>
       </section>
 
@@ -167,7 +143,7 @@ export default function Blog() {
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => { setActiveCategory(cat); setCurrentPage(1); }}
                 style={{
                   background: "transparent",
                   border: "none",
@@ -191,33 +167,34 @@ export default function Blog() {
       {/* ── GUARDIAN BLOG LISTING ── */}
       <section style={{ backgroundColor: "#141414" }} className="py-12 px-6">
         <div className="max-w-[1100px] mx-auto">
-          <h2 className="text-white font-bold mb-3" style={{ fontSize: "clamp(24px, 3vw, 32px)" }}>
+          <h2 className="text-white font-bold mb-3" style={{ fontSize: "clamp(22px, 3vw, 30px)" }}>
             Guardian Blog
           </h2>
-          <div style={{ borderBottom: "1.5px dashed rgba(255,255,255,0.18)", marginBottom: "32px" }} />
+          <div style={{ borderBottom: "1.5px dashed rgba(255,255,255,0.2)", marginBottom: "0" }} />
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
-            {filtered.map((post, idx) => (
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {paginated.map((post, idx) => (
               <div
                 key={post.id}
                 style={{
-                  borderTop: idx === 0 ? "none" : "1px solid rgba(255,255,255,0.07)",
-                  padding: "28px 0",
+                  borderTop: "1px solid rgba(255,255,255,0.08)",
+                  padding: "32px 0",
                   display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "48px",
+                  gridTemplateColumns: "1fr 1.1fr",
+                  gap: "56px",
                   alignItems: "start",
                 }}
-                className="blog-post-row"
               >
+                {/* Left: title */}
                 <div>
                   <h3
                     className="text-white font-bold"
-                    style={{ fontSize: "clamp(16px, 2vw, 20px)", lineHeight: 1.35 }}
+                    style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.35 }}
                   >
                     {post.title}
                   </h3>
                 </div>
+                {/* Right: meta + excerpt + button */}
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
                     <span style={{ fontSize: "11px", fontWeight: 700, color: "#ffffff", letterSpacing: "0.1em" }}>
@@ -226,29 +203,67 @@ export default function Blog() {
                     <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "16px" }}>|</span>
                     <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.65)" }}>{post.date}</span>
                   </div>
-                  <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.72)", lineHeight: 1.65, marginBottom: "14px" }}>
+                  <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.72)", lineHeight: 1.65, marginBottom: "16px" }}>
                     {post.excerpt}
                   </p>
-                  <button
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      background: "transparent",
-                      border: "none",
-                      color: "#ffffff",
-                      fontSize: "13px",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      padding: 0,
-                      letterSpacing: "0.04em",
-                    }}
-                  >
-                    Read More
-                    <ReadMoreArrow />
-                  </button>
+                  <a href="#" className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <img src="/images/btn-read-more.png" alt="Read More" className="h-auto" />
+                    <img src="/images/btn-play-small.png" alt="" className="h-auto" />
+                  </a>
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* ── PAGINATION ── */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              marginTop: "32px",
+              paddingTop: "16px",
+            }}
+          >
+            {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                style={{
+                  width: "30px",
+                  height: "30px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: currentPage === page ? "#4a7fbd" : "transparent",
+                  border: currentPage === page ? "1px solid #4a7fbd" : "1px solid rgba(255,255,255,0.2)",
+                  color: "#ffffff",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  transition: "background 0.2s",
+                }}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, TOTAL_PAGES))}
+              style={{
+                width: "30px",
+                height: "30px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "transparent",
+                border: "1px solid rgba(255,255,255,0.2)",
+                color: "#ffffff",
+                fontSize: "13px",
+                cursor: "pointer",
+              }}
+            >
+              &gt;
+            </button>
           </div>
         </div>
       </section>
