@@ -72,7 +72,7 @@ export default function TradingServices() {
           <div className="flex-1 flex flex-col sm:flex-row gap-12 lg:gap-16">
             <div>
               <p className="text-white text-[13px] font-semibold mb-1">Options Contracts</p>
-              <p className="text-[#76d1f5] text-[11px] font-bold uppercase tracking-wider mb-2">AS LOW AS</p>
+              <p className="text-white text-[11px] font-bold uppercase tracking-wider mb-2">AS LOW AS</p>
               <p className="font-bold mb-1" style={{ fontSize: "52px", lineHeight: 1, color: "#76d1f5" }}>
                 <span style={{ fontSize: "28px", verticalAlign: "top", marginTop: "8px", display: "inline-block" }}>$</span>0.15
               </p>
@@ -80,7 +80,7 @@ export default function TradingServices() {
             </div>
             <div>
               <p className="text-white text-[13px] font-semibold mb-1">Equities Commissions</p>
-              <p className="text-[#76d1f5] text-[11px] font-bold uppercase tracking-wider mb-2">AS LOW AS</p>
+              <p className="text-white text-[11px] font-bold uppercase tracking-wider mb-2">AS LOW AS</p>
               <p className="font-bold mb-1" style={{ fontSize: "52px", lineHeight: 1, color: "#76d1f5" }}>
                 <span style={{ fontSize: "28px", verticalAlign: "top", marginTop: "8px", display: "inline-block" }}>$</span>0.0005
               </p>
