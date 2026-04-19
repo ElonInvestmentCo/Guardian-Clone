@@ -2,6 +2,7 @@ import { Layout } from "@/components/Layout";
 import { Link } from "wouter";
 
 const BG = "https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image-3.png";
+const IMG_HERO_CHART = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-trading-services-241x241.png";
 const IMG_ORDER = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-order-routing-174x174.png";
 const IMG_LOCATES = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-locates-borrows-174x174.png";
 const IMG_PLATFORMS = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-leading-platforms-174x174.png";
@@ -21,39 +22,50 @@ export default function TradingServices() {
   return (
     <Layout title="Trading Services | Guardian Trading">
 
-      {/* ── HERO ── */}
+      {/* ── HERO + BROKERAGE INTRO (merged) ── */}
       <section
-        className="relative flex items-center justify-center text-center overflow-hidden"
+        className="relative overflow-hidden"
         style={{
           marginTop: "78px",
-          minHeight: "280px",
           backgroundImage: `url('${BG}')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
         <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.15)" }} />
-        <div className="relative z-10 py-16 px-4">
+
+        {/* Title row */}
+        <div className="relative z-10 flex items-center justify-center text-center pt-14 pb-6 px-4">
           <h1 className="text-4xl lg:text-5xl font-display font-bold text-white tracking-tight">
             Trading Services
           </h1>
         </div>
-      </section>
 
-      {/* ── BROKERAGE INTRO ── */}
-      <section style={{ backgroundColor: "#141414" }} className="py-14 px-4 border-b border-white/5">
-        <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-10 lg:gap-20 items-start">
-          <div className="lg:w-[40%]">
-            <h2 className="text-2xl lg:text-3xl font-display font-bold text-white leading-snug">
-              Brokerage services built for active traders
-            </h2>
+        {/* Chart + two-col text row */}
+        <div className="relative z-10 max-w-[1200px] mx-auto px-6 pb-16 flex flex-col lg:flex-row items-center gap-8 lg:gap-0">
+          {/* Left: chart image */}
+          <div className="flex-shrink-0 lg:w-[220px] flex justify-start">
+            <img
+              src={IMG_HERO_CHART}
+              alt="Trading Services Chart"
+              style={{ width: "200px", height: "auto", objectFit: "contain" }}
+            />
           </div>
-          <div className="flex-1">
-            <p className="text-white text-[15px] leading-relaxed">
-              A complete suite of trading services, tools and technology built to support professional traders.
-              Guardian Trading is the active trader division of Velocity Clearing, recognized provider of clearing,
-              execution and technology to institutional traders and other retail brokerage firms.
-            </p>
+
+          {/* Right: two-column text */}
+          <div className="flex-1 flex flex-col lg:flex-row gap-10 lg:gap-16 items-start lg:pl-8">
+            <div className="lg:w-[42%]">
+              <h2 className="text-2xl lg:text-[26px] font-display font-bold text-white leading-snug">
+                Brokerage services built for active traders
+              </h2>
+            </div>
+            <div className="flex-1">
+              <p className="text-white text-[14px] leading-relaxed">
+                A complete suite of trading services, tools and technology built to support professional traders.
+                Guardian Trading is the active trader division of Velocity Clearing, recognized provider of clearing,
+                execution and technology to institutional traders and other retail brokerage firms.
+              </p>
+            </div>
           </div>
         </div>
       </section>
