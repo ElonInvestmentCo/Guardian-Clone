@@ -104,7 +104,7 @@ export default function TradingServices() {
       </section>
 
       {/* ── ORDER ROUTING ── */}
-      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4 border-b border-white/5">
+      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row items-center gap-12">
           <div className="flex-shrink-0 flex justify-center lg:justify-start lg:w-[220px]">
             <img src={IMG_ORDER} alt="Order Routing" style={{ width: "174px", height: "174px", objectFit: "contain" }} />
@@ -120,7 +120,7 @@ export default function TradingServices() {
       </section>
 
       {/* ── LOCATES & STOCK BORROWS ── */}
-      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4 border-b border-white/5">
+      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row items-center gap-12">
           <div className="flex-shrink-0 flex justify-center lg:justify-start lg:w-[220px]">
             <img src={IMG_LOCATES} alt="Locates & Stock Borrows" style={{ width: "174px", height: "174px", objectFit: "contain" }} />
@@ -136,7 +136,7 @@ export default function TradingServices() {
       </section>
 
       {/* ── LEADING TRADING PLATFORMS ── */}
-      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4 border-b border-white/5">
+      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row items-center gap-12">
           <div className="flex-shrink-0 flex justify-center lg:justify-start lg:w-[220px]">
             <img src={IMG_PLATFORMS} alt="Leading Trading Platforms" style={{ width: "174px", height: "174px", objectFit: "contain" }} />
