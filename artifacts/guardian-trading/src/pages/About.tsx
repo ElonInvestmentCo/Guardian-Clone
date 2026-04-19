@@ -21,41 +21,37 @@ export default function About() {
   return (
     <Layout title="About | Guardian Trading">
 
-      {/* ── HERO ── */}
+      {/* ── HERO + SERVING THE ACTIVE TRADER COMMUNITY ── */}
       <section
-        className="relative flex items-center justify-center text-center overflow-hidden"
+        className="relative overflow-hidden"
         style={{
-          minHeight: "320px",
           marginTop: "78px",
-          backgroundColor: "#141414",
           backgroundImage: "url('https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image-1.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
         <div className="absolute inset-0" style={{ backgroundColor: "rgba(10,10,10,0.72)" }} />
-        <div className="relative z-10 py-20 px-4">
+        <div className="relative z-10 flex items-center justify-center text-center py-16 px-4">
           <h1 className="text-4xl lg:text-5xl font-display font-bold text-white">
             About Guardian
           </h1>
         </div>
-      </section>
-
-      {/* ── SERVING THE ACTIVE TRADER COMMUNITY ── */}
-      <section style={{ backgroundImage: "url('https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image-1.png')", backgroundSize: "cover", backgroundPosition: "center" }} className="py-16 px-4">
-        <div className="max-w-[1100px] mx-auto">
-          <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
-            <div className="lg:w-[42%]">
-              <h3 className="text-[26px] font-bold text-white leading-snug">
-                Serving the Active Trader Community
-              </h3>
-            </div>
-            <div className="flex-1">
-              <p className="text-white text-[15px] leading-relaxed">
-                Guardian Trading began with a mission to deliver the trading tools, services, and technology
-                traders need to succeed and scale. Guardian Trading provides the knowledge and support active
-                traders expect to manage the entire trading cycle.
-              </p>
+        <div className="relative z-10 pb-16 px-4">
+          <div className="max-w-[1100px] mx-auto">
+            <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
+              <div className="lg:w-[42%]">
+                <h3 className="text-[26px] font-bold text-white leading-snug">
+                  Serving the Active Trader Community
+                </h3>
+              </div>
+              <div className="flex-1">
+                <p className="text-white text-[15px] leading-relaxed">
+                  Guardian Trading began with a mission to deliver the trading tools, services, and technology
+                  traders need to succeed and scale. Guardian Trading provides the knowledge and support active
+                  traders expect to manage the entire trading cycle.
+                </p>
+              </div>
             </div>
           </div>
         </div>
