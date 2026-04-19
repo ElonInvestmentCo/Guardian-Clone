@@ -40,16 +40,20 @@ export default function TradingServices() {
           </h1>
         </div>
 
-        {/* Centered text block */}
-        <div className="relative z-10 max-w-[760px] mx-auto px-6 pb-16 text-center">
-          <h2 className="text-2xl lg:text-[26px] font-display font-bold text-white leading-snug mb-5">
-            Brokerage services built for active traders
-          </h2>
-          <p className="text-white text-[14px] leading-relaxed">
-            A complete suite of trading services, tools and technology built to support professional traders.
-            Guardian Trading is the active trader division of Velocity Clearing, recognized provider of clearing,
-            execution and technology to institutional traders and other retail brokerage firms.
-          </p>
+        {/* Two-column text row */}
+        <div className="relative z-10 max-w-[1200px] mx-auto px-6 pb-16 flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+          <div className="lg:w-[42%]">
+            <h2 className="text-2xl lg:text-[26px] font-display font-bold text-white leading-snug">
+              Brokerage services built for active traders
+            </h2>
+          </div>
+          <div className="flex-1">
+            <p className="text-white text-[14px] leading-relaxed">
+              A complete suite of trading services, tools and technology built to support professional traders.
+              Guardian Trading is the active trader division of Velocity Clearing, recognized provider of clearing,
+              execution and technology to institutional traders and other retail brokerage firms.
+            </p>
+          </div>
         </div>
       </section>
 
