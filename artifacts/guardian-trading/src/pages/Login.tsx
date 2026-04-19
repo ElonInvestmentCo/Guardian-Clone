@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import guardianLogo from "@assets/GuardianLogo.svg";
 import { getApiBase } from "@/lib/api";
 
 export default function Login() {
@@ -104,14 +103,6 @@ export default function Login() {
           <div className="h-[5px] bg-[#4a7fbd] w-full" />
 
           <div className="px-8 py-8">
-            <div className="flex items-center gap-3 mb-7">
-              <img
-                src={guardianLogo}
-                alt="Guardian Trading Logo"
-                className="h-14 w-auto object-contain flex-shrink-0"
-              />
-            </div>
-
             <h1 className="text-[22px] font-bold text-gray-900 mb-6">
               Client Portal Login
             </h1>
