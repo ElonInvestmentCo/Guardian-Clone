@@ -36,7 +36,7 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#services" className="text-white text-[13px] transition-colors">
+                  <Link href="/services/trading-services" className="text-white text-[13px] transition-colors">
                     Services
                   </Link>
                 </li>
@@ -46,14 +46,14 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#pricing" className="text-white text-[13px] transition-colors">
+                  <Link href="/equities-options" className="text-white text-[13px] transition-colors">
                     Pricing
                   </Link>
                 </li>
                 <li>
-                  <a href="#" className="text-white text-[13px] transition-colors">
+                  <Link href="/blog" className="text-white text-[13px] transition-colors">
                     Insights
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -63,14 +63,14 @@ export function Footer() {
               <h4 className="text-[#aaa] text-[11px] font-bold uppercase tracking-widest mb-5">LEGAL</h4>
               <ul className="flex flex-col gap-3">
                 <li>
-                  <a href="#" className="text-white text-[13px] transition-colors">
+                  <Link href="/disclosures" className="text-white text-[13px] transition-colors">
                     Disclosures
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="text-white text-[13px] transition-colors">
+                  <Link href="/disclosures" className="text-white text-[13px] transition-colors">
                     Privacy Policy
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
