@@ -42,7 +42,7 @@ export default function About() {
       </section>
 
       {/* ── SERVING THE ACTIVE TRADER COMMUNITY ── */}
-      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4">
+      <section style={{ backgroundImage: "url('https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image-1.png')", backgroundSize: "cover", backgroundPosition: "center" }} className="py-16 px-4">
         <div className="max-w-[1100px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
             <div className="lg:w-[42%]">
