@@ -1,0 +1,100 @@
+Make this Trading Services page 100% pixel-perfect to the real Guardian Trading design.
+
+STRICT REQUIREMENTS (NO APPROXIMATIONS):
+
+1. LAYOUT & STRUCTURE
+- Use a centered max-width container (~1200px)
+- Apply consistent vertical spacing between sections (80px–120px)
+- Each section must align perfectly on a grid (left icons, right text)
+- Maintain exact alignment between headings, paragraphs, and buttons
+- No random margins — spacing must be consistent across all sections
+
+2. COLORS (EXACT VALUES ONLY)
+- Background: #0b0f14 (deep black/blue)
+- Section background (alternate): #11161c
+- Primary text (headings): #ffffff
+- Secondary text (paragraphs): #b0bccb
+- Accent blue (prices, icons, highlights): #76d1f5
+- Button border: #76d1f5
+- Button text: #ffffff
+- Footer text: #6e7b8a
+
+DO NOT use approximations — match these exactly.
+
+3. TYPOGRAPHY
+- Font: Inter or similar modern sans-serif
+- H1 (Trading Services): 
+  - font-size: 40–48px
+  - font-weight: 600–700
+  - text-align: center
+- Section titles:
+  - font-size: 24–28px
+  - font-weight: 600
+- Paragraph text:
+  - font-size: 15–16px
+  - line-height: 1.6
+- Pricing numbers:
+  - large, bold, accent color (#76d1f5)
+  - perfectly aligned horizontally
+
+4. HERO SECTION
+- Left: icon (large, soft glow, slightly transparent)
+- Center/right:
+  - Title centered: "Trading Services"
+  - Below: 2-column layout:
+    - Left: "Brokerage services built for active traders"
+    - Right: description paragraph
+- Add subtle dotted gradient pattern on top-right background
+
+5. PRICING SECTION
+- 3 columns:
+  - Left: Pricing description + button
+  - Middle: Options Contracts
+  - Right: Equities Commissions
+- Prices must be:
+  - horizontally aligned
+  - same baseline
+  - colored #76d1f5
+- Button style:
+  - transparent background
+  - 1px solid #76d1f5
+  - hover: fill with #76d1f5 and invert text
+
+6. FEATURE SECTIONS (Order Routing, Locates, Platforms)
+- Each section:
+  - LEFT: icon (same size across all sections)
+  - RIGHT: text block
+- Spacing between icon and text: ~40–60px
+- Vertical spacing between sections: ~100px
+- Buttons aligned directly under text (not floating)
+
+7. ICONS
+- Same size across all sections (~80px–120px)
+- Color: #76d1f5
+- Consistent stroke thickness
+- Vertically centered with text blocks
+
+8. BACKGROUND DETAILS
+- Use subtle gradients:
+  - linear-gradient(180deg, #0b0f14 → #11161c)
+- Add faint dotted/mesh pattern on right side of hero
+- DO NOT overuse effects — keep it minimal and clean
+
+9. FOOTER
+- Multi-column layout:
+  - Company / Legal / Contact
+- Small text:
+  - color: #6e7b8a
+  - tight line spacing
+- Add thin divider line above footer
+- Ensure everything is centered and evenly spaced
+
+10. FINAL POLISH
+- Remove any inconsistent padding/margins
+- Ensure pixel alignment (no off-grid elements)
+- Match spacing, colors, and typography EXACTLY
+- The page must visually match the reference screenshot with no differences
+
+NO CREATIVE CHANGES.
+NO DESIGN INTERPRETATION.
+ONLY EXACT REPLICATION.
