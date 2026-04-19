@@ -47,7 +47,7 @@ export default function ContactUs() {
         }}
       >
         {/* Dark overlay */}
-        <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.85)", zIndex: 0 }} />
+        <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.15)", zIndex: 0 }} />
 
         {/* ── HERO ── */}
         <section
