@@ -30,7 +30,7 @@ export default function About() {
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0" style={{ backgroundColor: "rgba(10,10,10,0.72)" }} />
+        <div className="absolute inset-0" style={{ backgroundColor: "rgba(10,10,10,0.15)" }} />
         <div className="relative z-10 flex items-center justify-center text-center py-16 px-4">
           <h1 className="text-4xl lg:text-5xl font-display font-bold text-white">
             About Guardian

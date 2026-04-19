@@ -68,7 +68,7 @@ export default function Platforms() {
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.35)" }} />
+        <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.15)" }} />
         <div className="relative z-10 py-14 px-4">
           <h1 className="text-4xl lg:text-5xl font-display font-bold text-white tracking-tight">
             Platforms
