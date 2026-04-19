@@ -20,7 +20,6 @@ const BulletItem = ({ children }: { children: React.ReactNode }) => (
 export default function About() {
   return (
     <Layout title="About | Guardian Trading">
-
       {/* ── HERO + SERVING THE ACTIVE TRADER COMMUNITY ── */}
       <section
         className="relative overflow-hidden"
@@ -41,9 +40,8 @@ export default function About() {
           <div className="max-w-[1100px] mx-auto">
             <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
               <div className="lg:w-[42%]">
-                <h3 className="text-[26px] font-bold text-white leading-snug">
-                  Serving the Active Trader Community
-                </h3>
+                <h3 className="text-white text-[32px] font-medium bg-[transparent]">Serving the Active
+                Trader Community</h3>
               </div>
               <div className="flex-1">
                 <p className="text-white text-[15px] leading-relaxed">
@@ -56,7 +54,6 @@ export default function About() {
           </div>
         </div>
       </section>
-
       {/* ── THE GUARDIAN ADVANTAGE ── */}
       <section style={{ backgroundColor: "#1c1c1c" }} className="py-16 lg:py-20 px-4">
         <div className="max-w-[1100px] mx-auto">
@@ -96,7 +93,6 @@ export default function About() {
           </div>
         </div>
       </section>
-
       {/* ── FEATURES: CLIENT SUPPORT / PRICING / TECHNOLOGY ── */}
       <section style={{ backgroundColor: "#141414" }} className="py-16 lg:py-20 px-4">
         <div className="max-w-[1100px] mx-auto space-y-0">
@@ -184,7 +180,6 @@ export default function About() {
 
         </div>
       </section>
-
       {/* ── ABOUT VELOCITY CLEARING ── */}
       <section style={{ backgroundColor: "#1c1c1c" }} className="py-16 lg:py-20 px-4">
         <div className="max-w-[1100px] mx-auto">
@@ -304,7 +299,6 @@ export default function About() {
           </div>
         </div>
       </section>
-
       {/* ── CTA ── */}
       <section className="bg-[#141414] py-20 px-4 text-center border-t border-white/5">
         <div className="max-w-[700px] mx-auto">
@@ -320,7 +314,6 @@ export default function About() {
           </Link>
         </div>
       </section>
-
     </Layout>
   );
 }
