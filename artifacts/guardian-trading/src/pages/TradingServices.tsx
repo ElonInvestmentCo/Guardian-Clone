@@ -41,7 +41,7 @@ export default function TradingServices() {
         </div>
 
         {/* Two-column text row */}
-        <div className="relative z-10 max-w-[1200px] mx-auto px-6 pb-28 flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+        <div className="relative z-10 max-w-[1200px] mx-auto px-6 pb-40 flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
           <div className="lg:w-[42%]">
             <h2 className="text-2xl lg:text-[26px] font-display font-bold text-white leading-snug">
               Brokerage services built for active traders
