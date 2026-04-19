@@ -2,7 +2,6 @@ import { Layout } from "@/components/Layout";
 import { Link } from "wouter";
 
 const BG = "https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image-3.png";
-const IMG_HERO_CHART = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-trading-services-241x241.png";
 const IMG_ORDER = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-order-routing-174x174.png";
 const IMG_LOCATES = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-locates-borrows-174x174.png";
 const IMG_PLATFORMS = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-leading-platforms-174x174.png";
@@ -43,16 +42,7 @@ export default function TradingServices() {
 
         {/* Chart + two-col text row */}
         <div className="relative z-10 max-w-[1200px] mx-auto px-6 pb-16 flex flex-col lg:flex-row items-center gap-8 lg:gap-0">
-          {/* Left: chart image */}
-          <div className="flex-shrink-0 lg:w-[220px] flex justify-start">
-            <img
-              src={IMG_HERO_CHART}
-              alt="Trading Services Chart"
-              style={{ width: "200px", height: "auto", objectFit: "contain" }}
-            />
-          </div>
-
-          {/* Right: two-column text */}
+          {/* Two-column text */}
           <div className="flex-1 flex flex-col lg:flex-row gap-10 lg:gap-16 items-start lg:pl-8">
             <div className="lg:w-[42%]">
               <h2 className="text-2xl lg:text-[26px] font-display font-bold text-white leading-snug">
