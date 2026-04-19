@@ -89,7 +89,7 @@ router.post("/contact", sensitiveEndpointLimit, validate(ContactSchema), async (
 </html>`;
 
       await client.emails.send({
-        from: "Guardian Trading <noreply@guardiiantrading.com>",
+        from: "Guardian Trading <support@guardiiantrading.com>",
         to: "info@guardiiantrading.com",
         replyTo: email.trim(),
         subject: `Contact Form: ${safeSubject}`,

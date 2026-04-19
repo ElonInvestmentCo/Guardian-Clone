@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const FROM_ADDRESS = "Guardian Trading <noreply@guardiiantrading.com>";
+const FROM_ADDRESS = "Guardian Trading <support@guardiiantrading.com>";
 const LOGO_URL = "https://guardiiantrading.com/logo.png";
 const SUPPORT_EMAIL = "support@guardiiantrading.com";
 const COMPANY_LINE = "Guardian Trading &mdash; A Division of Velocity Clearing, LLC. Member FINRA/SIPC.";
