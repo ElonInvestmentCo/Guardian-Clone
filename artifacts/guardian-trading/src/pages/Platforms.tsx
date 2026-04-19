@@ -14,16 +14,27 @@ const BLOOMBERG_SCREENS = "https://www.guardiantrading.com/wp-content/uploads/20
 
 const BENZINGA = "https://www.guardiantrading.com/wp-content/uploads/2026/01/reviewed-by-benzinga-2024-200x166-1-320x266.png";
 
-const OutlineBtn = ({ href, children, primary }: { href?: string; children: React.ReactNode; primary?: boolean }) => (
-  <a
-    href={href ?? "#"}
-    className="inline-block text-white text-[13px] font-semibold px-5 py-2 tracking-wide transition-colors border"
-    style={primary
-      ? { backgroundColor: "#4a7fbd", borderColor: "#4a7fbd" }
-      : { borderColor: "#4a7fbd", backgroundColor: "transparent" }
-    }
-  >
-    {children}
+const PlusBtn = ({ href }: { href?: string }) => (
+  <a href={href ?? "#"} className="inline-block hover:opacity-80 transition-opacity">
+    <img src="/images/btn-plus.png" alt="Details" className="h-auto" />
+  </a>
+);
+
+const PricingBtn = ({ href }: { href?: string }) => (
+  <a href={href ?? "/pricing"} className="inline-block hover:opacity-80 transition-opacity">
+    <img src="/images/btn-pricing-details.png" alt="Pricing Details" className="h-auto" />
+  </a>
+);
+
+const StartBtn = ({ href }: { href?: string }) => (
+  <a href={href ?? "/open-account"} className="inline-block hover:opacity-80 transition-opacity">
+    <img src="/images/btn-start-trial.png" alt="Start A 14 Day Trial" className="h-auto" />
+  </a>
+);
+
+const GuidanceBtn = ({ href }: { href?: string }) => (
+  <a href={href ?? "/contact"} className="inline-block hover:opacity-80 transition-opacity">
+    <img src="/images/btn-platform-guidance.png" alt="Get Platform Guidance" className="h-auto" />
   </a>
 );
 
@@ -90,9 +101,9 @@ export default function Platforms() {
               ].map((f) => <Bullet key={f}>{f}</Bullet>)}
             </ul>
             <div className="flex items-center gap-3 flex-wrap">
-              <OutlineBtn>+ DAS Trader Details</OutlineBtn>
-              <OutlineBtn href="/pricing">Pricing Details</OutlineBtn>
-              <OutlineBtn primary>Start &amp; Try Free</OutlineBtn>
+              <PlusBtn />
+              <PricingBtn href="/pricing" />
+              <StartBtn />
             </div>
           </div>
           {/* Screen */}
@@ -133,9 +144,9 @@ export default function Platforms() {
               ].map((f) => <Bullet key={f}>{f}</Bullet>)}
             </ul>
             <div className="flex items-center gap-3 flex-wrap">
-              <OutlineBtn>+ Sterling Trader® Pro Details</OutlineBtn>
-              <OutlineBtn href="/pricing">Pricing Details</OutlineBtn>
-              <OutlineBtn primary>Start &amp; Try Free</OutlineBtn>
+              <PlusBtn />
+              <PricingBtn href="/pricing" />
+              <StartBtn />
             </div>
           </div>
         </div>
@@ -168,9 +179,9 @@ export default function Platforms() {
               ].map((f) => <Bullet key={f}>{f}</Bullet>)}
             </ul>
             <div className="flex items-center gap-3 flex-wrap">
-              <OutlineBtn>+ Rival One Platform Details</OutlineBtn>
-              <OutlineBtn href="/pricing">Pricing Details</OutlineBtn>
-              <OutlineBtn primary>Start &amp; Try Free</OutlineBtn>
+              <PlusBtn />
+              <PricingBtn href="/pricing" />
+              <StartBtn />
             </div>
           </div>
           {/* Screen */}
@@ -198,9 +209,9 @@ export default function Platforms() {
               firms access to over $2,100 brokers, 175 DMA algorithms and other Regulatory tools needed to trade proficiently.
             </p>
             <div className="flex items-center gap-3 flex-wrap">
-              <OutlineBtn>+ Bloomberg EMSX Details</OutlineBtn>
-              <OutlineBtn href="/pricing">Pricing Details</OutlineBtn>
-              <OutlineBtn primary>Start &amp; Try Free</OutlineBtn>
+              <PlusBtn />
+              <PricingBtn href="/pricing" />
+              <StartBtn />
             </div>
           </div>
         </div>
@@ -229,9 +240,9 @@ export default function Platforms() {
               ].map((f) => <Bullet key={f}>{f}</Bullet>)}
             </ul>
             <div className="flex items-center gap-3 flex-wrap">
-              <OutlineBtn>+ Silexx OMS by CBOE Details</OutlineBtn>
-              <OutlineBtn href="/pricing">Pricing Details</OutlineBtn>
-              <OutlineBtn primary>Start &amp; Try Free</OutlineBtn>
+              <PlusBtn />
+              <PricingBtn href="/pricing" />
+              <StartBtn />
             </div>
           </div>
           {/* Placeholder screen — no image provided for Silexx */}
@@ -250,13 +261,7 @@ export default function Platforms() {
           <p className="text-white text-[15px] mb-8">
             Not seeing your trading platform here? Questions regarding DAS?
           </p>
-          <a
-            href="/contact"
-            className="inline-block border text-white text-[14px] font-semibold px-8 py-3 tracking-wide transition-colors hover:bg-white/10"
-            style={{ borderColor: "#4a7fbd" }}
-          >
-            Get Platform Support
-          </a>
+          <GuidanceBtn href="/contact" />
         </div>
       </section>
 
