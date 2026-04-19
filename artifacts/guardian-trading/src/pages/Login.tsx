@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import guardianLogo from "@assets/IMG_7934_1773719077190.png";
+import guardianLogo from "@assets/GuardianLogo.svg";
 import { getApiBase } from "@/lib/api";
 
 export default function Login() {

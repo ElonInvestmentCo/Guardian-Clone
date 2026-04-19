@@ -1,6 +1,6 @@
 import { useLoading } from "@/context/LoadingContext";
 import { useEffect } from "react";
-import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
+import loaderGif from "@assets/Loading.gif";
 
 export function PageLoader() {
   const { isLoading } = useLoading();
