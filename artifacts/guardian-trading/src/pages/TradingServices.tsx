@@ -1,24 +1,18 @@
 import { Layout } from "@/components/Layout";
 import { Link } from "wouter";
 
-const IMG_ORDER =
-  "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-order-routing-174x174.png";
-const IMG_LOCATES =
-  "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-locates-borrows-174x174.png";
-const IMG_PLATFORMS =
-  "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-leading-platforms-174x174.png";
+const BG = "https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image-3.png";
+const IMG_HERO_CHART = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-trading-services-241x241.png";
+const IMG_ORDER = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-order-routing-174x174.png";
+const IMG_LOCATES = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-locates-borrows-174x174.png";
+const IMG_PLATFORMS = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-leading-platforms-174x174.png";
+const BENZINGA = "https://www.guardiantrading.com/wp-content/uploads/2026/01/reviewed-by-benzinga-2024-200x166-1-320x266.png";
 
-const OutlineBtn = ({
-  href,
-  children,
-}: {
-  href?: string;
-  children: React.ReactNode;
-}) => (
+const OutlineBtn = ({ href, children }: { href?: string; children: React.ReactNode }) => (
   <a
     href={href ?? "#"}
-    className="group inline-block border text-white text-[13px] font-semibold px-5 py-[9px] tracking-wide transition-all duration-200 hover:bg-[#76d1f5] hover:text-[#0b0f14] hover:border-[#76d1f5]"
-    style={{ borderColor: "#76d1f5" }}
+    className="inline-block border text-white text-[13px] font-semibold px-5 py-2 tracking-wide transition-colors hover:bg-white/10"
+    style={{ borderColor: "#4a7fbd" }}
   >
     {children}
   </a>
@@ -28,108 +22,48 @@ export default function TradingServices() {
   return (
     <Layout title="Trading Services | Guardian Trading">
 
-      {/* ── HERO ── */}
+      {/* ── HERO + BROKERAGE INTRO (merged) ── */}
       <section
         className="relative overflow-hidden"
         style={{
           marginTop: "78px",
-          backgroundColor: "#0b0f14",
-          backgroundImage: `
-            radial-gradient(circle at 85% 30%, rgba(118,209,245,0.04) 0%, transparent 55%),
-            radial-gradient(circle at 90% 60%, rgba(118,209,245,0.03) 0%, transparent 40%)
-          `,
+          backgroundImage: `url('${BG}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
-        {/* Dotted mesh pattern — top-right */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, rgba(118,209,245,0.18) 1px, transparent 1px)",
-            backgroundSize: "22px 22px",
-            maskImage:
-              "radial-gradient(ellipse 55% 80% at 95% 20%, black 0%, transparent 70%)",
-            WebkitMaskImage:
-              "radial-gradient(ellipse 55% 80% at 95% 20%, black 0%, transparent 70%)",
-            opacity: 0.55,
-          }}
-        />
+        <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.15)" }} />
 
-        {/* "Trading Services" title */}
-        <div className="relative z-10 flex items-center justify-center text-center pt-14 pb-10 px-4">
-          <h1
-            className="text-white font-bold tracking-tight"
-            style={{ fontSize: "clamp(34px, 5vw, 46px)", fontWeight: 700 }}
-          >
+        {/* Title row */}
+        <div className="relative z-10 flex items-center justify-center text-center pt-14 pb-6 px-4">
+          <h1 className="text-4xl lg:text-5xl font-display font-bold text-white tracking-tight">
             Trading Services
           </h1>
         </div>
 
-        {/* Icon + two-col brokerage intro */}
-        <div className="relative z-10 max-w-[1200px] mx-auto px-6 pb-20 flex flex-col lg:flex-row items-center gap-8 lg:gap-0">
-          {/* Left: chart icon */}
-          <div className="flex-shrink-0 lg:w-[240px] flex justify-start items-center">
-            <div
-              style={{
-                filter:
-                  "drop-shadow(0 0 28px rgba(118,209,245,0.25)) drop-shadow(0 0 8px rgba(118,209,245,0.14))",
-              }}
-            >
-              <svg
-                width="200"
-                height="200"
-                viewBox="0 0 200 200"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-label="Trading Services"
-              >
-                {/* Bar chart bars */}
-                <rect x="18" y="122" width="22" height="52" rx="3" fill="#76d1f5" fillOpacity="0.25" stroke="#76d1f5" strokeWidth="2"/>
-                <rect x="52" y="96" width="22" height="78" rx="3" fill="#76d1f5" fillOpacity="0.25" stroke="#76d1f5" strokeWidth="2"/>
-                <rect x="86" y="110" width="22" height="64" rx="3" fill="#76d1f5" fillOpacity="0.25" stroke="#76d1f5" strokeWidth="2"/>
-                <rect x="120" y="76" width="22" height="98" rx="3" fill="#76d1f5" fillOpacity="0.35" stroke="#76d1f5" strokeWidth="2"/>
-                <rect x="154" y="48" width="22" height="126" rx="3" fill="#76d1f5" fillOpacity="0.45" stroke="#76d1f5" strokeWidth="2.5"/>
-                {/* Trend line */}
-                <polyline
-                  points="29,118 63,88 97,100 131,66 165,38"
-                  stroke="#76d1f5"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                />
-                {/* Arrow head at end of trend line */}
-                <polyline
-                  points="152,28 165,38 155,51"
-                  stroke="#76d1f5"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                />
-                {/* Baseline */}
-                <line x1="10" y1="178" x2="190" y2="178" stroke="#76d1f5" strokeWidth="2" strokeOpacity="0.4"/>
-              </svg>
-            </div>
+        {/* Chart + two-col text row */}
+        <div className="relative z-10 max-w-[1200px] mx-auto px-6 pb-16 flex flex-col lg:flex-row items-center gap-8 lg:gap-0">
+          {/* Left: chart image */}
+          <div className="flex-shrink-0 lg:w-[220px] flex justify-start">
+            <img
+              src={IMG_HERO_CHART}
+              alt="Trading Services Chart"
+              style={{ width: "200px", height: "auto", objectFit: "contain" }}
+            />
           </div>
 
           {/* Right: two-column text */}
-          <div className="flex-1 flex flex-col lg:flex-row gap-10 lg:gap-16 items-start lg:pl-4">
+          <div className="flex-1 flex flex-col lg:flex-row gap-10 lg:gap-16 items-start lg:pl-8">
             <div className="lg:w-[42%]">
-              <h2
-                className="text-white font-bold leading-snug"
-                style={{ fontSize: "clamp(20px, 2.5vw, 26px)", fontWeight: 700 }}
-              >
+              <h2 className="text-2xl lg:text-[26px] font-display font-bold text-white leading-snug">
                 Brokerage services built for active traders
               </h2>
             </div>
             <div className="flex-1">
-              <p style={{ color: "#b0bccb", fontSize: "15px", lineHeight: 1.65 }}>
-                A complete suite of trading services, tools and technology built to support
-                professional traders. Guardian Trading is the active trader division of Velocity
-                Clearing, recognized provider of clearing, execution and technology to institutional
-                traders and other retail brokerage firms.
+              <p className="text-white text-[14px] leading-relaxed">
+                A complete suite of trading services, tools and technology built to support professional traders.
+                Guardian Trading is the active trader division of Velocity Clearing, recognized provider of clearing,
+                execution and technology to institutional traders and other retail brokerage firms.
               </p>
             </div>
           </div>
@@ -137,155 +71,48 @@ export default function TradingServices() {
       </section>
 
       {/* ── PRICING ── */}
-      <section style={{ backgroundColor: "#11161c" }} className="py-16 px-4">
-        <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
-
-          {/* Left col: text + button */}
-          <div style={{ minWidth: "220px", maxWidth: "280px" }}>
-            <h2
-              className="text-white font-bold mb-3"
-              style={{ fontSize: "26px", fontWeight: 700 }}
-            >
-              Pricing
-            </h2>
-            <p style={{ color: "#b0bccb", fontSize: "15px", lineHeight: 1.65, marginBottom: "22px" }}>
+      <section style={{ backgroundColor: "#141414" }} className="py-14 px-4">
+        <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-12 items-start">
+          {/* Left */}
+          <div className="lg:w-[32%]">
+            <h2 className="text-2xl font-display font-bold text-white mb-3">Pricing</h2>
+            <p className="text-white text-[14px] leading-relaxed mb-5">
               Low commissions on stock and options trades. Transparent pricing and no hidden fees.
             </p>
-            <OutlineBtn href="/equities-options">Pricing Details</OutlineBtn>
+            <OutlineBtn href="/pricing">Pricing Details</OutlineBtn>
           </div>
-
-          {/* Middle: Options Contracts */}
-          <div className="flex-1 flex flex-col sm:flex-row gap-14 lg:gap-20">
+          {/* Right: two stats */}
+          <div className="flex-1 flex flex-col sm:flex-row gap-12 lg:gap-16">
             <div>
-              <p style={{ color: "#ffffff", fontSize: "14px", fontWeight: 600, marginBottom: "4px" }}>
-                Options Contracts
+              <p className="text-white text-[13px] font-semibold mb-1">Options Contracts</p>
+              <p className="text-[#76d1f5] text-[11px] font-bold uppercase tracking-wider mb-2">AS LOW AS</p>
+              <p className="text-white font-bold mb-1" style={{ fontSize: "52px", lineHeight: 1 }}>
+                <span style={{ fontSize: "28px", verticalAlign: "top", marginTop: "8px", display: "inline-block" }}>$</span>0.15
               </p>
-              <p
-                style={{
-                  color: "#76d1f5",
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  marginBottom: "8px",
-                }}
-              >
-                AS LOW AS
-              </p>
-              <div className="flex items-start" style={{ lineHeight: 1 }}>
-                <span
-                  style={{
-                    color: "#76d1f5",
-                    fontSize: "26px",
-                    fontWeight: 700,
-                    marginTop: "6px",
-                    marginRight: "1px",
-                    lineHeight: 1,
-                  }}
-                >
-                  $
-                </span>
-                <span
-                  style={{
-                    color: "#76d1f5",
-                    fontSize: "56px",
-                    fontWeight: 700,
-                    lineHeight: 1,
-                  }}
-                >
-                  0.15
-                </span>
-              </div>
-              <p style={{ color: "#b0bccb", fontSize: "13px", marginTop: "8px" }}>Per Contract</p>
+              <p className="text-white text-[13px] mt-2">Per Contract</p>
             </div>
-
-            {/* Right: Equities Commissions */}
             <div>
-              <p style={{ color: "#ffffff", fontSize: "14px", fontWeight: 600, marginBottom: "4px" }}>
-                Equities Commissions
+              <p className="text-white text-[13px] font-semibold mb-1">Equities Commissions</p>
+              <p className="text-[#76d1f5] text-[11px] font-bold uppercase tracking-wider mb-2">AS LOW AS</p>
+              <p className="text-white font-bold mb-1" style={{ fontSize: "52px", lineHeight: 1 }}>
+                <span style={{ fontSize: "28px", verticalAlign: "top", marginTop: "8px", display: "inline-block" }}>$</span>0.0005
               </p>
-              <p
-                style={{
-                  color: "#76d1f5",
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  marginBottom: "8px",
-                }}
-              >
-                AS LOW AS
-              </p>
-              <div className="flex items-start" style={{ lineHeight: 1 }}>
-                <span
-                  style={{
-                    color: "#76d1f5",
-                    fontSize: "26px",
-                    fontWeight: 700,
-                    marginTop: "6px",
-                    marginRight: "1px",
-                    lineHeight: 1,
-                  }}
-                >
-                  $
-                </span>
-                <span
-                  style={{
-                    color: "#76d1f5",
-                    fontSize: "56px",
-                    fontWeight: 700,
-                    lineHeight: 1,
-                  }}
-                >
-                  0.0005
-                </span>
-              </div>
-              <p style={{ color: "#b0bccb", fontSize: "13px", marginTop: "8px" }}>Per Share</p>
+              <p className="text-white text-[13px] mt-2">Per Share</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* ── ORDER ROUTING ── */}
-      <section
-        style={{
-          background: "linear-gradient(180deg, #0b0f14 0%, #11161c 100%)",
-          borderTop: "1px solid rgba(255,255,255,0.05)",
-        }}
-        className="py-20 px-4"
-      >
-        <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row items-center gap-14 lg:gap-20">
-          <div className="flex-shrink-0 flex justify-center lg:justify-start" style={{ width: "200px" }}>
-            <img
-              src={IMG_ORDER}
-              alt="Order Routing"
-              style={{
-                width: "160px",
-                height: "160px",
-                objectFit: "contain",
-                filter: "drop-shadow(0 0 20px rgba(118,209,245,0.15))",
-                opacity: 0.9,
-              }}
-            />
+      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4 border-b border-white/5">
+        <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row items-center gap-12">
+          <div className="flex-shrink-0 flex justify-center lg:justify-start lg:w-[220px]">
+            <img src={IMG_ORDER} alt="Order Routing" style={{ width: "174px", height: "174px", objectFit: "contain" }} />
           </div>
           <div className="flex-1">
-            <h2
-              className="text-white font-bold mb-4"
-              style={{ fontSize: "clamp(22px, 3vw, 28px)", fontWeight: 700 }}
-            >
-              Order Routing
-            </h2>
-            <p
-              style={{
-                color: "#b0bccb",
-                fontSize: "15px",
-                lineHeight: 1.65,
-                maxWidth: "580px",
-                marginBottom: "24px",
-              }}
-            >
-              Execute orders quickly by choosing from over 30 order routing options including ALGO,
-              ECN, and dark pool routes.
+            <h2 className="text-2xl lg:text-3xl font-display font-bold text-white mb-4">Order Routing</h2>
+            <p className="text-white text-[15px] leading-relaxed mb-6">
+              Execute orders quickly by choosing from over 30 order routing options including ALGO, ECN, and dark pool routes.
             </p>
             <OutlineBtn>Learn More</OutlineBtn>
           </div>
@@ -293,45 +120,15 @@ export default function TradingServices() {
       </section>
 
       {/* ── LOCATES & STOCK BORROWS ── */}
-      <section
-        style={{
-          background: "linear-gradient(180deg, #11161c 0%, #0b0f14 100%)",
-          borderTop: "1px solid rgba(255,255,255,0.05)",
-        }}
-        className="py-20 px-4"
-      >
-        <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row items-center gap-14 lg:gap-20">
-          <div className="flex-shrink-0 flex justify-center lg:justify-start" style={{ width: "200px" }}>
-            <img
-              src={IMG_LOCATES}
-              alt="Locates & Stock Borrows"
-              style={{
-                width: "160px",
-                height: "160px",
-                objectFit: "contain",
-                filter: "drop-shadow(0 0 20px rgba(118,209,245,0.15))",
-                opacity: 0.9,
-              }}
-            />
+      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4 border-b border-white/5">
+        <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row items-center gap-12">
+          <div className="flex-shrink-0 flex justify-center lg:justify-start lg:w-[220px]">
+            <img src={IMG_LOCATES} alt="Locates & Stock Borrows" style={{ width: "174px", height: "174px", objectFit: "contain" }} />
           </div>
           <div className="flex-1">
-            <h2
-              className="text-white font-bold mb-4"
-              style={{ fontSize: "clamp(22px, 3vw, 28px)", fontWeight: 700 }}
-            >
-              Locates &amp; Stock Borrows
-            </h2>
-            <p
-              style={{
-                color: "#b0bccb",
-                fontSize: "15px",
-                lineHeight: 1.65,
-                maxWidth: "580px",
-                marginBottom: "24px",
-              }}
-            >
-              Leverage our proprietary technology for stock locates and borrows, combined with the
-              support of our team.
+            <h2 className="text-2xl lg:text-3xl font-display font-bold text-white mb-4">Locates &amp; Stock Borrows</h2>
+            <p className="text-white text-[15px] leading-relaxed mb-6">
+              Leverage our proprietary technology for stock locates and borrows, combined with the support of our team.
             </p>
             <OutlineBtn href="/equities-options">Stock Locate &amp; Borrowing</OutlineBtn>
           </div>
@@ -339,45 +136,15 @@ export default function TradingServices() {
       </section>
 
       {/* ── LEADING TRADING PLATFORMS ── */}
-      <section
-        style={{
-          background: "linear-gradient(180deg, #0b0f14 0%, #11161c 100%)",
-          borderTop: "1px solid rgba(255,255,255,0.05)",
-        }}
-        className="py-20 px-4"
-      >
-        <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row items-center gap-14 lg:gap-20">
-          <div className="flex-shrink-0 flex justify-center lg:justify-start" style={{ width: "200px" }}>
-            <img
-              src={IMG_PLATFORMS}
-              alt="Leading Trading Platforms"
-              style={{
-                width: "160px",
-                height: "160px",
-                objectFit: "contain",
-                filter: "drop-shadow(0 0 20px rgba(118,209,245,0.15))",
-                opacity: 0.9,
-              }}
-            />
+      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4 border-b border-white/5">
+        <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row items-center gap-12">
+          <div className="flex-shrink-0 flex justify-center lg:justify-start lg:w-[220px]">
+            <img src={IMG_PLATFORMS} alt="Leading Trading Platforms" style={{ width: "174px", height: "174px", objectFit: "contain" }} />
           </div>
           <div className="flex-1">
-            <h2
-              className="text-white font-bold mb-4"
-              style={{ fontSize: "clamp(22px, 3vw, 28px)", fontWeight: 700 }}
-            >
-              Leading Trading Platforms
-            </h2>
-            <p
-              style={{
-                color: "#b0bccb",
-                fontSize: "15px",
-                lineHeight: 1.65,
-                maxWidth: "580px",
-                marginBottom: "24px",
-              }}
-            >
-              Select from Sterling Trader, DAS Trader and other advanced trading platforms and
-              options to execute your trading strategy.
+            <h2 className="text-2xl lg:text-3xl font-display font-bold text-white mb-4">Leading Trading Platforms</h2>
+            <p className="text-white text-[15px] leading-relaxed mb-6">
+              Select from Sterling Trader, DAS Trader and other advanced trading platforms and options to execute your trading strategy.
             </p>
             <OutlineBtn href="/platforms">Stock Locate &amp; Borrowing</OutlineBtn>
           </div>
@@ -385,30 +152,34 @@ export default function TradingServices() {
       </section>
 
       {/* ── CTA ── */}
-      <section
-        style={{
-          backgroundColor: "#11161c",
-          borderTop: "1px solid rgba(255,255,255,0.05)",
-        }}
-        className="py-24 px-4 text-center"
-      >
+      <section style={{ backgroundColor: "#141414" }} className="py-20 px-4 text-center">
         <div className="max-w-[700px] mx-auto">
-          <h2
-            className="text-white font-bold mb-4"
-            style={{ fontSize: "clamp(26px, 4vw, 38px)", fontWeight: 700 }}
-          >
+          <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-4">
             Take on the Markets with Guardian.
           </h2>
-          <p style={{ color: "#b0bccb", fontSize: "15px", marginBottom: "32px" }}>
+          <p className="text-white text-[15px] mb-8">
             Let a Guardian Specialist Create a Trading Package for You
           </p>
-          <Link
-            href="/contact-us"
-            className="inline-block border text-white text-[14px] font-semibold px-9 py-3 tracking-wide transition-all duration-200 hover:bg-[#76d1f5] hover:text-[#0b0f14] hover:border-[#76d1f5]"
-            style={{ borderColor: "#76d1f5" }}
+          <a
+            href="/contact"
+            className="inline-block border text-white text-[14px] font-semibold px-8 py-3 tracking-wide transition-colors hover:bg-white/10"
+            style={{ borderColor: "#4a7fbd" }}
           >
             Let's Talk
-          </Link>
+          </a>
+        </div>
+      </section>
+
+      {/* ── BENZINGA ── */}
+      <section style={{ backgroundColor: "#141414" }} className="py-12 px-4">
+        <div className="max-w-[1100px] mx-auto flex justify-center">
+          <a
+            href="https://www.benzinga.com/money/guardian-trading-review"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src={BENZINGA} alt="Reviewed by Benzinga 2024" style={{ width: "120px", height: "auto" }} />
+          </a>
         </div>
       </section>
 
