@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Layout } from "@/components/Layout";
 
 const PATTERN_BG = "https://www.guardiantrading.com/wp-content/themes/gate39media/public/img/img-blog-background-pattern.png";
+const BG_VECTOR = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-background-vector-1.png";
 
 const CATEGORIES = ["All Blogs", "DAS Hotkeys", "Margin", "Risk Management", "Short Selling", "Tools"];
 
@@ -85,13 +86,13 @@ export default function Blog() {
 
   return (
     <Layout title="Blog | Guardian Trading">
-
+      <div style={{ backgroundImage: `url('${BG_VECTOR}')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }}>
       {/* ── FEATURED POST ── */}
       <section
         className="relative overflow-hidden"
         style={{
           marginTop: "78px",
-          backgroundColor: "#141414",
+          backgroundColor: "transparent",
           minHeight: "280px",
         }}
       >
@@ -137,7 +138,7 @@ export default function Blog() {
       </section>
 
       {/* ── CATEGORY FILTER BAR ── */}
-      <section style={{ backgroundColor: "#1a1a1a", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+      <section style={{ backgroundColor: "transparent", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
         <div className="max-w-[1100px] mx-auto px-6">
           <div className="flex items-center overflow-x-auto" style={{ gap: "0" }}>
             {CATEGORIES.map((cat) => (
@@ -165,7 +166,7 @@ export default function Blog() {
       </section>
 
       {/* ── GUARDIAN BLOG LISTING ── */}
-      <section style={{ backgroundColor: "#141414" }} className="py-12 px-6">
+      <section style={{ backgroundColor: "transparent" }} className="py-12 px-6">
         <div className="max-w-[1100px] mx-auto">
           <h2 className="text-white font-bold mb-3" style={{ fontSize: "clamp(22px, 3vw, 30px)" }}>
             Guardian Blog
@@ -267,7 +268,7 @@ export default function Blog() {
           </div>
         </div>
       </section>
-
+      </div>
     </Layout>
   );
 }

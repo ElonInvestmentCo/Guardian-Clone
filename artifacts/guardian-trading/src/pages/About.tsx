@@ -2,6 +2,8 @@ import { Layout } from "@/components/Layout";
 import { Link } from "wouter";
 import { Play } from "lucide-react";
 
+const BG_VECTOR = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-background-vector-1.png";
+
 const BulletItem = ({ children }: { children: React.ReactNode }) => (
   <li style={{ display: "flex", alignItems: "center", gap: "10px" }} className="text-white text-[15px] leading-snug">
     <span style={{
@@ -20,6 +22,7 @@ const BulletItem = ({ children }: { children: React.ReactNode }) => (
 export default function About() {
   return (
     <Layout title="About | Guardian Trading">
+      <div style={{ backgroundImage: `url('${BG_VECTOR}')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }}>
       {/* ── HERO + SERVING THE ACTIVE TRADER COMMUNITY ── */}
       <section
         className="relative overflow-hidden"
@@ -55,7 +58,7 @@ export default function About() {
         </div>
       </section>
       {/* ── THE GUARDIAN ADVANTAGE ── */}
-      <section style={{ backgroundColor: "#1c1c1c" }} className="py-16 lg:py-20 px-4">
+      <section style={{ backgroundColor: "transparent" }} className="py-16 lg:py-20 px-4">
         <div className="max-w-[1100px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
             {/* Left: text */}
@@ -94,7 +97,7 @@ export default function About() {
         </div>
       </section>
       {/* ── FEATURES: CLIENT SUPPORT / PRICING / TECHNOLOGY ── */}
-      <section style={{ backgroundColor: "#141414" }} className="py-16 lg:py-20 px-4">
+      <section style={{ backgroundColor: "transparent" }} className="py-16 lg:py-20 px-4">
         <div className="max-w-[1100px] mx-auto space-y-0">
 
           {/* Row 1 — Extensive Client Support */}
@@ -181,7 +184,7 @@ export default function About() {
         </div>
       </section>
       {/* ── ABOUT VELOCITY CLEARING ── */}
-      <section style={{ backgroundColor: "#1c1c1c" }} className="py-16 lg:py-20 px-4">
+      <section style={{ backgroundColor: "transparent" }} className="py-16 lg:py-20 px-4">
         <div className="max-w-[1100px] mx-auto">
 
           {/* Two-col intro */}
@@ -300,7 +303,7 @@ export default function About() {
         </div>
       </section>
       {/* ── CTA ── */}
-      <section className="bg-[#141414] py-20 px-4 text-center border-t border-white/5">
+      <section className="py-20 px-4 text-center border-t border-white/5">
         <div className="max-w-[700px] mx-auto">
           <h3 className="text-2xl lg:text-3xl font-display font-bold text-white mb-8">
             Let Guardian Help You Achieve Your Trading Goals
@@ -314,6 +317,7 @@ export default function About() {
           </Link>
         </div>
       </section>
+      </div>
     </Layout>
   );
 }

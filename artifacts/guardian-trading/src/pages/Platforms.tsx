@@ -1,6 +1,7 @@
 import { Layout } from "@/components/Layout";
 
 const BG2 = "https://www.guardiantrading.com/wp-content/uploads/2025/07/background-image-2.png";
+const BG_VECTOR = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-background-vector-1.png";
 
 const DAS_ICON = "https://www.guardiantrading.com/wp-content/uploads/2025/07/DAS-icon-50x50.png";
 const STERLING_ICON = "https://www.guardiantrading.com/wp-content/uploads/2025/07/sterling-icon-50x50.png";
@@ -56,7 +57,7 @@ const Bullet = ({ children }: { children: React.ReactNode }) => (
 export default function Platforms() {
   return (
     <Layout title="Trading Platforms | Guardian Trading">
-
+      <div style={{ backgroundImage: `url('${BG_VECTOR}')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }}>
       {/* ── HERO ── */}
       <section
         className="relative flex items-center justify-center text-center overflow-hidden"
@@ -77,7 +78,7 @@ export default function Platforms() {
       </section>
 
       {/* ── DAS TRADER PRO ── text left / screen right */}
-      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4 border-b border-white/5">
+      <section style={{ backgroundColor: "transparent" }} className="py-16 px-4 border-b border-white/5">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
           {/* Text */}
           <div className="flex-1 order-2 lg:order-1">
@@ -114,7 +115,7 @@ export default function Platforms() {
       </section>
 
       {/* ── STERLING TRADER PRO ── screen left / text right */}
-      <section style={{ backgroundColor: "#1c1c1c" }} className="py-16 px-4 border-b border-white/5">
+      <section style={{ backgroundColor: "transparent" }} className="py-16 px-4 border-b border-white/5">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
           {/* Screen */}
           <div className="flex-shrink-0 w-full lg:w-[440px]">
@@ -153,7 +154,7 @@ export default function Platforms() {
       </section>
 
       {/* ── RIVAL ONE ── text left / screen right */}
-      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4 border-b border-white/5">
+      <section style={{ backgroundColor: "transparent" }} className="py-16 px-4 border-b border-white/5">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
           {/* Text */}
           <div className="flex-1 order-2 lg:order-1">
@@ -192,7 +193,7 @@ export default function Platforms() {
       </section>
 
       {/* ── BLOOMBERG EMSX ── screen left / text right */}
-      <section style={{ backgroundColor: "#1c1c1c" }} className="py-16 px-4 border-b border-white/5">
+      <section style={{ backgroundColor: "transparent" }} className="py-16 px-4 border-b border-white/5">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
           {/* Screen */}
           <div className="flex-shrink-0 w-full lg:w-[420px]">
@@ -218,7 +219,7 @@ export default function Platforms() {
       </section>
 
       {/* ── CBOE SILEXX ── text left / screen right */}
-      <section style={{ backgroundColor: "#141414" }} className="py-16 px-4 border-b border-white/5">
+      <section style={{ backgroundColor: "transparent" }} className="py-16 px-4 border-b border-white/5">
         <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
           {/* Text */}
           <div className="flex-1 order-2 lg:order-1">
@@ -253,7 +254,7 @@ export default function Platforms() {
       </section>
 
       {/* ── TRADING PLATFORM EXPERTISE ── */}
-      <section style={{ backgroundColor: "#1c1c1c" }} className="py-20 px-4 text-center border-b border-white/5">
+      <section style={{ backgroundColor: "transparent" }} className="py-20 px-4 text-center border-b border-white/5">
         <div className="max-w-[700px] mx-auto">
           <h2 className="text-2xl lg:text-3xl font-display font-bold text-white mb-4">
             Trading Platform Expertise
@@ -266,14 +267,14 @@ export default function Platforms() {
       </section>
 
       {/* ── BENZINGA ── */}
-      <section style={{ backgroundColor: "#141414" }} className="py-12 px-4">
+      <section style={{ backgroundColor: "transparent" }} className="py-12 px-4">
         <div className="max-w-[1100px] mx-auto flex justify-center">
           <a href="https://www.benzinga.com/money/guardian-trading-review" target="_blank" rel="noopener noreferrer">
             <img src={BENZINGA} alt="Reviewed by Benzinga 2024" style={{ width: "120px", height: "auto" }} />
           </a>
         </div>
       </section>
-
+      </div>
     </Layout>
   );
 }
