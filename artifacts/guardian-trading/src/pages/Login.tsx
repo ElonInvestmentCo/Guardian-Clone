@@ -187,12 +187,12 @@ export default function Login() {
               </button>
             </form>
 
-            <div className="mt-5 text-right">
+            <div className="mt-5 w-full">
               <Link
                 href="/forgot-password"
-                className="text-sm text-[#4a7fbd] hover:underline"
+                className="block w-full text-right py-2 text-sm text-[#4a7fbd] hover:underline"
               >
-                Forgot Password ?
+                Forgot Password?
               </Link>
             </div>
 
