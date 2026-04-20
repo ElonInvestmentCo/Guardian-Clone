@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
+import submitBtnImg from "@assets/Guardian-Trading_-_Replit_-_Google_Chrome_4_19_2026_9_14_03_PM_1776658513433.png";
 
 const BG_VECTOR = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-background-vector-1.png";
 const RECAPTCHA_LOGO = "https://www.gstatic.com/recaptcha/api2/logo_48.png";
@@ -198,22 +199,14 @@ export default function ContactUs() {
               <div style={{ display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap" }}>
                 <button
                   type="submit"
-                  style={{
-                    background: "#4a7fbd",
-                    color: "#ffffff",
-                    border: "none",
-                    padding: "13px 36px",
-                    fontSize: "15px",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                    borderRadius: "2px",
-                    letterSpacing: "0.03em",
-                    transition: "background 0.2s",
-                  }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#3a6fad"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#4a7fbd"; }}
+                  style={{ background: "none", border: "none", padding: 0, cursor: "pointer", display: "block" }}
                 >
-                  Submit
+                  <img
+                    src={submitBtnImg}
+                    alt="Submit"
+                    draggable={false}
+                    style={{ height: "50px", width: "auto", display: "block" }}
+                  />
                 </button>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                   <img src={RECAPTCHA_LOGO} alt="reCAPTCHA" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
