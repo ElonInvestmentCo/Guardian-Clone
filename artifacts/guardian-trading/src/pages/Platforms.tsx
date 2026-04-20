@@ -261,7 +261,7 @@ export default function Platforms() {
           <p className="text-white text-[15px] mb-8">
             Not seeing your trading platform here? Questions regarding DAS?
           </p>
-          <GuidanceBtn href="/contact" />
+          <GuidanceBtn href="/contact-us" />
         </div>
       </section>
 

@@ -147,7 +147,7 @@ export default function TradingServices() {
             Let a Guardian Specialist Create a Trading Package for You
           </p>
           <a
-            href="/contact"
+            href="/contact-us"
             className="inline-block border text-white text-[14px] font-semibold px-8 py-3 tracking-wide transition-colors hover:bg-white/10"
             style={{ borderColor: "#4a7fbd" }}
           >

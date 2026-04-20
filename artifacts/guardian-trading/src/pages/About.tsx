@@ -306,7 +306,7 @@ export default function About() {
             Let Guardian Help You Achieve Your Trading Goals
           </h3>
           <Link
-            href="/contact"
+            href="/contact-us"
             className="inline-block border text-white text-sm px-10 py-3 font-semibold tracking-wide transition-colors hover:bg-white/10"
             style={{ borderColor: "#1ab8d4" }}
           >
