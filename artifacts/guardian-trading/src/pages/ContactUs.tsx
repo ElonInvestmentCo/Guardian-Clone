@@ -199,19 +199,22 @@ export default function ContactUs() {
                 <button
                   type="submit"
                   style={{
-                    background: "#4a7fbd",
+                    background: "linear-gradient(135deg, #4a87c7 0%, #2a5daa 55%, #1e4589 100%)",
                     color: "#ffffff",
                     border: "none",
-                    padding: "13px 36px",
+                    padding: "14px 52px",
                     fontSize: "15px",
                     fontWeight: 700,
                     cursor: "pointer",
-                    borderRadius: "2px",
-                    letterSpacing: "0.03em",
-                    transition: "background 0.2s",
+                    borderRadius: "4px",
+                    letterSpacing: "0.04em",
+                    transition: "filter 0.2s, transform 0.15s",
+                    boxShadow: "0 2px 10px rgba(30, 69, 137, 0.35)",
                   }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#3a6fad"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#4a7fbd"; }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = "brightness(1.08)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = "brightness(1)"; }}
+                  onMouseDown={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(0.97)"; }}
+                  onMouseUp={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
                 >
                   Submit
                 </button>
