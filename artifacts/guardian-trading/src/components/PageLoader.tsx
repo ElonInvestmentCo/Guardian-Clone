@@ -76,15 +76,16 @@ export function PageLoader() {
       <div
         style={{
           background: "#ffffff",
-          borderRadius: "16px",
+          borderRadius: "0",
           padding: "36px 48px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
           gap: "14px",
-          boxShadow: "0 8px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08)",
+          boxShadow: "0 4px 32px rgba(0,0,0,0.22), 0 1px 4px rgba(0,0,0,0.12)",
           minWidth: "180px",
+          outline: "1px solid rgba(0,0,0,0.06)",
         }}
       >
         <img
