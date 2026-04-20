@@ -52,6 +52,7 @@ export function PageLoader() {
   if (!mounted) return null;
 
   return (
+    /* Dimmed + blurred backdrop */
     <div
       aria-hidden={!revealed}
       role="status"
@@ -63,26 +64,53 @@ export function PageLoader() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#060b14",
+        backgroundColor: "rgba(0, 0, 0, 0.45)",
+        backdropFilter: "blur(4px)",
+        WebkitBackdropFilter: "blur(4px)",
         opacity: revealed ? 1 : 0,
         pointerEvents: revealed ? "all" : "none",
         transition: "opacity 280ms cubic-bezier(0.4, 0, 0.2, 1)",
       }}
     >
-      <img
-        src={loaderGif}
-        alt=""
-        draggable={false}
+      {/* Floating card */}
+      <div
         style={{
-          width: 96,
-          height: "auto",
-          maxWidth: 96,
-          objectFit: "contain",
-          imageRendering: "auto",
-          display: "block",
-          userSelect: "none",
+          background: "#ffffff",
+          borderRadius: "16px",
+          padding: "36px 48px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "14px",
+          boxShadow: "0 8px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08)",
+          minWidth: "180px",
         }}
-      />
+      >
+        <img
+          src={loaderGif}
+          alt=""
+          draggable={false}
+          style={{
+            width: 48,
+            height: 48,
+            objectFit: "contain",
+            display: "block",
+            userSelect: "none",
+          }}
+        />
+        <span
+          style={{
+            fontSize: "14px",
+            fontWeight: 500,
+            color: "#444",
+            letterSpacing: "0.01em",
+            userSelect: "none",
+          }}
+        >
+          Loading…
+        </span>
+      </div>
     </div>
   );
 }
