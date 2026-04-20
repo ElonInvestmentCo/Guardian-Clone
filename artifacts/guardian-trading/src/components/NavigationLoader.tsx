@@ -2,6 +2,8 @@ import { useLayoutEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { useLoading } from "@/context/LoadingContext";
 
+const STOP_DELAY_MS = 320;
+
 export function NavigationLoader() {
   const [location] = useLocation();
   const prevLocation = useRef<string | null>(null);
@@ -16,7 +18,7 @@ export function NavigationLoader() {
     if (prevLocation.current !== location) {
       prevLocation.current = location;
       startLoading();
-      const timer = setTimeout(() => stopLoading(), 600);
+      const timer = setTimeout(() => stopLoading(), STOP_DELAY_MS);
       return () => clearTimeout(timer);
     }
 
