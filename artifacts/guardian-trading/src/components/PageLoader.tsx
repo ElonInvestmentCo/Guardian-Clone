@@ -13,6 +13,8 @@ export function PageLoader() {
   return (
     <div
       aria-hidden={!isLoading}
+      role="status"
+      aria-label="Loading"
       style={{
         position: "fixed",
         inset: 0,
@@ -20,19 +22,27 @@ export function PageLoader() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.65)",
-        backdropFilter: "blur(4px)",
-        WebkitBackdropFilter: "blur(4px)",
+        backgroundColor: "rgba(6, 11, 20, 0.78)",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
         opacity: isLoading ? 1 : 0,
         pointerEvents: isLoading ? "all" : "none",
-        transition: "opacity 250ms ease-in-out",
+        transition: "opacity 300ms ease-in-out",
       }}
     >
       <img
         src={loaderGif}
-        alt="Loading"
+        alt=""
         draggable={false}
-        style={{ width: 100, height: 100, objectFit: "contain" }}
+        style={{
+          width: 96,
+          height: "auto",
+          maxWidth: 96,
+          objectFit: "contain",
+          imageRendering: "auto",
+          display: "block",
+          userSelect: "none",
+        }}
       />
     </div>
   );
