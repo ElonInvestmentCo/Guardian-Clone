@@ -1,0 +1,283 @@
+2026-04-20T17:57:10.480140192Z [inf]  
+2026-04-20T17:57:15.699613846Z [inf]  [35m[Region: us-east4][0m
+2026-04-20T17:57:15.866051310Z [inf]  
+2026-04-20T17:57:15.866097637Z [inf]  [38;2;125;86;243m╭─────────────────╮[0m
+2026-04-20T17:57:15.866104158Z [inf]  [38;2;125;86;243m│[0m Railpack 0.23.0 [38;2;125;86;243m│[0m
+2026-04-20T17:57:15.866108760Z [inf]  [38;2;125;86;243m╰─────────────────╯[0m
+2026-04-20T17:57:15.866115905Z [inf]  
+2026-04-20T17:57:15.866121181Z [inf]  [97m↳ Detected Node[0m
+2026-04-20T17:57:15.866125857Z [inf]  [97m↳ Using pnpm package manager[0m
+2026-04-20T17:57:15.866129898Z [inf]  [97m↳ Found workspace with 11 packages[0m
+2026-04-20T17:57:15.866134591Z [inf]  [97m↳ Installing pnpm@10.26.1 with Corepack[0m
+2026-04-20T17:57:15.866139087Z [inf]  
+2026-04-20T17:57:15.866143064Z [inf]  [1mPackages[0m
+2026-04-20T17:57:15.866147003Z [inf]  [38;5;238m──────────[0m
+2026-04-20T17:57:15.866151094Z [inf]  [95mnode[0m  [38;5;238m│[0m  [96m22.22.2[0m  [38;5;238m│[0m  mise.toml (22.22.2)
+2026-04-20T17:57:15.866155443Z [inf]  [95mpnpm[0m  [38;5;238m│[0m  [96m10.26.1[0m  [38;5;238m│[0m  package.json > packageManager (10.26.1)
+2026-04-20T17:57:15.866159548Z [inf]  
+2026-04-20T17:57:15.866163410Z [inf]  [1mSteps[0m
+2026-04-20T17:57:15.866168078Z [inf]  [38;5;238m──────────[0m
+2026-04-20T17:57:15.866172551Z [inf]  [95m▸ install[0m
+2026-04-20T17:57:15.866176415Z [inf]  [38;5;245m$[0m [1mnpm i -g corepack@latest && corepack enable && corepack prepare --activate[0m
+2026-04-20T17:57:15.866180734Z [inf]  [38;5;245m$[0m [1mpnpm install --frozen-lockfile --prefer-offline[0m
+2026-04-20T17:57:15.866184851Z [inf]  
+2026-04-20T17:57:15.866188898Z [inf]  [95m▸ build[0m
+2026-04-20T17:57:15.866193128Z [inf]  [38;5;245m$[0m [1mpnpm install && pnpm --filter @workspace/api-server run build[0m
+2026-04-20T17:57:15.866197454Z [inf]  
+2026-04-20T17:57:15.866201606Z [inf]  [1mDeploy[0m
+2026-04-20T17:57:15.866205601Z [inf]  [38;5;238m──────────[0m
+2026-04-20T17:57:15.866209576Z [inf]  [38;5;245m$[0m [1mpnpm --filter @workspace/api-server run start[0m
+2026-04-20T17:57:15.866213701Z [inf]  
+2026-04-20T17:57:15.866217978Z [inf]  
+2026-04-20T17:57:15.868176224Z [inf]  Successfully prepared Railpack plan for build
+2026-04-20T17:57:15.868215787Z [inf]  
+2026-04-20T17:57:15.868225240Z [inf]  
+2026-04-20T17:57:15.868959533Z [inf]  context: xv53-s
+2026-04-20T17:57:16.052351571Z [inf]  [internal] load build definition from railpack-plan.json
+2026-04-20T17:57:16.052408134Z [inf]  [internal] load build definition from railpack-plan.json
+2026-04-20T17:57:16.052426366Z [inf]  [internal] load build definition from railpack-plan.json
+2026-04-20T17:57:16.068119846Z [inf]  [internal] load build definition from railpack-plan.json
+2026-04-20T17:57:16.070955334Z [inf]  resolve image config for docker-image://ghcr.io/railwayapp/railpack-frontend:v0.23.0
+2026-04-20T17:57:16.290442013Z [inf]  resolve image config for docker-image://ghcr.io/railwayapp/railpack-frontend:v0.23.0
+2026-04-20T17:57:16.290507243Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.23.0@sha256:ba4c430961d9ee3215c64807727a4b11e2198daac31250e9db9eaf9cee4624d6
+2026-04-20T17:57:16.290529386Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.23.0@sha256:ba4c430961d9ee3215c64807727a4b11e2198daac31250e9db9eaf9cee4624d6
+2026-04-20T17:57:16.296514654Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.23.0@sha256:ba4c430961d9ee3215c64807727a4b11e2198daac31250e9db9eaf9cee4624d6
+2026-04-20T17:57:16.296597167Z [inf]  docker-image://ghcr.io/railwayapp/railpack-frontend:v0.23.0@sha256:ba4c430961d9ee3215c64807727a4b11e2198daac31250e9db9eaf9cee4624d6
+2026-04-20T17:57:16.404542986Z [inf]  load build definition from railpack-plan.json
+2026-04-20T17:57:16.404609214Z [inf]  load build definition from railpack-plan.json
+2026-04-20T17:57:16.404788368Z [inf]  load build definition from railpack-plan.json
+2026-04-20T17:57:16.420303944Z [inf]  load build definition from railpack-plan.json
+2026-04-20T17:57:16.446465055Z [inf]  copy /mise/shims
+2026-04-20T17:57:16.446535773Z [inf]  install mise packages: node
+2026-04-20T17:57:16.446560848Z [inf]  create mise config
+2026-04-20T17:57:16.446573860Z [inf]  mkdir /etc/mise
+2026-04-20T17:57:16.446587098Z [inf]  copy .mise.toml
+2026-04-20T17:57:16.446599206Z [inf]  loading .
+2026-04-20T17:57:16.446614248Z [inf]  docker-image://ghcr.io/railwayapp/railpack-builder:mise-2026.3.17
+2026-04-20T17:57:16.446639445Z [inf]  install apt packages: libatomic1
+2026-04-20T17:57:16.446652069Z [inf]  docker-image://ghcr.io/railwayapp/railpack-runtime:mise-2026.3.17
+2026-04-20T17:57:16.446693435Z [inf]  copy /root/.local/state/mise
+2026-04-20T17:57:16.446705998Z [inf]  copy /etc/mise/config.toml
+2026-04-20T17:57:16.446717522Z [inf]  copy /usr/local/bin/mise
+2026-04-20T17:57:16.446732896Z [inf]  copy /mise/installs
+2026-04-20T17:57:16.446767422Z [inf]  [railpack] hash used secrets
+2026-04-20T17:57:16.446781959Z [inf]  [railpack] copy secrets hash
+2026-04-20T17:57:16.446794008Z [inf]  [railpack] secrets hash
+2026-04-20T17:57:16.446804277Z [inf]  [railpack] loading secrets
+2026-04-20T17:57:16.446816842Z [inf]  copy package.json
+2026-04-20T17:57:16.446862316Z [inf]  mkdir -p /app/node_modules/.cache
+2026-04-20T17:57:16.446879415Z [inf]  npm i -g corepack@latest && corepack enable && corepack prepare --activate
+2026-04-20T17:57:16.446891887Z [inf]  [railpack] copy used secrets hash
+2026-04-20T17:57:16.446944455Z [inf]  copy lib/api-spec/package.json
+2026-04-20T17:57:16.446954603Z [inf]  copy lib/api-client-react/package.json
+2026-04-20T17:57:16.446964458Z [inf]  copy artifacts/mockup-sandbox/package.json
+2026-04-20T17:57:16.446980108Z [inf]  copy artifacts/guardian-trading/package.json
+2026-04-20T17:57:16.446995293Z [inf]  copy artifacts/api-server/package.json
+2026-04-20T17:57:16.447008353Z [inf]  copy artifacts/admin-kyc/package.json
+2026-04-20T17:57:16.447021549Z [inf]  copy .npmrc
+2026-04-20T17:57:16.447057051Z [inf]  copy lib/integrations-openai-ai-react/package.json
+2026-04-20T17:57:16.447071608Z [inf]  copy lib/db/package.json
+2026-04-20T17:57:16.447087275Z [inf]  copy lib/api-zod/package.json
+2026-04-20T17:57:16.447132394Z [inf]  copy .
+2026-04-20T17:57:16.447144617Z [inf]  copy / /app
+2026-04-20T17:57:16.447152270Z [inf]  pnpm install --frozen-lockfile --prefer-offline
+2026-04-20T17:57:16.447160131Z [inf]  copy scripts/package.json
+2026-04-20T17:57:16.447167816Z [inf]  copy pnpm-workspace.yaml
+2026-04-20T17:57:16.447175534Z [inf]  copy pnpm-lock.yaml
+2026-04-20T17:57:16.447183032Z [inf]  copy package.json
+2026-04-20T17:57:16.447196170Z [inf]  copy lib/integrations-openai-ai-server/package.json
+2026-04-20T17:57:16.447217533Z [inf]  copy /root/.cache
+2026-04-20T17:57:16.447228484Z [inf]  copy /app/node_modules
+2026-04-20T17:57:16.447239718Z [inf]  pnpm install && pnpm --filter @workspace/api-server run build
+2026-04-20T17:57:16.447262768Z [inf]  [railpack] merge $packages:apt:runtime, $packages:mise, $build, $build
+2026-04-20T17:57:16.447276624Z [inf]  copy /opt/corepack
+2026-04-20T17:57:16.447284699Z [inf]  copy /app
+2026-04-20T17:57:16.447308016Z [inf]  docker-image://ghcr.io/railwayapp/railpack-runtime:mise-2026.3.17
+2026-04-20T17:57:16.447333622Z [inf]  loading .
+2026-04-20T17:57:16.447346364Z [inf]  [railpack] secrets hash
+2026-04-20T17:57:16.447369147Z [inf]  [railpack] secrets hash
+2026-04-20T17:57:16.447393313Z [inf]  docker-image://ghcr.io/railwayapp/railpack-builder:mise-2026.3.17
+2026-04-20T17:57:16.447781714Z [inf]  [railpack] loading secrets
+2026-04-20T17:57:16.454738974Z [inf]  [auth] library/alpine:pull token for registry-1.docker.io
+2026-04-20T17:57:16.454784116Z [inf]  [auth] library/alpine:pull token for registry-1.docker.io
+2026-04-20T17:57:16.533646085Z [inf]  docker-image://ghcr.io/railwayapp/railpack-runtime:mise-2026.3.17
+2026-04-20T17:57:16.577511859Z [inf]  [railpack] loading secrets
+2026-04-20T17:57:16.577658730Z [inf]  [railpack] secrets hash
+2026-04-20T17:57:16.577923124Z [inf]  loading .
+2026-04-20T17:57:16.593934743Z [inf]  [railpack] secrets hash
+2026-04-20T17:57:16.598177019Z [inf]  [railpack] loading secrets
+2026-04-20T17:57:16.598231303Z [inf]  [railpack] copy secrets hash
+2026-04-20T17:57:16.615010668Z [inf]  [railpack] copy secrets hash
+2026-04-20T17:57:16.617291348Z [inf]  [railpack] hash used secrets
+2026-04-20T17:57:16.717177545Z [inf]  docker-image://ghcr.io/railwayapp/railpack-builder:mise-2026.3.17
+2026-04-20T17:57:16.759080796Z [inf]  [railpack] hash used secrets
+2026-04-20T17:57:18.033133857Z [inf]  loading .
+2026-04-20T17:57:18.050261485Z [inf]  copy .mise.toml
+2026-04-20T17:57:18.050309945Z [inf]  mkdir /etc/mise
+2026-04-20T17:57:18.050322079Z [inf]  create mise config
+2026-04-20T17:57:18.050331818Z [inf]  install mise packages: node
+2026-04-20T17:57:18.050342685Z [inf]  copy package.json
+2026-04-20T17:57:18.050352083Z [inf]  [railpack] copy used secrets hash
+2026-04-20T17:57:18.050362799Z [inf]  npm i -g corepack@latest && corepack enable && corepack prepare --activate
+2026-04-20T17:57:18.050376952Z [inf]  mkdir -p /app/node_modules/.cache
+2026-04-20T17:57:18.050386058Z [inf]  copy .npmrc
+2026-04-20T17:57:18.050395238Z [inf]  copy artifacts/admin-kyc/package.json
+2026-04-20T17:57:18.050404674Z [inf]  copy artifacts/api-server/package.json
+2026-04-20T17:57:18.050413635Z [inf]  copy artifacts/guardian-trading/package.json
+2026-04-20T17:57:18.050422402Z [inf]  copy artifacts/mockup-sandbox/package.json
+2026-04-20T17:57:18.050434990Z [inf]  copy lib/api-client-react/package.json
+2026-04-20T17:57:18.050443528Z [inf]  copy lib/api-spec/package.json
+2026-04-20T17:57:18.050467074Z [inf]  copy lib/api-zod/package.json
+2026-04-20T17:57:18.050479281Z [inf]  copy lib/db/package.json
+2026-04-20T17:57:18.050488188Z [inf]  copy lib/integrations-openai-ai-react/package.json
+2026-04-20T17:57:18.050496358Z [inf]  copy lib/integrations-openai-ai-server/package.json
+2026-04-20T17:57:18.050504787Z [inf]  copy package.json
+2026-04-20T17:57:18.050513691Z [inf]  copy pnpm-lock.yaml
+2026-04-20T17:57:18.050521798Z [inf]  copy pnpm-workspace.yaml
+2026-04-20T17:57:18.050530580Z [inf]  copy scripts/package.json
+2026-04-20T17:57:18.050545663Z [inf]  pnpm install --frozen-lockfile --prefer-offline
+2026-04-20T17:57:18.050561865Z [inf]  copy / /app
+2026-04-20T17:57:18.562284956Z [inf]  copy / /app
+2026-04-20T17:57:18.565229611Z [inf]  copy .
+2026-04-20T17:57:19.058541777Z [inf]  copy .
+2026-04-20T17:57:19.061892236Z [inf]  pnpm install && pnpm --filter @workspace/api-server run build
+2026-04-20T17:57:19.758030046Z [inf]  Scope: all 12 workspace projects
+
+2026-04-20T17:57:19.869359902Z [inf]  Lockfile is up to date, resolution step is skipped
+
+2026-04-20T17:57:19.971417308Z [inf]  Already up to date
+
+2026-04-20T17:57:21.114284516Z [inf]  
+
+2026-04-20T17:57:21.445222474Z [inf]  Done in 2s using pnpm v10.26.1
+
+2026-04-20T17:57:21.881902411Z [inf]  
+> @workspace/api-server@0.0.0 build /app/artifacts/api-server
+> tsx ./build.ts
+
+
+2026-04-20T17:57:22.193514461Z [inf]  
+==> Building guardian-trading frontend...
+
+2026-04-20T17:57:22.193670184Z [inf]  
+==> pnpm --filter @workspace/guardian-trading run build
+
+2026-04-20T17:57:22.593312584Z [inf]  
+> @workspace/guardian-trading@0.0.0 build /app/artifacts/guardian-trading
+> vite build --config vite.config.ts
+
+
+2026-04-20T17:57:23.054272914Z [inf]  [36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+
+2026-04-20T17:57:23.148940518Z [inf]  transforming...
+
+2026-04-20T17:57:23.549380754Z [inf]  [33msrc/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.[39m
+
+2026-04-20T17:57:28.524752547Z [inf]  [32m✓[39m 2483 modules transformed.
+
+2026-04-20T17:57:29.267883277Z [inf]  rendering chunks...
+
+2026-04-20T17:57:29.286786241Z [inf]  computing gzip size...
+
+2026-04-20T17:57:29.320738177Z [inf]  [2mdist/public/[22m[32mindex.html                                                                                        [39m[1m[2m    3.78 kB[22m[1m[22m[2m │ gzip:   1.54 kB[22m
+[2mdist/public/[22m[2massets/[22m[32mico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png                                   [39m[1m[2m    4.49 kB[22m[1m[22m
+
+2026-04-20T17:57:29.32081319Z [inf]  [2mdist/public/[22m[2massets/[22m[32mGuardian_Trading_-_Google_Chrome_4_15_2026_3_12_55_PM-fotor-bg_1776475354489-CKNZACCh.png  [39m[1m[2m    6.11 kB[22m[1m[22m
+
+2026-04-20T17:57:29.320833151Z [inf]  [2mdist/public/[22m[2massets/[22m[32mimg-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png                                  [39m[1m[2m    6.21 kB[22m[1m[22m
+
+2026-04-20T17:57:29.320873752Z [inf]  [2mdist/public/[22m[2massets/[22m[32mguardian_logo_reversed-D24bK1aW.png                                                        [39m[1m[2m    6.21 kB[22m[1m[22m
+[2mdist/public/[22m[2massets/[22m[32mGuardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png           [39m[1m[2m    6.30 kB[22m[1m[22m
+
+2026-04-20T17:57:29.320959179Z [inf]  [2mdist/public/[22m[2massets/[22m[32mGuardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png           [39m[1m[2m    6.83 kB[22m[1m[22m
+[2mdist/public/[22m[2massets/[22m[32mIMG_7934_1773719077190-CLq6B01D.png                                                        [39m[1m[2m    8.48 kB[22m[1m[22m
+[2mdist/public/[22m[2massets/[22m[32mGuardianLogo-DexM0ikr.svg                                                                  [39m[1m[2m    8.65 kB[22m[1m[22m[2m │ gzip:   2.42 kB[22m
+[2mdist/public/[22m[2massets/[22m[32mIMG_7968_1773721659915-C53aLAjV.png                                                        [39m[1m[2m   16.66 kB[22m[1m[22m
+[2mdist/public/[22m[2massets/[22m[32msupport-card-CwKQW0e3.png                                                                  [39m[1m[2m   39.42 kB[22m[1m[22m
+
+2026-04-20T17:57:29.320978705Z [inf]  [2mdist/public/[22m[2massets/[22m[32mLoading-LR1bPjGO.gif                                                                       [39m[1m[2m   45.40 kB[22m[1m[22m
+[2mdist/public/[22m[2massets/[22m[32mIMG_7967_1773721659915-Bdj3jXlG.png                                                        [39m[1m[2m   80.20 kB[22m[1m[22m
+[2mdist/public/[22m[2massets/[22m[32mimg-background-vector-1_1773948931248-kdCdaMwT.png                                         [39m[1m[2m  104.76 kB[22m[1m[22m
+
+2026-04-20T17:57:29.321016128Z [inf]  [2mdist/public/[22m[2massets/[22m[32mD63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246-Cbmt2YzL.gif                            [39m[1m[2m  110.90 kB[22m[1m[22m
+[2mdist/public/[22m[2massets/[22m[32mpattern_1773965291387-CNruTbwj.png                                                         [39m[1m[2m  200.94 kB[22m[1m[22m
+
+2026-04-20T17:57:29.32102819Z [inf]  [2mdist/public/[22m[2massets/[22m[35mindex-3Cjeg7h6.css                                                                         [39m[1m[2m  117.91 kB[22m[1m[22m[2m │ gzip:  19.79 kB[22m
+
+2026-04-20T17:57:29.321235059Z [inf]  [2mdist/public/[22m[2massets/[22m[36mindex-AO1RXgb-.js                                                                          [39m[1m[33m1,223.16 kB[39m[22m[2m │ gzip: 340.32 kB[22m
+
+2026-04-20T17:57:29.321329691Z [inf]  [33m
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+
+2026-04-20T17:57:29.321537315Z [inf]  [32m✓ built in 6.22s[39m
+
+2026-04-20T17:57:29.41168885Z [inf]  
+==> Building admin-kyc frontend...
+
+==> pnpm --filter @workspace/admin-kyc run build
+
+2026-04-20T17:57:29.792046457Z [inf]  
+> @workspace/admin-kyc@0.0.0 build /app/artifacts/admin-kyc
+> vite build --config vite.config.ts
+
+
+2026-04-20T17:57:30.128134003Z [inf]  [36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+
+2026-04-20T17:57:30.194206626Z [inf]  transforming...
+
+2026-04-20T17:57:31.686021174Z [inf]  [32m✓[39m 116 modules transformed.
+
+2026-04-20T17:57:31.969168204Z [inf]  rendering chunks...
+
+2026-04-20T17:57:31.98319751Z [inf]  computing gzip size...
+
+2026-04-20T17:57:31.996390006Z [inf]  [2mdist/public/[22m[32mindex.html                             [39m[1m[2m  1.77 kB[22m[1m[22m[2m │ gzip:   0.73 kB[22m
+[2mdist/public/[22m[2massets/[22m[32mbootstrap-icons-mSm7cUeB.woff2  [39m[1m[2m134.04 kB[22m[1m[22m
+
+2026-04-20T17:57:31.996404042Z [inf]  [2mdist/public/[22m[2massets/[22m[32mbootstrap-icons-BeopsB42.woff   [39m[1m[2m180.29 kB[22m[1m[22m
+
+2026-04-20T17:57:31.99651253Z [inf]  [2mdist/public/[22m[2massets/[22m[35mindex-DMuSK-U4.css              [39m[1m[2m323.04 kB[22m[1m[22m[2m │ gzip:  47.49 kB[22m
+
+2026-04-20T17:57:31.996608414Z [inf]  [2mdist/public/[22m[2massets/[22m[36mindex-hjhwIYNr.js               [39m[1m[2m371.78 kB[22m[1m[22m[2m │ gzip: 105.03 kB[22m
+
+2026-04-20T17:57:31.996919027Z [inf]  [32m✓ built in 1.84s[39m
+
+2026-04-20T17:57:32.043748517Z [inf]  
+building server...
+
+2026-04-20T17:57:32.247732547Z [inf]  
+  dist/index.cjs  1.4mb ⚠️
+
+⚡ Done in 195ms
+
+2026-04-20T17:57:32.248974174Z [inf]  
+==> Production build complete.
+
+2026-04-20T17:57:32.312756316Z [inf]  pnpm install && pnpm --filter @workspace/api-server run build
+2026-04-20T17:57:32.504416819Z [inf]  docker-image://ghcr.io/railwayapp/railpack-runtime:mise-2026.3.17
+2026-04-20T17:57:32.504452294Z [inf]  docker-image://ghcr.io/railwayapp/railpack-runtime:mise-2026.3.17
+2026-04-20T17:57:50.694149722Z [inf]  install apt packages: libatomic1
+2026-04-20T17:57:50.694206833Z [inf]  copy /mise/shims
+2026-04-20T17:57:50.694236446Z [inf]  copy /mise/installs
+2026-04-20T17:57:50.694255442Z [inf]  copy /usr/local/bin/mise
+2026-04-20T17:57:50.694272433Z [inf]  copy /etc/mise/config.toml
+2026-04-20T17:57:50.694288799Z [inf]  copy /root/.local/state/mise
+2026-04-20T17:57:50.694301341Z [inf]  copy /app/node_modules
+2026-04-20T17:57:50.694319081Z [inf]  copy /root/.local/state/mise
+2026-04-20T17:57:50.694334792Z [inf]  install apt packages: libatomic1
+2026-04-20T17:57:50.801383581Z [inf]  copy /root/.cache
+2026-04-20T17:57:50.801431093Z [inf]  copy /app
+2026-04-20T17:57:52.236918264Z [inf]  copy /app
+2026-04-20T17:57:52.240956932Z [inf]  copy /opt/corepack
+2026-04-20T17:57:52.451453720Z [inf]  copy /opt/corepack
+2026-04-20T17:57:55.392065213Z [inf]  copy /app/node_modules
+2026-04-20T17:57:55.393036924Z [inf]  [railpack] merge $packages:apt:runtime, $packages:mise, $build, $build
+2026-04-20T17:57:55.920246946Z [inf]  [railpack] merge $packages:apt:runtime, $packages:mise, $build, $build
+2026-04-20T17:58:21.485864163Z [inf]  importing to docker
+2026-04-20T17:58:22.523906387Z [inf]  [auth] sharing credentials for production-us-east4-eqdc4a.railway-registry.com
+2026-04-20T17:58:22.523968256Z [inf]  [auth] sharing credentials for production-us-east4-eqdc4a.railway-registry.com
+2026-04-20T17:58:41.068778185Z [inf]  importing to docker
+2026-04-20T17:59:01.421187203Z [inf]  [92mBuild time: 105.55 seconds[0m
