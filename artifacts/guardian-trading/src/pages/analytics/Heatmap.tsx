@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
 import AnalyticsLayout from "@/components/analytics/AnalyticsLayout";
 import { Flame, MousePointer, Layers, BarChart2 } from "lucide-react";
 import { useLocation, Link } from "wouter";
@@ -260,7 +259,7 @@ export default function Heatmap() {
 
             {loading || rendering ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3" style={{ background: "rgba(0,0,0,0.55)" }}>
-                <img src={loaderGif} alt="Loading" draggable={false} style={{ width: 80, height: 80, objectFit: "contain" }} />
+                <div className="gt-spinner gt-spinner-md" />
                 <span className="text-white/30 text-sm">{loading ? "Loading data…" : "Rendering heatmap…"}</span>
               </div>
             ) : points.length === 0 ? (

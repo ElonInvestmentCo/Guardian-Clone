@@ -1,7 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { Link, useLocation } from "wouter";
 import { getApiBase } from "@/lib/api";
-import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -345,5 +344,5 @@ export default function Signup() {
 }
 
 function Spinner() {
-  return <img src={loaderGif} alt="" draggable={false} style={{ width: 14, height: 14, objectFit: "contain" }} />;
+  return <span className="gt-spinner gt-spinner-sm" role="status" aria-label="Loading" />;
 }

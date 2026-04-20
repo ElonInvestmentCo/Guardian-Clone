@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
 import AnalyticsLayout from "@/components/analytics/AnalyticsLayout";
 import { Lightbulb, AlertTriangle, CheckCircle, Info, RefreshCw } from "lucide-react";
 import { useLocation, Link } from "wouter";
@@ -105,7 +104,7 @@ export default function Insights() {
             onClick={() => void load()}
             className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors"
           >
-            {loading ? <img src={loaderGif} alt="" draggable={false} style={{ width: 14, height: 14, objectFit: "contain" }} /> : <RefreshCw size={14} />}
+            {loading ? <span className="gt-spinner gt-spinner-sm" role="status" aria-label="Loading" /> : <RefreshCw size={14} />}
             Refresh
           </button>
         </div>

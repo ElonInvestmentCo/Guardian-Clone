@@ -1,7 +1,6 @@
 import { useLocation, Link } from "wouter";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { getApiBase } from "@/lib/api";
-import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
 import lightLogo from "@assets/GuardianLogoLight.svg";
 import {
   LayoutDashboard, Briefcase, ShoppingCart, PieChart,
@@ -196,7 +195,7 @@ export default function DashboardLayout({ children }: Props) {
   if (!gateChecked) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: colors.bg }}>
-        <img src={loaderGif} alt="Loading" draggable={false} style={{ width: 80, height: 80, objectFit: "contain" }} />
+        <div className="gt-spinner gt-spinner-md" />
       </div>
     );
   }

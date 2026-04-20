@@ -27,7 +27,7 @@ export function LoadingProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    timerRef.current = setTimeout(() => setIsLoading(false), 900);
+    timerRef.current = setTimeout(() => setIsLoading(false), 550);
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { getApiBase } from "@/lib/api";
-import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
 import { User, Lock, BellRing, ChevronRight, Eye, EyeOff, Check, Shield, Copy, Download, AlertTriangle } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme, type ThemeColors } from "@/context/ThemeContext";
@@ -335,7 +334,7 @@ export default function Settings() {
       <DashboardLayout>
         <div style={{ position: "relative", height: "256px" }}>
           <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.45)", borderRadius: "8px" }}>
-            <img src={loaderGif} alt="Loading" draggable={false} style={{ width: 80, height: 80, objectFit: "contain" }} />
+            <div className="gt-spinner gt-spinner-md" />
           </div>
         </div>
       </DashboardLayout>

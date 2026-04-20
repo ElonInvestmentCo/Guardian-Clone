@@ -1,17 +1,20 @@
 import { cn } from "@/lib/utils";
-import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
 
-function Spinner({ className, style, ...props }: React.ComponentProps<"img">) {
+interface SpinnerProps {
+  className?: string;
+  size?: "sm" | "md";
+}
+
+function Spinner({ className, size = "sm" }: SpinnerProps) {
   return (
-    <img
-      src={loaderGif}
+    <span
       role="status"
       aria-label="Loading"
-      alt=""
-      draggable={false}
-      className={cn("size-4", className)}
-      style={{ objectFit: "contain", ...style }}
-      {...props}
+      className={cn(
+        "gt-spinner",
+        size === "sm" ? "gt-spinner-sm" : "gt-spinner-md",
+        className
+      )}
     />
   );
 }
