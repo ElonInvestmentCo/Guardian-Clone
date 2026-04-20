@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
+import readMoreBtn from "@assets/Guardian-Clone_-_Replit_-_Google_Chrome_4_18_2026_7_43_01_PM_1776655378942.png";
 
 const PATTERN_BG = "https://www.guardiantrading.com/wp-content/themes/gate39media/public/img/img-blog-background-pattern.png";
 
@@ -130,8 +131,9 @@ export default function Blog() {
           <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.78)", maxWidth: "680px", lineHeight: 1.7, marginBottom: "28px" }}>
             {featured.excerpt}
           </p>
-          <a href="#" className="inline-block hover:opacity-90 transition-opacity">
-            <img src="/images/btn-read-more.png" alt="Read More" className="h-auto" />
+          <a href="#" className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity group">
+            <span style={{ fontSize: "13px", fontWeight: 700, color: "#ffffff", letterSpacing: "0.04em" }}>Read More</span>
+            <img src={readMoreBtn} alt="Read More" style={{ height: "28px", width: "auto" }} />
           </a>
         </div>
       </section>
@@ -207,8 +209,8 @@ export default function Blog() {
                     {post.excerpt}
                   </p>
                   <a href="#" className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity">
-                    <img src="/images/btn-read-more.png" alt="Read More" className="h-auto" />
-                    <img src="/images/btn-play-small.png" alt="" className="h-auto" />
+                    <span style={{ fontSize: "13px", fontWeight: 700, color: "#ffffff", letterSpacing: "0.04em" }}>Read More</span>
+                    <img src={readMoreBtn} alt="Read More" style={{ height: "28px", width: "auto" }} />
                   </a>
                 </div>
               </div>
