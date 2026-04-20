@@ -85,8 +85,8 @@ export function Footer() {
                   </a>
                 </li>
                 <li>
-                  <a href="mailto:info@guardiiantrading.com" className="text-white text-[13px] transition-colors">
-                    info@guardiiantrading.com
+                  <a href="mailto:support@guardiiantrading.com" className="text-white text-[13px] transition-colors">
+                    support@guardiiantrading.com
                   </a>
                 </li>
                 <li>
@@ -130,7 +130,7 @@ export function Footer() {
           OPTIONS INVOLVE RISK AND ARE NOT SUITABLE FOR ALL INVESTORS. FOR MORE INFORMATION READ THE{" "}
           <a href="#" className="underline text-[#4a7fbd]">CHARACTERISTICS AND RISKS OF STANDARDIZED OPTIONS</a>
           , ALSO KNOWN AS THE OPTIONS DISCLOSURE DOCUMENT (ODD). ALTERNATIVELY, PLEASE CONTACT{" "}
-          <a href="mailto:info@guardiiantrading.com" className="underline text-[#4a7fbd]">INFO@GUARDIIANTRADING.COM</a>
+          <a href="mailto:support@guardiiantrading.com" className="underline text-[#4a7fbd]">SUPPORT@GUARDIIANTRADING.COM</a>
           {" "}TO RECEIVE A COPY OF THE ODD.
         </p>
         <p className="text-[13px] font-medium text-white leading-relaxed uppercase">
