@@ -234,9 +234,8 @@ export default function Signup() {
                       />
                       <button
                         type="button"
-                        onClick={() => setShowPassword((v) => !v)}
-                        className="absolute right-0 top-0 h-full flex items-center justify-center"
-                        style={{ width: "48px" }}
+                        onClick={(e) => { e.stopPropagation(); setShowPassword((v) => !v); }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9"
                         aria-label={showPassword ? "Hide password" : "Show password"}
                       >
                         <img
@@ -284,9 +283,8 @@ export default function Signup() {
                       />
                       <button
                         type="button"
-                        onClick={() => setShowConfirmPassword((v) => !v)}
-                        className="absolute right-0 top-0 h-full flex items-center justify-center"
-                        style={{ width: "48px" }}
+                        onClick={(e) => { e.stopPropagation(); setShowConfirmPassword((v) => !v); }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9"
                         aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                       >
                         <img

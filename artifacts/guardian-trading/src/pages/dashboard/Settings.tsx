@@ -495,7 +495,7 @@ export default function Settings() {
                       <div className="relative">
                         <input type={show ? "text" : "password"} value={val} onChange={(e) => set(e.target.value)}
                           style={{ ...inputStyle, padding: "10px 42px 10px 14px" }} />
-                        <button type="button" onClick={toggle} style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: colors.textMuted, padding: 0 }}>
+                        <button type="button" onClick={(e) => { e.stopPropagation(); toggle(); }} style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: colors.textMuted, padding: 0 }}>
                           {show ? <EyeOff size={15} /> : <Eye size={15} />}
                         </button>
                       </div>

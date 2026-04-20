@@ -152,7 +152,7 @@ export default function Login() {
                     />
                     <button
                       type="button"
-                      onClick={() => setShowPassword((v) => !v)}
+                      onClick={(e) => { e.stopPropagation(); setShowPassword((v) => !v); }}
                       className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9"
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >

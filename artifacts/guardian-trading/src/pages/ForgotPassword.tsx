@@ -185,7 +185,7 @@ export default function ForgotPassword() {
                         onChange={(e) => { setNewPassword(e.target.value); setErrors({}); }}
                         className="w-full px-4 py-3 pr-11 bg-gray-100 border-0 rounded text-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
                       />
-                      <button type="button" onClick={() => setShowNew(!showNew)}
+                      <button type="button" onClick={(e) => { e.stopPropagation(); setShowNew(!showNew); }}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
                         <EyeIcon open={showNew} />
                       </button>
@@ -205,7 +205,7 @@ export default function ForgotPassword() {
                         onChange={(e) => { setConfirmPassword(e.target.value); setErrors({}); }}
                         className="w-full px-4 py-3 pr-11 bg-gray-100 border-0 rounded text-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7fbd]/40"
                       />
-                      <button type="button" onClick={() => setShowConfirm(!showConfirm)}
+                      <button type="button" onClick={(e) => { e.stopPropagation(); setShowConfirm(!showConfirm); }}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
                         <EyeIcon open={showConfirm} />
                       </button>
