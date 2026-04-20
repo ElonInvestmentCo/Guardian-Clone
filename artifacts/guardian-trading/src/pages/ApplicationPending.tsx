@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "wouter";
+import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
 import { checkApplicationStatus } from "@/lib/saveStep";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 import guardianReversedLogo from "@assets/img-guardian-reversed-291x63-1_1773948931249.png";
@@ -280,7 +281,7 @@ export default function ApplicationPending() {
                   }}
                 >
                   {checking && (
-                    <span className="gt-spinner gt-spinner-sm" role="status" aria-label="Loading" />
+                    <img src={loaderGif} alt="" draggable={false} style={{ width: 16, height: 16, objectFit: "contain" }} />
                   )}
                   {checking ? "Checking..." : "Check Verification Status"}
                 </button>

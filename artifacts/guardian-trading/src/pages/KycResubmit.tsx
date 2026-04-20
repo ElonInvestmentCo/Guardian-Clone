@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
+import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
 import { getApiBase } from "@/lib/api";
 import guardianLogo from "@assets/img-guardian-reversed-291x63-1_1773972882381.png";
 
@@ -190,7 +191,7 @@ export default function KycResubmit() {
   if (loading) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: "#f4f4f4" }}>
-        <div className="gt-spinner gt-spinner-md" />
+        <img src={loaderGif} alt="Loading" draggable={false} style={{ width: 80, height: 80, objectFit: "contain" }} />
       </div>
     );
   }

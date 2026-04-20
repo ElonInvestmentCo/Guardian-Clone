@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import guardianLogo from "@assets/IMG_7934_1773719077190.png";
+import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
 import { getApiBase } from "@/lib/api";
 
 const RESEND_COOLDOWN = 180;
@@ -356,5 +357,5 @@ export default function EmailVerification() {
 }
 
 function Spinner() {
-  return <span className="gt-spinner gt-spinner-sm" role="status" aria-label="Loading" />;
+  return <img src={loaderGif} alt="" draggable={false} style={{ width: 14, height: 14, objectFit: "contain" }} />;
 }

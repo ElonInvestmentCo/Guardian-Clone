@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
 import { LoadingOverlay } from "@/components/LoadingOverlay";
 import AnalyticsLayout from "@/components/analytics/AnalyticsLayout";
 import {
@@ -213,7 +214,7 @@ export default function Dashboard() {
               ))}
             </div>
             <button onClick={() => void load()} className="text-white/40 hover:text-white transition-colors">
-              {loading ? <span className="gt-spinner gt-spinner-sm" role="status" aria-label="Loading" /> : <RefreshCw size={16} />}
+              {loading ? <img src={loaderGif} alt="" draggable={false} style={{ width: 16, height: 16, objectFit: "contain" }} /> : <RefreshCw size={16} />}
             </button>
           </div>
         </div>
