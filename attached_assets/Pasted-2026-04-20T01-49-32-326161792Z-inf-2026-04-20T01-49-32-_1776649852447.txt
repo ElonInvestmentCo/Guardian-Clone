@@ -1,0 +1,17 @@
+2026-04-20T01:49:32.326161792Z [inf]  
+2026-04-20T01:49:32.326167382Z [inf]  > @workspace/api-server@0.0.0 start /app/artifacts/api-server
+2026-04-20T01:49:32.326172262Z [inf]  > node dist/index.cjs
+2026-04-20T01:49:32.326176572Z [inf]  
+2026-04-20T01:49:32.326181362Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-20T01:49:32.366197886Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-20T01:49:32.366203736Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-20T01:49:32.366208686Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-DMuSK-U4.css, index-hjhwIYNr.js
+2026-04-20T01:49:32.366213826Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-20T01:49:32.366219886Z [inf]  [Static] guardian-trading files: _redirects, assets, benzinga-review.jpg, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, need-help-card.png, opengraph.jpg, robots.txt, support-card.png
+2026-04-20T01:49:32.366225095Z [inf]  [Static] guardian-trading/assets: D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246-Cbmt2YzL.gif, GuardianLogo-DexM0ikr.svg, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, Guardian_Trading_-_Google_Chrome_4_15_2026_3_12_55_PM-fotor-bg_1776475354489-CKNZACCh.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, Loading-LR1bPjGO.gif, guardian_logo_reversed-D24bK1aW.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-CnkBMwnT.css, index-DaX2TqGJ.js, pattern_1773965291387-CNruTbwj.png, support-card-CwKQW0e3.png
+2026-04-20T01:49:32.463153148Z [inf]  [DB] Database tables initialized successfully
+2026-04-20T01:49:32.463157248Z [inf]  [Startup] Database initialized
+2026-04-20T01:49:32.463160608Z [inf]  [Admin] Credentials loaded from environment variables.
+2026-04-20T01:49:32.463163318Z [inf]  [Startup] Admin credentials configured
+2026-04-20T01:49:32.464428175Z [inf]  Server listening on port 8080
+2026-04-20T01:49:32.464607098Z [inf]  Starting Container
