@@ -1,65 +1,40 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-} from "react";
+import { createContext, useContext, useState, useCallback, useRef, useEffect } from "react";
 
 interface LoadingContextValue {
   isLoading: boolean;
-  showLoader: boolean;
   startLoading: () => void;
   stopLoading: () => void;
 }
 
 const LoadingContext = createContext<LoadingContextValue>({
-  isLoading: false,
-  showLoader: false,
+  isLoading: true,
   startLoading: () => {},
   stopLoading: () => {},
 });
 
-const SHOW_DELAY_MS = 200;
-const INITIAL_TIMEOUT_MS = 500;
-
 export function LoadingProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
-  const [showLoader, setShowLoader] = useState(false);
-
-  const stopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const showTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const clearAllTimers = useCallback(() => {
-    if (stopTimerRef.current) clearTimeout(stopTimerRef.current);
-    if (showTimerRef.current) clearTimeout(showTimerRef.current);
-  }, []);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const startLoading = useCallback(() => {
-    clearAllTimers();
+    if (timerRef.current) clearTimeout(timerRef.current);
     setIsLoading(true);
-    showTimerRef.current = setTimeout(() => setShowLoader(true), SHOW_DELAY_MS);
-  }, [clearAllTimers]);
+  }, []);
 
   const stopLoading = useCallback(() => {
-    clearAllTimers();
-    setIsLoading(false);
-    setShowLoader(false);
-  }, [clearAllTimers]);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setIsLoading(false), 300);
+  }, []);
 
   useEffect(() => {
-    showTimerRef.current = setTimeout(() => setShowLoader(true), SHOW_DELAY_MS);
-    stopTimerRef.current = setTimeout(() => {
-      setIsLoading(false);
-      setShowLoader(false);
-    }, INITIAL_TIMEOUT_MS);
-
-    return clearAllTimers;
-  }, [clearAllTimers]);
+    timerRef.current = setTimeout(() => setIsLoading(false), 900);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   return (
-    <LoadingContext.Provider value={{ isLoading, showLoader, startLoading, stopLoading }}>
+    <LoadingContext.Provider value={{ isLoading, startLoading, stopLoading }}>
       {children}
     </LoadingContext.Provider>
   );
