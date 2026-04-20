@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useRef } from "react";
+import { createContext, useContext, useState, useCallback, useRef, useEffect } from "react";
 
 interface LoadingContextValue {
   isLoading: boolean;
@@ -7,13 +7,13 @@ interface LoadingContextValue {
 }
 
 const LoadingContext = createContext<LoadingContextValue>({
-  isLoading: false,
+  isLoading: true,
   startLoading: () => {},
   stopLoading: () => {},
 });
 
 export function LoadingProvider({ children }: { children: React.ReactNode }) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const startLoading = useCallback(() => {
@@ -24,6 +24,13 @@ export function LoadingProvider({ children }: { children: React.ReactNode }) {
   const stopLoading = useCallback(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => setIsLoading(false), 300);
+  }, []);
+
+  useEffect(() => {
+    timerRef.current = setTimeout(() => setIsLoading(false), 900);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, []);
 
   return (

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { useLoading } from "@/context/LoadingContext";
 
@@ -7,7 +7,7 @@ export function NavigationLoader() {
   const prevLocation = useRef<string | null>(null);
   const { startLoading, stopLoading } = useLoading();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (prevLocation.current === null) {
       prevLocation.current = location;
       return undefined;
@@ -16,9 +16,10 @@ export function NavigationLoader() {
     if (prevLocation.current !== location) {
       prevLocation.current = location;
       startLoading();
-      const timer = setTimeout(() => stopLoading(), 500);
+      const timer = setTimeout(() => stopLoading(), 600);
       return () => clearTimeout(timer);
     }
+
     return undefined;
   }, [location, startLoading, stopLoading]);
 
