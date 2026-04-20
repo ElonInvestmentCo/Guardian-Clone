@@ -15,6 +15,7 @@ import { ScrollAndFormReset } from "@/components/ScrollAndFormReset";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
 import Platforms from "@/pages/Platforms";
+import Contact from "@/pages/Contact";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import ForgotPassword from "@/pages/ForgotPassword";
@@ -65,6 +66,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/about" component={About} />
       <Route path="/platforms" component={Platforms} />
+      <Route path="/contact" component={Contact} />
       <Route path="/services/trading-services" component={TradingServices} />
       <Route path="/equities-options" component={EquitiesOptions} />
       <Route path="/blog" component={Blog} />
