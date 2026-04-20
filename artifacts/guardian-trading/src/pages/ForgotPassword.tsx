@@ -140,15 +140,13 @@ export default function ForgotPassword() {
                   {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
                 </div>
                 {errors.submit && <p className="mb-3 text-xs text-red-500 text-center">{errors.submit}</p>}
-                <div className="flex justify-center">
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="px-10 py-2.5 bg-[#4a7fbd] hover:bg-[#3d6fad] text-white font-semibold rounded text-sm transition-colors disabled:opacity-70"
-                  >
-                    {loading ? "Sending…" : "Send Reset Code"}
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-2.5 bg-[#4a7fbd] hover:bg-[#3d6fad] text-white font-semibold rounded text-sm transition-colors disabled:opacity-70"
+                >
+                  {loading ? "Sending…" : "Send Reset Code"}
+                </button>
               </form>
             )}
 
@@ -249,7 +247,7 @@ export default function ForgotPassword() {
                 </p>
                 <Link
                   href="/login"
-                  className="inline-block px-8 py-2.5 bg-[#4a7fbd] hover:bg-[#3d6fad] text-white font-semibold rounded text-sm transition-colors"
+                  className="block w-full py-2.5 bg-[#4a7fbd] hover:bg-[#3d6fad] text-white font-semibold rounded text-sm transition-colors text-center"
                 >
                   Go to Login
                 </Link>
