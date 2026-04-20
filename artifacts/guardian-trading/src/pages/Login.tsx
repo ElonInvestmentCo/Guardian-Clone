@@ -251,7 +251,7 @@ export default function Login() {
                     fontSize: "14px",
                     fontWeight: 600,
                     color: "#fff",
-                    background: loading ? "#7aaee8" : "#3a7bd5",
+                    background: loading ? "#7aaee8" : "#337ab8",
                     border: "none",
                     borderRadius: "4px",
                     cursor: loading ? "not-allowed" : "pointer",
@@ -259,8 +259,8 @@ export default function Login() {
                     transition: "background 0.15s",
                     letterSpacing: "0.02em",
                   }}
-                  onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = "#2f6bc4"; }}
-                  onMouseLeave={(e) => { if (!loading) e.currentTarget.style.background = "#3a7bd5"; }}
+                  onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = "#286090"; }}
+                  onMouseLeave={(e) => { if (!loading) e.currentTarget.style.background = "#337ab8"; }}
                 >
                   {loading ? "Logging in…" : "Login"}
                 </button>
