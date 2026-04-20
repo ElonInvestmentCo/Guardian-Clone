@@ -181,7 +181,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-2 bg-[#4a7fbd] hover:bg-[#3d6fad] text-white font-semibold rounded text-sm transition-colors disabled:opacity-70"
+                className="w-full px-6 py-2 bg-[#4a7fbd] hover:bg-[#3d6fad] text-white font-semibold rounded text-sm transition-colors disabled:opacity-70"
               >
                 {loading ? "Logging in..." : "Login"}
               </button>
@@ -196,11 +196,11 @@ export default function Login() {
               </Link>
             </div>
 
-            <div className="mt-3 text-center">
-              <span className="text-sm text-gray-800 font-medium">Need An Account </span>
+            <div className="mt-3 flex flex-col items-center gap-1">
+              <span className="text-sm text-gray-800 font-medium">Need An Account?</span>
               <Link
                 href="/signup"
-                className="text-sm text-[#4a7fbd] hover:underline font-medium"
+                className="w-full text-center py-2 text-sm text-[#4a7fbd] hover:underline font-medium"
               >
                 Open Now →
               </Link>
