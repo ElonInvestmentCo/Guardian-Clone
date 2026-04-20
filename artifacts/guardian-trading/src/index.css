@@ -64,13 +64,15 @@
 }
 
 @layer base {
-  * {
+  *, *::before, *::after {
+    box-sizing: border-box;
     @apply border-border;
   }
 
   html {
     color-scheme: dark;
     background: #060b14;
+    overflow-x: hidden;
   }
 
   html[data-theme="light"] {
@@ -81,14 +83,34 @@
   body {
     @apply font-sans antialiased bg-background text-foreground selection:bg-primary/30;
     transition: background-color 0.2s ease, color 0.2s ease;
+    overflow-x: hidden;
+    min-width: 320px;
+  }
+
+  img, video {
+    max-width: 100%;
+    height: auto;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  p, li, span {
+    overflow-wrap: break-word;
   }
 
   #root {
     min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Ensure tables don't overflow on mobile */
+  table {
+    border-collapse: collapse;
+    width: 100%;
   }
 }
 

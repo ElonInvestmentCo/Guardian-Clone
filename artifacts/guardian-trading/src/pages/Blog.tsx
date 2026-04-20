@@ -178,12 +178,10 @@ export default function Blog() {
             {paginated.map((post, idx) => (
               <div
                 key={post.id}
+                className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-14"
                 style={{
                   borderTop: "1px solid rgba(255,255,255,0.08)",
                   padding: "32px 0",
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1.1fr",
-                  gap: "56px",
                   alignItems: "start",
                 }}
               >

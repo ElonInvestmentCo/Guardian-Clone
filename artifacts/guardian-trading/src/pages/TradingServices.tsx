@@ -34,15 +34,15 @@ export default function TradingServices() {
 
         {/* Title row */}
         <div className="relative z-10 flex items-center justify-center text-center pt-14 pb-6 px-4">
-          <h1 className="text-white tracking-tight" style={{ fontSize: "50px", fontWeight: 700 }}>
+          <h1 className="text-[2rem] sm:text-[2.8rem] lg:text-[3.1rem] text-white tracking-tight font-bold">
             Trading Services
           </h1>
         </div>
 
         {/* Two-column text row */}
-        <div className="relative z-10 max-w-[1200px] mx-auto px-6 pt-10 pb-52 flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
-          <div className="lg:w-[42%] lg:pl-40">
-            <h2 className="text-white leading-snug" style={{ fontSize: "32px", fontWeight: 400 }}>
+        <div className="relative z-10 max-w-[1200px] mx-auto px-6 pt-10 pb-12 lg:pb-40 flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+          <div className="w-full lg:w-[42%]">
+            <h2 className="text-white leading-snug text-[26px] lg:text-[32px]" style={{ fontWeight: 400 }}>
               Brokerage services built for active traders
             </h2>
           </div>

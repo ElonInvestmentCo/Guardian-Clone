@@ -67,15 +67,7 @@ export default function ContactUs() {
         {/* ── CONTENT ── */}
         <section className="py-14 px-6" style={{ position: "relative", zIndex: 1 }}
       >
-        <div
-          className="max-w-[1100px] mx-auto"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1.6fr",
-            gap: "64px",
-            alignItems: "start",
-          }}
-        >
+        <div className="max-w-[1100px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-10 lg:gap-16 items-start">
           {/* Left — Company Info */}
           <div>
             <h2 className="text-white font-bold mb-4" style={{ fontSize: "22px" }}>
@@ -118,7 +110,7 @@ export default function ContactUs() {
                 <label style={labelStyle}>
                   Name <span style={{ color: "#c0392b" }}>*</span>
                 </label>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.55)", display: "block", marginBottom: "4px" }}>First</span>
                     <input
@@ -143,7 +135,7 @@ export default function ContactUs() {
               </div>
 
               {/* Email + Phone row */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label style={labelStyle}>
                     Email <span style={{ color: "#c0392b" }}>*</span>

@@ -34,24 +34,20 @@ export default function Home() {
               borderBottom: "1px solid #212e33",
             }}
           >
-            <div className="flex items-center min-w-0" style={{ gap: "10px" }}>
+            <div className="flex items-center min-w-0 overflow-hidden" style={{ gap: "10px" }}>
               <span
+                className="flex-shrink-0"
                 style={{
                   width: "8px",
                   height: "8px",
                   borderRadius: "50%",
                   background: "linear-gradient(180deg, #5bc5f0 0%, #0a8fd4 100%)",
-                  flexShrink: 0,
                   boxShadow: "0 0 6px 2px rgba(54, 172, 245, 0.45), 0 0 12px 4px rgba(54, 172, 245, 0.2)",
                 }}
               />
               <span
-                style={{
-                  color: "#f5f9fc",
-                  fontSize: "13px",
-                  fontWeight: 500,
-                  whiteSpace: "nowrap",
-                }}
+                className="hidden sm:inline flex-shrink-0"
+                style={{ color: "#f5f9fc", fontSize: "13px", fontWeight: 500 }}
               >
                 New on the blog
               </span>
@@ -59,14 +55,15 @@ export default function Home() {
                 href="https://www.guardiiantrading.com/how-to-prepare-your-das-trader-pro-for-advanced-hotkeys-scripting/"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="overflow-hidden"
                 style={{
                   color: "#76d1f5",
                   fontSize: "13px",
                   fontWeight: 500,
-                  whiteSpace: "nowrap",
                   textDecoration: "none",
-                  overflow: "hidden",
                   textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  minWidth: 0,
                 }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.textDecoration = "underline"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.textDecoration = "none"; }}
@@ -164,8 +161,8 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
             {/* Left column */}
             <div className="flex-1 max-w-[520px]">
-              <p className="text-[13px] font-bold tracking-widest uppercase text-white mb-4">TAKE ON THE MARKETS WITH GUARDIAN</p>
-              <h1 className="text-[2.6rem] lg:text-5xl font-display font-bold leading-tight text-white mb-8">
+              <p className="text-[11px] sm:text-[13px] font-bold tracking-widest uppercase text-white mb-4">TAKE ON THE MARKETS WITH GUARDIAN</p>
+              <h1 className="text-[1.9rem] sm:text-[2.4rem] lg:text-5xl font-display font-bold leading-tight text-white mb-8">
                 Optimized services, tools and support designed specifically for active traders.
               </h1>
               <Link

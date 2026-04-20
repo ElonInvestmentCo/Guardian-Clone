@@ -40,11 +40,10 @@ export default function About() {
           <div className="max-w-[1100px] mx-auto">
             <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
               <div className="lg:w-[42%]">
-                <h3 className="text-white text-[32px] font-medium bg-[transparent] ml-[115px] mr-[115px] pl-[0px] pr-[0px] mt-[10px] mb-[10px] pt-[1px] pb-[1px]">Serving the Active
-                Trader Community</h3>
+                <h3 className="text-white text-[28px] lg:text-[32px] font-medium mt-[10px] mb-[10px]">Serving the Active Trader Community</h3>
               </div>
               <div className="flex-1">
-                <p className="text-[16px] font-normal text-[#FFFFFF] text-left pl-[20px] pr-[20px] mt-[15px] mb-[15px] ml-[10px] mr-[10px]">
+                <p className="text-[15px] lg:text-[16px] font-normal text-[#FFFFFF] text-left mt-[15px] mb-[15px]">
                   Guardian Trading began with a mission to deliver the trading tools, services, and technology
                   traders need to succeed and scale. Guardian Trading provides the knowledge and support active
                   traders expect to manage the entire trading cycle.

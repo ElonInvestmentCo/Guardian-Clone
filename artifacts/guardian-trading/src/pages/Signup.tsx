@@ -122,7 +122,7 @@ export default function Signup() {
           <div style={{ height: "5px", background: "#3a7bd5" }} />
 
           <div
-            className="text-center px-10 pt-7 pb-6"
+            className="text-center px-6 sm:px-10 pt-7 pb-6"
             style={{ borderBottom: "1px solid #e0e0e0" }}
           >
             <h1
@@ -139,7 +139,7 @@ export default function Signup() {
             </p>
           </div>
 
-          <div className="px-10 py-8">
+          <div className="px-6 sm:px-10 py-8">
             {sent ? (
               <div className="flex flex-col items-center justify-center py-8 gap-4">
                 <div
