@@ -1,0 +1,19 @@
+kind = "web"
+  previewPath = "/"
+  title = "Guardian Trading"
+  version = "1.0.0"
+  id = "artifacts/guardian-trading"
+
+  [[services]]
+  localPort = 3000
+  name = "web"
+  paths = ["/"]
+
+  [services.env]
+  PORT = "3000"
+  BASE_PATH = "/"
+  API_PORT = "3001"
+
+  [services.development]
+  run = "pnpm --filter @workspace/guardian-trading run dev"
+  
