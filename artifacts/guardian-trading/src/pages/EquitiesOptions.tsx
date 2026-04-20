@@ -7,7 +7,7 @@ const SILEXX_ICON = "https://www.guardiantrading.com/wp-content/uploads/2026/04/
 const BENZINGA = "https://www.guardiantrading.com/wp-content/uploads/2026/01/reviewed-by-benzinga-2024-200x166-1-320x266.png";
 
 const ContactBtn = () => (
-  <a href="/contact" className="inline-block hover:opacity-90 transition-opacity">
+  <a href="/contact-us" className="inline-block hover:opacity-90 transition-opacity">
     <img
       src="/images/btn-contact-quote.png"
       alt="Contact Us For A Custom Quote"
