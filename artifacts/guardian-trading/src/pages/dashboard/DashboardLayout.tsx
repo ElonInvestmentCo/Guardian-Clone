@@ -2,7 +2,6 @@ import { useLocation, Link } from "wouter";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { getApiBase } from "@/lib/api";
 import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
-import darkLogo from "@assets/GuardianLogo.svg";
 import lightLogo from "@assets/GuardianLogoLight.svg";
 import {
   LayoutDashboard, Briefcase, ShoppingCart, PieChart,
@@ -12,6 +11,8 @@ import {
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 
+
+const DARK_LOGO_URL = "https://assets.guardiiantrading.com/logo.svg";
 
 const NAV = [
   { icon: LayoutDashboard, label: "Dashboard",     href: "/dashboard"     },
@@ -277,7 +278,7 @@ export default function DashboardLayout({ children }: Props) {
       <aside className="hidden md:flex flex-col flex-shrink-0" style={{ width: "240px", background: colors.sidebar, borderRight: `1px solid ${colors.sidebarBorder}` }}>
         <div style={{ padding: "20px 20px 16px" }}>
           <Link href="/dashboard">
-            <img src={theme === "light" ? lightLogo : darkLogo} alt="Guardian Trading Logo" style={{ height: "52px", width: "auto", cursor: "pointer", opacity: 0.95 }} />
+            <img src={theme === "light" ? lightLogo : DARK_LOGO_URL} alt="Guardian Trading Logo" style={{ height: "52px", width: "auto", cursor: "pointer", opacity: 0.95 }} />
           </Link>
         </div>
 
