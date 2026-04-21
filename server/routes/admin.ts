@@ -768,6 +768,128 @@ router.post("/admin/verify-signature", requireAdmin, adminRateLimit, validate(Ad
   }
 });
 
+// ─── Signature Stats ────────────────────────────────────────────────────────
+
+router.get("/admin/signature-stats", requireAdmin, adminRateLimit, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const pool = getPool();
+
+    const todayResult = await pool.query(
+      `SELECT COUNT(*) FROM signature_audit_logs WHERE created_at >= CURRENT_DATE`
+    );
+    const weekResult = await pool.query(
+      `SELECT COUNT(*) FROM signature_audit_logs WHERE created_at >= date_trunc('week', NOW())`
+    );
+
+    const master = await readMaster();
+    const emails = Object.keys(master);
+
+    const sigResult = await pool.query(
+      `SELECT DISTINCT ON (email) email, created_at AS signed_at, signature_image
+       FROM signature_audit_logs
+       WHERE email = ANY($1)
+       ORDER BY email, created_at DESC`,
+      [emails]
+    );
+    const signedEmails = new Set(sigResult.rows.map((r: { email: string }) => r.email));
+
+    let pendingCount   = 0;
+    let verifiedCount  = 0;
+
+    for (const row of sigResult.rows) {
+      const profile    = await getUserProfileData(row.email);
+      const signatures = (profile.signatures as Record<string, unknown> | undefined) ?? {};
+      if (signatures.signatureVerified === true) {
+        verifiedCount++;
+      } else {
+        pendingCount++;
+      }
+    }
+
+    res.json({
+      todayCount:    parseInt(todayResult.rows[0].count, 10),
+      weekCount:     parseInt(weekResult.rows[0].count,  10),
+      pendingCount,
+      verifiedCount,
+      notSignedCount: emails.length - signedEmails.size,
+      totalSigned:    signedEmails.size,
+    });
+  } catch (err) {
+    console.error("[Admin] signature-stats error:", err);
+    res.status(500).json({ error: "Failed to fetch signature stats" });
+  }
+});
+
+// ─── Signatures List ────────────────────────────────────────────────────────
+
+router.get("/admin/signatures-list", requireAdmin, adminRateLimit, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const pool         = getPool();
+    const filterStatus = req.query.status as string | undefined;
+    const search       = String(req.query.search ?? "").trim().toLowerCase();
+    const page         = Math.max(1, parseInt(String(req.query.page  ?? "1"),  10));
+    const limit        = Math.min(50, Math.max(1, parseInt(String(req.query.limit ?? "25"), 10)));
+
+    const master = await readMaster();
+    const emails = Object.keys(master);
+
+    const sigResult = await pool.query(
+      `SELECT DISTINCT ON (email) email, created_at AS signed_at, signature_image
+       FROM signature_audit_logs
+       WHERE email = ANY($1)
+       ORDER BY email, created_at DESC`,
+      [emails]
+    );
+    const sigMap = new Map(sigResult.rows.map((r: { email: string; signed_at: Date; signature_image: string | null }) => [r.email, r]));
+
+    const users = await Promise.all(emails.map(async (email) => {
+      const u    = master[email];
+      const profile    = await getUserProfileData(email);
+      const p          = (profile.personal   as Record<string, string>          | undefined) ?? {};
+      const signatures = (profile.signatures as Record<string, unknown>         | undefined) ?? {};
+      const sig        = sigMap.get(email) as { signed_at: Date; signature_image: string | null } | undefined;
+
+      let signatureStatus: "verified" | "pending" | "not_signed";
+      if (!sig) {
+        signatureStatus = "not_signed";
+      } else if (signatures.signatureVerified === true) {
+        signatureStatus = "verified";
+      } else {
+        signatureStatus = "pending";
+      }
+
+      return {
+        email,
+        name:               [p.firstName ?? "", p.lastName ?? ""].join(" ").trim() || email,
+        status:             (u.status as string) ?? "pending",
+        signatureStatus,
+        signedAt:           sig ? (sig.signed_at instanceof Date ? sig.signed_at.toISOString() : String(sig.signed_at)) : null,
+        signatureThumbnail: sig ? sig.signature_image : null,
+        signatureVerifiedAt: (signatures.signatureVerifiedAt as string | undefined) ?? null,
+      };
+    }));
+
+    const filtered = users
+      .filter(u => !filterStatus || u.signatureStatus === filterStatus)
+      .filter(u => !search || u.email.toLowerCase().includes(search) || u.name.toLowerCase().includes(search))
+      .sort((a, b) => {
+        if (a.signedAt && b.signedAt) return new Date(b.signedAt).getTime() - new Date(a.signedAt).getTime();
+        if (a.signedAt) return -1;
+        if (b.signedAt) return 1;
+        return 0;
+      });
+
+    const total    = filtered.length;
+    const offset   = (page - 1) * limit;
+    const paginated = filtered.slice(offset, offset + limit);
+
+    res.json({ total, page, limit, pages: Math.ceil(total / limit), users: paginated });
+  } catch (err) {
+    console.error("[Admin] signatures-list error:", err);
+    res.status(500).json({ error: "Failed to fetch signatures list" });
+  }
+});
+
 // ─── Signature Audit Log ────────────────────────────────────────────────────
 
 router.get("/admin/signature-audit-log", requireAdmin, adminRateLimit, async (req: Request, res: Response): Promise<void> => {

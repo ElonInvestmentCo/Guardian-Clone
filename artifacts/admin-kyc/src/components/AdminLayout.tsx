@@ -2,19 +2,20 @@ import { useState, useRef, useEffect } from "react";
 import { clearSession } from "@/lib/api";
 import { useTheme } from "@/context/ThemeContext";
 
-export type View = "dashboard" | "kyc" | "risk" | "audit" | "users" | "activity" | "registrations" | "sig-audit";
+export type View = "dashboard" | "kyc" | "risk" | "audit" | "users" | "activity" | "registrations" | "sig-audit" | "signatures";
 
 interface NavItem { id: View; label: string; icon: string; }
 
 const NAV: NavItem[] = [
-  { id: "dashboard", label: "Dashboard", icon: "bi-speedometer2" },
-  { id: "kyc", label: "KYC Queue", icon: "bi-clipboard-check" },
-  { id: "users", label: "Users", icon: "bi-people" },
-  { id: "registrations", label: "Registrations", icon: "bi-person-plus" },
-  { id: "risk", label: "Risk Events", icon: "bi-exclamation-triangle" },
-  { id: "activity", label: "Activity Logs", icon: "bi-activity" },
-  { id: "audit", label: "Audit Log", icon: "bi-shield-check" },
-  { id: "sig-audit", label: "Signature Audit", icon: "bi-pen" },
+  { id: "dashboard",     label: "Dashboard",        icon: "bi-speedometer2" },
+  { id: "kyc",           label: "KYC Queue",         icon: "bi-clipboard-check" },
+  { id: "users",         label: "Users",             icon: "bi-people" },
+  { id: "signatures",    label: "Signatures",        icon: "bi-pen-fill" },
+  { id: "registrations", label: "Registrations",     icon: "bi-person-plus" },
+  { id: "risk",          label: "Risk Events",       icon: "bi-exclamation-triangle" },
+  { id: "activity",      label: "Activity Logs",     icon: "bi-activity" },
+  { id: "audit",         label: "Audit Log",         icon: "bi-shield-check" },
+  { id: "sig-audit",     label: "Signature Audit",   icon: "bi-pen" },
 ];
 
 interface Props {

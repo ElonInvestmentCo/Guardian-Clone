@@ -382,6 +382,58 @@ export async function getSignatureAuditLog(params: {
   return request<SignatureAuditLogResponse>("GET", `/admin/signature-audit-log${query}`);
 }
 
+// ── Signature Stats ───────────────────────────────────────────────────────────
+
+export interface SignatureStats {
+  todayCount:     number;
+  weekCount:      number;
+  pendingCount:   number;
+  verifiedCount:  number;
+  notSignedCount: number;
+  totalSigned:    number;
+}
+
+export async function getSignatureStats(): Promise<SignatureStats> {
+  return request<SignatureStats>("GET", "/admin/signature-stats");
+}
+
+// ── Signatures List ───────────────────────────────────────────────────────────
+
+export type SignatureStatus = "verified" | "pending" | "not_signed";
+
+export interface SignatureUser {
+  email:               string;
+  name:                string;
+  status:              UserStatus;
+  signatureStatus:     SignatureStatus;
+  signedAt:            string | null;
+  signatureThumbnail:  string | null;
+  signatureVerifiedAt: string | null;
+}
+
+export interface SignaturesListResponse {
+  total: number;
+  page:  number;
+  limit: number;
+  pages: number;
+  users: SignatureUser[];
+}
+
+export async function getSignaturesList(params?: {
+  status?: SignatureStatus | "";
+  search?: string;
+  page?:   number;
+  limit?:  number;
+}): Promise<SignaturesListResponse> {
+  const qs = new URLSearchParams();
+  if (params?.status) qs.set("status", params.status);
+  if (params?.search) qs.set("search", params.search);
+  if (params?.page)   qs.set("page",   String(params.page));
+  if (params?.limit)  qs.set("limit",  String(params.limit));
+  const query = qs.toString() ? `?${qs.toString()}` : "";
+  return request<SignaturesListResponse>("GET", `/admin/signatures-list${query}`);
+}
+
 export async function exportSignatureAuditLog(search?: string): Promise<void> {
   const session = getSession();
   if (!session) {

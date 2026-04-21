@@ -9,12 +9,15 @@ import UserProfileView         from "@/pages/UserProfileView";
 import ActivityLogsView        from "@/pages/ActivityLogsView";
 import RegistrationLogView     from "@/pages/RegistrationLogView";
 import SignatureAuditLogView   from "@/pages/SignatureAuditLogView";
+import SignaturesView          from "@/pages/SignaturesView";
 import { useLoading } from "@/context/LoadingContext";
+import type { SignatureStatus } from "@/lib/api";
 
 export default function KycDashboard() {
-  const [activeView,       setActiveView]       = useState<View>("dashboard");
-  const [profileEmail,     setProfileEmail]     = useState<string | null>(null);
-  const [profileFromView,  setProfileFromView]  = useState<View>("users");
+  const [activeView,           setActiveView]           = useState<View>("dashboard");
+  const [profileEmail,         setProfileEmail]         = useState<string | null>(null);
+  const [profileFromView,      setProfileFromView]      = useState<View>("users");
+  const [signaturesFilter,     setSignaturesFilter]     = useState<SignatureStatus | "">("");
   const { startLoading, stopLoading } = useLoading();
   const prevView = useRef<string>(activeView);
 
@@ -41,6 +44,12 @@ export default function KycDashboard() {
     setProfileEmail(null);
   };
 
+  const handleNavigateToSignatures = (filter: SignatureStatus | "") => {
+    setSignaturesFilter(filter);
+    setActiveView("signatures");
+    setProfileEmail(null);
+  };
+
   if (profileEmail) {
     return (
       <AdminLayout activeView={profileFromView} setActiveView={handleSetView}>
@@ -51,14 +60,15 @@ export default function KycDashboard() {
 
   return (
     <AdminLayout activeView={activeView} setActiveView={handleSetView}>
-      {activeView === "dashboard" && <DashboardView />}
-      {activeView === "kyc"      && <KycQueueView onOpenProfile={(email) => openProfile(email, "kyc")} />}
-      {activeView === "users"    && <UsersView onOpenProfile={(email) => openProfile(email, "users")} />}
-      {activeView === "risk"     && <RiskEventsView />}
-      {activeView === "activity"      && <ActivityLogsView onOpenProfile={(email) => openProfile(email, "activity")} />}
-      {activeView === "audit"         && <AuditLogView />}
-      {activeView === "registrations" && <RegistrationLogView />}
-      {activeView === "sig-audit"     && <SignatureAuditLogView />}
+      {activeView === "dashboard"    && <DashboardView onNavigateToSignatures={handleNavigateToSignatures} />}
+      {activeView === "kyc"          && <KycQueueView onOpenProfile={(email) => openProfile(email, "kyc")} />}
+      {activeView === "users"        && <UsersView onOpenProfile={(email) => openProfile(email, "users")} />}
+      {activeView === "signatures"   && <SignaturesView initialFilter={signaturesFilter} />}
+      {activeView === "risk"         && <RiskEventsView />}
+      {activeView === "activity"     && <ActivityLogsView onOpenProfile={(email) => openProfile(email, "activity")} />}
+      {activeView === "audit"        && <AuditLogView />}
+      {activeView === "registrations"&& <RegistrationLogView />}
+      {activeView === "sig-audit"    && <SignatureAuditLogView />}
     </AdminLayout>
   );
 }

@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useCallback } from "react";
-import { getKycQueue, getAllUsers, getGlobalAudit } from "@/lib/api";
+import { getKycQueue, getAllUsers, getGlobalAudit, getSignatureStats, type SignatureStatus } from "@/lib/api";
 import { formatDate, actionTypeLabel, actionTypeColor } from "@/lib/utils";
 import {
   useAdminRealtime,
@@ -11,7 +11,11 @@ import AdminToast, { type ToastItem } from "@/components/AdminToast";
 
 let toastCounter = 0;
 
-export default function DashboardView() {
+interface Props {
+  onNavigateToSignatures?: (filter: SignatureStatus | "") => void;
+}
+
+export default function DashboardView({ onNavigateToSignatures }: Props) {
   const queryClient = useQueryClient();
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [newRegistrations, setNewRegistrations] = useState(0);
@@ -40,6 +44,13 @@ export default function DashboardView() {
     queryKey: ["dashboard-audit"],
     queryFn: () => getGlobalAudit(10),
     staleTime: 30_000,
+  });
+
+  const { data: sigStats } = useQuery({
+    queryKey: ["sig-stats"],
+    queryFn: () => getSignatureStats(),
+    staleTime: 30_000,
+    refetchInterval: 60_000,
   });
 
   const handleNewRegistration = useCallback((event: RegistrationEvent) => {
@@ -147,6 +158,132 @@ export default function DashboardView() {
             <i className="bi bi-exclamation-triangle stat-icon" />
             <h2>{isLoading ? "..." : riskCount}</h2>
             <p>High Risk</p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Signature Compliance Widget ───────────────────────────────── */}
+      <div className="card-safee mb-4">
+        <div className="card-header">
+          <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <i className="bi bi-pen-fill" style={{ color: "#7A5AF8" }} />
+            Signature Compliance
+          </span>
+          <span style={{ fontSize: 12, color: "#94A3B8", fontWeight: 400 }}>
+            Click a card to filter the Signatures view
+          </span>
+        </div>
+        <div className="card-body">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12 }}>
+            {/* Today */}
+            <button
+              onClick={() => onNavigateToSignatures?.("")}
+              style={{
+                textAlign: "center", padding: "16px 12px",
+                background: "linear-gradient(135deg, #F5F3FF, #EDE9FE)",
+                border: "1px solid #DDD6FE", borderRadius: 8,
+                cursor: "pointer", transition: "transform 0.1s",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.transform = "translateY(-1px)")}
+              onMouseLeave={e => (e.currentTarget.style.transform = "")}
+              title="View all signed users"
+            >
+              <div style={{ fontSize: 30, fontWeight: 800, color: "#7A5AF8" }}>
+                {sigStats ? sigStats.todayCount : "—"}
+              </div>
+              <div style={{ fontSize: 11, color: "#6D28D9", fontWeight: 600, marginTop: 4 }}>
+                <i className="bi bi-pen" style={{ marginRight: 4 }} />
+                Signed Today
+              </div>
+            </button>
+
+            {/* This Week */}
+            <button
+              onClick={() => onNavigateToSignatures?.("")}
+              style={{
+                textAlign: "center", padding: "16px 12px",
+                background: "linear-gradient(135deg, #EFF6FF, #DBEAFE)",
+                border: "1px solid #BFDBFE", borderRadius: 8,
+                cursor: "pointer", transition: "transform 0.1s",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.transform = "translateY(-1px)")}
+              onMouseLeave={e => (e.currentTarget.style.transform = "")}
+              title="View all signed users"
+            >
+              <div style={{ fontSize: 30, fontWeight: 800, color: "#2563EB" }}>
+                {sigStats ? sigStats.weekCount : "—"}
+              </div>
+              <div style={{ fontSize: 11, color: "#1D4ED8", fontWeight: 600, marginTop: 4 }}>
+                <i className="bi bi-calendar-week" style={{ marginRight: 4 }} />
+                Signed This Week
+              </div>
+            </button>
+
+            {/* Pending Verification */}
+            <button
+              onClick={() => onNavigateToSignatures?.("pending")}
+              style={{
+                textAlign: "center", padding: "16px 12px",
+                background: "linear-gradient(135deg, #FFFBEB, #FEF3C7)",
+                border: "1px solid #FCD34D", borderRadius: 8,
+                cursor: "pointer", transition: "transform 0.1s",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.transform = "translateY(-1px)")}
+              onMouseLeave={e => (e.currentTarget.style.transform = "")}
+              title="View pending verification"
+            >
+              <div style={{ fontSize: 30, fontWeight: 800, color: "#D97706" }}>
+                {sigStats ? sigStats.pendingCount : "—"}
+              </div>
+              <div style={{ fontSize: 11, color: "#B45309", fontWeight: 600, marginTop: 4 }}>
+                <i className="bi bi-clock" style={{ marginRight: 4 }} />
+                Pending Verification
+              </div>
+            </button>
+
+            {/* Verified */}
+            <button
+              onClick={() => onNavigateToSignatures?.("verified")}
+              style={{
+                textAlign: "center", padding: "16px 12px",
+                background: "linear-gradient(135deg, #F0FDF4, #DCFCE7)",
+                border: "1px solid #86EFAC", borderRadius: 8,
+                cursor: "pointer", transition: "transform 0.1s",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.transform = "translateY(-1px)")}
+              onMouseLeave={e => (e.currentTarget.style.transform = "")}
+              title="View verified signatures"
+            >
+              <div style={{ fontSize: 30, fontWeight: 800, color: "#16A34A" }}>
+                {sigStats ? sigStats.verifiedCount : "—"}
+              </div>
+              <div style={{ fontSize: 11, color: "#15803D", fontWeight: 600, marginTop: 4 }}>
+                <i className="bi bi-check-circle" style={{ marginRight: 4 }} />
+                Verified
+              </div>
+            </button>
+
+            {/* Not Signed */}
+            <button
+              onClick={() => onNavigateToSignatures?.("not_signed")}
+              style={{
+                textAlign: "center", padding: "16px 12px",
+                background: "#F9FAFB",
+                border: "1px solid #E5E7EB", borderRadius: 8,
+                cursor: "pointer", transition: "transform 0.1s",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.transform = "translateY(-1px)")}
+              onMouseLeave={e => (e.currentTarget.style.transform = "")}
+              title="View users who have not signed"
+            >
+              <div style={{ fontSize: 30, fontWeight: 800, color: "#9CA3AF" }}>
+                {sigStats ? sigStats.notSignedCount : "—"}
+              </div>
+              <div style={{ fontSize: 11, color: "#6B7280", fontWeight: 600, marginTop: 4 }}>
+                <i className="bi bi-dash-circle" style={{ marginRight: 4 }} />
+                Not Signed
+              </div>
+            </button>
           </div>
         </div>
       </div>

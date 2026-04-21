@@ -1,0 +1,187 @@
+Implement an automated validation system for all 11 onboarding (KYC) forms.
+
+IMPORTANT:
+The system should ONLY validate and flag data — NOT approve users automatically.
+Final approval must always be done manually by an admin.
+
+========================
+
+1. VALIDATION ENGINE (CORE)
+   ========================
+
+Create a centralized validation service:
+
+validateOnboarding(userData)
+
+This function should:
+
+* Run checks across ALL 11 onboarding forms
+* Return structured results:
+
+{
+isValid: boolean,
+riskLevel: "low" | "medium" | "high",
+flags: [
+{ field: "ssn", issue: "Invalid format" },
+{ field: "address", issue: "Mismatch with region" }
+]
+}
+
+---
+
+========================
+2. FIELD VALIDATIONS
+====================
+
+SSN:
+
+* Must match valid format (XXX-XX-XXXX)
+* Reject obvious fake patterns (000, 123, 999)
+* Flag duplicates across users
+
+Address:
+
+* Validate structure (street, city, zip)
+* Cross-check zip code format
+* Detect incomplete or suspicious entries
+
+Email:
+
+* Validate format
+* Check for disposable email domains
+
+Phone:
+
+* Validate international format
+* Detect invalid or repeated numbers
+
+Bank / Account Details:
+
+* Ensure required fields exist
+* Validate length/format
+* Flag reused accounts across multiple users
+
+Date of Birth:
+
+* Must be valid date
+* Must meet age requirement (e.g. 18+)
+
+Name:
+
+* Detect fake patterns (e.g. "Test User", "asdf")
+* Ensure first + last name present
+
+---
+
+========================
+3. FRAUD & RISK CHECKS
+======================
+
+Add intelligent checks:
+
+* Multiple accounts using same:
+
+  * SSN
+  * IP address
+  * Device fingerprint (if available)
+* Rapid submissions (bot behavior)
+* Mismatched data (e.g. SSN region vs address)
+
+Assign risk levels:
+
+* LOW → clean data
+* MEDIUM → minor inconsistencies
+* HIGH → likely fraud
+
+---
+
+========================
+4. DATABASE ADDITIONS
+=====================
+
+Add fields to users table:
+
+* kyc_validation_status (pending / flagged / clean)
+* kyc_risk_level (low / medium / high)
+* kyc_flags (JSON)
+
+---
+
+========================
+5. BACKEND PROCESSING
+=====================
+
+Trigger validation:
+
+* After user submits onboarding
+* OR when admin opens profile
+
+Save results:
+
+UPDATE users SET
+kyc_validation_status = 'flagged',
+kyc_risk_level = 'high',
+kyc_flags = JSON.stringify(flags)
+
+---
+
+========================
+6. ADMIN DASHBOARD UI
+=====================
+
+For each user show:
+
+* Validation Status Badge:
+
+  * Green → Clean
+  * Yellow → Needs Review
+  * Red → High Risk
+
+* Risk Level Indicator
+
+* Expandable “Validation Issues” panel:
+
+  * List all flagged problems
+
+---
+
+========================
+7. FILTERING SYSTEM
+===================
+
+Add filters:
+
+* Show only HIGH risk users
+* Show FLAGGED users
+* Show CLEAN users
+
+---
+
+========================
+8. IMPORTANT RESTRICTIONS
+=========================
+
+DO NOT:
+
+* Auto approve users
+* Auto reject users
+* Modify user data automatically
+
+ONLY:
+
+* Analyze
+* Flag
+* Assist admin decisions
+
+---
+
+========================
+FINAL GOAL
+==========
+
+Create a fast, intelligent KYC validation system that:
+
+* Instantly checks all onboarding data
+* Detects fraud and inconsistencies
+* Helps admins review users faster
+* Keeps full control in admin hands
