@@ -1,0 +1,21 @@
+2026-04-21T01:18:52.897990473Z [inf]  Starting Container
+2026-04-21T01:18:53.217862892Z [inf]  
+2026-04-21T01:18:53.217866500Z [inf]  > @workspace/api-server@0.0.0 start /app/artifacts/api-server
+2026-04-21T01:18:53.217869876Z [inf]  > node dist/index.cjs
+2026-04-21T01:18:53.217873121Z [inf]  
+2026-04-21T01:18:53.217877211Z [inf]  [UserDataStore] Using PostgreSQL-backed storage
+2026-04-21T01:18:53.217881780Z [inf]  [Static] admin-kyc → /app/artifacts/admin-kyc/dist/public
+2026-04-21T01:18:53.217885147Z [inf]  [Static] admin-kyc files: assets, favicon.svg, index.html, logo-white.png, logo.png, opengraph.jpg, robots.txt
+2026-04-21T01:18:53.217888607Z [inf]  [Static] admin-kyc/assets: bootstrap-icons-BeopsB42.woff, bootstrap-icons-mSm7cUeB.woff2, index-DMuSK-U4.css, index-hjhwIYNr.js
+2026-04-21T01:18:53.217891988Z [inf]  [Static] guardian-trading → /app/artifacts/guardian-trading/dist/public
+2026-04-21T01:18:53.217895338Z [inf]  [Static] guardian-trading files: _redirects, assets, benzinga-review.jpg, chat-preview.mp4, eye-closed-clean.png, eye-closed.png, eye-open-clean.png, eye-open.png, favicon.png, favicon.svg, images, index.html, need-help-card.png, opengraph.jpg, robots.txt, support-card.png
+2026-04-21T01:18:53.217898566Z [inf]  [Static] guardian-trading/assets: D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246-Cbmt2YzL.gif, GuardianLogo-DexM0ikr.svg, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345-BwLhiiHO.png, Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443-DMHdlxng.png, Guardian_Trading_-_Google_Chrome_4_15_2026_3_12_55_PM-fotor-bg_1776475354489-CKNZACCh.png, IMG_7934_1773719077190-CLq6B01D.png, IMG_7967_1773721659915-Bdj3jXlG.png, IMG_7968_1773721659915-C53aLAjV.png, Loading-LR1bPjGO.gif, guardian_logo_reversed-D24bK1aW.png, ico-our-infrastructure-132x72_1773948931248-CywgX0Yb.png, img-background-vector-1_1773948931248-kdCdaMwT.png, img-guardian-reversed-291x63-1_1773948931249-Bq6DvXcv.png, index-3Cjeg7h6.css, index-CEMqXdPP.js, pattern_1773965291387-CNruTbwj.png, support-card-CwKQW0e3.png
+2026-04-21T01:18:53.218706175Z [inf]  [DB] Database tables initialized successfully
+2026-04-21T01:18:53.218709751Z [inf]  [Startup] Database initialized
+2026-04-21T01:18:53.218713386Z [inf]  [Admin] Credentials loaded from environment variables.
+2026-04-21T01:18:53.218716826Z [inf]  [Startup] Admin credentials configured
+2026-04-21T01:18:53.218720105Z [inf]  [Mailer] Credentials resolved from RESEND_API_KEY env var
+2026-04-21T01:18:53.218723446Z [inf]  [Mailer] Email system ready — sender: Guardian Trading <support@guardiiantrading.com>
+2026-04-21T01:18:53.218726667Z [inf]  Server listening on port 8080
+2026-04-21T01:20:22.994660310Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://guardian-trading-api-production.up.railway.app","timestamp":"2026-04-21T01:20:21.445Z"}
+2026-04-21T01:20:22.994664518Z [err]  [Security] {"event":"CORS_REJECTED","origin":"https://guardian-trading-api-production.up.railway.app","timestamp":"2026-04-21T01:20:21.537Z"}

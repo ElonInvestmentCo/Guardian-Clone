@@ -17,6 +17,10 @@ const app: Express = express();
 
 app.set("trust proxy", 1);
 
+app.get("/health", (_req, res) => {
+  res.status(200).json({ status: "ok", uptime: Math.floor(process.uptime()) });
+});
+
 const allowedOrigins = [
   "https://guardiiantrading.com",
   "https://www.guardiiantrading.com",

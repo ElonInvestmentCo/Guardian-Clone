@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
 import { required, nameField, type FieldErrors, hasErrors } from "@/lib/validation";
@@ -27,6 +27,19 @@ function getPos(e: MouseEvent | TouchEvent, canvas: HTMLCanvasElement) {
   return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
 }
 
+function restoreFromDataUrl(canvas: HTMLCanvasElement, dataUrl: string) {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  const img = new Image();
+  img.onload = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  };
+  img.src = dataUrl;
+}
+
 export default function Signatures() {
   const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(11);
 
@@ -38,18 +51,28 @@ export default function Signatures() {
   );
   const [tradingPlan,        setTradingPlan]        = useState((sd.tradingPlan        as string)  ?? "");
   const [electronicDelivery, setElectronicDelivery] = useState((sd.electronicDelivery as boolean) ?? false);
-  const [signatureDataUrl,   setSignatureDataUrl]   = useState<string | null>(null);
+  const [signatureDataUrl,   setSignatureDataUrl]   = useState<string | null>((sd.signatureImage as string) || null);
   const [signatureName,      setSignatureName]      = useState((sd.signatureName      as string)  ?? "");
 
   const [showElectronicModal, setShowElectronicModal] = useState(false);
   const [electronicAgreed,    setElectronicAgreed]    = useState(false);
   const [showSignatureModal,  setShowSignatureModal]   = useState(false);
   const [showSubmitModal,     setShowSubmitModal]      = useState(false);
-  const [errors, setErrors] = useState<FieldErrors<Fields>>({});
+  const [errors, setErrors]     = useState<FieldErrors<Fields>>({});
+  const [canUndo, setCanUndo]   = useState(false);
+  const [canRedo, setCanRedo]   = useState(false);
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const isDrawing = useRef(false);
-  const lastPos   = useRef<{ x: number; y: number } | null>(null);
+  const canvasRef    = useRef<HTMLCanvasElement>(null);
+  const isDrawing    = useRef(false);
+  const lastPos      = useRef<{ x: number; y: number } | null>(null);
+  const historyStack = useRef<string[]>([]);
+  const redoStack    = useRef<string[]>([]);
+  const preStroke    = useRef<string | null>(null);
+
+  const syncHistoryState = () => {
+    setCanUndo(historyStack.current.length > 0);
+    setCanRedo(redoStack.current.length > 0);
+  };
 
   useEffect(() => {
     if (!showSignatureModal) return;
@@ -67,13 +90,20 @@ export default function Signatures() {
 
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
+
       ctx.fillStyle = "#fff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      historyStack.current = [];
+      redoStack.current    = [];
+      preStroke.current    = null;
+      syncHistoryState();
 
       const onStart = (e: MouseEvent | TouchEvent) => {
         e.preventDefault();
         isDrawing.current = true;
-        lastPos.current = getPos(e, canvas);
+        lastPos.current   = getPos(e, canvas);
+        preStroke.current = canvas.toDataURL();
       };
 
       const onMove = (e: MouseEvent | TouchEvent) => {
@@ -86,16 +116,24 @@ export default function Signatures() {
         c.moveTo(lastPos.current.x, lastPos.current.y);
         c.lineTo(pos.x, pos.y);
         c.strokeStyle = "#1c1c1c";
-        c.lineWidth = 2.5;
-        c.lineCap = "round";
-        c.lineJoin = "round";
+        c.lineWidth   = 2.5;
+        c.lineCap     = "round";
+        c.lineJoin    = "round";
         c.stroke();
         lastPos.current = pos;
       };
 
       const onEnd = () => {
+        if (!isDrawing.current) return;
         isDrawing.current = false;
-        lastPos.current = null;
+        lastPos.current   = null;
+        if (preStroke.current) {
+          historyStack.current.push(preStroke.current);
+          if (historyStack.current.length > 30) historyStack.current.shift();
+          preStroke.current = null;
+        }
+        redoStack.current = [];
+        syncHistoryState();
       };
 
       canvas.addEventListener("mousedown",   onStart, { passive: false });
@@ -123,19 +161,44 @@ export default function Signatures() {
       cancelAnimationFrame(rafId);
       if (removeListeners) removeListeners();
       isDrawing.current = false;
-      lastPos.current = null;
+      lastPos.current   = null;
     };
   }, [showSignatureModal]);
 
-  const clearCanvas = () => {
+  const clearCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    const snap = canvas.toDataURL();
+    historyStack.current.push(snap);
+    if (historyStack.current.length > 30) historyStack.current.shift();
+    redoStack.current = [];
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#fff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-  };
+    syncHistoryState();
+  }, []);
+
+  const handleUndo = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || historyStack.current.length === 0) return;
+    const current  = canvas.toDataURL();
+    const previous = historyStack.current.pop()!;
+    redoStack.current.push(current);
+    restoreFromDataUrl(canvas, previous);
+    syncHistoryState();
+  }, []);
+
+  const handleRedo = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || redoStack.current.length === 0) return;
+    const current = canvas.toDataURL();
+    const next    = redoStack.current.pop()!;
+    historyStack.current.push(current);
+    restoreFromDataUrl(canvas, next);
+    syncHistoryState();
+  }, []);
 
   const submitSignature = () => {
     const canvas = canvasRef.current;
@@ -183,7 +246,6 @@ export default function Signatures() {
           {globalError && (
             <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>{globalError}</div>
           )}
-
           {hasErrors(errors) && (
             <div className="mb-4 px-4 py-2 rounded text-sm" style={{ background: "#fff3f3", border: "1px solid #f5c6c6", color: "#c0392b" }}>
               Please complete all required items below before submitting your application.
@@ -250,18 +312,29 @@ export default function Signatures() {
 
             <div className="mb-6" style={{ borderTop: "1px solid #eef1f4", paddingTop: "16px" }}>
               <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.65", marginBottom: "16px" }}>By signing below, I/We attest to the accuracy of the information provided on this form. I/We acknowledge that we have received, read and agree to the terms and conditions contained in the attached Account Agreement, including the arbitration clause.</p>
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-3 mb-3">
                 <p style={{ fontSize: "13px", color: "#333", fontWeight: 600 }}>ACCOUNT OWNER:</p>
                 <span style={{ fontSize: "12px", color: "#777" }}>Signature <span style={{ color: "#e53e3e" }}>*</span></span>
               </div>
-              <button type="button" onClick={() => setShowElectronicModal(true)} style={{ background: "#3a7bd5", color: "white", border: "none", borderRadius: "3px", padding: "8px 20px", fontSize: "13px", cursor: "pointer", fontWeight: 600, marginBottom: "12px" }}>Signature</button>
-              {errors.signature && !signatureDataUrl && <p className="mb-2 text-xs" style={{ color: "#e53e3e" }}>{errors.signature}</p>}
-              {signatureDataUrl && (
-                <div className="mb-4" style={{ border: "1px solid #dde3e9", borderRadius: "2px", padding: "4px", display: "inline-block" }}>
-                  <img src={signatureDataUrl} alt="Your signature" style={{ height: "80px", maxWidth: "300px", objectFit: "contain", display: "block" }} />
+
+              {signatureDataUrl ? (
+                <div className="mb-3">
+                  <div style={{ border: "1px solid #dde3e9", borderRadius: "2px", padding: "6px", display: "inline-block", background: "#fafbfc" }}>
+                    <img src={signatureDataUrl} alt="Your signature" style={{ height: "80px", maxWidth: "320px", objectFit: "contain", display: "block" }} />
+                  </div>
+                  <div className="flex items-center gap-3 mt-2">
+                    <button type="button" onClick={() => setShowElectronicModal(true)} style={{ background: "none", border: "1px solid #ccd3da", borderRadius: "3px", padding: "5px 14px", fontSize: "12px", color: "#555", cursor: "pointer" }}>Redraw</button>
+                    <button type="button" onClick={() => { setSignatureDataUrl(null); setErrors((p) => ({ ...p, signature: "Please draw your signature before submitting" })); }} style={{ background: "none", border: "none", fontSize: "12px", color: "#e53e3e", cursor: "pointer", textDecoration: "underline" }}>Clear Signature</button>
+                  </div>
                 </div>
+              ) : (
+                <>
+                  <button type="button" onClick={() => setShowElectronicModal(true)} style={{ background: "#3a7bd5", color: "white", border: "none", borderRadius: "3px", padding: "8px 20px", fontSize: "13px", cursor: "pointer", fontWeight: 600, marginBottom: "8px" }}>Sign Here</button>
+                  {errors.signature && <p className="mb-2 mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.signature}</p>}
+                </>
               )}
-              <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.65", marginBottom: "12px" }}>By entering your full name, you are signing this Agreement electronically. You agree your electronic signature is the legal equivalent of your manual/handwritten signature on this Agreement.</p>
+
+              <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.65", marginBottom: "12px", marginTop: "8px" }}>By entering your full name, you are signing this Agreement electronically. You agree your electronic signature is the legal equivalent of your manual/handwritten signature on this Agreement.</p>
               <input type="text" placeholder="Your Full Name *" value={signatureName} onChange={(e) => { setSignatureName(e.target.value); setErrors((p) => ({ ...p, signatureName: undefined })); }} style={{ width: "100%", maxWidth: "360px", padding: "8px 10px", fontSize: "13px", border: `1px solid ${errors.signatureName ? "#e53e3e" : "#ccd3da"}`, borderRadius: "2px", color: "#444" }} />
               {errors.signatureName && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.signatureName}</p>}
             </div>
@@ -299,33 +372,55 @@ export default function Signatures() {
         <div className="fixed inset-0 flex items-center justify-center z-50 px-4" style={{ background: "rgba(0,0,0,0.45)" }}>
           <div className="bg-white rounded shadow-xl w-full max-w-[460px]" style={{ padding: "24px" }}>
             <div className="flex items-center justify-between mb-4">
-              <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#333" }}>Signature</h2>
+              <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#333" }}>Draw Your Signature</h2>
               <button type="button" onClick={() => setShowSignatureModal(false)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#777", lineHeight: 1 }}>✕</button>
             </div>
-            <div className="relative mb-4">
-              <select style={{ width: "100%", padding: "7px 32px 7px 10px", fontSize: "13px", border: "1px solid #ccd3da", borderRadius: "2px", appearance: "none", background: "white", color: "#444", cursor: "pointer" }}>
-                <option>Draw Signature</option>
-              </select>
-              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
-            </div>
-            <p style={{ fontSize: "12px", color: "#666", marginBottom: "8px" }}>Draw your New Signature</p>
+
+            <p style={{ fontSize: "12px", color: "#666", marginBottom: "8px" }}>Draw your signature in the box below using your mouse or finger</p>
+
             <canvas
               ref={canvasRef}
               style={{
-                border: "1px solid #dde3e9",
-                borderRadius: "2px",
+                border: "1.5px solid #b0bec5",
+                borderRadius: "3px",
                 width: "100%",
-                height: "130px",
+                height: "140px",
                 cursor: "crosshair",
                 touchAction: "none",
                 background: "#fff",
                 display: "block",
               }}
             />
-            <div className="flex justify-end mt-1 mb-4">
-              <button type="button" onClick={clearCanvas} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "#3a7bd5", textDecoration: "underline" }}>Clear</button>
+
+            <div className="flex items-center justify-between mt-2 mb-4">
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={handleUndo}
+                  disabled={!canUndo}
+                  title="Undo last stroke"
+                  style={{ background: "none", border: "1px solid #ccd3da", borderRadius: "3px", padding: "3px 10px", fontSize: "12px", color: canUndo ? "#444" : "#bbb", cursor: canUndo ? "pointer" : "not-allowed", display: "flex", alignItems: "center", gap: "4px" }}
+                >
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-1"/></svg>
+                  Undo
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRedo}
+                  disabled={!canRedo}
+                  title="Redo"
+                  style={{ background: "none", border: "1px solid #ccd3da", borderRadius: "3px", padding: "3px 10px", fontSize: "12px", color: canRedo ? "#444" : "#bbb", cursor: canRedo ? "pointer" : "not-allowed", display: "flex", alignItems: "center", gap: "4px" }}
+                >
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h1"/></svg>
+                  Redo
+                </button>
+              </div>
+              <button type="button" onClick={clearCanvas} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "#e53e3e", textDecoration: "underline" }}>Clear</button>
             </div>
-            <button type="button" onClick={submitSignature} style={{ width: "100%", background: "#3a7bd5", color: "white", border: "none", borderRadius: "3px", padding: "10px", fontSize: "13px", cursor: "pointer", fontWeight: 600 }}>Submit Signature</button>
+
+            <button type="button" onClick={submitSignature} style={{ width: "100%", background: "#3a7bd5", color: "white", border: "none", borderRadius: "3px", padding: "10px", fontSize: "13px", cursor: "pointer", fontWeight: 600 }}>
+              Save Signature
+            </button>
           </div>
         </div>
       )}

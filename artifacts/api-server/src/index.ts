@@ -6,16 +6,11 @@ import { setupAdminCredentials } from "./lib/setupAdmin.js";
 import { initDatabase } from "./lib/db.js";
 import { checkEmailConfig } from "./lib/mailer.js";
 
-const rawPort = process.env["PORT"];
-
-if (!rawPort) {
-  throw new Error("PORT environment variable is required but was not provided.");
-}
-
+const rawPort = process.env["PORT"] ?? "3000";
 const port = Number(rawPort);
 
 if (Number.isNaN(port) || port <= 0) {
-  throw new Error(`Invalid PORT value: "${rawPort}"`);
+  console.error(`[Startup] Invalid PORT value: "${rawPort}" — defaulting to 3000`);
 }
 
 async function start() {
@@ -39,8 +34,8 @@ async function start() {
 
   const server = http.createServer(app);
   createWebSocketServer(server);
-  server.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
+  server.listen(port, "0.0.0.0", () => {
+    console.log(`Server listening on 0.0.0.0:${port}`);
   });
 }
 
