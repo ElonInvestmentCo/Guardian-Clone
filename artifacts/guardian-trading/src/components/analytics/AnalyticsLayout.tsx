@@ -13,7 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const API = "/api";
-const OWNER_EMAIL = "demo@guardiiantrading.com";
+const OWNER_EMAIL = "demo@guardiantrading.com";
 
 const NAV = [
   { href: "/analytics", label: "Overview", icon: LayoutDashboard, exact: true },

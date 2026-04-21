@@ -143,7 +143,7 @@ export default function ApplicationSubmitted() {
                 <h4 className="text-[11px] font-bold uppercase tracking-widest mb-4" style={{ color: "#aaa" }}>Contact</h4>
                 <div className="flex flex-col gap-2.5">
                   <a href="tel:8886020092" className="text-[13px] hover:text-white" style={{ color: "#bbb" }}>888-602-0092</a>
-                  <a href="mailto:support@guardiiantrading.com" className="text-[13px] hover:text-white" style={{ color: "#bbb" }}>support@guardiiantrading.com</a>
+                  <a href="mailto:support@guardiantrading.com" className="text-[13px] hover:text-white" style={{ color: "#bbb" }}>support@guardiantrading.com</a>
                   <p className="text-[13px]" style={{ color: "#bbb" }}>1301 Route 36 Suite 109 Hazlet, NJ 07730</p>
                 </div>
               </div>
@@ -157,7 +157,7 @@ export default function ApplicationSubmitted() {
             @2023 VELOCITY CLEARING, LLC IS REGISTERED WITH THE SEC AND A MEMBER OF <a href="https://www.finra.org" target="_blank" rel="noreferrer" style={{ color: "#5baad4" }}>FINRA</a> AND <a href="https://www.sipc.org" target="_blank" rel="noreferrer" style={{ color: "#5baad4" }}>SIPC</a>. MARKET VOLATILITY AND VOLUME MAY DELAY SYSTEMS ACCESS AND TRADE EXECUTION. CHECK THE BACKGROUND OF VELOCITY CLEARING ON <a href="https://brokercheck.finra.org" target="_blank" rel="noreferrer" style={{ color: "#5baad4" }}>FINRA'S BROKER CHECK</a>.
           </p>
           <p className="text-[11px] uppercase leading-relaxed" style={{ color: "#666", maxWidth: "900px", margin: "0 auto" }}>
-            OPTIONS INVOLVE RISK AND ARE NOT SUITABLE FOR ALL INVESTORS. FOR MORE INFORMATION READ THE <a href="#" style={{ color: "#5baad4" }}>CHARACTERISTICS AND RISKS OF STANDARDIZED OPTIONS</a>, ALSO KNOWN AS THE OPTIONS DISCLOSURE DOCUMENT (ODD). ALTERNATIVELY, PLEASE CONTACT <a href="mailto:support@guardiiantrading.com" style={{ color: "#5baad4" }}>SUPPORT@GUARDIIANTRADING.COM</a> TO RECEIVE A COPY OF THE ODD.
+            OPTIONS INVOLVE RISK AND ARE NOT SUITABLE FOR ALL INVESTORS. FOR MORE INFORMATION READ THE <a href="#" style={{ color: "#5baad4" }}>CHARACTERISTICS AND RISKS OF STANDARDIZED OPTIONS</a>, ALSO KNOWN AS THE OPTIONS DISCLOSURE DOCUMENT (ODD). ALTERNATIVELY, PLEASE CONTACT <a href="mailto:support@guardiantrading.com" style={{ color: "#5baad4" }}>SUPPORT@GUARDIIANTRADING.COM</a> TO RECEIVE A COPY OF THE ODD.
           </p>
         </div>
       </footer>

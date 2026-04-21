@@ -89,8 +89,8 @@ export default function ContactUs() {
                 888-602-0092
               </a>{" "}
               During Market Hours or email{" "}
-              <a href="mailto:support@guardiiantrading.com" style={{ color: "#76d1f5", textDecoration: "none", display: "block", marginTop: "2px" }}>
-                support@guardiiantrading.com
+              <a href="mailto:support@guardiantrading.com" style={{ color: "#76d1f5", textDecoration: "none", display: "block", marginTop: "2px" }}>
+                support@guardiantrading.com
               </a>
             </p>
           </div>

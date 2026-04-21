@@ -16,7 +16,7 @@ interface Project {
 }
 
 const API = "/api";
-const OWNER_EMAIL = "demo@guardiiantrading.com";
+const OWNER_EMAIL = "demo@guardiantrading.com";
 
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);

@@ -52,7 +52,7 @@ export default function Home() {
                 New on the blog
               </span>
               <a
-                href="https://www.guardiiantrading.com/how-to-prepare-your-das-trader-pro-for-advanced-hotkeys-scripting/"
+                href="https://www.guardiantrading.com/how-to-prepare-your-das-trader-pro-for-advanced-hotkeys-scripting/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="overflow-hidden"
