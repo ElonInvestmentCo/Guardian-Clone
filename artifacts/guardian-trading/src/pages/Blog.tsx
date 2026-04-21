@@ -254,40 +254,50 @@ export default function Blog() {
                   <div
                     key={page}
                     style={{
-                      display: "flex",
+                      display: "inline-flex",
                       flexDirection: "row",
                       alignItems: "center",
-                      gap: "6px",
+                      gap: "3px",
+                      lineHeight: 0,
                     }}
                   >
                     {pageButton}
-                    <img
-                      src={paginationArrow}
-                      alt="Next"
-                      style={{ height: "30px", width: "auto", display: "block" }}
-                    />
+                    <button
+                      onClick={() => setCurrentPage((p) => Math.min(p + 1, TOTAL_PAGES))}
+                      aria-label="Next page"
+                      className="pagination-arrow-btn"
+                      style={{
+                        height: "30px",
+                        width: "14px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "transparent",
+                        border: "none",
+                        padding: 0,
+                        cursor: "pointer",
+                      }}
+                    >
+                      <img
+                        src={paginationArrow}
+                        alt=""
+                        style={{
+                          width: "13px",
+                          height: "auto",
+                          display: "block",
+                          opacity: 0.85,
+                          filter:
+                            "brightness(0) saturate(100%) invert(48%) sepia(46%) saturate(457%) hue-rotate(176deg) brightness(92%) contrast(89%)",
+                          transition: "opacity 0.2s",
+                        }}
+                      />
+                    </button>
                   </div>
                 );
               }
               return pageButton;
             })}
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(p + 1, TOTAL_PAGES))}
-              style={{
-                width: "30px",
-                height: "30px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "transparent",
-                border: "1px solid rgba(255,255,255,0.2)",
-                color: "#ffffff",
-                fontSize: "13px",
-                cursor: "pointer",
-              }}
-            >
-              &gt;
-            </button>
+            <style>{`.pagination-arrow-btn:hover img { opacity: 1 !important; }`}</style>
           </div>
         </div>
       </section>
