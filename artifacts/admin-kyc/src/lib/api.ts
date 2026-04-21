@@ -501,27 +501,27 @@ export async function exportSignatureAuditLog(search?: string): Promise<void> {
 // ── Fund Requests ─────────────────────────────────────────────────────────────
 
 export interface FundRequest {
-  id: number;
+  id: string;
   email: string;
   type: "deposit" | "withdrawal";
   amount: number;
-  currency: string;
   note: string | null;
+  adminNote: string | null;
   status: "pending" | "approved" | "rejected";
   createdAt: string;
   reviewedAt: string | null;
-  reviewedBy: string | null;
 }
 
 export async function getFundRequests(status?: string): Promise<FundRequest[]> {
   const qs = status ? `?status=${encodeURIComponent(status)}` : "";
-  return request<FundRequest[]>("GET", `/admin/fund-requests${qs}`);
+  const res = await request<{ requests: FundRequest[] }>("GET", `/admin/fund-requests${qs}`);
+  return res.requests;
 }
 
-export async function approveFundRequest(id: number): Promise<void> {
+export async function approveFundRequest(id: string): Promise<void> {
   await request("POST", `/admin/fund-requests/${id}/approve`);
 }
 
-export async function rejectFundRequest(id: number): Promise<void> {
+export async function rejectFundRequest(id: string): Promise<void> {
   await request("POST", `/admin/fund-requests/${id}/reject`);
 }

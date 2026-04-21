@@ -249,8 +249,7 @@ export default function FundRequestsView() {
                           </div>
                         ) : (
                           <span style={{ fontSize: 12, color: "#94A3B8" }}>
-                            {r.reviewedAt ? timeAgo(r.reviewedAt) : "Reviewed"}
-                            {r.reviewedBy ? ` by ${r.reviewedBy}` : ""}
+                            {r.reviewedAt ? `Reviewed ${timeAgo(r.reviewedAt)}` : "Reviewed"}
                           </span>
                         )}
                       </td>
