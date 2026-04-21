@@ -74,6 +74,7 @@ export default function DashboardLayout({ children }: Props) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [userStatus, setUserStatus] = useState<UserStatus | null>(null);
   const [gateChecked, setGateChecked] = useState(false);
+  const [liveProfilePicUrl, setLiveProfilePicUrl] = useState<string | null>(null);
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -133,6 +134,15 @@ export default function DashboardLayout({ children }: Props) {
       })
       .catch(() => { navigate("/login"); });
   }, [email]);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const url = (e as CustomEvent<{ url: string | null }>).detail.url;
+      setLiveProfilePicUrl(url);
+    };
+    window.addEventListener("profile-pic-updated", handler);
+    return () => window.removeEventListener("profile-pic-updated", handler);
+  }, []);
 
   useEffect(() => {
     if (!email) return;
@@ -200,9 +210,11 @@ export default function DashboardLayout({ children }: Props) {
     );
   }
 
-  const profilePicUrl = userStatus?.profilePicture
-    ? `${API}/api/user/profile-picture/${userStatus.profilePicture}`
-    : null;
+  const profilePicUrl = liveProfilePicUrl !== null
+    ? liveProfilePicUrl
+    : userStatus?.profilePicture
+      ? `${API}/api/user/profile-picture/${userStatus.profilePicture}`
+      : null;
 
   const handleLogout = () => {
     sessionStorage.clear();
@@ -577,8 +589,10 @@ export default function DashboardLayout({ children }: Props) {
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = colors.inputBg; }}
             >
               {profilePicUrl ? (
-                <img src={profilePicUrl} alt={displayName}
-                  style={{ width: "32px", height: "32px", borderRadius: "6px", objectFit: "cover" }} />
+                <div style={{ width: "32px", height: "32px", borderRadius: "6px", overflow: "hidden", flexShrink: 0 }}>
+                  <img src={profilePicUrl} alt={displayName}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                </div>
               ) : (
                 <div className="flex items-center justify-center rounded-md font-bold text-white"
                   style={{ width: "32px", height: "32px", background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", fontSize: "12px", borderRadius: "6px", flexShrink: 0 }}>
