@@ -1,0 +1,140 @@
+Implement a comprehensive admin notification system (email + optional in-app alerts) for onboarding, signatures, and compliance events.
+
+========================
+
+1. CORE REQUIREMENTS
+   ========================
+
+Add email notifications for the following events:
+
+A. SIGNATURE EVENTS
+
+* When a user submits a signature
+* When signature verification is completed
+* When pending signature verifications exceed a configurable threshold (e.g. 10+ pending)
+
+B. USER ONBOARDING EVENTS
+
+* When a new user signs up
+* When a user completes onboarding (all 11 forms submitted)
+* When a user is awaiting admin approval
+
+C. KYC / VALIDATION EVENTS
+
+* When a user is flagged as HIGH risk
+* When validation fails (invalid SSN, address mismatch, etc.)
+
+---
+
+========================
+2. ADDITIONAL SMART NOTIFICATIONS
+=================================
+
+Also include:
+
+* Multiple accounts detected (same SSN / IP / device)
+* Suspicious activity (rapid submissions / bot behavior)
+* Failed login attempts (security alert)
+* Admin action logs (e.g. user approved, rejected, signature verified)
+* Daily summary report:
+
+  * New users
+  * Signatures submitted
+  * Pending approvals
+  * Flagged accounts
+
+---
+
+========================
+3. EMAIL DELIVERY SETUP
+=======================
+
+Use existing email provider (e.g. RESEND_API_KEY or configured SMTP).
+
+Create reusable function:
+
+sendAdminNotification({
+subject,
+message,
+type,
+priority
+})
+
+Support:
+
+* High priority (instant email)
+* Low priority (batched/daily digest)
+
+---
+
+========================
+4. CONFIGURATION (IMPORTANT)
+============================
+
+Add environment variables:
+
+* ADMIN_EMAIL (where alerts are sent)
+* SIGNATURE_THRESHOLD (e.g. 10)
+* ENABLE_DAILY_SUMMARY (true/false)
+
+---
+
+========================
+5. BACKEND IMPLEMENTATION
+=========================
+
+Trigger notifications inside:
+
+* /api/signature/save
+* /api/admin/signatures/verify
+* user signup route
+* onboarding completion handler
+* KYC validation engine
+
+Example:
+
+if (pendingCount > SIGNATURE_THRESHOLD) {
+sendAdminNotification({
+subject: "High Pending Signatures Alert",
+message: `${pendingCount} signatures awaiting verification`,
+priority: "high"
+});
+}
+
+---
+
+========================
+6. ADMIN DASHBOARD (OPTIONAL BUT RECOMMENDED)
+=============================================
+
+Add “Notifications” panel:
+
+* List recent alerts
+* Mark as read
+* Filter by type (KYC, Signature, Signup, Security)
+
+---
+
+========================
+7. SECURITY
+===========
+
+* Do NOT expose sensitive data (e.g. full SSN) in emails
+* Only send minimal necessary info (user ID, masked data)
+* Ensure only admins receive notifications
+
+---
+
+========================
+FINAL GOAL
+==========
+
+Create a real-time awareness system so admins are instantly informed of:
+
+* New users
+* Signatures
+* Pending approvals
+* Fraud risks
+* System activity
+
+This should feel like a professional fintech compliance alert system.
