@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import readMoreBtn from "@assets/Guardian-Clone_-_Replit_-_Google_Chrome_4_18_2026_7_43_01_PM_1776655378942.png";
-import paginationArrow from "@assets/Guardian-Clone_-_Replit_-_Google_Chrome_4_18_2026_7_45_33_PM_1776784283117.png";
-import paginationPrevArrow from "@assets/PREVIOUS_BUTTON_1776784210198.png";
 
 const PATTERN_BG = "https://www.guardiantrading.com/wp-content/themes/gate39media/public/img/img-blog-background-pattern.png";
 
@@ -222,7 +220,7 @@ export default function Blog() {
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "6px",
+              gap: "14px",
               marginTop: "32px",
               paddingTop: "16px",
             }}
@@ -230,101 +228,68 @@ export default function Blog() {
             <button
               onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
               aria-label="Previous page"
-              className="pagination-arrow-btn"
               style={{
-                height: "30px",
+                width: "34px",
+                height: "34px",
                 display: "inline-flex",
                 alignItems: "center",
                 justifyContent: "center",
                 background: "transparent",
-                border: "none",
+                border: "1px solid #76d1f5",
                 padding: 0,
-                marginRight: "3px",
                 cursor: "pointer",
+                color: "#ffffff",
               }}
             >
-              <img
-                src={paginationPrevArrow}
-                alt=""
+              <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 0L9 12L0 6Z" />
+              </svg>
+            </button>
+            {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
                 style={{
+                  minWidth: "18px",
                   height: "30px",
-                  width: "auto",
-                  display: "block",
-                  opacity: 0.9,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "transparent",
+                  border: "none",
+                  padding: "0 2px",
+                  color: "#ffffff",
+                  fontSize: "15px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  borderBottom: currentPage === page ? "2px solid #76d1f5" : "2px solid transparent",
+                  opacity: currentPage === page ? 1 : 0.55,
                   transition: "opacity 0.2s",
                 }}
-              />
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, TOTAL_PAGES))}
+              aria-label="Next page"
+              style={{
+                width: "34px",
+                height: "34px",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "transparent",
+                border: "1px solid #76d1f5",
+                padding: 0,
+                cursor: "pointer",
+                color: "#ffffff",
+              }}
+            >
+              <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0L0 12L9 6Z" />
+              </svg>
             </button>
-            {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((page) => {
-              const pageButton = (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  style={{
-                    width: "30px",
-                    height: "30px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: currentPage === page ? "#4a7fbd" : "transparent",
-                    border: currentPage === page ? "1px solid #4a7fbd" : "1px solid rgba(255,255,255,0.2)",
-                    color: "#ffffff",
-                    fontSize: "13px",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    transition: "background 0.2s",
-                  }}
-                >
-                  {page}
-                </button>
-              );
-              if (page === TOTAL_PAGES) {
-                return (
-                  <div
-                    key={page}
-                    style={{
-                      display: "inline-flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: "3px",
-                      lineHeight: 0,
-                    }}
-                  >
-                    {pageButton}
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.min(p + 1, TOTAL_PAGES))}
-                      aria-label="Next page"
-                      className="pagination-arrow-btn"
-                      style={{
-                        height: "30px",
-                        display: "inline-flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        background: "transparent",
-                        border: "none",
-                        padding: 0,
-                        marginLeft: "3px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <img
-                        src={paginationArrow}
-                        alt=""
-                        style={{
-                          height: "30px",
-                          width: "auto",
-                          display: "block",
-                          opacity: 0.9,
-                          transition: "opacity 0.2s",
-                        }}
-                      />
-                    </button>
-                  </div>
-                );
-              }
-              return pageButton;
-            })}
-            <style>{`.pagination-arrow-btn:hover img { opacity: 1 !important; }`}</style>
           </div>
         </div>
       </section>
