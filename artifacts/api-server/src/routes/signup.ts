@@ -385,6 +385,7 @@ signupRouter.post("/signup/complete-step", sensitiveEndpointLimit, validate(Sign
           ...(data.lastName   ? { lastName:  data.lastName }    : {}),
           ...(data.phoneNumber? { phone:     data.phoneNumber } : {}),
           ...(data.country    ? { country:   data.country }     : {}),
+          ...(data.state      ? { state:     data.state }       : {}),
           ...(data.city       ? { city:      data.city }        : {}),
         };
         await setUserProfileMeta(email, "_settings", merged);

@@ -91,7 +91,7 @@ profileRouter.get("/user/me", userDataLimit, validate(AuthCheckEmailSchema), asy
         lastName:  str("lastName",  "lastName"),
         phone:     str("phone",     "phoneNumber"),
         country:   str("country",   "country"),
-        state:     str("state"),
+        state:     str("state",     "state"),
         city:      str("city",      "city"),
       },
       notificationPreferences: {
@@ -186,6 +186,7 @@ profileRouter.post("/user/update-profile", userDataLimit, validate(ProfileUpdate
 
     const profile = await getUserProfileData(email);
     if (!profile["email"]) { res.status(404).json({ error: "User not found" }); return; }
+
     const settings = (profile["_settings"] as Record<string, unknown>) ?? {};
     if (firstName !== undefined) settings["firstName"] = firstName.trim();
     if (lastName !== undefined) settings["lastName"] = lastName.trim();
@@ -195,6 +196,19 @@ profileRouter.post("/user/update-profile", userDataLimit, validate(ProfileUpdate
     if (city !== undefined) settings["city"] = city.trim();
     settings["updatedAt"] = new Date().toISOString();
     await setUserProfileMeta(email, "_settings", settings);
+
+    const personalStep = (profile["personal"] as Record<string, unknown>) ?? {};
+    const updatedPersonal = {
+      ...personalStep,
+      ...(firstName !== undefined ? { firstName: firstName.trim() } : {}),
+      ...(lastName  !== undefined ? { lastName:  lastName.trim()  } : {}),
+      ...(phone     !== undefined ? { phoneNumber: phone.trim()   } : {}),
+      ...(country   !== undefined ? { country:   country.trim()   } : {}),
+      ...(state     !== undefined ? { state:     state.trim()     } : {}),
+      ...(city      !== undefined ? { city:      city.trim()      } : {}),
+    };
+    await setUserProfileMeta(email, "personal", updatedPersonal);
+
     res.json({ success: true });
   } catch (err) {
     console.error("[Profile] update-profile error:", err);
