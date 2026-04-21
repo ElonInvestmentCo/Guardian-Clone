@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import readMoreBtn from "@assets/Guardian-Clone_-_Replit_-_Google_Chrome_4_18_2026_7_43_01_PM_1776655378942.png";
 import paginationArrow from "@assets/Guardian-Clone_-_Replit_-_Google_Chrome_4_18_2026_7_45_33_PM_1776778943504.png";
+import paginationPrevArrow from "@assets/PREVIOUS_BUTTON_1776783858684.png";
 
 const PATTERN_BG = "https://www.guardiantrading.com/wp-content/themes/gate39media/public/img/img-blog-background-pattern.png";
 
@@ -226,6 +227,37 @@ export default function Blog() {
               paddingTop: "16px",
             }}
           >
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              aria-label="Previous page"
+              className="pagination-arrow-btn"
+              style={{
+                height: "30px",
+                width: "14px",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "transparent",
+                border: "none",
+                padding: 0,
+                marginRight: "3px",
+                cursor: "pointer",
+              }}
+            >
+              <img
+                src={paginationPrevArrow}
+                alt=""
+                style={{
+                  width: "13px",
+                  height: "auto",
+                  display: "block",
+                  opacity: 0.85,
+                  filter:
+                    "brightness(0) saturate(100%) invert(48%) sepia(46%) saturate(457%) hue-rotate(176deg) brightness(92%) contrast(89%)",
+                  transition: "opacity 0.2s",
+                }}
+              />
+            </button>
             {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((page) => {
               const pageButton = (
                 <button
