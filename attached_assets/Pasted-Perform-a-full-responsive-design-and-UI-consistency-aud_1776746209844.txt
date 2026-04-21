@@ -1,0 +1,58 @@
+Perform a full responsive design and UI consistency audit across the entire platform, including both the main website and the admin dashboard.
+
+Ensure the application displays correctly on all screen sizes and devices, including:
+- Mobile phones (small and large screens)
+- Tablets
+- Laptops
+- Desktop monitors (including large/wide screens)
+
+Requirements:
+
+1. Responsive Layout Fixes
+- Ensure all pages use proper responsive layouts (flex/grid with breakpoints)
+- Fix any overflowing elements, cut-off content, or misaligned sections
+- Ensure no horizontal scrolling occurs unless intentionally designed
+
+2. UI Scaling & Consistency
+- Text, buttons, cards, and images must scale properly across screen sizes
+- Maintain consistent spacing, padding, and margins
+- Ensure font sizes are readable on mobile and not oversized on desktop
+
+3. Navigation & Usability
+- Mobile navigation (menus, dropdowns, sidebars) must work smoothly
+- Ensure buttons (especially critical ones like deposit/withdraw) are easily clickable on touch devices
+- Fix any hover-only interactions that break on mobile
+
+4. Admin Dashboard
+- Ensure tables, charts, and panels are fully responsive
+- Add horizontal scroll or stacking for tables on small screens
+- Ensure all admin controls are accessible and not hidden or overlapping
+
+5. Forms & Inputs
+- All forms (onboarding, profile, admin inputs) must display correctly on all devices
+- Inputs should not overflow or become unusable on small screens
+- Labels and placeholders must remain visible and readable
+
+6. Images & Media
+- Ensure images (logos, profile photos, icons) scale correctly and do not stretch or break
+- Use proper object-fit handling where necessary
+
+7. Cross-Browser Compatibility
+- Verify correct display on major browsers (Chrome, Safari, Edge, Firefox)
+- Fix any inconsistencies
+
+8. Performance Consideration
+- Avoid layout shifts and excessive reflows
+- Optimize components for smooth rendering on lower-end devices
+
+9. Testing & Validation
+- Simulate multiple screen sizes using dev tools
+- Manually verify key pages:
+  - Homepage
+  - Dashboard
+  - Admin dashboard
+  - KYC/onboarding pages
+  - Profile pages
+
+Final goal:
+The entire platform should look clean, professional, and fully usable on any device with no layout issues, broken UI elements, or poor user experience.

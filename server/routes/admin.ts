@@ -485,6 +485,31 @@ router.post("/admin/set-balance", validate(AdminSetBalanceSchema), async (req: R
     if (!await getUserData(email)) { res.status(404).json({ error: "User not found" }); return; }
     await setUserBalance(email, balNum, profNum, adminNote.trim(), "admin", txType);
     console.log(`[Admin] SET BALANCE: ${email} balance=$${balNum} profit=$${profNum} type=${txType}`);
+
+    const txLabel = txType.charAt(0).toUpperCase() + txType.slice(1);
+    const notifTitle = txType === "deposit"
+      ? "Deposit Processed"
+      : txType === "withdrawal"
+        ? "Withdrawal Processed"
+        : "Account Balance Updated";
+    const notifMsg = txType === "deposit"
+      ? `A deposit of $${balNum.toLocaleString()} has been added to your account.`
+      : txType === "withdrawal"
+        ? `A withdrawal of $${balNum.toLocaleString()} has been processed.`
+        : `Your account balance has been updated to $${balNum.toLocaleString()}. (${txLabel})`;
+    await addNotification(email, {
+      type: "account",
+      title: notifTitle,
+      message: notifMsg,
+    });
+    await addAdminNotification({
+      type: txType,
+      title: `${txLabel} — ${email}`,
+      message: `Admin set balance=$${balNum} profit=$${profNum} for ${email}. Note: ${adminNote.trim() || "none"}`,
+      userEmail: email,
+      meta: { balance: balNum, profit: profNum, transactionType: txType },
+    });
+
     res.json({ success: true, email, balance: balNum, profit: profNum, transactionType: txType });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Failed to set balance";

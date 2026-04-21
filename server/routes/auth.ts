@@ -2,7 +2,7 @@ import { Router } from "express";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { sendVerificationEmail, sendPasswordResetEmail } from "../lib/mailer.js";
-import { saveUserCredentials, getStoredPasswordHash, getUserData } from "../lib/userDataStore.js";
+import { saveUserCredentials, getStoredPasswordHash, getUserData, addAdminNotification } from "../lib/userDataStore.js";
 import { sensitiveEndpointLimit } from "../middleware/security.js";
 import { validate, AuthLoginSchema, AuthRegisterSchema, AuthCheckEmailSchema, AuthSendVerificationSchema, AuthVerifyCodeSchema, AuthResetPasswordSchema } from "../lib/validation.js";
 import { logSecurity } from "../lib/securityLogger.js";
@@ -106,6 +106,14 @@ authRouter.post("/auth/register", sensitiveEndpointLimit, validate(AuthRegisterS
     });
 
     notifyNewUser({ email, ipAddress, registeredAt: registeredAt.toISOString() }).catch(() => {});
+
+    addAdminNotification({
+      type: "registration",
+      title: "New User Registered",
+      message: `${email} created an account at ${formattedAt}.`,
+      userEmail: email,
+      meta: { ipAddress, registeredAt: registeredAt.toISOString() },
+    }).catch(() => {});
 
     logAttempt("REGISTER", email, "success — credentials persisted to database");
     res.json({ success: true });

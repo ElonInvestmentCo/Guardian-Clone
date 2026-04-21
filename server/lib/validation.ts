@@ -13,12 +13,12 @@ export const ContactSchema = z.object({
 export const AuthLoginSchema = z.object({
   email: emailSchema,
   password: z.string().min(1, "Password is required").max(200),
-});
+}).strict();
 
 export const AuthRegisterSchema = z.object({
   email: emailSchema,
   password: z.string().min(8, "Password must be at least 8 characters").max(200),
-});
+}).strict();
 
 export const AuthCheckEmailSchema = z.object({
   email: emailSchema,
@@ -166,6 +166,13 @@ export const KycResubmitSchema = z.object({
   email: emailSchema,
   data: z.record(z.record(z.unknown())).optional(),
 });
+
+export const FundRequestSchema = z.object({
+  email: emailSchema,
+  type: z.enum(["deposit", "withdrawal"]),
+  amount: z.number({ coerce: true }).positive("Amount must be positive").max(10_000_000, "Amount exceeds limit"),
+  note: z.string().trim().max(500).optional(),
+}).strict();
 
 export function validate<T extends z.ZodSchema>(schema: T) {
   return (req: Request, res: Response, next: NextFunction): void => {

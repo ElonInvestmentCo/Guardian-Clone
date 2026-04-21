@@ -434,6 +434,32 @@ export async function getSignaturesList(params?: {
   return request<SignaturesListResponse>("GET", `/admin/signatures-list${query}`);
 }
 
+// ── Admin Notifications ───────────────────────────────────────────────────────
+
+export interface AdminNotification {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  userEmail: string | null;
+  meta: Record<string, unknown>;
+  isRead: boolean;
+  createdAt: string;
+}
+
+export interface AdminNotificationsResponse {
+  notifications: AdminNotification[];
+  unreadCount: number;
+}
+
+export async function getAdminNotifications(): Promise<AdminNotificationsResponse> {
+  return request<AdminNotificationsResponse>("GET", "/admin/notifications");
+}
+
+export async function markAdminNotificationsRead(ids?: string[]): Promise<void> {
+  await request("POST", "/admin/notifications/read", ids && ids.length > 0 ? { ids } : {});
+}
+
 export async function sendDailySummary(): Promise<void> {
   const session = getSession();
   if (!session) {

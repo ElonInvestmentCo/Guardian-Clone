@@ -12,6 +12,7 @@ import { userDataLimit, sensitiveEndpointLimit } from "../middleware/security.js
 import { validate, SignupSaveStepSchema, SignupCompleteStepSchema, SignupGetProgressSchema } from "../lib/validation.js";
 import { broadcastAdmin } from "../lib/realtime.js";
 import { notifySignatureSubmitted, notifyOnboardingComplete } from "../lib/adminNotifier.js";
+import { addAdminNotification } from "../lib/userDataStore.js";
 
 const signupRouter = Router();
 
@@ -376,9 +377,16 @@ signupRouter.post("/signup/complete-step", sensitiveEndpointLimit, validate(Sign
       }
       // Admin notification — fire-and-forget
       querySignatureAuditLog({ limit: 500 }).then(sigData => {
-        // Count pending (no signatureVerified flag — approximate via total unique emails)
         const pendingCount = sigData.total;
         notifySignatureSubmitted({ email, ipAddress: ip, userAgent: ua, pendingCount }).catch(() => {});
+      }).catch(() => {});
+
+      addAdminNotification({
+        type: "signature",
+        title: "Signature Submitted",
+        message: `${email} submitted their signature.`,
+        userEmail: email,
+        meta: { ipAddress: ip },
       }).catch(() => {});
     }
 
@@ -479,6 +487,14 @@ signupRouter.post("/signup/complete-step", sensitiveEndpointLimit, validate(Sign
         email,
         totalSteps: ONBOARDING_STEPS.length,
         completedAt: now.toISOString(),
+      }).catch(() => {});
+
+      addAdminNotification({
+        type: "kyc_complete",
+        title: "Application Ready for Review",
+        message: `${email} completed all ${ONBOARDING_STEPS.length} onboarding steps and is awaiting review.`,
+        userEmail: email,
+        meta: { completedAt: now.toISOString() },
       }).catch(() => {});
     }
 

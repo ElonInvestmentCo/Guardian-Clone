@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { getApiBase } from "@/lib/api";
-import { ArrowUpRight, ArrowDownRight, Wallet, TrendingUp, BarChart3, ArrowRightLeft, InboxIcon } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Wallet, TrendingUp, BarChart3, ArrowRightLeft, InboxIcon, X } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
 import TradingViewChart from "@/components/TradingViewChart";
@@ -18,6 +18,169 @@ function EmptyState({ icon: Icon, title, message }: { icon: React.ElementType; t
   );
 }
 
+type ModalType = "deposit" | "withdrawal" | null;
+
+interface FundModalProps {
+  type: ModalType;
+  onClose: () => void;
+  onSuccess: (msg: string) => void;
+  colors: Record<string, string>;
+  email: string;
+}
+
+function FundModal({ type, onClose, onSuccess, colors, email }: FundModalProps) {
+  const [amount, setAmount] = useState("");
+  const [note, setNote] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  if (!type) return null;
+
+  const label = type === "deposit" ? "Deposit" : "Withdraw";
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const parsed = parseFloat(amount.replace(/,/g, ""));
+    if (isNaN(parsed) || parsed <= 0) {
+      setError("Please enter a valid amount.");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch(`${getApiBase()}/api/user/fund-request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, type, amount: parsed, note: note.trim() || undefined }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Request failed");
+      onSuccess(`Your ${label.toLowerCase()} request for $${parsed.toLocaleString(undefined, { minimumFractionDigits: 2 })} has been submitted. We'll process it within 1-3 business days.`);
+      onClose();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 flex items-center justify-center z-50"
+      style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)" }}
+      onClick={onClose}
+    >
+      <div
+        className="rounded-2xl w-full mx-4"
+        style={{ maxWidth: "420px", background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "28px" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <p style={{ fontSize: "18px", fontWeight: 700, color: colors.textPrimary }}>{label} Funds</p>
+            <p style={{ fontSize: "12px", color: colors.textMuted, marginTop: "2px" }}>
+              {type === "deposit" ? "Add funds to your account" : "Request a withdrawal from your account"}
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            style={{ background: colors.filterBar, border: "none", borderRadius: "8px", padding: "6px", cursor: "pointer", display: "flex", alignItems: "center" }}
+          >
+            <X size={16} color={colors.textMuted} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label style={{ fontSize: "12px", fontWeight: 600, color: colors.textSub, display: "block", marginBottom: "6px" }}>
+              Amount (USD)
+            </label>
+            <div className="flex items-center rounded-xl" style={{ border: `1px solid ${colors.cardBorder}`, background: colors.filterBar, padding: "0 14px" }}>
+              <span style={{ fontSize: "15px", color: colors.textMuted, marginRight: "6px" }}>$</span>
+              <input
+                type="number"
+                min="1"
+                step="0.01"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="0.00"
+                required
+                style={{
+                  flex: 1,
+                  background: "transparent",
+                  border: "none",
+                  outline: "none",
+                  fontSize: "15px",
+                  color: colors.textPrimary,
+                  padding: "12px 0",
+                  fontWeight: 600,
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <label style={{ fontSize: "12px", fontWeight: 600, color: colors.textSub, display: "block", marginBottom: "6px" }}>
+              Note (optional)
+            </label>
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Any additional details for your request…"
+              maxLength={500}
+              rows={3}
+              style={{
+                width: "100%",
+                background: colors.filterBar,
+                border: `1px solid ${colors.cardBorder}`,
+                borderRadius: "12px",
+                padding: "10px 14px",
+                fontSize: "13px",
+                color: colors.textPrimary,
+                outline: "none",
+                resize: "vertical",
+                boxSizing: "border-box",
+              }}
+            />
+          </div>
+
+          {error && (
+            <p style={{ fontSize: "12px", color: colors.red, marginBottom: "12px", padding: "8px 12px", background: `${colors.red}18`, borderRadius: "8px" }}>
+              {error}
+            </p>
+          )}
+
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              style={{
+                flex: 1, padding: "12px", fontSize: "13px", fontWeight: 600,
+                border: `1px solid ${colors.btnBorder}`, borderRadius: "12px",
+                background: colors.btnBg, color: colors.textSub, cursor: "pointer",
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                flex: 1, padding: "12px", fontSize: "13px", fontWeight: 600,
+                border: "none", borderRadius: "12px",
+                background: type === "deposit" ? colors.accent : colors.red,
+                color: "#fff", cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.7 : 1,
+              }}
+            >
+              {loading ? "Submitting…" : `Request ${label}`}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
 
 export default function Overview() {
   const { colors } = useTheme();
@@ -25,8 +188,10 @@ export default function Overview() {
 
   const [balance, setBalance] = useState(0);
   const [profit, setProfit] = useState(0);
+  const [modalType, setModalType] = useState<ModalType>(null);
+  const [successMsg, setSuccessMsg] = useState("");
 
-  useEffect(() => {
+  const fetchBalance = useCallback(() => {
     if (!email) return;
     const base = getApiBase();
     fetch(`${base}/api/user/balance/${encodeURIComponent(email)}`)
@@ -42,6 +207,10 @@ export default function Overview() {
         console.warn("[Overview] Could not load balance:", err);
       });
   }, [email]);
+
+  useEffect(() => {
+    fetchBalance();
+  }, [fetchBalance]);
 
   const currentVal = balance;
   const pChange = profit;
@@ -66,10 +235,33 @@ export default function Overview() {
               ${currentVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
             </p>
             <div className="flex gap-2">
-              <button style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, border: "none", borderRadius: "10px", background: colors.accent, color: "#fff", cursor: "pointer" }}>Deposit</button>
-              <button style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, border: `1px solid ${colors.btnBorder}`, borderRadius: "10px", background: colors.btnBg, color: colors.textSub, cursor: "pointer" }}>Withdraw</button>
+              <button
+                onClick={() => setModalType("deposit")}
+                style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, border: "none", borderRadius: "10px", background: colors.accent, color: "#fff", cursor: "pointer" }}
+              >
+                Deposit
+              </button>
+              <button
+                onClick={() => setModalType("withdrawal")}
+                style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, border: `1px solid ${colors.btnBorder}`, borderRadius: "10px", background: colors.btnBg, color: colors.textSub, cursor: "pointer" }}
+              >
+                Withdraw
+              </button>
             </div>
           </div>
+
+          {successMsg && (
+            <div className="rounded-xl mb-5 flex items-start gap-3" style={{ background: `${colors.green}18`, border: `1px solid ${colors.green}44`, padding: "14px 18px" }}>
+              <ArrowUpRight size={16} color={colors.green} style={{ flexShrink: 0, marginTop: "2px" }} />
+              <div>
+                <p style={{ fontSize: "13px", fontWeight: 600, color: colors.green, marginBottom: "2px" }}>Request Submitted</p>
+                <p style={{ fontSize: "12px", color: colors.textSub }}>{successMsg}</p>
+              </div>
+              <button onClick={() => setSuccessMsg("")} style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", padding: "2px" }}>
+                <X size={14} color={colors.textMuted} />
+              </button>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {statCards.map((c) => (
@@ -133,8 +325,18 @@ export default function Overview() {
           </div>
 
           <div className="flex gap-2 mb-6">
-            <button style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, border: "none", borderRadius: "10px", background: colors.accent, color: "#fff", cursor: "pointer" }}>Deposit</button>
-            <button style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, border: `1px solid ${colors.btnBorder}`, borderRadius: "10px", background: colors.btnBg, color: colors.textSub, cursor: "pointer" }}>Withdraw</button>
+            <button
+              onClick={() => setModalType("deposit")}
+              style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, border: "none", borderRadius: "10px", background: colors.accent, color: "#fff", cursor: "pointer" }}
+            >
+              Deposit
+            </button>
+            <button
+              onClick={() => setModalType("withdrawal")}
+              style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, border: `1px solid ${colors.btnBorder}`, borderRadius: "10px", background: colors.btnBg, color: colors.textSub, cursor: "pointer" }}
+            >
+              Withdraw
+            </button>
           </div>
 
           <div className="rounded-xl p-4" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
@@ -147,6 +349,14 @@ export default function Overview() {
           </div>
         </aside>
       </div>
+
+      <FundModal
+        type={modalType}
+        onClose={() => setModalType(null)}
+        onSuccess={(msg) => setSuccessMsg(msg)}
+        colors={colors}
+        email={email}
+      />
     </DashboardLayout>
   );
 }

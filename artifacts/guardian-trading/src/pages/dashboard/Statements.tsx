@@ -1,18 +1,42 @@
-import { useState } from "react";
-import { Download, FileText } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Download, FileText, RefreshCw } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
+import { getApiBase } from "@/lib/api";
+
+interface BalanceHistoryRecord {
+  timestamp: string;
+  transactionType: string;
+  newBalance: number;
+  prevBalance: number;
+  balanceChange: number;
+  newProfit: number;
+  prevProfit: number;
+  profitChange: number;
+  note: string;
+  actor: string;
+}
 
 interface Transaction {
   id: string;
   date: string;
   description: string;
-  type: "Trade" | "Deposit" | "Withdrawal" | "Dividend" | "Fee";
-  symbol?: string;
-  qty?: number;
-  price?: number;
+  type: "Trade" | "Deposit" | "Withdrawal" | "Dividend" | "Fee" | "Adjustment";
   amount: number;
   balance: number;
+}
+
+function toDisplayType(txType: string): Transaction["type"] {
+  const map: Record<string, Transaction["type"]> = {
+    deposit: "Deposit",
+    withdrawal: "Withdrawal",
+    adjustment: "Adjustment",
+    bonus: "Dividend",
+    refund: "Dividend",
+    fee: "Fee",
+    correction: "Adjustment",
+  };
+  return map[txType.toLowerCase()] ?? "Adjustment";
 }
 
 function EmptyState({ icon: Icon, title, message }: { icon: React.ElementType; title: string; message: string }) {
@@ -28,24 +52,58 @@ function EmptyState({ icon: Icon, title, message }: { icon: React.ElementType; t
   );
 }
 
+const ALL_TYPES: Array<"All" | Transaction["type"]> = ["All", "Deposit", "Withdrawal", "Trade", "Dividend", "Fee", "Adjustment"];
+
 export default function Statements() {
   const { colors } = useTheme();
-  const TRANSACTIONS: Transaction[] = [];
+  const API = getApiBase();
+  const email = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("signupEmail") ?? "" : "";
 
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
   const [typeFilter, setTypeFilter] = useState<"All" | Transaction["type"]>("All");
   const [search, setSearch] = useState("");
   const [downloading, setDownloading] = useState<"csv" | null>(null);
 
-  const filtered = TRANSACTIONS.filter((t) =>
+  const fetchTransactions = useCallback(async () => {
+    if (!email) { setLoading(false); return; }
+    try {
+      setLoading(true);
+      const res = await fetch(`${API}/api/user/balance/${encodeURIComponent(email)}`);
+      if (!res.ok) { setLoading(false); return; }
+      const data = await res.json() as { history?: BalanceHistoryRecord[] };
+      const history = data.history ?? [];
+      const txs: Transaction[] = history
+        .slice()
+        .reverse()
+        .map((h, i) => ({
+          id: `TX-${String(i + 1).padStart(4, "0")}`,
+          date: new Date(h.timestamp).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
+          description: h.note || toDisplayType(h.transactionType),
+          type: toDisplayType(h.transactionType),
+          amount: h.balanceChange,
+          balance: h.newBalance,
+        }));
+      setTransactions(txs);
+    } catch {
+      setTransactions([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [email, API]);
+
+  useEffect(() => { fetchTransactions(); }, [fetchTransactions]);
+
+  const filtered = transactions.filter((t) =>
     (typeFilter === "All" || t.type === typeFilter) &&
-    (t.description.toLowerCase().includes(search.toLowerCase()) || t.id.toLowerCase().includes(search.toLowerCase()) || (t.symbol ?? "").toLowerCase().includes(search.toLowerCase()))
+    (t.description.toLowerCase().includes(search.toLowerCase()) || t.id.toLowerCase().includes(search.toLowerCase()))
   );
 
-  const handleDownload = (format: "csv") => {
-    if (TRANSACTIONS.length === 0) return;
-    setDownloading(format);
-    const headers = ["ID", "Date", "Description", "Type", "Symbol", "Qty", "Price", "Amount", "Balance"];
-    const rows = TRANSACTIONS.map((t) => [t.id, t.date, t.description, t.type, t.symbol ?? "", t.qty ?? "", t.price ?? "", t.amount, t.balance].join(","));
+  const handleDownload = () => {
+    if (transactions.length === 0) return;
+    setDownloading("csv");
+    const headers = ["ID", "Date", "Description", "Type", "Amount", "Balance"];
+    const rows = filtered.map((t) => [t.id, t.date, `"${t.description}"`, t.type, t.amount, t.balance].join(","));
     const csv = [headers.join(","), ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -55,8 +113,8 @@ export default function Statements() {
     setTimeout(() => setDownloading(null), 1200);
   };
 
-  const totalIn  = TRANSACTIONS.filter((t) => t.amount > 0).reduce((s, t) => s + t.amount, 0);
-  const totalOut = TRANSACTIONS.filter((t) => t.amount < 0).reduce((s, t) => s + Math.abs(t.amount), 0);
+  const totalIn  = filtered.filter((t) => t.amount > 0).reduce((s, t) => s + t.amount, 0);
+  const totalOut = filtered.filter((t) => t.amount < 0).reduce((s, t) => s + Math.abs(t.amount), 0);
   const netBalance = totalIn - totalOut;
 
   const typeColors: Record<string, { bg: string; text: string }> = {
@@ -65,6 +123,7 @@ export default function Statements() {
     Withdrawal: { bg: colors.redBg, text: colors.red },
     Dividend:   { bg: colors.yellowBg, text: colors.yellow },
     Fee:        { bg: colors.filterBar, text: colors.textMuted },
+    Adjustment: { bg: colors.filterBar, text: colors.textMuted },
   };
 
   return (
@@ -75,20 +134,36 @@ export default function Statements() {
             <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary }}>Statements</h1>
             <p style={{ fontSize: "12px", color: colors.textMuted, marginTop: "2px" }}>Transaction history & reports</p>
           </div>
-          <button
-            onClick={() => handleDownload("csv")}
-            disabled={TRANSACTIONS.length === 0}
-            className="flex items-center gap-2"
-            style={{
-              padding: "9px 16px", fontSize: "13px", fontWeight: 600,
-              border: `1px solid ${colors.btnBorder}`, borderRadius: "10px",
-              background: colors.btnBg, color: colors.textSub, cursor: TRANSACTIONS.length === 0 ? "not-allowed" : "pointer",
-              opacity: TRANSACTIONS.length === 0 ? 0.5 : 1,
-            }}
-          >
-            <Download size={14} />
-            {downloading ? "Exporting..." : "Export CSV"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={fetchTransactions}
+              disabled={loading}
+              aria-label="Refresh"
+              className="flex items-center gap-2"
+              style={{
+                padding: "9px 14px", fontSize: "13px", fontWeight: 600,
+                border: `1px solid ${colors.btnBorder}`, borderRadius: "10px",
+                background: colors.btnBg, color: colors.textSub, cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.6 : 1,
+              }}
+            >
+              <RefreshCw size={14} style={{ animation: loading ? "spin 1s linear infinite" : "none" }} />
+            </button>
+            <button
+              onClick={handleDownload}
+              disabled={filtered.length === 0}
+              className="flex items-center gap-2"
+              style={{
+                padding: "9px 16px", fontSize: "13px", fontWeight: 600,
+                border: `1px solid ${colors.btnBorder}`, borderRadius: "10px",
+                background: colors.btnBg, color: colors.textSub, cursor: filtered.length === 0 ? "not-allowed" : "pointer",
+                opacity: filtered.length === 0 ? 0.5 : 1,
+              }}
+            >
+              <Download size={14} />
+              {downloading ? "Exporting..." : "Export CSV"}
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
@@ -113,7 +188,7 @@ export default function Statements() {
               style={{ flex: 1, padding: "8px 14px", fontSize: "13px", border: `1px solid ${colors.inputBorder}`, borderRadius: "10px", color: colors.inputText, background: colors.inputBg, outline: "none" }}
             />
             <div className="flex gap-1 overflow-x-auto pb-1 sm:pb-0" style={{ scrollbarWidth: "none" }}>
-              {(["All", "Trade", "Deposit", "Withdrawal", "Dividend", "Fee"] as ("All" | Transaction["type"])[]).map((t) => (
+              {ALL_TYPES.filter(t => t === "All" || transactions.some(tx => tx.type === t)).map((t) => (
                 <button key={t} onClick={() => setTypeFilter(t)} style={{
                   padding: "6px 14px", fontSize: "12px", fontWeight: 600, borderRadius: "7px",
                   border: "none", cursor: "pointer", flexShrink: 0,
@@ -124,16 +199,20 @@ export default function Statements() {
             </div>
           </div>
 
-          {filtered.length === 0 ? (
+          {loading ? (
+            <div style={{ padding: "32px 16px", textAlign: "center", color: colors.textMuted, fontSize: "13px" }}>
+              Loading transactions…
+            </div>
+          ) : filtered.length === 0 ? (
             <EmptyState
               icon={FileText}
               title="No transactions yet"
-              message="Your transaction history will appear here once you make deposits, withdrawals, or trades."
+              message="Your transaction history will appear here once deposits, withdrawals, or trades are processed."
             />
           ) : (
             <>
               <div className="hidden sm:block overflow-x-auto">
-                <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "700px" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "600px" }}>
                   <thead>
                     <tr>
                       {["ID", "Date", "Description", "Type", "Amount", "Balance"].map((h) => (
@@ -143,7 +222,7 @@ export default function Statements() {
                   </thead>
                   <tbody>
                     {filtered.map((t) => {
-                      const tc = typeColors[t.type] ?? typeColors.Fee;
+                      const tc = typeColors[t.type] ?? typeColors.Adjustment;
                       return (
                         <tr key={t.id} style={{ borderBottom: `1px solid ${colors.tableRowBorder}` }}
                           onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.background = colors.tableRowHoverBg}
@@ -168,7 +247,7 @@ export default function Statements() {
               </div>
               <div className="block sm:hidden space-y-3">
                 {filtered.map((t) => {
-                  const tc = typeColors[t.type] ?? typeColors.Fee;
+                  const tc = typeColors[t.type] ?? typeColors.Adjustment;
                   return (
                     <div key={t.id} className="flex items-center justify-between p-3 rounded-xl" style={{ border: `1px solid ${colors.divider}` }}>
                       <div>

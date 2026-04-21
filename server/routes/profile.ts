@@ -12,10 +12,12 @@ import {
   getStoredPasswordHash,
   saveUserCredentials,
   getUserBalance,
+  addAdminNotification,
+  addNotification,
 } from "../lib/userDataStore.js";
 import { getPool } from "../lib/db.js";
 import { userDataLimit, sensitiveEndpointLimit } from "../middleware/security.js";
-import { validate, ProfileUpdateSchema, ChangePasswordSchema, NotificationPrefsSchema, AuthCheckEmailSchema, KycResubmitSchema } from "../lib/validation.js";
+import { validate, ProfileUpdateSchema, ChangePasswordSchema, NotificationPrefsSchema, AuthCheckEmailSchema, KycResubmitSchema, FundRequestSchema } from "../lib/validation.js";
 
 const BCRYPT_ROUNDS = 12;
 
@@ -265,7 +267,7 @@ profileRouter.get("/user/balance/:email", userDataLimit, async (req, res) => {
       return;
     }
     const bal = await getUserBalance(email);
-    res.json({ email, balance: bal.balance, profit: bal.profit, updatedAt: bal.updatedAt });
+    res.json({ email, balance: bal.balance, profit: bal.profit, updatedAt: bal.updatedAt, history: bal.history });
   } catch (err) {
     console.error("[Profile] user balance error:", err);
     res.status(500).json({ error: "Failed to get balance" });
@@ -378,6 +380,41 @@ profileRouter.use((err: Error, _req: Request, res: Response, _next: NextFunction
   }
   console.error("[Profile] Unexpected error:", err);
   res.status(500).json({ error: "Internal server error" });
+});
+
+profileRouter.post("/user/fund-request", sensitiveEndpointLimit, validate(FundRequestSchema), async (req, res) => {
+  try {
+    const { email, type, amount, note } = req.body as { email: string; type: "deposit" | "withdrawal"; amount: number; note?: string };
+
+    const userData = await getUserData(email);
+    if (!userData) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const label = type === "deposit" ? "Deposit" : "Withdrawal";
+    const formattedAmt = `$${amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+
+    await addNotification(email, {
+      type: "account",
+      title: `${label} Request Received`,
+      message: `Your ${type} request for ${formattedAmt} has been received and is under review. We will process it within 1-3 business days.`,
+    });
+
+    await addAdminNotification({
+      type,
+      title: `${label} Request — ${email}`,
+      message: `User requested a ${type} of ${formattedAmt}.${note ? ` Note: ${note}` : ""}`,
+      userEmail: email,
+      meta: { amount, type, note: note ?? null },
+    });
+
+    console.log(`[Profile] Fund request: ${email} ${type} $${amount}`);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("[Profile] fund-request error:", err);
+    res.status(500).json({ error: "Failed to submit request" });
+  }
 });
 
 export default profileRouter;

@@ -2,6 +2,12 @@
 
 A comprehensive financial trading platform with KYC/AML compliance, an admin dashboard, and an AI-powered trading assistant.
 
+## Recent Changes
+- **Deposit/Withdraw Modal:** `Overview.tsx` — both buttons now open a fund request modal. Requests POST to `/api/user/fund-request`, creating an admin notification and a user confirmation notification.
+- **Fund Request Endpoint:** `server/routes/profile.ts` — new `POST /api/user/fund-request` endpoint, validated with `FundRequestSchema`.
+- **Security (Zod strict mode):** `server/lib/validation.ts` — `AuthLoginSchema` and `AuthRegisterSchema` now use `.strict()` to reject extra properties.
+- **New validation schema:** `FundRequestSchema` added to `server/lib/validation.ts`.
+
 ## Architecture
 
 This is a **pnpm monorepo** with three main services running in parallel:
