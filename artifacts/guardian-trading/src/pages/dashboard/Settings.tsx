@@ -6,6 +6,7 @@ import DashboardLayout from "./DashboardLayout";
 import { useTheme, type ThemeColors } from "@/context/ThemeContext";
 import { getCountries, getStates, getCities, getStateLabel, type LocationOption } from "@/lib/location/locationService";
 import ImageCropper from "@/components/ImageCropper";
+import VerifiedBadge from "@/components/VerifiedBadge";
 
 type Section = "profile" | "security" | "notifications";
 type TwoFAStep = "idle" | "qr" | "verify" | "backup" | "disable";
@@ -386,20 +387,25 @@ export default function Settings() {
                     {displayName[0]?.toUpperCase() ?? "U"}
                   </div>
                 )}
+                <div style={{ position: "absolute", bottom: "-5px", left: "-5px", filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.4))" }}>
+                  <VerifiedBadge size={22} />
+                </div>
                 <input ref={picInputRef} type="file" accept=".jpg,.jpeg,.png,.webp,.gif" onChange={handlePicSelect} style={{ display: "none" }} />
                 <button onClick={() => picInputRef.current?.click()} disabled={picUploading}
                   style={{ position: "absolute", bottom: "-4px", right: "-4px", width: "26px", height: "26px", borderRadius: "50%", background: picUploading ? colors.textMuted : colors.accent, color: "#fff", border: `2px solid ${colors.card}`, cursor: picUploading ? "wait" : "pointer", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1 }}>
                   {picUploading ? "…" : "+"}
                 </button>
               </div>
-              <p style={{ fontSize: "14px", fontWeight: 700, color: colors.textPrimary, marginBottom: "2px" }}>{firstName || displayName}</p>
+              <div className="flex items-center gap-1.5" style={{ marginBottom: "2px" }}>
+                <p style={{ fontSize: "14px", fontWeight: 700, color: colors.textPrimary }}>{firstName || displayName}</p>
+                <VerifiedBadge size={14} />
+              </div>
               <p style={{ fontSize: "11px", color: colors.textMuted }}>{email}</p>
               {(profilePic || picPreview) && (
                 <button onClick={handlePicRemove} style={{ marginTop: "6px", fontSize: "10px", color: colors.red ?? "#ef4444", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>
                   Remove photo
                 </button>
               )}
-              <span className="mt-3 px-3 py-1 rounded-md text-xs font-bold" style={{ background: colors.greenBg, color: colors.green }}>Approved</span>
             </div>
 
             <div className="flex md:flex-col gap-1.5 md:gap-0 overflow-x-auto md:overflow-visible rounded-xl md:rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}` }}>

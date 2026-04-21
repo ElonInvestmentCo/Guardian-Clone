@@ -9,6 +9,7 @@ import {
   X, CheckCheck, ExternalLink,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
+import VerifiedBadge from "@/components/VerifiedBadge";
 
 
 const LOGO_URL = "/images/img-guardian-logo-reversed.png";
@@ -588,19 +589,27 @@ export default function DashboardLayout({ children }: Props) {
               onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = colors.cardHover; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = colors.inputBg; }}
             >
-              {profilePicUrl ? (
-                <div style={{ width: "32px", height: "32px", borderRadius: "6px", overflow: "hidden", flexShrink: 0 }}>
-                  <img src={profilePicUrl} alt={displayName}
-                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              <div style={{ position: "relative", flexShrink: 0 }}>
+                {profilePicUrl ? (
+                  <div style={{ width: "32px", height: "32px", borderRadius: "6px", overflow: "hidden" }}>
+                    <img src={profilePicUrl} alt={displayName}
+                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center rounded-md font-bold text-white"
+                    style={{ width: "32px", height: "32px", background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", fontSize: "12px", borderRadius: "6px" }}>
+                    {displayName[0]?.toUpperCase() ?? "U"}
+                  </div>
+                )}
+                <div style={{ position: "absolute", bottom: "-5px", right: "-5px", filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))" }}>
+                  <VerifiedBadge size={14} />
                 </div>
-              ) : (
-                <div className="flex items-center justify-center rounded-md font-bold text-white"
-                  style={{ width: "32px", height: "32px", background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", fontSize: "12px", borderRadius: "6px", flexShrink: 0 }}>
-                  {displayName[0]?.toUpperCase() ?? "U"}
-                </div>
-              )}
+              </div>
               <div className="hidden lg:block">
-                <p style={{ fontSize: "12px", fontWeight: 600, color: colors.textPrimary, lineHeight: 1.2, margin: 0 }}>{displayName}</p>
+                <div className="flex items-center gap-1">
+                  <p style={{ fontSize: "12px", fontWeight: 600, color: colors.textPrimary, lineHeight: 1.2, margin: 0 }}>{displayName}</p>
+                  <VerifiedBadge size={11} />
+                </div>
                 <p style={{ fontSize: "10px", color: colors.textMuted, lineHeight: 1.2, margin: 0 }}>Pro Account</p>
               </div>
               <ChevronDown size={12} color={colors.textMuted} className="hidden lg:block" />
