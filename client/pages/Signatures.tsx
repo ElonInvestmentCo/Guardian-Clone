@@ -16,6 +16,17 @@ const DISCLOSURE_DOCS = [
 
 type Fields = "consents" | "tradingPlan" | "signatureName" | "signature";
 
+function getPos(e: MouseEvent | TouchEvent, canvas: HTMLCanvasElement) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  if (e instanceof TouchEvent) {
+    const t = e.touches[0] ?? e.changedTouches[0];
+    return { x: (t.clientX - rect.left) * scaleX, y: (t.clientY - rect.top) * scaleY };
+  }
+  return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
+}
+
 export default function Signatures() {
   const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(11);
 
@@ -25,10 +36,10 @@ export default function Signatures() {
     (sd.consents as Record<string, boolean>) ??
     Object.fromEntries(DISCLOSURE_DOCS.map((d) => [d, false]))
   );
-  const [tradingPlan,       setTradingPlan]       = useState((sd.tradingPlan       as string)  ?? "");
-  const [electronicDelivery,setElectronicDelivery]= useState((sd.electronicDelivery as boolean) ?? false);
-  const [signatureDataUrl,  setSignatureDataUrl]   = useState<string | null>(null);
-  const [signatureName,     setSignatureName]      = useState((sd.signatureName     as string)  ?? "");
+  const [tradingPlan,        setTradingPlan]        = useState((sd.tradingPlan        as string)  ?? "");
+  const [electronicDelivery, setElectronicDelivery] = useState((sd.electronicDelivery as boolean) ?? false);
+  const [signatureDataUrl,   setSignatureDataUrl]   = useState<string | null>(null);
+  const [signatureName,      setSignatureName]      = useState((sd.signatureName      as string)  ?? "");
 
   const [showElectronicModal, setShowElectronicModal] = useState(false);
   const [electronicAgreed,    setElectronicAgreed]    = useState(false);
@@ -37,42 +48,102 @@ export default function Signatures() {
   const [errors, setErrors] = useState<FieldErrors<Fields>>({});
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const drawing   = useRef(false);
+  const isDrawing = useRef(false);
   const lastPos   = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
-    if (showSignatureModal && canvasRef.current) {
-      const ctx = canvasRef.current.getContext("2d");
-      if (ctx) { ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height); }
-    }
+    if (!showSignatureModal) return;
+
+    let rafId: number;
+    let removeListeners: (() => void) | null = null;
+
+    rafId = requestAnimationFrame(() => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const rect = canvas.getBoundingClientRect();
+      canvas.width  = Math.round(rect.width)  || 408;
+      canvas.height = Math.round(rect.height) || 130;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const onStart = (e: MouseEvent | TouchEvent) => {
+        e.preventDefault();
+        isDrawing.current = true;
+        lastPos.current = getPos(e, canvas);
+      };
+
+      const onMove = (e: MouseEvent | TouchEvent) => {
+        e.preventDefault();
+        if (!isDrawing.current || !lastPos.current) return;
+        const c = canvas.getContext("2d");
+        if (!c) return;
+        const pos = getPos(e, canvas);
+        c.beginPath();
+        c.moveTo(lastPos.current.x, lastPos.current.y);
+        c.lineTo(pos.x, pos.y);
+        c.strokeStyle = "#1c1c1c";
+        c.lineWidth = 2.5;
+        c.lineCap = "round";
+        c.lineJoin = "round";
+        c.stroke();
+        lastPos.current = pos;
+      };
+
+      const onEnd = () => {
+        isDrawing.current = false;
+        lastPos.current = null;
+      };
+
+      canvas.addEventListener("mousedown",   onStart, { passive: false });
+      canvas.addEventListener("mousemove",   onMove,  { passive: false });
+      canvas.addEventListener("mouseup",     onEnd);
+      canvas.addEventListener("mouseleave",  onEnd);
+      canvas.addEventListener("touchstart",  onStart, { passive: false });
+      canvas.addEventListener("touchmove",   onMove,  { passive: false });
+      canvas.addEventListener("touchend",    onEnd,   { passive: false });
+      canvas.addEventListener("touchcancel", onEnd,   { passive: false });
+
+      removeListeners = () => {
+        canvas.removeEventListener("mousedown",   onStart);
+        canvas.removeEventListener("mousemove",   onMove);
+        canvas.removeEventListener("mouseup",     onEnd);
+        canvas.removeEventListener("mouseleave",  onEnd);
+        canvas.removeEventListener("touchstart",  onStart);
+        canvas.removeEventListener("touchmove",   onMove);
+        canvas.removeEventListener("touchend",    onEnd);
+        canvas.removeEventListener("touchcancel", onEnd);
+      };
+    });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      if (removeListeners) removeListeners();
+      isDrawing.current = false;
+      lastPos.current = null;
+    };
   }, [showSignatureModal]);
 
-  const getXY = (e: React.MouseEvent | React.TouchEvent, canvas: HTMLCanvasElement) => {
-    const rect = canvas.getBoundingClientRect();
-    const sx = canvas.width / rect.width;
-    const sy = canvas.height / rect.height;
-    if ("touches" in e) { const t = (e as React.TouchEvent).touches[0]; return { x: (t.clientX - rect.left) * sx, y: (t.clientY - rect.top) * sy }; }
-    const m = e as React.MouseEvent;
-    return { x: (m.clientX - rect.left) * sx, y: (m.clientY - rect.top) * sy };
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
   };
 
-  const startDraw = (e: React.MouseEvent | React.TouchEvent) => { e.preventDefault(); const canvas = canvasRef.current; if (!canvas) return; drawing.current = true; lastPos.current = getXY(e, canvas); };
-  const doDraw   = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault(); if (!drawing.current || !lastPos.current) return;
-    const canvas = canvasRef.current; if (!canvas) return;
-    const ctx = canvas.getContext("2d"); if (!ctx) return;
-    const pos = getXY(e, canvas);
-    ctx.beginPath(); ctx.moveTo(lastPos.current.x, lastPos.current.y); ctx.lineTo(pos.x, pos.y);
-    ctx.strokeStyle = "#1c1c1c"; ctx.lineWidth = 2.5; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.stroke();
-    lastPos.current = pos;
+  const submitSignature = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    setSignatureDataUrl(canvas.toDataURL("image/png"));
+    setShowSignatureModal(false);
+    setErrors((p) => ({ ...p, signature: undefined }));
   };
-  const stopDraw = () => { drawing.current = false; lastPos.current = null; };
-  const clearCanvas = () => {
-    const canvas = canvasRef.current; if (!canvas) return;
-    const ctx = canvas.getContext("2d"); if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-  };
-  const submitSignature = () => { const canvas = canvasRef.current; if (!canvas) return; setSignatureDataUrl(canvas.toDataURL("image/png")); setShowSignatureModal(false); setErrors((p) => ({ ...p, signature: undefined })); };
 
   const validateAll = (): FieldErrors<Fields> => {
     const e: FieldErrors<Fields> = {};
@@ -186,7 +257,7 @@ export default function Signatures() {
               {errors.signature && !signatureDataUrl && <p className="mb-2 text-xs" style={{ color: "#e53e3e" }}>{errors.signature}</p>}
               {signatureDataUrl && (
                 <div className="mb-4" style={{ border: "1px solid #dde3e9", borderRadius: "2px", padding: "4px", display: "inline-block" }}>
-                  <img src={signatureDataUrl} alt="Signature" style={{ height: "80px", maxWidth: "300px", objectFit: "contain", display: "block" }} />
+                  <img src={signatureDataUrl} alt="Your signature" style={{ height: "80px", maxWidth: "300px", objectFit: "contain", display: "block" }} />
                 </div>
               )}
               <p style={{ fontSize: "11.5px", color: "#555", lineHeight: "1.65", marginBottom: "12px" }}>By entering your full name, you are signing this Agreement electronically. You agree your electronic signature is the legal equivalent of your manual/handwritten signature on this Agreement.</p>
@@ -237,7 +308,19 @@ export default function Signatures() {
               <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
             </div>
             <p style={{ fontSize: "12px", color: "#666", marginBottom: "8px" }}>Draw your New Signature</p>
-            <canvas ref={canvasRef} width={400} height={130} style={{ border: "1px solid #dde3e9", borderRadius: "2px", width: "100%", height: "130px", cursor: "crosshair", touchAction: "none", background: "#fff" }} onMouseDown={startDraw} onMouseMove={doDraw} onMouseUp={stopDraw} onMouseLeave={stopDraw} onTouchStart={startDraw} onTouchMove={doDraw} onTouchEnd={stopDraw} />
+            <canvas
+              ref={canvasRef}
+              style={{
+                border: "1px solid #dde3e9",
+                borderRadius: "2px",
+                width: "100%",
+                height: "130px",
+                cursor: "crosshair",
+                touchAction: "none",
+                background: "#fff",
+                display: "block",
+              }}
+            />
             <div className="flex justify-end mt-1 mb-4">
               <button type="button" onClick={clearCanvas} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "#3a7bd5", textDecoration: "underline" }}>Clear</button>
             </div>
