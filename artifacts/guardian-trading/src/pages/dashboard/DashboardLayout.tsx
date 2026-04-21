@@ -458,7 +458,7 @@ export default function DashboardLayout({ children }: Props) {
               {/* Notification Dropdown */}
               {notifOpen && (
                 <div
-                  className="gt-dropdown absolute right-0 top-[calc(100%+8px)] z-[100] rounded-xl shadow-2xl overflow-hidden"
+                  className="gt-dropdown gt-notif-dropdown absolute right-0 top-[calc(100%+8px)] z-[100] rounded-xl shadow-2xl overflow-hidden"
                   style={{
                     width: "340px",
                     background: colors.card,
@@ -619,7 +619,7 @@ export default function DashboardLayout({ children }: Props) {
 
         {/* ── Page Content ──────────────────────────────────────────── */}
         <div
-          className="flex-1 overflow-y-auto"
+          className="flex-1 overflow-y-auto gt-page-content"
           style={{ scrollbarWidth: "thin", scrollbarColor: `${colors.scrollbar} transparent` }}
         >
           {children}
@@ -652,7 +652,7 @@ export default function DashboardLayout({ children }: Props) {
                 aria-current={isActive ? "page" : undefined}
               >
                 <Icon size={18} strokeWidth={isActive ? 2.2 : 1.5} />
-                <span style={{ fontSize: "9px", fontWeight: isActive ? 700 : 400 }}>{label}</span>
+                <span className="gt-bottom-nav-label" style={{ fontSize: "9px", fontWeight: isActive ? 700 : 400 }}>{label}</span>
                 {label === "Notifications" && unreadCount > 0 && (
                   <span
                     className="absolute top-1 right-[calc(50%-16px)] flex items-center justify-center rounded-full text-white"

@@ -88,21 +88,21 @@ export default function KycQueueView({ onOpenProfile }: KycQueueProps = {}) {
           </button>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
-          <div className="btn-group btn-group-sm">
+        <div className="admin-filter-bar" style={{ marginTop: 12 }}>
+          <div className="admin-status-filters">
             {STATUS_FILTERS.map(({ value, label }) => (
               <button
                 key={value}
-                className={`btn ${statusFilter === value ? "btn-primary" : "btn-outline-secondary"}`}
+                className={`btn btn-sm ${statusFilter === value ? "btn-primary" : "btn-outline-secondary"}`}
                 onClick={() => { setStatusFilter(value); setPage(1); }}
-                style={{ fontSize: 12 }}
+                style={{ fontSize: 11 }}
               >
                 {label}
               </button>
             ))}
           </div>
 
-          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <label style={{ fontSize: 11, color: "#64748B" }}>Min risk</label>
             <select
               className="form-select form-select-sm"

@@ -332,3 +332,45 @@
 .gt-input-wrap:focus-within::after {
   transform: scaleX(1);
 }
+
+/* ── Responsive Notification Dropdown ─────────────────────────── */
+.gt-notif-dropdown {
+  max-width: min(340px, calc(100vw - 16px));
+}
+
+/* On small screens push dropdown away from right edge if needed */
+@media (max-width: 400px) {
+  .gt-notif-dropdown {
+    right: -8px !important;
+    width: calc(100vw - 16px) !important;
+  }
+}
+
+/* ── Page content padding: don't hide behind mobile bottom nav ── */
+@media (max-width: 767px) {
+  .gt-page-content {
+    padding-bottom: 60px;
+  }
+}
+
+/* ── Mobile Bottom Nav: hide labels on very small screens ─────── */
+@media (max-width: 359px) {
+  .gt-bottom-nav-label {
+    display: none;
+  }
+}
+
+/* ── Dashboard stats grid: single column on 320px ─────────────── */
+@media (max-width: 359px) {
+  .gt-stat-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Onboarding shell: reduce padding on very small screens ────── */
+@media (max-width: 480px) {
+  .gt-onboarding-card {
+    padding: 20px 16px !important;
+    margin: 0 8px !important;
+  }
+}

@@ -699,7 +699,7 @@ body {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  width: 360px;
+  width: min(360px, calc(100vw - 16px));
   background: var(--dropdown-bg);
   border: 1px solid var(--dropdown-border);
   border-radius: 12px;
@@ -855,4 +855,92 @@ body {
 .spinner-border-sm {
   width: 1rem;
   height: 1rem;
+}
+
+/* ── Mobile Responsive Enhancements ────────────────────────────── */
+
+/* Make filter button groups wrap on small screens */
+.admin-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Status filter buttons: allow wrapping */
+.admin-status-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* Ensure table wrapper always scrolls horizontally */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* View wrapper needs safe scroll area */
+.safee-main > .view-wrapper {
+  overflow: auto;
+}
+
+@media (max-width: 991.98px) {
+  /* Give content area full height minus header on mobile */
+  .safee-main {
+    min-height: calc(100vh - var(--header-height));
+  }
+
+  /* Stat cards: 2 columns on tablets */
+  .stat-grid-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Table: reduce padding on mobile */
+  .table-safee th,
+  .table-safee td {
+    padding: 10px 12px;
+    font-size: 12.5px;
+  }
+
+  /* Card body: reduce padding */
+  .card-safee .card-body {
+    padding: 14px;
+  }
+
+  /* Admin search overlay: reduced top offset on mobile */
+  .admin-search-overlay {
+    padding-top: 56px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  /* Stat cards: single column on phones */
+  .stat-grid-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Filter bar: wrap on phones */
+  .admin-filter-bar {
+    gap: 6px;
+  }
+
+  /* Reduce table padding on phones */
+  .table-safee th,
+  .table-safee td {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  /* Keep login card full width on phones */
+  .safee-login .login-card {
+    border-radius: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Card padding */
+  .safee-main > .view-wrapper.with-padding {
+    padding: 14px;
+  }
 }

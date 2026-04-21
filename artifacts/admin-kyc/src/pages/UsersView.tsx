@@ -116,8 +116,8 @@ export default function UsersView({ onOpenProfile }: Props) {
           </div>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
-          <div style={{ position: "relative", flex: "0 1 220px" }}>
+        <div className="admin-filter-bar" style={{ marginTop: 12 }}>
+          <div style={{ position: "relative", flex: "0 1 220px", minWidth: 160 }}>
             <i className="bi bi-search" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "#94A3B8", fontSize: 13 }} />
             <input
               type="text"
@@ -128,11 +128,11 @@ export default function UsersView({ onOpenProfile }: Props) {
               style={{ paddingLeft: 32, fontSize: 12 }}
             />
           </div>
-          <div className="btn-group btn-group-sm">
+          <div className="admin-status-filters">
             {STATUS_FILTERS.map(({ value, label }) => (
               <button
                 key={value}
-                className={`btn ${statusFilter === value ? "btn-primary" : "btn-outline-secondary"}`}
+                className={`btn btn-sm ${statusFilter === value ? "btn-primary" : "btn-outline-secondary"}`}
                 onClick={() => setStatusFilter(value)}
                 style={{ fontSize: 11 }}
               >
