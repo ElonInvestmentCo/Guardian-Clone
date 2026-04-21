@@ -16,6 +16,50 @@ export interface AiProvider {
   chat(messages: AiMessage[]): Promise<string>;
 }
 
+function buildCloudflareProvider(): AiProvider {
+  const token = process.env.CLOUDFLARE_API_TOKEN;
+  if (!token) throw new Error("CLOUDFLARE_API_TOKEN must be set for Cloudflare provider");
+
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  if (!accountId) throw new Error("CLOUDFLARE_ACCOUNT_ID must be set for Cloudflare provider");
+
+  const client = new OpenAI({
+    apiKey: process.env.CLOUDFLARE_API_TOKEN,
+    baseURL: `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1`,
+    defaultHeaders: {
+      Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+    },
+  });
+
+  return {
+    name: "cloudflare",
+
+    async *chatStream(messages: AiMessage[]): AsyncIterable<AiStreamChunk> {
+      const stream = await client.chat.completions.create({
+        model: "gpt-5",
+        max_tokens: 8192,
+        messages,
+        stream: true,
+      });
+
+      for await (const chunk of stream) {
+        const content = chunk.choices[0]?.delta?.content;
+        if (content) yield { content };
+      }
+      yield { done: true };
+    },
+
+    async chat(messages: AiMessage[]): Promise<string> {
+      const resp = await client.chat.completions.create({
+        model: "gpt-5",
+        max_tokens: 8192,
+        messages,
+      });
+      return resp.choices[0]?.message?.content ?? "";
+    },
+  };
+}
+
 function buildOpenAiProvider(): AiProvider {
   const client = new OpenAI({
     apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY ?? "",
@@ -94,15 +138,20 @@ let _provider: AiProvider | null = null;
 export function getAiProvider(): AiProvider {
   if (_provider) return _provider;
 
-  const grokKey = process.env.XAI_API_KEY || process.env.GROK_API_KEY;
-  if (grokKey) {
-    console.log("[AI] Using Grok (xAI) provider");
-    _provider = buildGrokProvider();
-  } else if (process.env.AI_INTEGRATIONS_OPENAI_BASE_URL) {
-    console.log("[AI] Using OpenAI provider (Replit integration)");
-    _provider = buildOpenAiProvider();
+  if (process.env.CLOUDFLARE_API_TOKEN) {
+    console.log("[AI] Using Cloudflare AI provider (gpt-5)");
+    _provider = buildCloudflareProvider();
   } else {
-    throw new Error("No AI provider configured. Set XAI_API_KEY for Grok or provision OpenAI integration.");
+    const grokKey = process.env.XAI_API_KEY || process.env.GROK_API_KEY;
+    if (grokKey) {
+      console.log("[AI] Using Grok (xAI) provider");
+      _provider = buildGrokProvider();
+    } else if (process.env.AI_INTEGRATIONS_OPENAI_BASE_URL) {
+      console.log("[AI] Using OpenAI provider (Replit integration)");
+      _provider = buildOpenAiProvider();
+    } else {
+      throw new Error("No AI provider configured. Set CLOUDFLARE_API_TOKEN for Cloudflare, XAI_API_KEY for Grok, or provision the OpenAI integration.");
+    }
   }
 
   return _provider;
