@@ -454,3 +454,84 @@ export async function createAdminUser(
   await setProfile(email, profile);
   console.log(`[UserDataStore] Admin created user: ${email}`);
 }
+
+
+// ─── Admin Notifications ────────────────────────────────────────────────────
+
+export interface AdminNotificationRecord {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  userEmail: string | null;
+  meta: Record<string, unknown>;
+  isRead: boolean;
+  createdAt: string;
+}
+
+export async function addAdminNotification(notification: {
+  type: string;
+  title: string;
+  message: string;
+  userEmail?: string;
+  meta?: Record<string, unknown>;
+}): Promise<void> {
+  const id = crypto.randomUUID();
+  const pool = getPool();
+  await pool.query(
+    `INSERT INTO admin_notifications (id, type, title, message, user_email, meta, is_read, created_at)
+     VALUES ($1, $2, $3, $4, $5, $6, FALSE, NOW())`,
+    [
+      id,
+      notification.type,
+      notification.title,
+      notification.message,
+      notification.userEmail ?? null,
+      JSON.stringify(notification.meta ?? {}),
+    ]
+  );
+}
+
+export async function getAdminNotifications(limit = 50): Promise<AdminNotificationRecord[]> {
+  const pool = getPool();
+  const result = await pool.query(
+    `SELECT id, type, title, message, user_email, meta, is_read, created_at
+     FROM admin_notifications
+     ORDER BY created_at DESC
+     LIMIT $1`,
+    [limit]
+  );
+  return result.rows.map((r: Record<string, unknown>) => ({
+    id: r["id"] as string,
+    type: r["type"] as string,
+    title: r["title"] as string,
+    message: r["message"] as string,
+    userEmail: r["user_email"] as string | null,
+    meta: (r["meta"] as Record<string, unknown>) ?? {},
+    isRead: r["is_read"] as boolean,
+    createdAt: (r["created_at"] as Date).toISOString(),
+  }));
+}
+
+export async function getAdminUnreadCount(): Promise<number> {
+  const pool = getPool();
+  const result = await pool.query(
+    `SELECT COUNT(*) AS cnt FROM admin_notifications WHERE is_read = FALSE`
+  );
+  return parseInt((result.rows[0] as { cnt: string })["cnt"], 10);
+}
+
+export async function markAdminNotificationsRead(ids: string[]): Promise<void> {
+  if (ids.length === 0) return;
+  const pool = getPool();
+  const placeholders = ids.map((_: unknown, i: number) => `$${i + 1}`).join(",");
+  await pool.query(
+    `UPDATE admin_notifications SET is_read = TRUE WHERE id IN (${placeholders})`,
+    ids
+  );
+}
+
+export async function markAllAdminNotificationsRead(): Promise<void> {
+  const pool = getPool();
+  await pool.query(`UPDATE admin_notifications SET is_read = TRUE WHERE is_read = FALSE`);
+}

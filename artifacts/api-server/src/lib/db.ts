@@ -130,6 +130,25 @@ export async function initDatabase(): Promise<void> {
     CREATE INDEX IF NOT EXISTS idx_sig_audit_created_at ON signature_audit_logs (created_at DESC);
   `);
 
+  await p.query(`
+    CREATE TABLE IF NOT EXISTS admin_notifications (
+      id          TEXT PRIMARY KEY,
+      type        TEXT NOT NULL,
+      title       TEXT NOT NULL,
+      message     TEXT NOT NULL,
+      user_email  TEXT,
+      meta        JSONB NOT NULL DEFAULT '{}'::jsonb,
+      is_read     BOOLEAN NOT NULL DEFAULT FALSE,
+      created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+  await p.query(`
+    CREATE INDEX IF NOT EXISTS idx_admin_notif_read ON admin_notifications (is_read);
+  `);
+  await p.query(`
+    CREATE INDEX IF NOT EXISTS idx_admin_notif_created_at ON admin_notifications (created_at DESC);
+  `);
+
   dbAvailable = true;
   console.log("[DB] Database tables initialized successfully");
 }

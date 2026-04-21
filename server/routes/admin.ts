@@ -26,6 +26,11 @@ import {
   addNotification,
   readMaster,
   decryptSensitiveProfile,
+  addAdminNotification,
+  getAdminNotifications,
+  getAdminUnreadCount,
+  markAdminNotificationsRead,
+  markAllAdminNotificationsRead,
 } from "../lib/userDataStore.js";
 import { getPool } from "../lib/db.js";
 import { evaluateRisk } from "../lib/fraud/riskEngine.js";
@@ -964,4 +969,43 @@ router.get("/admin/signature-audit-log/export", requireAdmin, adminRateLimit, as
   }
 });
 
+// ─── Admin Notifications ────────────────────────────────────────────────────
+
+router.get(
+  "/admin/notifications",
+  adminRateLimit,
+  requireAdmin,
+  async (_req: Request, res: Response): Promise<void> => {
+    try {
+      const notifications = await getAdminNotifications(50);
+      const unreadCount   = await getAdminUnreadCount();
+      res.json({ notifications, unreadCount });
+    } catch (err) {
+      console.error("[Admin] Failed to fetch notifications:", err);
+      res.status(500).json({ error: "Failed to fetch notifications" });
+    }
+  }
+);
+
+router.post(
+  "/admin/notifications/read",
+  adminRateLimit,
+  requireAdmin,
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { ids } = req.body as { ids?: string[] };
+      if (ids && ids.length > 0) {
+        await markAdminNotificationsRead(ids);
+      } else {
+        await markAllAdminNotificationsRead();
+      }
+      res.json({ success: true });
+    } catch (err) {
+      console.error("[Admin] Failed to mark notifications read:", err);
+      res.status(500).json({ error: "Failed to mark notifications read" });
+    }
+  }
+);
+
+export { addAdminNotification };
 export default router;

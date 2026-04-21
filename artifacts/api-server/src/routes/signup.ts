@@ -6,6 +6,8 @@ import {
   getUserProfileData,
   setUserProfileMeta,
   setUserStatus,
+  addAdminNotification,
+  addCompletedStepNumber,
 } from "../lib/userDataStore.js";
 import { getPool } from "../lib/db.js";
 import { userDataLimit, sensitiveEndpointLimit } from "../middleware/security.js";
