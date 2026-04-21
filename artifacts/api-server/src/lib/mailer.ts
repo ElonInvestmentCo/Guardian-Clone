@@ -7,7 +7,89 @@ const COMPANY_LINE = "Guardian Trading &mdash; A Division of Velocity Clearing, 
 const ADDRESS_LINE = "1301 Route 36, Suite 109, Hazlet, NJ 07730";
 
 // ---------------------------------------------------------------------------
-// Shared email shell — wraps any content in the branded card layout
+// Cached credentials — resolved once at first use
+// ---------------------------------------------------------------------------
+let _cachedCreds: { apiKey: string; fromEmail?: string } | null | "not_found" = undefined as unknown as "not_found";
+let _credsFetchedAt = 0;
+const CREDS_CACHE_TTL_MS = 5 * 60 * 1000;
+
+async function resolveResendCredentials(): Promise<{ apiKey: string; fromEmail?: string } | null> {
+  const hostname = process.env["REPLIT_CONNECTORS_HOSTNAME"];
+  const replIdentity = process.env["REPL_IDENTITY"];
+  const webReplRenewal = process.env["WEB_REPL_RENEWAL"];
+
+  const xReplitToken = replIdentity
+    ? "repl " + replIdentity
+    : webReplRenewal
+    ? "depl " + webReplRenewal
+    : null;
+
+  if (hostname && xReplitToken) {
+    try {
+      const resp = await fetch(
+        "https://" + hostname + "/api/v2/connection?include_secrets=true&connector_names=resend",
+        {
+          headers: {
+            Accept: "application/json",
+            "X-Replit-Token": xReplitToken,
+          },
+          signal: AbortSignal.timeout(5000),
+        }
+      );
+      const data = await resp.json() as { items?: Array<{ settings?: { api_key?: string; from_email?: string } }> };
+      const settings = data.items?.[0]?.settings;
+      if (settings?.api_key) {
+        console.log("[Mailer] Credentials resolved from Replit connector");
+        return { apiKey: settings.api_key, fromEmail: settings.from_email };
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.warn("[Mailer] Connector fetch failed (will use env var fallback):", msg);
+    }
+  }
+
+  const apiKey = process.env["RESEND_API_KEY"];
+  if (apiKey) {
+    console.log("[Mailer] Credentials resolved from RESEND_API_KEY env var");
+    return { apiKey };
+  }
+
+  return null;
+}
+
+async function getResendCredentials(): Promise<{ apiKey: string; fromEmail?: string } | null> {
+  const now = Date.now();
+  if (_cachedCreds !== undefined && now - _credsFetchedAt < CREDS_CACHE_TTL_MS) {
+    return _cachedCreds === "not_found" ? null : _cachedCreds;
+  }
+
+  const creds = await resolveResendCredentials();
+  _cachedCreds = creds ?? "not_found";
+  _credsFetchedAt = now;
+
+  if (!creds) {
+    console.error(
+      "[Mailer] CRITICAL: No email credentials found. " +
+      "Set RESEND_API_KEY as a secret environment variable. " +
+      "Emails will fail until this is resolved."
+    );
+  }
+
+  return creds;
+}
+
+export async function checkEmailConfig(): Promise<boolean> {
+  const creds = await getResendCredentials();
+  if (creds) {
+    console.log("[Mailer] Email system ready — sender:", FROM_ADDRESS);
+    return true;
+  }
+  console.error("[Mailer] Email system NOT ready — RESEND_API_KEY is missing");
+  return false;
+}
+
+// ---------------------------------------------------------------------------
+// Shared email shell
 // ---------------------------------------------------------------------------
 function emailShell(content: string): string {
   return `<!DOCTYPE html>
@@ -96,7 +178,7 @@ function emailShell(content: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// Shared code-box block used by verification and password-reset emails
+// Shared code-box block
 // ---------------------------------------------------------------------------
 function codeBox(label: string, code: string, accentColor: string, bgColor: string, borderColor: string): string {
   return `
@@ -124,57 +206,6 @@ function codeBox(label: string, code: string, accentColor: string, bgColor: stri
 }
 
 // ---------------------------------------------------------------------------
-// Resend credentials helper
-// ---------------------------------------------------------------------------
-async function getResendCredentials(): Promise<{ apiKey: string; fromEmail?: string } | null> {
-  const hostname = process.env["REPLIT_CONNECTORS_HOSTNAME"];
-  const replIdentity = process.env["REPL_IDENTITY"];
-  const webReplRenewal = process.env["WEB_REPL_RENEWAL"];
-
-  const xReplitToken = replIdentity
-    ? "repl " + replIdentity
-    : webReplRenewal
-    ? "depl " + webReplRenewal
-    : null;
-
-  if (hostname && xReplitToken) {
-    try {
-      const resp = await fetch(
-        "https://" + hostname + "/api/v2/connection?include_secrets=true&connector_names=resend",
-        {
-          headers: {
-            Accept: "application/json",
-            "X-Replit-Token": xReplitToken,
-          },
-        }
-      );
-      const data = await resp.json() as { items?: Array<{ settings?: { api_key?: string; from_email?: string } }> };
-      const settings = data.items?.[0]?.settings;
-      if (settings?.api_key) {
-        console.log("[Mailer] Using Resend credentials from Replit connector");
-        return { apiKey: settings.api_key, fromEmail: settings.from_email };
-      }
-      console.warn("[Mailer] Replit connector responded but no api_key found:", JSON.stringify(data.items?.[0] ?? {}));
-    } catch (err) {
-      console.warn("[Mailer] Failed to fetch Resend credentials from connector:", err);
-    }
-  }
-
-  const apiKey = process.env["RESEND_API_KEY"];
-  if (apiKey) {
-    console.log("[Mailer] Using Resend credentials from RESEND_API_KEY env var");
-    return { apiKey };
-  }
-
-  console.error(
-    "[Mailer] No Resend credentials found. " +
-    "Set RESEND_API_KEY as an environment secret, or configure the Resend connector. " +
-    "Emails will NOT be sent until this is resolved."
-  );
-  return null;
-}
-
-// ---------------------------------------------------------------------------
 // Account Verified Email
 // ---------------------------------------------------------------------------
 export async function sendAccountVerifiedEmail(
@@ -183,7 +214,9 @@ export async function sendAccountVerifiedEmail(
 ): Promise<{ success: boolean; error?: string }> {
   const creds = await getResendCredentials();
   if (!creds) {
-    return { success: false, error: "Email service not configured — RESEND_API_KEY is missing" };
+    const err = "Email service not configured — RESEND_API_KEY is missing";
+    console.error(`[Mailer] Cannot send account verified email to ${to}: ${err}`);
+    return { success: false, error: err };
   }
 
   const name = firstName ?? to.split("@")[0];
@@ -249,10 +282,10 @@ export async function sendAccountVerifiedEmail(
       html,
     });
     if (result.error) {
-      console.error(`[Mailer] Failed to send verified email to ${to}:`, result.error);
+      console.error(`[Mailer] Resend error sending verified email to ${to}:`, JSON.stringify(result.error));
       return { success: false, error: result.error.message };
     }
-    console.log(`[Mailer] Verified email sent to ${to} — id: ${result.data?.id}`);
+    console.log(`[Mailer] Account verified email sent to ${to} — id: ${result.data?.id}`);
     return { success: true };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -270,8 +303,9 @@ export async function sendPasswordResetEmail(
 ): Promise<{ success: boolean; error?: string }> {
   const creds = await getResendCredentials();
   if (!creds) {
-    console.error(`[Mailer] Cannot send password reset to ${to} — no email credentials configured`);
-    return { success: false, error: "Email service not configured — RESEND_API_KEY is missing" };
+    const err = "Email service not configured — RESEND_API_KEY is missing";
+    console.error(`[Mailer] Cannot send password reset to ${to}: ${err}`);
+    return { success: false, error: err };
   }
 
   const client = new Resend(creds.apiKey);
@@ -315,7 +349,7 @@ export async function sendPasswordResetEmail(
       html,
     });
     if (result.error) {
-      console.error(`[Mailer] Failed to send reset email to ${to}:`, result.error);
+      console.error(`[Mailer] Resend error sending reset email to ${to}:`, JSON.stringify(result.error));
       return { success: false, error: result.error.message };
     }
     console.log(`[Mailer] Password reset email sent to ${to} — id: ${result.data?.id}`);
@@ -336,8 +370,9 @@ export async function sendVerificationEmail(
 ): Promise<{ success: boolean; error?: string }> {
   const creds = await getResendCredentials();
   if (!creds) {
-    console.error(`[Mailer] Cannot send verification email to ${to} — no email credentials configured`);
-    return { success: false, error: "Email service not configured — RESEND_API_KEY is missing. Please contact support." };
+    const err = "Email service not configured — RESEND_API_KEY is missing";
+    console.error(`[Mailer] Cannot send verification email to ${to}: ${err}`);
+    return { success: false, error: err };
   }
 
   const client = new Resend(creds.apiKey);
@@ -381,7 +416,11 @@ export async function sendVerificationEmail(
       html,
     });
     if (result.error) {
-      console.error(`[Mailer] Resend API error sending to ${to}:`, JSON.stringify(result.error));
+      const errCode = (result.error as { name?: string }).name ?? "unknown";
+      console.error(
+        `[Mailer] Resend error sending verification to ${to} — ` +
+        `code=${errCode} message=${result.error.message}`
+      );
       return { success: false, error: result.error.message };
     }
     console.log(`[Mailer] Verification email sent to ${to} — id: ${result.data?.id}`);

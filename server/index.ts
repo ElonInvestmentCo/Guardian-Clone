@@ -4,6 +4,7 @@ import app from "./app.js";
 import { createWebSocketServer } from "./lib/realtime.js";
 import { setupAdminCredentials } from "./lib/setupAdmin.js";
 import { initDatabase } from "./lib/db.js";
+import { checkEmailConfig } from "./lib/mailer.js";
 
 const rawPort = process.env["PORT"];
 
@@ -23,6 +24,8 @@ async function start() {
 
   await setupAdminCredentials();
   console.log("[Startup] Admin credentials configured");
+
+  await checkEmailConfig();
 
   const server = http.createServer(app);
   createWebSocketServer(server);

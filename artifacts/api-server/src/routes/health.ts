@@ -1,5 +1,6 @@
 import { Router, type IRouter } from "express";
 import { getPool } from "../lib/db.js";
+import { checkEmailConfig } from "../lib/mailer.js";
 
 const router: IRouter = Router();
 
@@ -14,12 +15,14 @@ router.get("/health", async (_req, res) => {
     uptime: number;
     timestamp: string;
     database: { connected: boolean; latency_ms?: number; error?: string };
+    email: { configured: boolean };
     version: string;
   } = {
     status: "ok",
     uptime: Math.floor(process.uptime()),
     timestamp: new Date().toISOString(),
     database: { connected: false },
+    email: { configured: false },
     version: process.env.npm_package_version ?? "1.0.0",
   };
 
@@ -35,6 +38,12 @@ router.get("/health", async (_req, res) => {
       connected: false,
       error: err instanceof Error ? err.message : "unknown error",
     };
+  }
+
+  const emailOk = await checkEmailConfig();
+  result.email = { configured: emailOk };
+  if (!emailOk) {
+    result.status = "degraded";
   }
 
   const statusCode = result.status === "ok" ? 200 : 503;
