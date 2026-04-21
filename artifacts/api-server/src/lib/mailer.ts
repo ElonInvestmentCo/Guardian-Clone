@@ -1,7 +1,13 @@
 import { Resend } from "resend";
 
 const FROM_ADDRESS = "Guardian Trading <support@guardiiantrading.com>";
-const LOGO_URL = "https://guardiiantrading.com/logo.png";
+function resolveAppBase(): string {
+  if (process.env["APP_URL"]) return process.env["APP_URL"]!.replace(/\/$/, "");
+  const railwayDomain = process.env["RAILWAY_PUBLIC_DOMAIN"];
+  if (railwayDomain) return `https://${railwayDomain}`;
+  return "https://guardian-trading-api-production.up.railway.app";
+}
+const LOGO_URL = `${resolveAppBase()}/assets/logo.png`;
 const SUPPORT_EMAIL = "support@guardiiantrading.com";
 const COMPANY_LINE = "Guardian Trading &mdash; A Division of Velocity Clearing, LLC. Member FINRA/SIPC.";
 const ADDRESS_LINE = "1301 Route 36, Suite 109, Hazlet, NJ 07730";

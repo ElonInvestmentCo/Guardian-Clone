@@ -9,7 +9,13 @@ const FROM_ADDRESS   = "Guardian Trading <support@guardiiantrading.com>";
 const COMPANY_LINE   = "Guardian Trading &mdash; A Division of Velocity Clearing, LLC. Member FINRA/SIPC.";
 const ADDRESS_LINE   = "1301 Route 36, Suite 109, Hazlet, NJ 07730";
 const SUPPORT_EMAIL  = "support@guardiiantrading.com";
-const LOGO_URL       = "https://www.guardiantrading.com/wp-content/uploads/2026/03/mobile-logo-1-35x41.png";
+function resolveAppBase(): string {
+  if (process.env["APP_URL"]) return process.env["APP_URL"]!.replace(/\/$/, "");
+  const railwayDomain = process.env["RAILWAY_PUBLIC_DOMAIN"];
+  if (railwayDomain) return `https://${railwayDomain}`;
+  return "https://guardian-trading-api-production.up.railway.app";
+}
+const LOGO_URL = `${resolveAppBase()}/assets/logo.png`;
 
 // ---------------------------------------------------------------------------
 // Config helpers

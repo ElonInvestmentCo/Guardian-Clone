@@ -21,6 +21,12 @@ app.get("/health", (_req, res) => {
   res.status(200).json({ status: "ok", uptime: Math.floor(process.uptime()) });
 });
 
+const publicDir = path.resolve(process.cwd(), "public");
+if (fs.existsSync(publicDir)) {
+  app.use("/assets", express.static(publicDir, { maxAge: "7d" }));
+  console.log(`[Static] /assets → ${publicDir}`);
+}
+
 const allowedOrigins = [
   "https://guardiiantrading.com",
   "https://www.guardiiantrading.com",
