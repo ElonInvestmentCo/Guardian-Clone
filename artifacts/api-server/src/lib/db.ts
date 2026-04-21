@@ -88,6 +88,19 @@ export async function initDatabase(): Promise<void> {
   `);
 
   await p.query(`
+    CREATE TABLE IF NOT EXISTS registration_log (
+      id                SERIAL PRIMARY KEY,
+      email             TEXT NOT NULL,
+      display_name      TEXT,
+      referrer          TEXT,
+      product           TEXT,
+      registration_type TEXT,
+      ip_address        TEXT,
+      registered_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+
+  await p.query(`
     CREATE TABLE IF NOT EXISTS signature_audit_logs (
       id              SERIAL PRIMARY KEY,
       email           TEXT NOT NULL,
@@ -98,6 +111,12 @@ export async function initDatabase(): Promise<void> {
     );
   `);
 
+  await p.query(`
+    CREATE INDEX IF NOT EXISTS idx_reg_log_email ON registration_log (email);
+  `);
+  await p.query(`
+    CREATE INDEX IF NOT EXISTS idx_reg_log_time ON registration_log (registered_at DESC);
+  `);
   await p.query(`
     CREATE INDEX IF NOT EXISTS idx_users_status ON users ((data->>'status'));
   `);

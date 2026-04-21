@@ -7,6 +7,7 @@ import {
   setUserProfileMeta,
   setUserStatus,
 } from "../lib/userDataStore.js";
+import { getPool } from "../lib/db.js";
 import { userDataLimit, sensitiveEndpointLimit } from "../middleware/security.js";
 import { validate, SignupSaveStepSchema, SignupCompleteStepSchema, SignupGetProgressSchema } from "../lib/validation.js";
 import { broadcastAdmin } from "../lib/realtime.js";

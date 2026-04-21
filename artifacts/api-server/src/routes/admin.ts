@@ -657,6 +657,241 @@ router.post("/admin/verify-signature", requireAdmin, adminRateLimit, validate(Ad
   }
 });
 
+// ─── Signature Stats ─────────────────────────────────────────────────────────
+
+router.get("/admin/signature-stats", requireAdmin, adminRateLimit, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const pool = getPool();
+
+    const todayResult = await pool.query(
+      `SELECT COUNT(*) FROM signature_audit_logs WHERE created_at >= CURRENT_DATE`
+    );
+    const weekResult = await pool.query(
+      `SELECT COUNT(*) FROM signature_audit_logs WHERE created_at >= date_trunc('week', NOW())`
+    );
+
+    const master = await readMaster();
+    const emails = Object.keys(master);
+
+    const sigResult = await pool.query(
+      `SELECT DISTINCT ON (email) email, created_at AS signed_at, signature_image
+       FROM signature_audit_logs
+       WHERE email = ANY($1)
+       ORDER BY email, created_at DESC`,
+      [emails]
+    );
+    const signedEmails = new Set(sigResult.rows.map((r: { email: string }) => r.email));
+
+    let pendingCount  = 0;
+    let verifiedCount = 0;
+
+    for (const row of sigResult.rows) {
+      const profile    = await getUserProfileData(row.email);
+      const signatures = (profile.signatures as Record<string, unknown> | undefined) ?? {};
+      if (signatures.signatureVerified === true) {
+        verifiedCount++;
+      } else {
+        pendingCount++;
+      }
+    }
+
+    res.json({
+      todayCount:    parseInt(todayResult.rows[0].count, 10),
+      weekCount:     parseInt(weekResult.rows[0].count,  10),
+      pendingCount,
+      verifiedCount,
+      notSignedCount: emails.length - signedEmails.size,
+      totalSigned:    signedEmails.size,
+    });
+  } catch (err) {
+    console.error("[Admin] signature-stats error:", err);
+    res.status(500).json({ error: "Failed to fetch signature stats" });
+  }
+});
+
+// ─── Signatures List ─────────────────────────────────────────────────────────
+
+router.get("/admin/signatures-list", requireAdmin, adminRateLimit, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const pool         = getPool();
+    const filterStatus = req.query.status as string | undefined;
+    const search       = String(req.query.search ?? "").trim().toLowerCase();
+    const page         = Math.max(1, parseInt(String(req.query.page  ?? "1"),  10));
+    const limit        = Math.min(50, Math.max(1, parseInt(String(req.query.limit ?? "25"), 10)));
+
+    const master = await readMaster();
+    const emails = Object.keys(master);
+
+    const sigResult = await pool.query(
+      `SELECT DISTINCT ON (email) email, created_at AS signed_at, signature_image
+       FROM signature_audit_logs
+       WHERE email = ANY($1)
+       ORDER BY email, created_at DESC`,
+      [emails]
+    );
+    const sigMap = new Map(sigResult.rows.map((r: { email: string; signed_at: Date; signature_image: string | null }) => [r.email, r]));
+
+    const users = await Promise.all(emails.map(async (email) => {
+      const u          = master[email];
+      const profile    = await getUserProfileData(email);
+      const p          = (profile.personal   as Record<string, string>         | undefined) ?? {};
+      const signatures = (profile.signatures as Record<string, unknown>        | undefined) ?? {};
+      const sig        = sigMap.get(email) as { signed_at: Date; signature_image: string | null } | undefined;
+
+      let signatureStatus: "verified" | "pending" | "not_signed";
+      if (!sig) {
+        signatureStatus = "not_signed";
+      } else if (signatures.signatureVerified === true) {
+        signatureStatus = "verified";
+      } else {
+        signatureStatus = "pending";
+      }
+
+      return {
+        email,
+        name:               [p.firstName ?? "", p.lastName ?? ""].join(" ").trim() || email,
+        status:             (u.status as string) ?? "pending",
+        signatureStatus,
+        signedAt:           sig ? (sig.signed_at instanceof Date ? sig.signed_at.toISOString() : String(sig.signed_at)) : null,
+        signatureThumbnail: sig ? sig.signature_image : null,
+        signatureVerifiedAt: (signatures.signatureVerifiedAt as string | undefined) ?? null,
+      };
+    }));
+
+    const filtered = users
+      .filter(u => !filterStatus || u.signatureStatus === filterStatus)
+      .filter(u => !search || u.email.toLowerCase().includes(search) || u.name.toLowerCase().includes(search))
+      .sort((a, b) => {
+        if (a.signedAt && b.signedAt) return new Date(b.signedAt).getTime() - new Date(a.signedAt).getTime();
+        if (a.signedAt) return -1;
+        if (b.signedAt) return 1;
+        return 0;
+      });
+
+    const total     = filtered.length;
+    const offset    = (page - 1) * limit;
+    const paginated = filtered.slice(offset, offset + limit);
+
+    res.json({ total, page, limit, pages: Math.ceil(total / limit), users: paginated });
+  } catch (err) {
+    console.error("[Admin] signatures-list error:", err);
+    res.status(500).json({ error: "Failed to fetch signatures list" });
+  }
+});
+
+// ─── Registration Log ─────────────────────────────────────────────────────────
+
+router.get("/admin/registration-log", requireAdmin, adminRateLimit, async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const result = await getPool().query<{
+      id: number;
+      email: string;
+      display_name: string | null;
+      referrer: string | null;
+      product: string | null;
+      registration_type: string | null;
+      ip_address: string | null;
+      registered_at: string;
+      profile_data: Record<string, unknown> | null;
+    }>(`
+      SELECT
+        rl.id,
+        rl.email,
+        rl.display_name,
+        rl.referrer,
+        rl.product,
+        rl.registration_type,
+        rl.ip_address,
+        rl.registered_at,
+        up.data AS profile_data
+      FROM registration_log rl
+      LEFT JOIN user_profiles up ON rl.email = up.email
+      ORDER BY rl.registered_at DESC
+      LIMIT 5000
+    `);
+
+    const entries = result.rows.map(row => {
+      const raw     = row.profile_data ?? {};
+      const profile = decryptSensitiveProfile(raw);
+      return {
+        id:                row.id,
+        email:             row.email,
+        display_name:      row.display_name,
+        referrer:          row.referrer,
+        product:           row.product,
+        registration_type: row.registration_type,
+        ip_address:        row.ip_address,
+        registered_at:     row.registered_at,
+        kyc_status:        (profile["status"] as string) ?? "pending",
+        kyc_completed_steps: ((profile["_completedStepNumbers"] as number[]) ?? []).length,
+        profile: {
+          status:                profile["status"],
+          createdAt:             profile["createdAt"],
+          updatedAt:             profile["updatedAt"],
+          completedStepNumbers:  profile["_completedStepNumbers"] ?? [],
+          documents:             profile["documents"] ?? {},
+          general:               profile["general"] ?? {},
+          personal:              profile["personal"] ?? {},
+          professional:          profile["professional"] ?? {},
+          idInformation:         profile["idInformation"] ?? {},
+          income:                profile["income"] ?? {},
+          riskTolerance:         profile["riskTolerance"] ?? {},
+          financialSituation:    profile["financialSituation"] ?? {},
+          investmentExperience:  profile["investmentExperience"] ?? {},
+          fundingDetails:        profile["fundingDetails"] ?? {},
+          disclosures:           profile["disclosures"] ?? {},
+        },
+      };
+    });
+
+    res.json({ entries });
+  } catch (err) {
+    console.error("[Admin] registration-log error:", err);
+    res.status(500).json({ error: "Failed to retrieve registration log" });
+  }
+});
+
+router.get("/admin/registration-log/export", requireAdmin, adminRateLimit, async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const result = await getPool().query<{
+      id: number;
+      email: string;
+      display_name: string | null;
+      referrer: string | null;
+      product: string | null;
+      registration_type: string | null;
+      ip_address: string | null;
+      registered_at: string;
+    }>(`
+      SELECT id, email, display_name, referrer, product, registration_type, ip_address, registered_at
+      FROM registration_log
+      ORDER BY registered_at DESC
+    `);
+
+    const fmt    = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const header = ["ID", "Email", "Display Name", "Referrer", "Product", "Registration Type", "IP Address", "Registered At"].map(fmt).join(",");
+    const rows   = result.rows.map(r => [
+      r.id,
+      r.email,
+      r.display_name ?? "",
+      r.referrer ?? "",
+      r.product ?? "",
+      r.registration_type ?? "",
+      r.ip_address ?? "",
+      new Date(r.registered_at).toLocaleString("en-US", { month: "long", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" }),
+    ].map(fmt).join(","));
+
+    const csv      = [header, ...rows].join("\n");
+    const filename = `registrations-${new Date().toISOString().slice(0, 10)}.csv`;
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.send(csv);
+  } catch (err) {
+    console.error("[Admin] registration-log export error:", err);
+    res.status(500).json({ error: "Failed to export registration log" });
+  }
+});
+
 // ─── Signature Audit Log ────────────────────────────────────────────────────
 
 router.get("/admin/signature-audit-log", requireAdmin, adminRateLimit, async (req: Request, res: Response): Promise<void> => {

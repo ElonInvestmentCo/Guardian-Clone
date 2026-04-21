@@ -115,7 +115,7 @@ export default function Signatures() {
         c.beginPath();
         c.moveTo(lastPos.current.x, lastPos.current.y);
         c.lineTo(pos.x, pos.y);
-        c.strokeStyle = "#1c1c1c";
+        c.strokeStyle = "#000000";
         c.lineWidth   = 2.5;
         c.lineCap     = "round";
         c.lineJoin    = "round";
