@@ -375,6 +375,24 @@ signupRouter.post("/signup/complete-step", sensitiveEndpointLimit, validate(Sign
 
     await upsertUserStep(email, stepKey, data);
 
+    if (stepKey === "personal") {
+      try {
+        const existingProfile = await getUserProfileData(email);
+        const currentSettings = (existingProfile["_settings"] as Record<string, unknown>) ?? {};
+        const merged = {
+          ...currentSettings,
+          ...(data.firstName  ? { firstName: data.firstName }   : {}),
+          ...(data.lastName   ? { lastName:  data.lastName }    : {}),
+          ...(data.phoneNumber? { phone:     data.phoneNumber } : {}),
+          ...(data.country    ? { country:   data.country }     : {}),
+          ...(data.city       ? { city:      data.city }        : {}),
+        };
+        await setUserProfileMeta(email, "_settings", merged);
+      } catch (syncErr) {
+        console.error("[Signup] Failed to sync personal data to profile settings:", syncErr);
+      }
+    }
+
     const completedSteps = await addCompletedStepNumber(email, stepNumber);
 
     if (stepKey === "general" && stepNumber === 1) {

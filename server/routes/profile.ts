@@ -72,8 +72,12 @@ profileRouter.get("/user/me", userDataLimit, validate(AuthCheckEmailSchema), asy
 
     const profile = await getUserProfileData(email);
     const settings = (profile["_settings"] as Record<string, unknown>) ?? {};
+    const personalStep = (profile["personal"] as Record<string, unknown>) ?? {};
     const notifPrefs = (profile["_notificationPreferences"] as Record<string, unknown>) ?? {};
     const twoFAData = (profile["_2fa"] as Record<string, unknown>) ?? {};
+
+    const str = (key: string, fallbackKey?: string): string =>
+      (settings[key] as string) || (fallbackKey ? (personalStep[fallbackKey] as string) : "") || "";
 
     res.json({
       status,
@@ -83,12 +87,12 @@ profileRouter.get("/user/me", userDataLimit, validate(AuthCheckEmailSchema), asy
       profilePicture: profilePic,
       role: (userData["role"] as string) ?? "user",
       settings: {
-        firstName: (settings["firstName"] as string) ?? "",
-        lastName: (settings["lastName"] as string) ?? "",
-        phone: (settings["phone"] as string) ?? "",
-        country: (settings["country"] as string) ?? "",
-        state: (settings["state"] as string) ?? "",
-        city: (settings["city"] as string) ?? "",
+        firstName: str("firstName", "firstName"),
+        lastName:  str("lastName",  "lastName"),
+        phone:     str("phone",     "phoneNumber"),
+        country:   str("country",   "country"),
+        state:     str("state"),
+        city:      str("city",      "city"),
       },
       notificationPreferences: {
         tradeConfirmations: (notifPrefs["tradeConfirmations"] as boolean) ?? true,
