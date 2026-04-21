@@ -158,6 +158,8 @@ router.get("/admin/kyc-queue", async (req: Request, res: Response): Promise<void
     const statusFilter = req.query.status  as string | undefined;
     const minRisk      = parseInt(String(req.query.minRisk ?? "0"));
 
+    console.log(`[Admin] kyc-queue fetch: totalUsers=${Object.keys(master).length} statusFilter=${statusFilter ?? "all"} minRisk=${minRisk} page=${page}`);
+
     const users = await Promise.all(Object.values(master).map(async (u) => {
       const email   = u.email as string;
       const risk    = await evaluateRisk(email);
@@ -182,6 +184,8 @@ router.get("/admin/kyc-queue", async (req: Request, res: Response): Promise<void
       .filter((u) => !statusFilter || u.status === statusFilter)
       .filter((u) => u.riskScore >= minRisk)
       .sort((a, b) => b.riskScore - a.riskScore);
+
+    console.log(`[Admin] kyc-queue result: ${filtered.length} users after filter (statuses: ${[...new Set(users.map(u => u.status))].join(",")})`);
 
     const total   = filtered.length;
     const start   = (page - 1) * limit;

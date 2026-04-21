@@ -5,6 +5,7 @@ import {
   getUserData,
   getUserProfileData,
   setUserProfileMeta,
+  setUserStatus,
 } from "../lib/userDataStore.js";
 import { userDataLimit, sensitiveEndpointLimit } from "../middleware/security.js";
 import { validate, SignupSaveStepSchema, SignupCompleteStepSchema, SignupGetProgressSchema } from "../lib/validation.js";
@@ -412,6 +413,13 @@ signupRouter.post("/signup/complete-step", sensitiveEndpointLimit, validate(Sign
         month: "long", day: "numeric", year: "numeric",
         hour: "2-digit", minute: "2-digit",
       }).format(now);
+
+      try {
+        await setUserStatus(email, "reviewing");
+        console.log(`[Signup] Status set to "reviewing" for ${email}`);
+      } catch (statusErr) {
+        console.error(`[Signup] Failed to set status to reviewing for ${email}:`, statusErr);
+      }
 
       broadcastAdmin({
         type: "APPLICATION_COMPLETE",

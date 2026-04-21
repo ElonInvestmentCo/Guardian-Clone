@@ -105,6 +105,8 @@ export function useAdminRealtime({
           queryClient.invalidateQueries({ queryKey: ["dashboard-users"] });
           queryClient.invalidateQueries({ queryKey: ["dashboard-queue"] });
           queryClient.invalidateQueries({ queryKey: ["registration-log"] });
+          queryClient.invalidateQueries({ queryKey: ["kyc-queue"] });
+          queryClient.invalidateQueries({ queryKey: ["all-users"] });
           callbacksRef.current.onNewRegistration?.(regEvent);
         }
 
@@ -112,11 +114,14 @@ export function useAdminRealtime({
           const appEvent = event.data as ApplicationCompleteEvent;
           queryClient.invalidateQueries({ queryKey: ["registration-log"] });
           queryClient.invalidateQueries({ queryKey: ["dashboard-queue"] });
+          queryClient.invalidateQueries({ queryKey: ["kyc-queue"] });
+          queryClient.invalidateQueries({ queryKey: ["all-users"] });
           callbacksRef.current.onApplicationComplete?.(appEvent);
         }
 
         if (event.type === "new_event" && event.data?.eventType === "STEP_COMPLETED") {
           const stepEvent = event.data as StepCompletedEvent;
+          queryClient.invalidateQueries({ queryKey: ["kyc-queue"] });
           callbacksRef.current.onStepCompleted?.(stepEvent);
         }
       } catch {}

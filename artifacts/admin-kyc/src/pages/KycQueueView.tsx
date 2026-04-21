@@ -4,18 +4,19 @@ import { getKycQueue, type KycUser } from "@/lib/api";
 import { formatDateShort, stepsPercent } from "@/lib/utils";
 import { RiskBadge, StatusBadge } from "@/components/Badges";
 import UserPanel from "@/components/UserPanel";
+import { useAdminRealtime } from "@/hooks/useAdminRealtime";
 
 const STATUS_FILTERS = [
-  { value: "",          label: "All" },
-  { value: "pending",   label: "Pending" },
-  { value: "verified",  label: "Under Review" },
-  { value: "approved",  label: "Approved" },
-  { value: "rejected",  label: "Rejected" },
-  { value: "resubmit",  label: "Resubmit" },
+  { value: "",                 label: "All" },
+  { value: "pending",          label: "Pending" },
+  { value: "reviewing",        label: "Under Review" },
+  { value: "verified",         label: "Verified" },
+  { value: "approved",         label: "Approved" },
+  { value: "rejected",         label: "Rejected" },
+  { value: "resubmit",         label: "Resubmit" },
   { value: "resubmit_required", label: "Resubmit Required" },
-  { value: "reviewing", label: "Under Review" },
-  { value: "suspended", label: "Suspended" },
-  { value: "banned",    label: "Banned" },
+  { value: "suspended",        label: "Suspended" },
+  { value: "banned",           label: "Banned" },
 ];
 
 const PAGE_SIZE = 25;
@@ -38,6 +39,16 @@ export default function KycQueueView({ onOpenProfile }: KycQueueProps = {}) {
   const { data, isLoading, isError, refetch, isFetching } = useQuery({
     queryKey: ["kyc-queue", page, statusFilter, minRisk],
     queryFn: () => getKycQueue({ page, limit: PAGE_SIZE, status: statusFilter || undefined, minRisk: minRisk || undefined }),
+    refetchInterval: 30_000,
+  });
+
+  useAdminRealtime({
+    onApplicationComplete: () => {
+      qc.invalidateQueries({ queryKey: ["kyc-queue"] });
+    },
+    onNewRegistration: () => {
+      qc.invalidateQueries({ queryKey: ["kyc-queue"] });
+    },
   });
 
   const handleSort = (key: SortKey) => {
