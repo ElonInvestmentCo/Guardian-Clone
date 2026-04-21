@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 
 const FROM_ADDRESS = "Guardian Trading <support@guardiiantrading.com>";
-const LOGO_URL = "https://guardiiantrading.com/logo.png";
+const LOGO_URL = "https://www.guardiantrading.com/wp-content/uploads/2026/03/mobile-logo-1-35x41.png";
 const SUPPORT_EMAIL = "support@guardiiantrading.com";
 const COMPANY_LINE = "Guardian Trading &mdash; A Division of Velocity Clearing, LLC. Member FINRA/SIPC.";
 const ADDRESS_LINE = "1301 Route 36, Suite 109, Hazlet, NJ 07730";
@@ -123,9 +123,8 @@ function emailShell(content: string): string {
                   <td align="center">
                     <img src="${LOGO_URL}"
                          alt="Guardian Trading"
-                         width="48" height="48"
-                         style="display:block;width:48px;height:48px;
-                                object-fit:contain;margin:0 auto 14px;" />
+                         width="35" height="41"
+                         style="display:block;width:35px;height:41px;margin:0 auto 14px;" />
                   </td>
                 </tr>
                 <tr>

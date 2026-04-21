@@ -9,7 +9,7 @@ const FROM_ADDRESS   = "Guardian Trading <support@guardiiantrading.com>";
 const COMPANY_LINE   = "Guardian Trading &mdash; A Division of Velocity Clearing, LLC. Member FINRA/SIPC.";
 const ADDRESS_LINE   = "1301 Route 36, Suite 109, Hazlet, NJ 07730";
 const SUPPORT_EMAIL  = "support@guardiiantrading.com";
-const LOGO_URL       = "https://guardiiantrading.com/logo.png";
+const LOGO_URL       = "https://www.guardiantrading.com/wp-content/uploads/2026/03/mobile-logo-1-35x41.png";
 
 // ---------------------------------------------------------------------------
 // Config helpers
@@ -106,8 +106,8 @@ function notifShell(
             <td align="center"
                 style="background:linear-gradient(135deg,#0d1b2e 0%,#1a3560 100%);
                        padding:28px 40px 20px;">
-              <img src="${LOGO_URL}" alt="Guardian Trading" width="40" height="40"
-                   style="display:block;margin:0 auto 10px;"/>
+              <img src="${LOGO_URL}" alt="Guardian Trading" width="35" height="41"
+                   style="display:block;width:35px;height:41px;margin:0 auto 10px;"/>
               <p style="margin:0;font-size:10px;font-weight:700;color:#5baad4;
                          letter-spacing:0.12em;text-transform:uppercase;">
                 GUARDIAN TRADING &mdash; ADMIN ALERT
