@@ -5,6 +5,7 @@ import { User, Lock, BellRing, ChevronRight, Eye, EyeOff, Check, Shield, Copy, D
 import DashboardLayout from "./DashboardLayout";
 import { useTheme, type ThemeColors } from "@/context/ThemeContext";
 import { getCountries, getStates, getCities, getStateLabel, type LocationOption } from "@/lib/location/locationService";
+import ImageCropper from "@/components/ImageCropper";
 
 type Section = "profile" | "security" | "notifications";
 type TwoFAStep = "idle" | "qr" | "verify" | "backup" | "disable";
@@ -93,6 +94,7 @@ export default function Settings() {
   const [profilePic, setProfilePic] = useState<string | null>(null);
   const [picPreview, setPicPreview] = useState<string | null>(null);
   const [picUploading, setPicUploading] = useState(false);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
   const picInputRef = useRef<HTMLInputElement>(null);
 
   const [currentPw, setCurrentPw] = useState("");
@@ -166,25 +168,42 @@ export default function Settings() {
   const handlePicSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { alert("File too large. Max 5MB."); return; }
-    setPicPreview(URL.createObjectURL(file));
+    if (file.size > 20 * 1024 * 1024) { alert("File too large. Max 20MB."); return; }
+    const url = URL.createObjectURL(file);
+    setCropSrc(url);
+    e.target.value = "";
+  };
+
+  const handleCropSave = (blob: Blob) => {
+    setCropSrc(null);
     setPicUploading(true);
+    const preview = URL.createObjectURL(blob);
+    setPicPreview(preview);
     const fd = new FormData();
     fd.append("email", email);
-    fd.append("picture", file);
+    fd.append("picture", blob, "profile.jpg");
     fetch(`${base}/api/user/profile-picture`, { method: "POST", body: fd })
       .then((r) => { if (!r.ok) throw new Error("Upload failed"); return r.json(); })
-      .then((d: { filename?: string }) => { if (d.filename) setProfilePic(d.filename); setPicUploading(false); })
+      .then((d: { filename?: string }) => {
+        if (d.filename) {
+          setProfilePic(d.filename);
+          const newUrl = `${base}/api/user/profile-picture/${d.filename}`;
+          window.dispatchEvent(new CustomEvent("profile-pic-updated", { detail: { url: newUrl } }));
+        }
+        setPicUploading(false);
+      })
       .catch(() => { setPicUploading(false); setPicPreview(null); alert("Upload failed. Please try again."); });
   };
 
   const handlePicRemove = () => {
     fetch(`${base}/api/user/profile-picture?email=${encodeURIComponent(email)}`, { method: "DELETE" })
-      .then((r) => { if (!r.ok) throw new Error("Delete failed"); setProfilePic(null); setPicPreview(null); })
+      .then((r) => { if (!r.ok) throw new Error("Delete failed"); setProfilePic(null); setPicPreview(null);
+        window.dispatchEvent(new CustomEvent("profile-pic-updated", { detail: { url: null } }));
+      })
       .catch(() => alert("Failed to remove profile picture."));
   };
 
-  const profilePicUrl = profilePic ? `${base}/api/user/profile-picture/${profilePic}` : null;
+  const profilePicUrl = picPreview ?? (profilePic ? `${base}/api/user/profile-picture/${profilePic}` : null);
 
   const handleSaveProfile = async () => {
     try {
@@ -356,18 +375,20 @@ export default function Settings() {
           <div className="flex-shrink-0 w-full md:w-[240px]">
             <div className="hidden md:flex rounded-xl p-5 mb-4 flex-col items-center" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
               <div style={{ position: "relative", marginBottom: "12px" }}>
-                {picPreview || profilePicUrl ? (
-                  <img src={picPreview || profilePicUrl!} alt={displayName}
-                    style={{ width: "64px", height: "64px", borderRadius: "16px", objectFit: "cover" }} />
+                {profilePicUrl ? (
+                  <div style={{ width: "80px", height: "80px", borderRadius: "20px", overflow: "hidden", border: `2px solid ${colors.accent}`, flexShrink: 0 }}>
+                    <img src={profilePicUrl} alt={displayName}
+                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  </div>
                 ) : (
-                  <div className="flex items-center justify-center rounded-xl font-bold text-white"
-                    style={{ width: "64px", height: "64px", background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", fontSize: "24px", borderRadius: "16px" }}>
+                  <div className="flex items-center justify-center font-bold text-white"
+                    style={{ width: "80px", height: "80px", background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", fontSize: "28px", borderRadius: "20px", flexShrink: 0 }}>
                     {displayName[0]?.toUpperCase() ?? "U"}
                   </div>
                 )}
-                <input ref={picInputRef} type="file" accept=".jpg,.jpeg,.png,.webp" onChange={handlePicSelect} style={{ display: "none" }} />
+                <input ref={picInputRef} type="file" accept=".jpg,.jpeg,.png,.webp,.gif" onChange={handlePicSelect} style={{ display: "none" }} />
                 <button onClick={() => picInputRef.current?.click()} disabled={picUploading}
-                  style={{ position: "absolute", bottom: "-4px", right: "-4px", width: "24px", height: "24px", borderRadius: "50%", background: colors.accent, color: "#fff", border: "2px solid white", cursor: "pointer", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  style={{ position: "absolute", bottom: "-4px", right: "-4px", width: "26px", height: "26px", borderRadius: "50%", background: picUploading ? colors.textMuted : colors.accent, color: "#fff", border: `2px solid ${colors.card}`, cursor: picUploading ? "wait" : "pointer", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1 }}>
                   {picUploading ? "…" : "+"}
                 </button>
               </div>
@@ -727,6 +748,14 @@ export default function Settings() {
           </div>
         </div>
       </div>
+
+      {cropSrc && (
+        <ImageCropper
+          imageSrc={cropSrc}
+          onSave={handleCropSave}
+          onCancel={() => { setCropSrc(null); }}
+        />
+      )}
     </DashboardLayout>
   );
 }
