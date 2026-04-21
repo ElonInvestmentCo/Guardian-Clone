@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from "express";
 import { getAiProvider, type AiMessage } from "../../lib/ai/aiService.js";
-import { buildSystemPrompt, getPortfolioData, getMarketData, getStakingData } from "../../lib/ai/tradingContext.js";
+import { buildSystemPrompt, buildStakeRecommendation, getPortfolioData, getMarketData, getStakingData } from "../../lib/ai/tradingContext.js";
 import { getRecentMessages, appendMessage, clearConversation, getConversation } from "../../lib/ai/chatStore.js";
 import { aiChatLimit } from "../../middleware/security.js";
 import { validate, AiChatSchema, AuthCheckEmailSchema } from "../../lib/validation.js";
@@ -117,6 +117,46 @@ router.get("/ai/staking", (_req: Request, res: Response): void => {
   } catch (err) {
     console.error("[AI] Staking error:", err);
     res.status(500).json({ error: "Failed to load staking data" });
+  }
+});
+
+router.get("/ai/stake-calculator", (req: Request, res: Response): void => {
+  try {
+    const { balance, risk, market } = req.query as {
+      balance?: string;
+      risk?: string;
+      market?: string;
+    };
+
+    const parsedBalance = balance ? parseFloat(balance) : undefined;
+    if (parsedBalance !== undefined && (isNaN(parsedBalance) || parsedBalance <= 0)) {
+      res.status(400).json({ error: "balance must be a positive number" });
+      return;
+    }
+
+    const riskLevels = ["low", "medium", "high"] as const;
+    const riskTolerance = riskLevels.includes(risk as typeof riskLevels[number])
+      ? (risk as typeof riskLevels[number])
+      : "medium";
+
+    const marketConditions = ["bullish", "bearish", "neutral"] as const;
+    const marketCondition = marketConditions.includes(market as typeof marketConditions[number])
+      ? (market as typeof marketConditions[number])
+      : undefined;
+
+    const portfolio = getPortfolioData();
+    const effectiveBalance = parsedBalance ?? portfolio.buyingPower;
+
+    const result = buildStakeRecommendation(effectiveBalance, riskTolerance, marketCondition);
+    res.json({
+      balance: effectiveBalance,
+      riskTolerance,
+      marketCondition: marketCondition ?? "neutral",
+      ...result,
+    });
+  } catch (err) {
+    console.error("[AI] Stake calculator error:", err);
+    res.status(500).json({ error: "Failed to calculate stake recommendation" });
   }
 });
 

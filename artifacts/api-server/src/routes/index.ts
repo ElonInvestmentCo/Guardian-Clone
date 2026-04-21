@@ -15,6 +15,7 @@ import marketRouter from "./market.js";
 import profileRouter from "./profile.js";
 import twoFARouter from "./twofa.js";
 import contactRouter from "./contact.js";
+import aiRouter from "./ai/index.js";
 import { isDatabaseAvailable } from "../lib/db.js";
 
 const router: IRouter = Router();
@@ -48,5 +49,6 @@ router.use(marketRouter);
 router.use(profileRouter);
 router.use(twoFARouter);
 router.use(contactRouter);
+router.use(aiRouter);
 
 export default router;
