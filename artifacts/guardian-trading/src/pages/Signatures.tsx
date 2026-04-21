@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
 import { required, nameField, type FieldErrors, hasErrors } from "@/lib/validation";
@@ -15,6 +15,30 @@ const DISCLOSURE_DOCS = [
 ];
 
 type Fields = "consents" | "tradingPlan" | "signatureName" | "signature";
+
+function initCanvas(canvas: HTMLCanvasElement) {
+  const rect = canvas.getBoundingClientRect();
+  if (rect.width > 0 && canvas.width !== Math.round(rect.width)) {
+    canvas.width = Math.round(rect.width);
+  }
+  if (rect.height > 0 && canvas.height !== Math.round(rect.height)) {
+    canvas.height = Math.round(rect.height);
+  }
+  const ctx = canvas.getContext("2d");
+  if (!ctx) { console.error("[SignaturePad] Failed to get 2d context"); return null; }
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  return ctx;
+}
+
+function getPosFromEvent(e: MouseEvent | TouchEvent, canvas: HTMLCanvasElement) {
+  const rect = canvas.getBoundingClientRect();
+  if (e instanceof TouchEvent) {
+    const t = e.touches[0] ?? e.changedTouches[0];
+    return { x: t.clientX - rect.left, y: t.clientY - rect.top };
+  }
+  return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+}
 
 export default function Signatures() {
   const { savedData, submit, goBack, isSubmitting, globalError } = useOnboardingStep(11);
@@ -40,39 +64,84 @@ export default function Signatures() {
   const drawing   = useRef(false);
   const lastPos   = useRef<{ x: number; y: number } | null>(null);
 
+  const clearCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }, []);
+
   useEffect(() => {
-    if (showSignatureModal && canvasRef.current) {
-      const ctx = canvasRef.current.getContext("2d");
-      if (ctx) { ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height); }
-    }
+    if (!showSignatureModal) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = initCanvas(canvas);
+    if (!ctx) return;
+
+    const getPos = (e: MouseEvent | TouchEvent) => getPosFromEvent(e, canvas);
+
+    const onStart = (e: MouseEvent | TouchEvent) => {
+      e.preventDefault();
+      drawing.current = true;
+      lastPos.current = getPos(e);
+    };
+
+    const onMove = (e: MouseEvent | TouchEvent) => {
+      e.preventDefault();
+      if (!drawing.current || !lastPos.current) return;
+      const c = canvas.getContext("2d");
+      if (!c) return;
+      const pos = getPos(e);
+      c.beginPath();
+      c.moveTo(lastPos.current.x, lastPos.current.y);
+      c.lineTo(pos.x, pos.y);
+      c.strokeStyle = "#1c1c1c";
+      c.lineWidth = 2.5;
+      c.lineCap = "round";
+      c.lineJoin = "round";
+      c.stroke();
+      lastPos.current = pos;
+    };
+
+    const onEnd = () => {
+      drawing.current = false;
+      lastPos.current = null;
+    };
+
+    canvas.addEventListener("mousedown",  onStart, { passive: false });
+    canvas.addEventListener("mousemove",  onMove,  { passive: false });
+    canvas.addEventListener("mouseup",    onEnd);
+    canvas.addEventListener("mouseleave", onEnd);
+    canvas.addEventListener("touchstart", onStart, { passive: false });
+    canvas.addEventListener("touchmove",  onMove,  { passive: false });
+    canvas.addEventListener("touchend",   onEnd,   { passive: false });
+    canvas.addEventListener("touchcancel",onEnd,   { passive: false });
+
+    return () => {
+      canvas.removeEventListener("mousedown",  onStart);
+      canvas.removeEventListener("mousemove",  onMove);
+      canvas.removeEventListener("mouseup",    onEnd);
+      canvas.removeEventListener("mouseleave", onEnd);
+      canvas.removeEventListener("touchstart", onStart);
+      canvas.removeEventListener("touchmove",  onMove);
+      canvas.removeEventListener("touchend",   onEnd);
+      canvas.removeEventListener("touchcancel",onEnd);
+    };
   }, [showSignatureModal]);
 
-  const getXY = (e: React.MouseEvent | React.TouchEvent, canvas: HTMLCanvasElement) => {
-    const rect = canvas.getBoundingClientRect();
-    const sx = canvas.width / rect.width;
-    const sy = canvas.height / rect.height;
-    if ("touches" in e) { const t = (e as React.TouchEvent).touches[0]; return { x: (t.clientX - rect.left) * sx, y: (t.clientY - rect.top) * sy }; }
-    const m = e as React.MouseEvent;
-    return { x: (m.clientX - rect.left) * sx, y: (m.clientY - rect.top) * sy };
+  const submitSignature = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) { console.error("[SignaturePad] Canvas ref is null on submit"); return; }
+    const dataUrl = canvas.toDataURL("image/png");
+    setSignatureDataUrl(dataUrl);
+    setShowSignatureModal(false);
+    setErrors((p) => ({ ...p, signature: undefined }));
   };
-
-  const startDraw = (e: React.MouseEvent | React.TouchEvent) => { e.preventDefault(); const canvas = canvasRef.current; if (!canvas) return; drawing.current = true; lastPos.current = getXY(e, canvas); };
-  const doDraw   = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault(); if (!drawing.current || !lastPos.current) return;
-    const canvas = canvasRef.current; if (!canvas) return;
-    const ctx = canvas.getContext("2d"); if (!ctx) return;
-    const pos = getXY(e, canvas);
-    ctx.beginPath(); ctx.moveTo(lastPos.current.x, lastPos.current.y); ctx.lineTo(pos.x, pos.y);
-    ctx.strokeStyle = "#1c1c1c"; ctx.lineWidth = 2.5; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.stroke();
-    lastPos.current = pos;
-  };
-  const stopDraw = () => { drawing.current = false; lastPos.current = null; };
-  const clearCanvas = () => {
-    const canvas = canvasRef.current; if (!canvas) return;
-    const ctx = canvas.getContext("2d"); if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-  };
-  const submitSignature = () => { const canvas = canvasRef.current; if (!canvas) return; setSignatureDataUrl(canvas.toDataURL("image/png")); setShowSignatureModal(false); setErrors((p) => ({ ...p, signature: undefined })); };
 
   const validateAll = (): FieldErrors<Fields> => {
     const e: FieldErrors<Fields> = {};
@@ -237,7 +306,7 @@ export default function Signatures() {
               <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
             </div>
             <p style={{ fontSize: "12px", color: "#666", marginBottom: "8px" }}>Draw your New Signature</p>
-            <canvas ref={canvasRef} width={400} height={130} style={{ border: "1px solid #dde3e9", borderRadius: "2px", width: "100%", height: "130px", cursor: "crosshair", touchAction: "none", background: "#fff" }} onMouseDown={startDraw} onMouseMove={doDraw} onMouseUp={stopDraw} onMouseLeave={stopDraw} onTouchStart={startDraw} onTouchMove={doDraw} onTouchEnd={stopDraw} />
+            <canvas ref={canvasRef} style={{ border: "1px solid #dde3e9", borderRadius: "2px", width: "100%", height: "130px", cursor: "crosshair", touchAction: "none", background: "#fff", display: "block" }} />
             <div className="flex justify-end mt-1 mb-4">
               <button type="button" onClick={clearCanvas} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "#3a7bd5", textDecoration: "underline" }}>Clear</button>
             </div>
