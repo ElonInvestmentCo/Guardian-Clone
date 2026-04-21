@@ -13,16 +13,13 @@ export default function EmailVerification() {
   const [resending, setResending] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
   const [email, setEmail] = useState("");
-  const [storedPassword, setStoredPassword] = useState("");
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN);
   const [, navigate] = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const storedEmail = sessionStorage.getItem("verificationEmail") || "";
-    const pw = sessionStorage.getItem("verificationPassword") || "";
     setEmail(storedEmail);
-    setStoredPassword(pw);
     if (!storedEmail) {
       navigate("/signup");
       return;
@@ -107,36 +104,8 @@ export default function EmailVerification() {
         return;
       }
 
-      if (email && storedPassword) {
-        let registered = false;
-        for (let attempt = 0; attempt < 3; attempt++) {
-          try {
-            const regRes = await fetch(`${getApiBase()}/api/auth/register`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email, password: storedPassword }),
-            });
-            if (regRes.ok) {
-              registered = true;
-              break;
-            }
-            const regData = await regRes.json().catch(() => ({})) as { error?: string };
-            console.error(`[Registration] Attempt ${attempt + 1} failed:`, regData.error);
-          } catch (regErr) {
-            console.error(`[Registration] Attempt ${attempt + 1} network error:`, regErr);
-          }
-          if (attempt < 2) await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
-        }
-        if (!registered) {
-          setError("Account creation failed. Please try again.");
-          setVerifying(false);
-          return;
-        }
-      }
-
       sessionStorage.setItem("signupEmail", email);
       sessionStorage.removeItem("verificationEmail");
-      sessionStorage.removeItem("verificationPassword");
       sessionStorage.removeItem("verificationDevMode");
       navigate("/general-details");
     } catch {

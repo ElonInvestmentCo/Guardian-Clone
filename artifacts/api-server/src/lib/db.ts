@@ -26,7 +26,7 @@ export function getPool(): pg.Pool {
       process.env.NODE_ENV === "production";
     pool = new Pool({
       connectionString,
-      ssl: isRemote ? { rejectUnauthorized: false } : false,
+      ssl: isRemote ? { rejectUnauthorized: true } : false,
       max: 10,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,

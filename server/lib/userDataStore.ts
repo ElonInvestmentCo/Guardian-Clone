@@ -92,8 +92,18 @@ export function getDataDir(): string {
   return path.join(process.cwd(), "data");
 }
 
+function assertSafeUserPath(resolvedPath: string): void {
+  const dataRoot = path.resolve(getDataDir());
+  const normalized = path.resolve(resolvedPath);
+  if (!normalized.startsWith(dataRoot + path.sep) && normalized !== dataRoot) {
+    throw new Error(`[Security] Path outside data directory blocked: ${normalized}`);
+  }
+}
+
 export function getUserDir(email: string): string {
-  return path.join(getDataDir(), "users", sanitizeEmail(email));
+  const p = path.join(getDataDir(), "users", sanitizeEmail(email));
+  assertSafeUserPath(p);
+  return p;
 }
 
 export function getUserDocDir(email: string): string {

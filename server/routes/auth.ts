@@ -160,13 +160,26 @@ authRouter.post("/auth/login", sensitiveEndpointLimit, validate(AuthLoginSchema)
 
 authRouter.post("/auth/send-verification", sensitiveEndpointLimit, validate(AuthSendVerificationSchema), async (req, res) => {
   try {
-    const { email } = req.body as { email: string };
+    const { email, password } = req.body as { email: string; password?: string };
 
     const existingUser = await getUserData(email);
     if (existingUser) {
       logAttempt("SEND_VERIFICATION", email, "rejected — email already registered");
       res.status(409).json({ error: "An account with this email already exists. Please log in instead." });
       return;
+    }
+
+    if (password) {
+      const hash = await hashPassword(password);
+      await query(
+        `INSERT INTO pending_registrations (email, password_hash, created_at, expires_at)
+         VALUES ($1, $2, NOW(), NOW() + INTERVAL '1 hour')
+         ON CONFLICT (email) DO UPDATE
+           SET password_hash = EXCLUDED.password_hash,
+               created_at    = NOW(),
+               expires_at    = NOW() + INTERVAL '1 hour'`,
+        [email.toLowerCase(), hash]
+      );
     }
 
     const key = email.toLowerCase();
@@ -202,7 +215,7 @@ authRouter.post("/auth/send-verification", sensitiveEndpointLimit, validate(Auth
   }
 });
 
-authRouter.post("/auth/verify-code", sensitiveEndpointLimit, validate(AuthVerifyCodeSchema), (req, res) => {
+authRouter.post("/auth/verify-code", sensitiveEndpointLimit, validate(AuthVerifyCodeSchema), async (req, res) => {
   try {
     const { email, code } = req.body as { email: string; code: string };
 
@@ -239,6 +252,21 @@ authRouter.post("/auth/verify-code", sensitiveEndpointLimit, validate(AuthVerify
 
     verificationCodes.delete(key);
     logAttempt("VERIFY_CODE", email, "success");
+
+    const pending = await query(
+      `SELECT password_hash FROM pending_registrations WHERE email = $1 AND expires_at > NOW()`,
+      [key]
+    );
+    if (pending.rows.length > 0) {
+      const existingUser = await getUserData(email);
+      if (!existingUser) {
+        const hash = pending.rows[0].password_hash as string;
+        await saveUserCredentials(email, hash);
+        logAttempt("VERIFY_CODE", email, "auto-registered from pending_registrations");
+      }
+      await query(`DELETE FROM pending_registrations WHERE email = $1`, [key]);
+    }
+
     res.json({ success: true });
   } catch (err) {
     console.error("[Auth] VERIFY_CODE error:", err);

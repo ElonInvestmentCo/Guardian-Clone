@@ -87,7 +87,7 @@ export default function Signup() {
       const res = await fetch(`${base}/api/auth/send-verification`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, password }),
       });
       const data = await res.json().catch(() => ({})) as { error?: string };
       if (!res.ok) {
@@ -95,7 +95,6 @@ export default function Signup() {
         return;
       }
       sessionStorage.setItem("verificationEmail", email);
-      sessionStorage.setItem("verificationPassword", password);
       setSent(true);
       setTimeout(() => navigate("/email-verification"), 600);
     } catch {

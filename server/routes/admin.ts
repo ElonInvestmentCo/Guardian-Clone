@@ -1000,14 +1000,18 @@ router.get("/admin/fund-requests", adminRateLimit, requireAdmin, async (req: Req
   try {
     const pool = getPool();
     const statusFilter = typeof req.query["status"] === "string" ? req.query["status"] : null;
-    const params: string[] = [];
-    const where = statusFilter ? `WHERE status = $${params.push(statusFilter)}` : "";
-    const result = await pool.query(
-      `SELECT id, email, type, amount, note, status, admin_note AS "adminNote",
-              created_at AS "createdAt", resolved_at AS "reviewedAt"
-       FROM fund_requests ${where} ORDER BY created_at DESC LIMIT 200`,
-      params
-    );
+    const ALLOWED_STATUSES = ["pending", "approved", "rejected"] as const;
+    const safeStatus = ALLOWED_STATUSES.includes(statusFilter as typeof ALLOWED_STATUSES[number])
+      ? statusFilter
+      : null;
+    const sql = safeStatus
+      ? `SELECT id, email, type, amount, note, status, admin_note AS "adminNote",
+                created_at AS "createdAt", resolved_at AS "reviewedAt"
+         FROM fund_requests WHERE status = $1 ORDER BY created_at DESC LIMIT 200`
+      : `SELECT id, email, type, amount, note, status, admin_note AS "adminNote",
+                created_at AS "createdAt", resolved_at AS "reviewedAt"
+         FROM fund_requests ORDER BY created_at DESC LIMIT 200`;
+    const result = await pool.query(sql, safeStatus ? [safeStatus] : []);
     res.json({ requests: result.rows });
   } catch (err) {
     console.error("[Admin] fund-requests list error:", err);

@@ -13,9 +13,15 @@ export function getPool(): pg.Pool {
     if (!connectionString) {
       throw new Error("[DB] No database URL configured (PG_DATABASE_URL or DATABASE_URL)");
     }
+    const isRemote =
+      connectionString.includes("railway") ||
+      connectionString.includes("render") ||
+      connectionString.includes("supabase") ||
+      connectionString.includes("neon") ||
+      process.env.NODE_ENV === "production";
     pool = new Pool({
       connectionString,
-      ssl: false,
+      ssl: isRemote ? { rejectUnauthorized: true } : false,
       max: 10,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,
@@ -175,6 +181,19 @@ export async function initDatabase(): Promise<void> {
   `);
   await p.query(`
     CREATE INDEX IF NOT EXISTS idx_fund_requests_status ON fund_requests (status, created_at DESC);
+  `);
+
+  await p.query(`
+    CREATE TABLE IF NOT EXISTS pending_registrations (
+      email         TEXT PRIMARY KEY,
+      password_hash TEXT NOT NULL,
+      created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      expires_at    TIMESTAMPTZ NOT NULL DEFAULT (NOW() + INTERVAL '1 hour')
+    );
+  `);
+
+  await p.query(`
+    DELETE FROM pending_registrations WHERE expires_at < NOW();
   `);
 
   console.log("[DB] Database tables initialized successfully");

@@ -26,6 +26,7 @@ export const AuthCheckEmailSchema = z.object({
 
 export const AuthSendVerificationSchema = z.object({
   email: emailSchema,
+  password: z.string().min(8, "Password must be at least 8 characters").max(200).optional(),
 });
 
 export const AuthVerifyCodeSchema = z.object({

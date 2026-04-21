@@ -80,7 +80,7 @@
   },
   "dependencies": {
     "@livechat/widget-react": "^1.4.0",
-    "dompurify": "^3.3.3",
+    "dompurify": "^3.4.0",
     "react-helmet-async": "^3.0.0"
   }
 }
