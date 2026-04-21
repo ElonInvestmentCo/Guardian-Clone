@@ -346,3 +346,7 @@ export interface RegistrationLogResponse {
 export async function getRegistrationLog(): Promise<RegistrationLogResponse> {
   return request<RegistrationLogResponse>("GET", "/admin/registration-log");
 }
+
+export async function verifySignature(email: string, adminNote?: string): Promise<void> {
+  await request<{ success: boolean }>("POST", "/admin/verify-signature", { email, adminNote });
+}

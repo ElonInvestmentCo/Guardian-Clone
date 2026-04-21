@@ -7,6 +7,7 @@ import {
   sanitizeEmail,
   setUserStatus,
   setUserProfileMeta,
+  upsertUserStep,
   deleteUser,
   setUserBalance,
   getUserBalance,
@@ -728,6 +729,41 @@ router.get("/admin/registration-log/export", securityHeaders, requireAdmin, admi
   } catch (err) {
     console.error("[Admin] registration-log export error:", err);
     res.status(500).json({ error: "Failed to export registration log" });
+  }
+});
+
+router.post("/admin/verify-signature", requireAdmin, adminRateLimit, validate(AdminEmailSchema), async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, adminNote } = req.body as { email: string; adminNote?: string };
+    const master = await getUserData(email);
+    if (!master) { res.status(404).json({ error: "User not found" }); return; }
+
+    const profile = await getUserProfileData(email);
+    const existingSigs = (profile["signatures"] as Record<string, unknown>) ?? {};
+    const now = new Date().toISOString();
+
+    await upsertUserStep(email, "signatures", {
+      ...existingSigs,
+      signatureVerified: true,
+      signatureVerifiedAt: now,
+    });
+
+    const auditLog = (profile["_auditLog"] as unknown[]) ?? [];
+    const adminUser = (req as Request & { adminUser: string }).adminUser;
+    auditLog.push({
+      actionType: "SIGNATURE_VERIFIED",
+      actor: adminUser,
+      email,
+      note: adminNote ?? null,
+      timestamp: now,
+    });
+    await setUserProfileMeta(email, "_auditLog", auditLog);
+
+    console.log(`[Admin] Signature verified for ${email} by ${adminUser}`);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("[Admin] verify-signature error:", err);
+    res.status(500).json({ error: "Failed to verify signature" });
   }
 });
 

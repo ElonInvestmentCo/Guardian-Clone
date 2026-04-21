@@ -351,6 +351,10 @@ signupRouter.post("/signup/complete-step", sensitiveEndpointLimit, validate(Sign
     const profile = await getUserProfileData(email);
     const oldStepData = (profile[stepKey] as Record<string, unknown>) ?? {};
 
+    if (stepKey === "signatures" && data.hasSigned && !data.signedAt) {
+      data.signedAt = new Date().toISOString();
+    }
+
     await upsertUserStep(email, stepKey, data);
 
     const completedSteps = await addCompletedStepNumber(email, stepNumber);

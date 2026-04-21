@@ -16,6 +16,7 @@ import {
   resetPassword,
   deleteUser,
   updateUser,
+  verifySignature,
   TRANSACTION_TYPES,
   type TransactionType,
   type AuditEntry,
@@ -55,6 +56,7 @@ export default function UserProfileView({ email, onBack }: Props) {
   const [editMode,        setEditMode]        = useState(false);
   const [actionMsg,       setActionMsg]       = useState<{ type: "ok" | "err"; text: string } | null>(null);
   const [confirmDel,      setConfirmDel]      = useState(false);
+  const [confirmVerifySig, setConfirmVerifySig] = useState(false);
   const [auditFilter,     setAuditFilter]     = useState("");
 
   const qc = useQueryClient();
@@ -93,6 +95,7 @@ export default function UserProfileView({ email, onBack }: Props) {
   const resetPwMut   = useMutation({ mutationFn: () => resetPassword(email, actionNote || undefined),                  onSuccess: () => { showMsg("ok", "Password reset"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
   const updateMut    = useMutation({ mutationFn: () => updateUser(email, editFirst || undefined, editLast || undefined, actionNote || undefined), onSuccess: () => { showMsg("ok", "Profile updated"); setEditMode(false); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
   const deleteMut    = useMutation({ mutationFn: () => deleteUser(email, actionNote || undefined),                     onSuccess: () => { showMsg("ok", "User deleted"); onBack(); }, onError: (e: Error) => showMsg("err", e.message) });
+  const verifySigMut = useMutation({ mutationFn: () => verifySignature(email), onSuccess: () => { showMsg("ok", "Signature verified"); setConfirmVerifySig(false); refresh(); }, onError: (e: Error) => { showMsg("err", e.message); setConfirmVerifySig(false); } });
 
   const profile  = data?.profile  ?? {};
   const risk     = data?.risk;
@@ -320,19 +323,104 @@ export default function UserProfileView({ email, onBack }: Props) {
                   <Field label="Can Withstand Total Loss"          value={pf("disclosures", "q10")} />
                 </Card>
 
-                <Card title="Signatures & Consents">
-                  <Field label="Trading Plan"          value={pf("signatures", "tradingPlan")} />
-                  <Field label="Electronic Delivery"   value={pf("signatures", "electronicDelivery")} />
-                  <Field label="Has Signed"            value={pf("signatures", "hasSigned")} />
-                  <Field label="Signature Name"        value={pf("signatures", "signatureName")} />
-                  {(() => {
-                    const consents = (profile.signatures as Record<string, unknown> | undefined)?.consents as Record<string, boolean> | undefined;
-                    if (!consents || Object.keys(consents).length === 0) return null;
-                    return Object.entries(consents).map(([name, agreed]) => (
-                      <Field key={name} label={name} value={agreed ? "Yes" : "No"} />
-                    ));
-                  })()}
-                </Card>
+                {/* ── Electronic Signature ── full-width ── */}
+                {(() => {
+                  const sigData        = (profile.signatures as Record<string, unknown>) ?? {};
+                  const sigImage       = (sigData.signatureImage as string) || null;
+                  const sigHasSigned   = !!(sigData.hasSigned);
+                  const sigSignedAt    = (sigData.signedAt as string) || null;
+                  const sigVerified    = !!(sigData.signatureVerified);
+                  const sigVerifiedAt  = (sigData.signatureVerifiedAt as string) || null;
+                  const sigConsents    = (sigData.consents as Record<string, boolean>) || null;
+
+                  const statusBadge = sigVerified ? (
+                    <span style={{ fontSize: "11px", fontWeight: "700", color: "#16A34A", background: "#DCFCE7", padding: "2px 9px", borderRadius: "4px", border: "1px solid #86EFAC" }}>Verified</span>
+                  ) : sigHasSigned ? (
+                    <span style={{ fontSize: "11px", fontWeight: "700", color: "#D97706", background: "#FEF3C7", padding: "2px 9px", borderRadius: "4px", border: "1px solid #FDE68A" }}>Signed — Pending Verification</span>
+                  ) : (
+                    <span style={{ fontSize: "11px", fontWeight: "700", color: "#DC2626", background: "#FEF2F2", padding: "2px 9px", borderRadius: "4px", border: "1px solid #FECACA" }}>Not Signed</span>
+                  );
+
+                  return (
+                    <div style={{ gridColumn: "1 / -1" }}>
+                      <Card title="Electronic Signature" borderColor={sigVerified ? "#16A34A" : sigHasSigned ? "#D97706" : "#DC2626"} headerAction={statusBadge}>
+                        <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: "20px" }}>
+
+                          {/* Left: signature image + actions */}
+                          <div>
+                            <div style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.06em", textTransform: "uppercase", color: "#94A3B8", marginBottom: "8px" }}>Signature Image</div>
+                            {sigImage ? (
+                              <>
+                                <div style={{ border: "1px solid #E5E7EB", borderRadius: "6px", padding: "12px", background: "#FAFAFA", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100px" }}>
+                                  <img src={sigImage} alt="User signature" style={{ maxWidth: "100%", maxHeight: "130px", objectFit: "contain", display: "block" }} />
+                                </div>
+                                <div style={{ display: "flex", gap: "6px", marginTop: "8px" }}>
+                                  <button
+                                    onClick={() => { const a = document.createElement("a"); a.href = sigImage; a.download = `signature-${email}.png`; a.click(); }}
+                                    style={{ flex: 1, padding: "6px 10px", borderRadius: "4px", border: "1px solid #BFDBFE", background: "#EFF6FF", color: "#2563EB", fontSize: "11px", fontWeight: "600", cursor: "pointer" }}
+                                  >
+                                    Download PNG
+                                  </button>
+                                  {!sigVerified && !confirmVerifySig && (
+                                    <button
+                                      onClick={() => setConfirmVerifySig(true)}
+                                      style={{ flex: 1, padding: "6px 10px", borderRadius: "4px", border: "none", background: "#16A34A", color: "white", fontSize: "11px", fontWeight: "600", cursor: "pointer" }}
+                                    >
+                                      Verify Signature
+                                    </button>
+                                  )}
+                                </div>
+                                {confirmVerifySig && (
+                                  <div style={{ marginTop: "8px" }}>
+                                    <ConfirmInline
+                                      message="Mark this signature as verified for compliance? This action is recorded in the audit log."
+                                      onConfirm={() => verifySigMut.mutate()}
+                                      onCancel={() => setConfirmVerifySig(false)}
+                                      loading={verifySigMut.isPending}
+                                      color="#16A34A"
+                                    />
+                                  </div>
+                                )}
+                                {sigVerified && (
+                                  <div style={{ marginTop: "8px", padding: "7px 10px", borderRadius: "4px", background: "#F0FDF4", border: "1px solid #86EFAC" }}>
+                                    <div style={{ fontSize: "11px", color: "#16A34A", fontWeight: "600" }}>
+                                      Verified {sigVerifiedAt ? `on ${formatDate(sigVerifiedAt)}` : ""}
+                                    </div>
+                                  </div>
+                                )}
+                              </>
+                            ) : (
+                              <div style={{ border: "1px dashed #E5E7EB", borderRadius: "6px", padding: "28px 12px", textAlign: "center", background: "#FAFAFA" }}>
+                                <div style={{ fontSize: "22px", marginBottom: "6px", opacity: 0.4 }}>✍️</div>
+                                <div style={{ fontSize: "12px", color: "#9CA3AF" }}>No signature submitted</div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Right: metadata + consents */}
+                          <div>
+                            <div style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.06em", textTransform: "uppercase", color: "#94A3B8", marginBottom: "8px" }}>Details</div>
+                            <Field label="Status"              value={sigVerified ? "Verified" : sigHasSigned ? "Signed" : "Not Signed"} />
+                            <Field label="Signature Name"      value={pf("signatures", "signatureName")} />
+                            <Field label="Date Signed"         value={sigSignedAt ? formatDate(sigSignedAt) : "—"} />
+                            {sigVerified && <Field label="Date Verified" value={sigVerifiedAt ? formatDate(sigVerifiedAt) : "—"} />}
+                            <Field label="Trading Plan"        value={pf("signatures", "tradingPlan")} />
+                            <Field label="Electronic Delivery" value={pf("signatures", "electronicDelivery")} />
+
+                            {sigConsents && Object.keys(sigConsents).length > 0 && (
+                              <>
+                                <div style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.06em", textTransform: "uppercase", color: "#94A3B8", margin: "10px 0 6px" }}>Document Consents</div>
+                                {Object.entries(sigConsents).map(([name, agreed]) => (
+                                  <Field key={name} label={name} value={agreed ? "Yes ✓" : "No ✗"} />
+                                ))}
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </Card>
+                    </div>
+                  );
+                })()}
 
                 <Card title="Uploaded Documents">
                   {(() => {
