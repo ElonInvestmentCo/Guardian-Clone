@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { Plus, ShoppingCart } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Plus, ShoppingCart, RefreshCw } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
+import { getApiBase } from "@/lib/api";
 
 type OrderStatus = "Active" | "Pending" | "Filled" | "Cancelled";
 type OrderType = "Market" | "Limit" | "Stop" | "Stop Limit";
@@ -36,6 +37,8 @@ function EmptyState({ icon: Icon, title, message }: { icon: React.ElementType; t
 
 export default function Orders() {
   const { colors } = useTheme();
+  const API = getApiBase();
+  const email = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("signupEmail") ?? "" : "";
 
   const [activeTab, setActiveTab] = useState<OrderStatus | "All">("All");
   const [search, setSearch] = useState("");
@@ -45,8 +48,29 @@ export default function Orders() {
   const [newType, setNewType] = useState<OrderType>("Market");
   const [newQty, setNewQty] = useState("100");
   const [newPrice, setNewPrice] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+
+  const fetchOrders = useCallback(async () => {
+    if (!email) { setLoading(false); return; }
+    try {
+      setLoadError("");
+      const res = await fetch(`${API}/api/user/orders/${encodeURIComponent(email)}`);
+      if (!res.ok) { setLoadError("Failed to load orders"); setLoading(false); return; }
+      const data = await res.json() as { orders: Order[] };
+      setOrders(data.orders ?? []);
+    } catch {
+      setLoadError("Failed to load orders");
+    } finally {
+      setLoading(false);
+    }
+  }, [email, API]);
+
+  useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
   const filtered = orders.filter((o) =>
     (activeTab === "All" || o.status === activeTab) &&
@@ -55,24 +79,50 @@ export default function Orders() {
 
   const counts = Object.fromEntries(TABS.map((t) => [t, orders.filter((o) => o.status === t).length]));
 
-  const handleSubmitOrder = () => {
+  const handleSubmitOrder = async () => {
     if (!newQty || Number(newQty) <= 0) return;
     if ((newType === "Limit" || newType === "Stop" || newType === "Stop Limit") && !newPrice) return;
-    const newOrder: Order = {
-      id: `ORD-${Date.now()}`,
-      symbol: newSymbol.toUpperCase(),
-      side: newSide,
-      type: newType,
-      qty: Number(newQty),
-      price: newType === "Market" ? null : Number(newPrice),
-      filled: newType === "Market" ? Number(newQty) : 0,
-      status: newType === "Market" ? "Filled" : "Active",
-      date: new Date().toLocaleDateString("en-GB").split("/").join("/"),
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
-    };
-    setOrders((prev) => [newOrder, ...prev]);
-    setSubmitted(true);
-    setTimeout(() => { setSubmitted(false); setShowNewOrder(false); }, 1500);
+    if (!email) { setSubmitError("Not logged in"); return; }
+
+    setSubmitting(true);
+    setSubmitError("");
+    try {
+      const body: Record<string, unknown> = {
+        email,
+        symbol: newSymbol.toUpperCase(),
+        side: newSide,
+        type: newType,
+        qty: Number(newQty),
+      };
+      if (newType !== "Market" && newPrice) {
+        body.price = Number(newPrice);
+      }
+      const res = await fetch(`${API}/api/user/orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json() as { success?: boolean; order?: Order; error?: string };
+      if (!res.ok || !data.success) {
+        setSubmitError(data.error ?? "Failed to place order");
+        setSubmitting(false);
+        return;
+      }
+      if (data.order) {
+        setOrders((prev) => [data.order!, ...prev]);
+      }
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        setSubmitting(false);
+        setShowNewOrder(false);
+        setNewQty("100");
+        setNewPrice("");
+      }, 1500);
+    } catch {
+      setSubmitError("Failed to place order. Please try again.");
+      setSubmitting(false);
+    }
   };
 
   const inputStyle: React.CSSProperties = {
@@ -100,15 +150,30 @@ export default function Orders() {
             <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary }}>Orders</h1>
             <p style={{ fontSize: "12px", color: colors.textMuted, marginTop: "2px" }}>Manage your trade orders</p>
           </div>
-          <button
-            onClick={() => setShowNewOrder(true)}
-            className="flex items-center gap-2"
-            style={{ padding: "9px 18px", fontSize: "13px", fontWeight: 600, background: colors.accent, color: "#fff", border: "none", borderRadius: "10px", cursor: "pointer" }}
-          >
-            <Plus size={15} />
-            New Order
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={fetchOrders}
+              title="Refresh"
+              style={{ padding: "9px 12px", fontSize: "13px", fontWeight: 600, background: colors.filterBar, color: colors.textSub, border: "none", borderRadius: "10px", cursor: "pointer", display: "flex", alignItems: "center" }}
+            >
+              <RefreshCw size={14} />
+            </button>
+            <button
+              onClick={() => setShowNewOrder(true)}
+              className="flex items-center gap-2"
+              style={{ padding: "9px 18px", fontSize: "13px", fontWeight: 600, background: colors.accent, color: "#fff", border: "none", borderRadius: "10px", cursor: "pointer" }}
+            >
+              <Plus size={15} />
+              New Order
+            </button>
+          </div>
         </div>
+
+        {loadError && (
+          <div style={{ padding: "12px 16px", background: "#FEF2F2", border: "1px solid #FECACA", borderRadius: "8px", marginBottom: "16px", color: "#DC2626", fontSize: "13px" }}>
+            {loadError}
+          </div>
+        )}
 
         <div className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "20px" }}>
           <div className="flex flex-col sm:flex-row gap-3 mb-5">
@@ -132,7 +197,9 @@ export default function Orders() {
             </div>
           </div>
 
-          {filtered.length === 0 ? (
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "40px", color: colors.textMuted, fontSize: "13px" }}>Loading orders…</div>
+          ) : filtered.length === 0 ? (
             <EmptyState
               icon={ShoppingCart}
               title="No orders yet"
@@ -213,7 +280,7 @@ export default function Orders() {
                   <p style={{ fontSize: "16px", fontWeight: 700, color: colors.textPrimary }}>New Order</p>
                   <p style={{ fontSize: "11px", color: colors.textMuted }}>Place a trade order</p>
                 </div>
-                <button onClick={() => setShowNewOrder(false)} style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", color: colors.textMuted, fontSize: "18px", lineHeight: 1 }}>×</button>
+                <button onClick={() => { setShowNewOrder(false); setSubmitError(""); }} style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", color: colors.textMuted, fontSize: "18px", lineHeight: 1 }}>×</button>
               </div>
 
               <div className="flex gap-2 mb-5">
@@ -252,11 +319,18 @@ export default function Orders() {
                 )}
               </div>
 
-              <button onClick={handleSubmitOrder} style={{
-                width: "100%", padding: "12px", fontSize: "14px", fontWeight: 700, borderRadius: "10px", border: "none", cursor: "pointer",
-                background: submitted ? colors.green : (newSide === "Buy" ? colors.green : colors.red), color: "#fff",
+              {submitError && (
+                <p style={{ fontSize: "12px", color: "#ef4444", marginBottom: "12px" }}>{submitError}</p>
+              )}
+
+              <button onClick={handleSubmitOrder} disabled={submitting} style={{
+                width: "100%", padding: "12px", fontSize: "14px", fontWeight: 700, borderRadius: "10px", border: "none",
+                cursor: submitting ? "not-allowed" : "pointer",
+                background: submitted ? colors.green : (newSide === "Buy" ? colors.green : colors.red),
+                color: "#fff",
+                opacity: submitting && !submitted ? 0.7 : 1,
               }}>
-                {submitted ? "✓ Order Placed" : `${newSide} ${newSymbol || "—"}`}
+                {submitted ? "✓ Order Placed" : submitting ? "Placing…" : `${newSide} ${newSymbol || "—"}`}
               </button>
             </div>
           </div>

@@ -174,6 +174,19 @@ export const FundRequestSchema = z.object({
   note: z.string().trim().max(500).optional(),
 }).strict();
 
+export const OrderSubmitSchema = z.object({
+  email: emailSchema,
+  symbol: z.string().trim().min(1).max(10),
+  side: z.enum(["Buy", "Sell"]),
+  type: z.enum(["Market", "Limit", "Stop", "Stop Limit"]),
+  qty: z.number({ coerce: true }).positive("Quantity must be positive"),
+  price: z.number({ coerce: true }).positive().optional(),
+}).strict();
+
+export const AdminFundRequestActionSchema = z.object({
+  adminNote: z.string().trim().max(500).optional(),
+}).strict();
+
 export function validate<T extends z.ZodSchema>(schema: T) {
   return (req: Request, res: Response, next: NextFunction): void => {
     const source = ["GET", "HEAD"].includes(req.method) ? req.query : req.body;

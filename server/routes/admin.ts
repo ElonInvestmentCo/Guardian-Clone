@@ -35,7 +35,7 @@ import {
 import { getPool } from "../lib/db.js";
 import { evaluateRisk } from "../lib/fraud/riskEngine.js";
 import { getAdminCredentials } from "../lib/setupAdmin.js";
-import { validate, AdminLoginSchema, AdminEmailSchema, AdminRejectSchema, AdminResubmitSchema, AdminCreateUserSchema, AdminUpdateUserSchema, AdminAssignRoleSchema, AdminBanSchema, AdminSetBalanceSchema } from "../lib/validation.js";
+import { validate, AdminLoginSchema, AdminEmailSchema, AdminRejectSchema, AdminResubmitSchema, AdminCreateUserSchema, AdminUpdateUserSchema, AdminAssignRoleSchema, AdminBanSchema, AdminSetBalanceSchema, AdminFundRequestActionSchema } from "../lib/validation.js";
 import { logSecurity } from "../lib/securityLogger.js";
 
 const router = Router();
@@ -991,6 +991,124 @@ router.get("/admin/signature-audit-log/export", requireAdmin, adminRateLimit, as
   } catch (err) {
     console.error("[Admin] signature-audit-log export error:", err);
     res.status(500).json({ error: "Failed to export signature audit log" });
+  }
+});
+
+// ─── Fund Requests ──────────────────────────────────────────────────────────
+
+router.get("/admin/fund-requests", adminRateLimit, requireAdmin, async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const pool = getPool();
+    const result = await pool.query(
+      `SELECT id, email, type, amount, note, status, admin_note, created_at, resolved_at
+       FROM fund_requests ORDER BY created_at DESC LIMIT 200`
+    );
+    res.json({ requests: result.rows });
+  } catch (err) {
+    console.error("[Admin] fund-requests list error:", err);
+    res.status(500).json({ error: "Failed to fetch fund requests" });
+  }
+});
+
+router.post("/admin/fund-requests/:id/approve", adminRateLimit, requireAdmin, validate(AdminFundRequestActionSchema), async (req: Request, res: Response): Promise<void> => {
+  try {
+    const requestId = req.params["id"];
+    const { adminNote } = req.body as { adminNote?: string };
+
+    const pool = getPool();
+    const result = await pool.query(
+      `SELECT id, email, type, amount, note, status FROM fund_requests WHERE id = $1`,
+      [requestId]
+    );
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: "Fund request not found" });
+      return;
+    }
+    const request = result.rows[0] as { id: string; email: string; type: string; amount: string; note: string | null; status: string };
+    if (request.status !== "pending") {
+      res.status(400).json({ error: `Request is already ${request.status}` });
+      return;
+    }
+
+    const amount = parseFloat(request.amount);
+    const email = request.email;
+
+    const bal = await getUserBalance(email);
+    const currentBalance = bal.balance;
+    const currentProfit = bal.profit;
+
+    let newBalance: number;
+    let newProfit: number;
+    const txType = request.type === "deposit" ? "deposit" : "withdrawal";
+
+    if (request.type === "deposit") {
+      newBalance = currentBalance + amount;
+      newProfit = currentProfit;
+    } else {
+      newBalance = Math.max(0, currentBalance - amount);
+      newProfit = currentProfit;
+    }
+
+    const noteText = adminNote?.trim() || `${request.type === "deposit" ? "Deposit" : "Withdrawal"} approved`;
+    await setUserBalance(email, newBalance, newProfit, noteText, "admin", txType);
+
+    await pool.query(
+      `UPDATE fund_requests SET status = 'approved', admin_note = $1, resolved_at = NOW() WHERE id = $2`,
+      [adminNote?.trim() || null, requestId]
+    );
+
+    const formattedAmt = `$${amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+    await addNotification(email, {
+      type: "account",
+      title: `${request.type === "deposit" ? "Deposit" : "Withdrawal"} Approved`,
+      message: `Your ${request.type} request for ${formattedAmt} has been approved and your account balance has been updated.`,
+    });
+
+    console.log(`[Admin] Fund request ${requestId} approved: ${email} ${request.type} $${amount}`);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("[Admin] fund-request approve error:", err);
+    res.status(500).json({ error: "Failed to approve fund request" });
+  }
+});
+
+router.post("/admin/fund-requests/:id/reject", adminRateLimit, requireAdmin, validate(AdminFundRequestActionSchema), async (req: Request, res: Response): Promise<void> => {
+  try {
+    const requestId = req.params["id"];
+    const { adminNote } = req.body as { adminNote?: string };
+
+    const pool = getPool();
+    const result = await pool.query(
+      `SELECT id, email, type, amount, status FROM fund_requests WHERE id = $1`,
+      [requestId]
+    );
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: "Fund request not found" });
+      return;
+    }
+    const request = result.rows[0] as { id: string; email: string; type: string; amount: string; status: string };
+    if (request.status !== "pending") {
+      res.status(400).json({ error: `Request is already ${request.status}` });
+      return;
+    }
+
+    await pool.query(
+      `UPDATE fund_requests SET status = 'rejected', admin_note = $1, resolved_at = NOW() WHERE id = $2`,
+      [adminNote?.trim() || null, requestId]
+    );
+
+    const formattedAmt = `$${parseFloat(request.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+    await addNotification(request.email, {
+      type: "account",
+      title: `${request.type === "deposit" ? "Deposit" : "Withdrawal"} Request Declined`,
+      message: `Your ${request.type} request for ${formattedAmt} was not approved.${adminNote?.trim() ? ` Reason: ${adminNote.trim()}` : " Please contact support for more information."}`,
+    });
+
+    console.log(`[Admin] Fund request ${requestId} rejected: ${request.email} ${request.type}`);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("[Admin] fund-request reject error:", err);
+    res.status(500).json({ error: "Failed to reject fund request" });
   }
 });
 

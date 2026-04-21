@@ -1,9 +1,40 @@
 import { Router, type Request, type Response } from "express";
 import { getAiProvider, type AiMessage } from "../../lib/ai/aiService.js";
-import { buildSystemPrompt, buildStakeRecommendation, getPortfolioData, getMarketData, getStakingData } from "../../lib/ai/tradingContext.js";
+import { buildSystemPrompt, buildStakeRecommendation, getStakingData, type UserAccountData, type LiveMarketData } from "../../lib/ai/tradingContext.js";
 import { getRecentMessages, appendMessage, clearConversation, getConversation } from "../../lib/ai/chatStore.js";
 import { aiChatLimit } from "../../middleware/security.js";
 import { validate, AiChatSchema, AuthCheckEmailSchema } from "../../lib/validation.js";
+import { getUserBalance, getUserData } from "../../lib/userDataStore.js";
+
+let marketsCache: { data: LiveMarketData; ts: number } | null = null;
+const MARKET_CACHE_TTL = 60_000;
+
+async function getLiveMarketData(): Promise<LiveMarketData | undefined> {
+  try {
+    if (marketsCache && Date.now() - marketsCache.ts < MARKET_CACHE_TTL) {
+      return marketsCache.data;
+    }
+    const url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false";
+    const response = await fetch(url, { headers: { Accept: "application/json" } });
+    if (!response.ok) return marketsCache?.data;
+    const raw = await response.json() as Array<{
+      name: string; symbol: string; current_price: number;
+      price_change_percentage_24h: number;
+    }>;
+    const data: LiveMarketData = {
+      coins: raw.map(c => ({
+        name: c.name,
+        symbol: c.symbol,
+        price: c.current_price,
+        percent_change_24h: c.price_change_percentage_24h,
+      })),
+    };
+    marketsCache = { data, ts: Date.now() };
+    return data;
+  } catch {
+    return marketsCache?.data;
+  }
+}
 
 const router = Router();
 
@@ -13,7 +44,28 @@ router.post("/ai/chat", aiChatLimit, validate(AiChatSchema), async (req: Request
 
     await appendMessage(email, "user", message);
 
-    const systemPrompt = buildSystemPrompt(email);
+    let account: UserAccountData | undefined;
+    let liveMarket: LiveMarketData | undefined;
+
+    try {
+      const [userData, bal, mkt] = await Promise.all([
+        getUserData(email),
+        getUserBalance(email),
+        getLiveMarketData(),
+      ]);
+      if (userData) {
+        account = {
+          balance: bal.balance,
+          profit: bal.profit,
+          history: (bal.history ?? []) as UserAccountData["history"],
+        };
+      }
+      liveMarket = mkt;
+    } catch (dataErr) {
+      console.warn("[AI] Could not load user/market data for system prompt:", dataErr);
+    }
+
+    const systemPrompt = buildSystemPrompt(email, account, liveMarket);
     const history = await getRecentMessages(email, 20);
     const messages: AiMessage[] = [
       systemPrompt,
@@ -93,18 +145,10 @@ router.post("/ai/clear", validate(AuthCheckEmailSchema), async (req: Request, re
   }
 });
 
-router.get("/ai/portfolio", (_req: Request, res: Response): void => {
+router.get("/ai/market", async (_req: Request, res: Response): Promise<void> => {
   try {
-    res.json(getPortfolioData());
-  } catch (err) {
-    console.error("[AI] Portfolio error:", err);
-    res.status(500).json({ error: "Failed to load portfolio data" });
-  }
-});
-
-router.get("/ai/market", (_req: Request, res: Response): void => {
-  try {
-    res.json(getMarketData());
+    const data = await getLiveMarketData();
+    res.json(data ?? { coins: [] });
   } catch (err) {
     console.error("[AI] Market error:", err);
     res.status(500).json({ error: "Failed to load market data" });
@@ -120,18 +164,28 @@ router.get("/ai/staking", (_req: Request, res: Response): void => {
   }
 });
 
-router.get("/ai/stake-calculator", (req: Request, res: Response): void => {
+router.get("/ai/stake-calculator", async (req: Request, res: Response): Promise<void> => {
   try {
-    const { balance, risk, market } = req.query as {
+    const { balance, risk, market, email } = req.query as {
       balance?: string;
       risk?: string;
       market?: string;
+      email?: string;
     };
 
-    const parsedBalance = balance ? parseFloat(balance) : undefined;
+    let parsedBalance = balance ? parseFloat(balance) : undefined;
     if (parsedBalance !== undefined && (isNaN(parsedBalance) || parsedBalance <= 0)) {
       res.status(400).json({ error: "balance must be a positive number" });
       return;
+    }
+
+    if (!parsedBalance && email) {
+      try {
+        const bal = await getUserBalance(email);
+        parsedBalance = bal.balance > 0 ? bal.balance : undefined;
+      } catch {
+        // ignore
+      }
     }
 
     const riskLevels = ["low", "medium", "high"] as const;
@@ -144,8 +198,7 @@ router.get("/ai/stake-calculator", (req: Request, res: Response): void => {
       ? (market as typeof marketConditions[number])
       : undefined;
 
-    const portfolio = getPortfolioData();
-    const effectiveBalance = parsedBalance ?? portfolio.buyingPower;
+    const effectiveBalance = parsedBalance ?? 0;
 
     const result = buildStakeRecommendation(effectiveBalance, riskTolerance, marketCondition);
     res.json({

@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { TrendingUp, ArrowUpRight, Briefcase } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { TrendingUp, ArrowUpRight, Briefcase, RefreshCw } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
+import { getApiBase } from "@/lib/api";
 
 function BarChart3Icon({ size = 24, color = "currentColor" }: { size?: number; color?: string }) {
   return (
@@ -24,10 +25,40 @@ function EmptyState({ icon: Icon, title, message }: { icon: React.ElementType; t
   );
 }
 
+interface BalanceData {
+  balance: number;
+  profit: number;
+}
+
 export default function Positions() {
   const { colors } = useTheme();
+  const API = getApiBase();
+  const email = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("signupEmail") ?? "" : "";
+
   const [search, setSearch] = useState("");
   const [sideFilter, setSideFilter] = useState<"All" | "Long" | "Short">("All");
+  const [balData, setBalData] = useState<BalanceData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchBalance = useCallback(async () => {
+    if (!email) { setLoading(false); return; }
+    try {
+      const res = await fetch(`${API}/api/user/balance/${encodeURIComponent(email)}`);
+      if (!res.ok) { setLoading(false); return; }
+      const json = await res.json() as BalanceData;
+      setBalData(json);
+    } catch {
+      // silent
+    } finally {
+      setLoading(false);
+    }
+  }, [email, API]);
+
+  useEffect(() => { fetchBalance(); }, [fetchBalance]);
+
+  const balance = balData?.balance ?? 0;
+  const profit = balData?.profit ?? 0;
+  const hasBalance = balance > 0;
 
   return (
     <DashboardLayout>
@@ -37,13 +68,41 @@ export default function Positions() {
             <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary }}>Positions</h1>
             <p style={{ fontSize: "12px", color: colors.textMuted, marginTop: "2px" }}>Active market positions</p>
           </div>
+          <button
+            onClick={fetchBalance}
+            title="Refresh"
+            style={{ padding: "9px 12px", background: colors.filterBar, color: colors.textSub, border: "none", borderRadius: "10px", cursor: "pointer", display: "flex", alignItems: "center" }}
+          >
+            <RefreshCw size={14} />
+          </button>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           {[
-            { label: "Total Positions", value: "0", sub: "No open positions", subColor: colors.accent, icon: BarChart3Icon, gradient: "linear-gradient(135deg, #3b82f6, #1d4ed8)" },
-            { label: "Market Value", value: "$0.00", sub: "Across all positions", subColor: colors.textMuted, icon: TrendingUp, gradient: "linear-gradient(135deg, #8b5cf6, #6d28d9)" },
-            { label: "Unrealised P&L", value: "$0.00", sub: "No active trades", subColor: colors.textMuted, icon: ArrowUpRight, gradient: "linear-gradient(135deg, #10b981, #059669)" },
+            {
+              label: "Total Positions",
+              value: loading ? "—" : "0",
+              sub: "No open positions",
+              subColor: colors.accent,
+              icon: BarChart3Icon,
+              gradient: "linear-gradient(135deg, #3b82f6, #1d4ed8)",
+            },
+            {
+              label: "Account Value",
+              value: loading ? "—" : (hasBalance ? `$${balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "$0.00"),
+              sub: hasBalance ? "Current balance" : "No balance yet",
+              subColor: colors.textMuted,
+              icon: TrendingUp,
+              gradient: "linear-gradient(135deg, #8b5cf6, #6d28d9)",
+            },
+            {
+              label: "Unrealised P&L",
+              value: loading ? "—" : (hasBalance ? `${profit >= 0 ? "+" : ""}$${Math.abs(profit).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "$0.00"),
+              sub: hasBalance ? "Total profit/loss" : "No trades yet",
+              subColor: profit >= 0 ? colors.green : colors.red,
+              icon: ArrowUpRight,
+              gradient: "linear-gradient(135deg, #10b981, #059669)",
+            },
           ].map((c) => (
             <div key={c.label} className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "18px" }}>
               <div className="flex items-center justify-between mb-3">

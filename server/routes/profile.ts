@@ -17,7 +17,7 @@ import {
 } from "../lib/userDataStore.js";
 import { getPool } from "../lib/db.js";
 import { userDataLimit, sensitiveEndpointLimit } from "../middleware/security.js";
-import { validate, ProfileUpdateSchema, ChangePasswordSchema, NotificationPrefsSchema, AuthCheckEmailSchema, KycResubmitSchema, FundRequestSchema } from "../lib/validation.js";
+import { validate, ProfileUpdateSchema, ChangePasswordSchema, NotificationPrefsSchema, AuthCheckEmailSchema, KycResubmitSchema, FundRequestSchema, OrderSubmitSchema } from "../lib/validation.js";
 
 const BCRYPT_ROUNDS = 12;
 
@@ -392,6 +392,14 @@ profileRouter.post("/user/fund-request", sensitiveEndpointLimit, validate(FundRe
       return;
     }
 
+    const requestId = `FR-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    const pool = getPool();
+    await pool.query(
+      `INSERT INTO fund_requests (id, email, type, amount, note, status, created_at)
+       VALUES ($1, $2, $3, $4, $5, 'pending', NOW())`,
+      [requestId, email, type, amount, note ?? null]
+    );
+
     const label = type === "deposit" ? "Deposit" : "Withdrawal";
     const formattedAmt = `$${amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
 
@@ -406,14 +414,97 @@ profileRouter.post("/user/fund-request", sensitiveEndpointLimit, validate(FundRe
       title: `${label} Request — ${email}`,
       message: `User requested a ${type} of ${formattedAmt}.${note ? ` Note: ${note}` : ""}`,
       userEmail: email,
-      meta: { amount, type, note: note ?? null },
+      meta: { amount, type, note: note ?? null, requestId },
     });
 
-    console.log(`[Profile] Fund request: ${email} ${type} $${amount}`);
-    res.json({ success: true });
+    console.log(`[Profile] Fund request ${requestId}: ${email} ${type} $${amount}`);
+    res.json({ success: true, requestId });
   } catch (err) {
     console.error("[Profile] fund-request error:", err);
     res.status(500).json({ error: "Failed to submit request" });
+  }
+});
+
+profileRouter.get("/user/orders/:email", userDataLimit, async (req, res) => {
+  try {
+    const email = decodeURIComponent(String(req.params["email"]));
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      res.status(400).json({ error: "Valid email is required" });
+      return;
+    }
+    const userData = await getUserData(email);
+    if (!userData) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+    const pool = getPool();
+    const result = await pool.query(
+      `SELECT id, symbol, side, type, qty, price, filled, status, created_at
+       FROM user_orders WHERE email = $1 ORDER BY created_at DESC LIMIT 500`,
+      [email]
+    );
+    const orders = result.rows.map(r => ({
+      id: r.id,
+      symbol: r.symbol,
+      side: r.side,
+      type: r.type,
+      qty: parseFloat(r.qty),
+      price: r.price !== null ? parseFloat(r.price) : null,
+      filled: parseFloat(r.filled),
+      status: r.status,
+      date: new Date(r.created_at).toLocaleDateString("en-GB"),
+      time: new Date(r.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
+    }));
+    res.json({ orders });
+  } catch (err) {
+    console.error("[Profile] user orders error:", err);
+    res.status(500).json({ error: "Failed to get orders" });
+  }
+});
+
+profileRouter.post("/user/orders", userDataLimit, validate(OrderSubmitSchema), async (req, res) => {
+  try {
+    const { email, symbol, side, type, qty, price } = req.body as {
+      email: string; symbol: string; side: "Buy" | "Sell";
+      type: "Market" | "Limit" | "Stop" | "Stop Limit";
+      qty: number; price?: number;
+    };
+
+    const userData = await getUserData(email);
+    if (!userData) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const status = type === "Market" ? "Filled" : "Active";
+    const filled = type === "Market" ? qty : 0;
+    const orderId = `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+
+    const pool = getPool();
+    await pool.query(
+      `INSERT INTO user_orders (id, email, symbol, side, type, qty, price, filled, status, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())`,
+      [orderId, email, symbol.toUpperCase(), side, type, qty, price ?? null, filled, status]
+    );
+
+    const order = {
+      id: orderId,
+      symbol: symbol.toUpperCase(),
+      side,
+      type,
+      qty,
+      price: price ?? null,
+      filled,
+      status,
+      date: new Date().toLocaleDateString("en-GB"),
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
+    };
+
+    console.log(`[Profile] Order placed: ${orderId} ${email} ${side} ${qty} ${symbol}`);
+    res.json({ success: true, order });
+  } catch (err) {
+    console.error("[Profile] place order error:", err);
+    res.status(500).json({ error: "Failed to place order" });
   }
 });
 

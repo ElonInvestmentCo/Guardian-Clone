@@ -139,6 +139,44 @@ export async function initDatabase(): Promise<void> {
     CREATE INDEX IF NOT EXISTS idx_admin_notif_created_at ON admin_notifications (created_at DESC);
   `);
 
+  await p.query(`
+    CREATE TABLE IF NOT EXISTS user_orders (
+      id          TEXT PRIMARY KEY,
+      email       TEXT NOT NULL,
+      symbol      TEXT NOT NULL,
+      side        TEXT NOT NULL,
+      type        TEXT NOT NULL,
+      qty         NUMERIC NOT NULL,
+      price       NUMERIC,
+      filled      NUMERIC NOT NULL DEFAULT 0,
+      status      TEXT NOT NULL DEFAULT 'Active',
+      created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+  await p.query(`
+    CREATE INDEX IF NOT EXISTS idx_user_orders_email ON user_orders (email, created_at DESC);
+  `);
+
+  await p.query(`
+    CREATE TABLE IF NOT EXISTS fund_requests (
+      id          TEXT PRIMARY KEY,
+      email       TEXT NOT NULL,
+      type        TEXT NOT NULL,
+      amount      NUMERIC NOT NULL,
+      note        TEXT,
+      status      TEXT NOT NULL DEFAULT 'pending',
+      admin_note  TEXT,
+      created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      resolved_at TIMESTAMPTZ
+    );
+  `);
+  await p.query(`
+    CREATE INDEX IF NOT EXISTS idx_fund_requests_email ON fund_requests (email, created_at DESC);
+  `);
+  await p.query(`
+    CREATE INDEX IF NOT EXISTS idx_fund_requests_status ON fund_requests (status, created_at DESC);
+  `);
+
   console.log("[DB] Database tables initialized successfully");
 }
 
