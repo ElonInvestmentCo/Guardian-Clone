@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import readMoreBtn from "@assets/Guardian-Clone_-_Replit_-_Google_Chrome_4_18_2026_7_43_01_PM_1776655378942.png";
-import paginationArrow from "@assets/Guardian-Clone_-_Replit_-_Google_Chrome_4_18_2026_7_45_33_PM_1776778943504.png";
-import paginationPrevArrow from "@assets/PREVIOUS_BUTTON_1776783858684.png";
+import paginationArrow from "@assets/Guardian-Clone_-_Replit_-_Google_Chrome_4_18_2026_7_45_33_PM_1776784283117.png";
+import paginationPrevArrow from "@assets/PREVIOUS_BUTTON_1776784210198.png";
 
 const PATTERN_BG = "https://www.guardiantrading.com/wp-content/themes/gate39media/public/img/img-blog-background-pattern.png";
 
@@ -233,7 +233,6 @@ export default function Blog() {
               className="pagination-arrow-btn"
               style={{
                 height: "30px",
-                width: "14px",
                 display: "inline-flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -248,12 +247,10 @@ export default function Blog() {
                 src={paginationPrevArrow}
                 alt=""
                 style={{
-                  width: "13px",
-                  height: "auto",
+                  height: "30px",
+                  width: "auto",
                   display: "block",
-                  opacity: 0.85,
-                  filter:
-                    "brightness(0) saturate(100%) invert(48%) sepia(46%) saturate(457%) hue-rotate(176deg) brightness(92%) contrast(89%)",
+                  opacity: 0.9,
                   transition: "opacity 0.2s",
                 }}
               />
@@ -300,13 +297,13 @@ export default function Blog() {
                       className="pagination-arrow-btn"
                       style={{
                         height: "30px",
-                        width: "14px",
                         display: "inline-flex",
                         alignItems: "center",
                         justifyContent: "center",
                         background: "transparent",
                         border: "none",
                         padding: 0,
+                        marginLeft: "3px",
                         cursor: "pointer",
                       }}
                     >
@@ -314,12 +311,10 @@ export default function Blog() {
                         src={paginationArrow}
                         alt=""
                         style={{
-                          width: "13px",
-                          height: "auto",
+                          height: "30px",
+                          width: "auto",
                           display: "block",
-                          opacity: 0.85,
-                          filter:
-                            "brightness(0) saturate(100%) invert(48%) sepia(46%) saturate(457%) hue-rotate(176deg) brightness(92%) contrast(89%)",
+                          opacity: 0.9,
                           transition: "opacity 0.2s",
                         }}
                       />
