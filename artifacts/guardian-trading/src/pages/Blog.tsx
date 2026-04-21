@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import readMoreBtn from "@assets/Guardian-Clone_-_Replit_-_Google_Chrome_4_18_2026_7_43_01_PM_1776655378942.png";
+import paginationArrow from "@assets/Guardian-Clone_-_Replit_-_Google_Chrome_4_18_2026_7_45_33_PM_1776778943504.png";
 
 const PATTERN_BG = "https://www.guardiantrading.com/wp-content/themes/gate39media/public/img/img-blog-background-pattern.png";
 
@@ -225,28 +226,51 @@ export default function Blog() {
               paddingTop: "16px",
             }}
           >
-            {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                style={{
-                  width: "30px",
-                  height: "30px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: currentPage === page ? "#4a7fbd" : "transparent",
-                  border: currentPage === page ? "1px solid #4a7fbd" : "1px solid rgba(255,255,255,0.2)",
-                  color: "#ffffff",
-                  fontSize: "13px",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  transition: "background 0.2s",
-                }}
-              >
-                {page}
-              </button>
-            ))}
+            {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((page) => {
+              const pageButton = (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: currentPage === page ? "#4a7fbd" : "transparent",
+                    border: currentPage === page ? "1px solid #4a7fbd" : "1px solid rgba(255,255,255,0.2)",
+                    color: "#ffffff",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "background 0.2s",
+                  }}
+                >
+                  {page}
+                </button>
+              );
+              if (page === TOTAL_PAGES) {
+                return (
+                  <div
+                    key={page}
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    {pageButton}
+                    <img
+                      src={paginationArrow}
+                      alt="Next"
+                      style={{ height: "30px", width: "auto", display: "block" }}
+                    />
+                  </div>
+                );
+              }
+              return pageButton;
+            })}
             <button
               onClick={() => setCurrentPage((p) => Math.min(p + 1, TOTAL_PAGES))}
               style={{
