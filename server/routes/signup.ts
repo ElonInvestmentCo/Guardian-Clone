@@ -386,6 +386,29 @@ signupRouter.post("/signup/complete-step", sensitiveEndpointLimit, validate(Sign
 
     const completedSteps = await addCompletedStepNumber(email, stepNumber);
 
+    if (stepKey === "general" && stepNumber === 1) {
+      try {
+        const fwd = (req as Request).headers["x-forwarded-for"];
+        const ip  = fwd
+          ? String(Array.isArray(fwd) ? fwd[0] : fwd).split(",")[0].trim()
+          : (req as Request).ip ?? "unknown";
+        await getPool().query(
+          `INSERT INTO registration_log (email, product, registration_type, ip_address)
+           VALUES ($1, $2, $3, $4)
+           ON CONFLICT DO NOTHING`,
+          [
+            email,
+            (data.product as string) ?? null,
+            (data.registrationType as string) ?? null,
+            ip,
+          ]
+        );
+        console.log(`[Signup] Registration logged for ${email}`);
+      } catch (regErr) {
+        console.error("[Signup] Failed to write registration log:", regErr);
+      }
+    }
+
     const diff = computeAuditDiff(stepKey, oldStepData, data);
     await appendAuditLog(email, diff);
 
