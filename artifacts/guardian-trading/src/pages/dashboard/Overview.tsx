@@ -59,6 +59,18 @@ export default function Overview() {
       <div className="flex flex-col xl:flex-row" style={{ minHeight: "100%" }}>
         <div className="flex-1 overflow-y-auto" style={{ padding: "24px 20px" }}>
 
+          {/* Mobile account equity + buttons — hidden on xl where the aside handles this */}
+          <div className="xl:hidden rounded-xl mb-5" style={{ background: colors.rightPanel, border: `1px solid ${colors.rightPanelBorder}`, padding: "18px 20px" }}>
+            <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "4px", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 500 }}>Account Equity</p>
+            <p style={{ fontSize: "26px", fontWeight: 800, color: colors.textPrimary, letterSpacing: "-0.03em", marginBottom: "12px" }}>
+              ${currentVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            </p>
+            <div className="flex gap-2">
+              <button style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, border: "none", borderRadius: "10px", background: colors.accent, color: "#fff", cursor: "pointer" }}>Deposit</button>
+              <button style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, border: `1px solid ${colors.btnBorder}`, borderRadius: "10px", background: colors.btnBg, color: colors.textSub, cursor: "pointer" }}>Withdraw</button>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {statCards.map((c) => (
               <div key={c.label} className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, overflow: "hidden" }}>
