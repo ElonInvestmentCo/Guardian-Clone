@@ -49,7 +49,26 @@ All three workflows run in parallel via the "Project" button:
 - `ADMIN_JWT_SECRET`, `ADMIN_SECRET`, `INTERNAL_API_KEY`, `USER_DATA_KEY` — Auth secrets (set in .replit userenv)
 - `CMC_API_KEY` — CoinMarketCap API key
 - `OPENAI_API_KEY` — For AI trading assistant features
-- `RESEND_API_KEY` — For email communications
+- `RESEND_API_KEY` — For email communications via Resend
+- `ADMIN_EMAIL` — Destination address for all admin alert emails (e.g. admin_alerts@guardiantrading.com)
+- `SIGNATURE_THRESHOLD` — Pending signature count that triggers a high-pending alert (default: 10)
+
+## Admin Notification System
+`server/lib/adminNotifier.ts` sends real-time compliance alerts to `ADMIN_EMAIL` via Resend:
+
+| Function | Trigger |
+|---|---|
+| `notifyNewUser` | User registers an account |
+| `notifyOnboardingComplete` | User completes all KYC onboarding steps |
+| `notifySignatureSubmitted` | User submits their electronic signature |
+| `notifySignatureVerified` | Admin verifies a user's signature |
+| `notifyHighPendingSignatures` | Pending count ≥ `SIGNATURE_THRESHOLD` |
+| `notifyHighRiskUser` | Fraud engine flags a high-risk user |
+| `notifyAdminAction` | Approve / Reject / Suspend / Ban / Flag / Reactivate actions |
+| `notifySecurityAlert` | Security events (failed logins, etc.) |
+| `notifyDailySummary` | Scheduled daily compliance report |
+
+All notifications are fire-and-forget (`.catch(() => {})`) so they never block the API response.
 
 ## Deployment
 - Build: `scripts/build-production.sh`

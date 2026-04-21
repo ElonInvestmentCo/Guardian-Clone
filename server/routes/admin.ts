@@ -1,5 +1,10 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import { querySignatureAuditLog } from "../lib/signatureAudit.js";
+import {
+  notifyAdminAction,
+  notifySignatureVerified,
+  notifyHighRiskUser,
+} from "../lib/adminNotifier.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import {
@@ -270,6 +275,8 @@ router.post("/admin/approve-user", validate(AdminEmailSchema), async (req: Reque
       actionUrl: "/dashboard",
     });
     console.log(`[Admin] APPROVED: ${email}`);
+    const adminUser = (req as Request & { adminUser?: string }).adminUser ?? "admin";
+    notifyAdminAction({ action: "APPROVE", targetEmail: email, performedBy: adminUser, note: adminNote }).catch(() => {});
     res.json({ success: true, email, status: "approved" });
   } catch (err) {
     console.error("[Admin] approve-user error:", err);
@@ -294,6 +301,8 @@ router.post("/admin/reject-user", validate(AdminRejectSchema), async (req: Reque
       message: `Your identity verification was not approved. Reason: ${reason}. Please contact support for more information.`,
     });
     console.log(`[Admin] REJECTED: ${email}`);
+    const adminUser2 = (req as Request & { adminUser?: string }).adminUser ?? "admin";
+    notifyAdminAction({ action: "REJECT", targetEmail: email, performedBy: adminUser2, note: adminNote, reason }).catch(() => {});
     res.json({ success: true, email, status: "rejected" });
   } catch (err) {
     console.error("[Admin] reject-user error:", err);
@@ -387,6 +396,8 @@ router.post("/admin/suspend-user", validate(AdminEmailSchema), async (req: Reque
     auditLog.push({ actionType: "ADMIN_SUSPEND", actor: "admin", note: adminNote ?? null, timestamp: new Date().toISOString() });
     await setUserProfileMeta(email, "_auditLog", auditLog);
     console.log(`[Admin] SUSPENDED: ${email}`);
+    const adminUserS = (req as Request & { adminUser?: string }).adminUser ?? "admin";
+    notifyAdminAction({ action: "SUSPEND", targetEmail: email, performedBy: adminUserS, note: adminNote }).catch(() => {});
     res.json({ success: true, email, status: "suspended" });
   } catch (err) { res.status(500).json({ error: "Failed to suspend user" }); }
 });
@@ -401,6 +412,8 @@ router.post("/admin/ban-user", validate(AdminBanSchema), async (req: Request, re
     auditLog.push({ actionType: "ADMIN_BAN", actor: "admin", reason: reason ?? null, note: adminNote ?? null, timestamp: new Date().toISOString() });
     await setUserProfileMeta(email, "_auditLog", auditLog);
     console.log(`[Admin] BANNED: ${email}`);
+    const adminUserB = (req as Request & { adminUser?: string }).adminUser ?? "admin";
+    notifyAdminAction({ action: "BAN", targetEmail: email, performedBy: adminUserB, note: adminNote, reason }).catch(() => {});
     res.json({ success: true, email, status: "banned" });
   } catch (err) { res.status(500).json({ error: "Failed to ban user" }); }
 });
@@ -539,6 +552,8 @@ router.post("/admin/flag-user", async (req: Request, res: Response): Promise<voi
     await setUserProfileMeta(email, "_auditLog", auditLog);
     await setUserProfileMeta(email, "_flagged", true);
     console.log(`[Admin] FLAGGED: ${email}`);
+    const adminUserF = (req as Request & { adminUser?: string }).adminUser ?? "admin";
+    notifyAdminAction({ action: "FLAG", targetEmail: email, performedBy: adminUserF, note: adminNote, reason }).catch(() => {});
     res.json({ success: true, email });
   } catch (err) { res.status(500).json({ error: "Failed to flag user" }); }
 });
@@ -761,6 +776,7 @@ router.post("/admin/verify-signature", requireAdmin, adminRateLimit, validate(Ad
     await setUserProfileMeta(email, "_auditLog", auditLog);
 
     console.log(`[Admin] Signature verified for ${email} by ${adminUser}`);
+    notifySignatureVerified({ email, verifiedBy: adminUser, note: adminNote }).catch(() => {});
     res.json({ success: true });
   } catch (err) {
     console.error("[Admin] verify-signature error:", err);

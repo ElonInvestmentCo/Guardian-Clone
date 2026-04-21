@@ -8,6 +8,7 @@ import { validate, AuthLoginSchema, AuthRegisterSchema, AuthCheckEmailSchema, Au
 import { logSecurity } from "../lib/securityLogger.js";
 import { query } from "../lib/db.js";
 import { broadcastAdmin } from "../lib/realtime.js";
+import { notifyNewUser } from "../lib/adminNotifier.js";
 
 const authRouter = Router();
 
@@ -103,6 +104,8 @@ authRouter.post("/auth/register", sensitiveEndpointLimit, validate(AuthRegisterS
         ipAddress,
       },
     });
+
+    notifyNewUser({ email, ipAddress, registeredAt: registeredAt.toISOString() }).catch(() => {});
 
     logAttempt("REGISTER", email, "success — credentials persisted to database");
     res.json({ success: true });

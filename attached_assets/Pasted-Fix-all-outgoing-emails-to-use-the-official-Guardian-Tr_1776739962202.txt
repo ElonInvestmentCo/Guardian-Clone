@@ -1,0 +1,105 @@
+Fix all outgoing emails to use the official Guardian Trading logo and ensure it renders correctly across all devices and email clients.
+
+========================
+USE THIS LOGO URL
+=================
+
+https://www.guardiantrading.com/wp-content/uploads/2026/03/mobile-logo-1-35x41.png
+
+---
+
+========================
+
+1. REPLACE BROKEN LOGO
+   ========================
+
+Remove any:
+
+* local paths (/logo.png)
+* base64 placeholders (if broken)
+* missing/invalid image references
+
+Replace with:
+
+<img 
+src="https://www.guardiantrading.com/wp-content/uploads/2026/03/mobile-logo-1-35x41.png"
+alt="Guardian Trading"
+width="35"
+height="41"
+style="display:block;margin:0 auto;"
+/>
+
+---
+
+========================
+2. CLEAN EMAIL HEADER DESIGN
+============================
+
+Use a proper branded header:
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#0b1f3a;padding:20px;text-align:center;">
+  <tr>
+    <td>
+      <img 
+        src="https://www.guardiantrading.com/wp-content/uploads/2026/03/mobile-logo-1-35x41.png"
+        alt="Guardian Trading"
+        width="35"
+        height="41"
+        style="display:block;margin:0 auto;"
+      />
+      <div style="color:#ffffff;font-size:14px;margin-top:8px;letter-spacing:1px;">
+        GUARDIAN TRADING
+      </div>
+    </td>
+  </tr>
+</table>
+
+---
+
+========================
+3. EMAIL CLIENT COMPATIBILITY (CRITICAL)
+========================================
+
+* Use ONLY inline CSS
+* Do NOT use flexbox or external stylesheets
+* Always define width + height
+* Keep layout table-based
+
+---
+
+========================
+4. FALLBACK SAFETY
+==================
+
+Ensure alt text always exists:
+
+alt="Guardian Trading"
+
+So branding still appears if image fails.
+
+---
+
+========================
+5. APPLY TO ALL EMAILS
+======================
+
+Update ALL templates:
+
+* Email verification
+* Signup confirmation
+* Admin alerts
+* Signature notifications
+* KYC alerts
+
+---
+
+========================
+6. FINAL GOAL
+=============
+
+All emails must:
+
+* Show logo correctly (no broken icons)
+* Look clean and professional
+* Be consistent across Gmail, iPhone Mail, Outlook
+* Match Guardian Trading branding perfectly

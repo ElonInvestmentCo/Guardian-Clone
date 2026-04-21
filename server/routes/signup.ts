@@ -1,5 +1,5 @@
 import { Router, type Request } from "express";
-import { insertSignatureAuditLog } from "../lib/signatureAudit.js";
+import { insertSignatureAuditLog, querySignatureAuditLog } from "../lib/signatureAudit.js";
 import {
   upsertUserStep,
   getUserData,
@@ -9,6 +9,7 @@ import {
 import { userDataLimit, sensitiveEndpointLimit } from "../middleware/security.js";
 import { validate, SignupSaveStepSchema, SignupCompleteStepSchema, SignupGetProgressSchema } from "../lib/validation.js";
 import { broadcastAdmin } from "../lib/realtime.js";
+import { notifySignatureSubmitted, notifyOnboardingComplete } from "../lib/adminNotifier.js";
 
 const signupRouter = Router();
 
@@ -360,16 +361,23 @@ signupRouter.post("/signup/complete-step", sensitiveEndpointLimit, validate(Sign
       const ip  = fwd
         ? String(Array.isArray(fwd) ? fwd[0] : fwd).split(",")[0].trim()
         : (req as Request).ip ?? "unknown";
+      const ua = String((req as Request).headers["user-agent"] ?? "");
       try {
         await insertSignatureAuditLog({
           email,
           ipAddress:      ip,
-          userAgent:      String((req as Request).headers["user-agent"] ?? ""),
+          userAgent:      ua,
           signatureImage: (data.signatureImage as string) || null,
         });
       } catch (auditErr) {
         console.error("[Signup] Failed to write signature audit log:", auditErr);
       }
+      // Admin notification — fire-and-forget
+      querySignatureAuditLog({ limit: 500 }).then(sigData => {
+        // Count pending (no signatureVerified flag — approximate via total unique emails)
+        const pendingCount = sigData.total;
+        notifySignatureSubmitted({ email, ipAddress: ip, userAgent: ua, pendingCount }).catch(() => {});
+      }).catch(() => {});
     }
 
     await upsertUserStep(email, stepKey, data);
@@ -415,6 +423,12 @@ signupRouter.post("/signup/complete-step", sensitiveEndpointLimit, validate(Sign
         },
       });
       console.log(`[Signup] APPLICATION_COMPLETE broadcast sent for ${email}`);
+
+      notifyOnboardingComplete({
+        email,
+        totalSteps: ONBOARDING_STEPS.length,
+        completedAt: now.toISOString(),
+      }).catch(() => {});
     }
 
     res.json({ success: true, completedSteps });
