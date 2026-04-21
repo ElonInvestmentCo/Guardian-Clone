@@ -1,4 +1,5 @@
-import { Router } from "express";
+import { Router, type Request } from "express";
+import { insertSignatureAuditLog } from "../lib/signatureAudit.js";
 import {
   upsertUserStep,
   getUserData,
@@ -350,8 +351,24 @@ signupRouter.post("/signup/complete-step", sensitiveEndpointLimit, validate(Sign
     const profile = await getUserProfileData(email);
     const oldStepData = (profile[stepKey] as Record<string, unknown>) ?? {};
 
-    if (stepKey === "signatures" && data.hasSigned && !data.signedAt) {
-      data.signedAt = new Date().toISOString();
+    if (stepKey === "signatures" && data.hasSigned) {
+      if (!data.signedAt) {
+        data.signedAt = new Date().toISOString();
+      }
+      const fwd = (req as Request).headers["x-forwarded-for"];
+      const ip  = fwd
+        ? String(Array.isArray(fwd) ? fwd[0] : fwd).split(",")[0].trim()
+        : (req as Request).ip ?? "unknown";
+      try {
+        await insertSignatureAuditLog({
+          email,
+          ipAddress:      ip,
+          userAgent:      String((req as Request).headers["user-agent"] ?? ""),
+          signatureImage: (data.signatureImage as string) || null,
+        });
+      } catch (auditErr) {
+        console.error("[Signup] Failed to write signature audit log:", auditErr);
+      }
     }
 
     await upsertUserStep(email, stepKey, data);

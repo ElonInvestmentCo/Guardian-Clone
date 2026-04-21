@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import AdminLayout, { type View } from "@/components/AdminLayout";
-import DashboardView        from "@/pages/DashboardView";
-import KycQueueView         from "@/pages/KycQueueView";
-import RiskEventsView       from "@/pages/RiskEventsView";
-import AuditLogView         from "@/pages/AuditLogView";
-import UsersView            from "@/pages/UsersView";
-import UserProfileView      from "@/pages/UserProfileView";
-import ActivityLogsView     from "@/pages/ActivityLogsView";
-import RegistrationLogView  from "@/pages/RegistrationLogView";
+import DashboardView           from "@/pages/DashboardView";
+import KycQueueView            from "@/pages/KycQueueView";
+import RiskEventsView          from "@/pages/RiskEventsView";
+import AuditLogView            from "@/pages/AuditLogView";
+import UsersView               from "@/pages/UsersView";
+import UserProfileView         from "@/pages/UserProfileView";
+import ActivityLogsView        from "@/pages/ActivityLogsView";
+import RegistrationLogView     from "@/pages/RegistrationLogView";
+import SignatureAuditLogView   from "@/pages/SignatureAuditLogView";
 import { useLoading } from "@/context/LoadingContext";
 
 export default function KycDashboard() {
@@ -57,6 +58,7 @@ export default function KycDashboard() {
       {activeView === "activity"      && <ActivityLogsView onOpenProfile={(email) => openProfile(email, "activity")} />}
       {activeView === "audit"         && <AuditLogView />}
       {activeView === "registrations" && <RegistrationLogView />}
+      {activeView === "sig-audit"     && <SignatureAuditLogView />}
     </AdminLayout>
   );
 }

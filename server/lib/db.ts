@@ -97,10 +97,27 @@ export async function initDatabase(): Promise<void> {
   `);
 
   await p.query(`
+    CREATE TABLE IF NOT EXISTS signature_audit_logs (
+      id              SERIAL PRIMARY KEY,
+      email           TEXT NOT NULL,
+      ip_address      TEXT,
+      user_agent      TEXT,
+      signature_image TEXT,
+      created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+
+  await p.query(`
     CREATE INDEX IF NOT EXISTS idx_reg_log_email ON registration_log (email);
   `);
   await p.query(`
     CREATE INDEX IF NOT EXISTS idx_reg_log_time ON registration_log (registered_at DESC);
+  `);
+  await p.query(`
+    CREATE INDEX IF NOT EXISTS idx_sig_audit_email ON signature_audit_logs (email);
+  `);
+  await p.query(`
+    CREATE INDEX IF NOT EXISTS idx_sig_audit_created_at ON signature_audit_logs (created_at DESC);
   `);
 
   console.log("[DB] Database tables initialized successfully");

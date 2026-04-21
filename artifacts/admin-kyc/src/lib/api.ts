@@ -350,3 +350,56 @@ export async function getRegistrationLog(): Promise<RegistrationLogResponse> {
 export async function verifySignature(email: string, adminNote?: string): Promise<void> {
   await request<{ success: boolean }>("POST", "/admin/verify-signature", { email, adminNote });
 }
+
+// ── Signature Audit Log ───────────────────────────────────────────────────────
+
+export interface SignatureAuditEntry {
+  id: number;
+  email: string;
+  ip_address: string | null;
+  user_agent: string | null;
+  signature_image: string | null;
+  created_at: string;
+}
+
+export interface SignatureAuditLogResponse {
+  entries: SignatureAuditEntry[];
+  total:   number;
+  page:    number;
+  limit:   number;
+}
+
+export async function getSignatureAuditLog(params: {
+  search?: string;
+  page?:   number;
+  limit?:  number;
+}): Promise<SignatureAuditLogResponse> {
+  const qs = new URLSearchParams();
+  if (params.search) qs.set("search", params.search);
+  if (params.page)   qs.set("page",   String(params.page));
+  if (params.limit)  qs.set("limit",  String(params.limit));
+  const query = qs.toString() ? `?${qs.toString()}` : "";
+  return request<SignatureAuditLogResponse>("GET", `/admin/signature-audit-log${query}`);
+}
+
+export async function exportSignatureAuditLog(search?: string): Promise<void> {
+  const session = getSession();
+  if (!session) {
+    window.dispatchEvent(new CustomEvent("admin:session-expired"));
+    throw new Error("Session expired");
+  }
+  const qs = new URLSearchParams();
+  if (search) qs.set("search", search);
+  const query = qs.toString() ? `?${qs.toString()}` : "";
+  const res = await fetch(`${API_ROOT}/admin/signature-audit-log/export${query}`, {
+    headers: { Authorization: `Bearer ${session.token}` },
+  });
+  if (!res.ok) throw new Error(`Export failed: HTTP ${res.status}`);
+  const blob = await res.blob();
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href     = url;
+  a.download = `signature-audit-${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}

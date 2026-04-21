@@ -1,4 +1,5 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
+import { querySignatureAuditLog } from "../lib/signatureAudit.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import {
@@ -764,6 +765,47 @@ router.post("/admin/verify-signature", requireAdmin, adminRateLimit, validate(Ad
   } catch (err) {
     console.error("[Admin] verify-signature error:", err);
     res.status(500).json({ error: "Failed to verify signature" });
+  }
+});
+
+// ─── Signature Audit Log ────────────────────────────────────────────────────
+
+router.get("/admin/signature-audit-log", requireAdmin, adminRateLimit, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const search = String(req.query.search ?? "").trim();
+    const page   = Math.max(1, parseInt(String(req.query.page  ?? "1"),  10));
+    const limit  = Math.min(100, Math.max(1, parseInt(String(req.query.limit ?? "25"), 10)));
+    const offset = (page - 1) * limit;
+
+    const result = await querySignatureAuditLog({ search, limit, offset });
+    res.json({ ...result, page, limit });
+  } catch (err) {
+    console.error("[Admin] signature-audit-log error:", err);
+    res.status(500).json({ error: "Failed to fetch signature audit log" });
+  }
+});
+
+router.get("/admin/signature-audit-log/export", requireAdmin, adminRateLimit, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const search = String(req.query.search ?? "").trim();
+    const result = await querySignatureAuditLog({ search, limit: 10_000, offset: 0 });
+
+    const escCsv = (v: string | null | undefined) => {
+      const s = String(v ?? "");
+      return s.includes(",") || s.includes('"') || s.includes("\n") ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+
+    const header = "ID,Email,IP Address,User Agent,Signed At\n";
+    const rows   = result.entries.map((e) =>
+      [e.id, escCsv(e.email), escCsv(e.ip_address), escCsv(e.user_agent), escCsv(e.created_at)].join(",")
+    ).join("\n");
+
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", `attachment; filename="signature-audit-${Date.now()}.csv"`);
+    res.send(header + rows);
+  } catch (err) {
+    console.error("[Admin] signature-audit-log export error:", err);
+    res.status(500).json({ error: "Failed to export signature audit log" });
   }
 });
 
