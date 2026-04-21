@@ -1,0 +1,135 @@
+Continue from where the previous agent stopped — do NOT restart or re-analyze from scratch.
+
+Current state:
+
+* Admin notification system is partially implemented
+* Database table `admin_notifications` has been added
+* Backend functions for add/get/mark-read are partially implemented
+* API routes for admin notifications are partially added
+* Signup triggers for notifications are in progress but NOT fully completed
+* Admin UI (notification bell) is still not functional
+* Work stopped while integrating notification triggers inside `signup.ts`
+
+========================
+
+1. COMPLETE ADMIN NOTIFICATIONS
+   ========================
+
+Finish integrating `addAdminNotification` into ALL onboarding triggers:
+
+* New user signup (step 1)
+* Signature submission
+* Completion of onboarding (ready for review)
+
+Ensure:
+
+* Notifications are stored correctly in DB
+* API endpoints work:
+
+  * GET /admin/notifications
+  * POST /admin/notifications/read
+
+Fully implement Admin Dashboard UI:
+
+* Functional notification bell
+* Unread count badge
+* Dropdown list of notifications
+* Auto-refresh (polling every ~30s)
+
+---
+
+========================
+2. USER NOTIFICATION SYSTEM (FULL UI)
+=====================================
+
+Implement a full notification UI system for user accounts:
+
+* Notification bell icon with unread count
+* Dropdown/panel showing recent notifications
+* Read vs unread distinction
+* Timestamp for each notification
+* Ability to mark as read
+
+Ensure:
+
+* Real-time or near real-time updates
+* Notifications trigger for:
+
+  * Deposits
+  * Withdrawals
+  * Account changes
+  * Approvals
+  * Any major activity
+
+---
+
+========================
+3. FUNCTIONALITY CHECK (CRITICAL)
+=================================
+
+Confirm deposit and withdrawal buttons:
+
+* Fully responsive on all devices
+* Actually trigger correct backend actions
+* No broken handlers or UI dead clicks
+
+Fix any issues found.
+
+---
+
+========================
+4. FULL SYSTEM SCAN + FIX
+=========================
+
+Perform a complete scan across:
+
+* All pages
+* All components
+* All API routes
+
+Identify and fix:
+
+* Broken features
+* Incomplete implementations
+* UI inconsistencies
+* Data sync issues
+
+---
+
+========================
+5. SECURITY AUDIT (DO NOT SKIP)
+===============================
+
+Run a full security audit and fix ALL issues:
+
+Check:
+
+* Authentication & authorization
+* API protection (admin vs user routes)
+* Input validation & sanitization
+* SQL injection / XSS vulnerabilities
+* Secret/environment variable exposure
+* Rate limiting / abuse protection
+
+Continue fixing until:
+
+* No vulnerabilities remain
+* System passes all security checks
+
+---
+
+========================
+FINAL REQUIREMENT
+=================
+
+Do NOT stop halfway.
+
+Complete everything end-to-end and verify:
+
+* Admin notifications work
+* User notifications work
+* Deposit/withdrawal works
+* No broken features remain
+* Security issues are fully resolved
+
+Perform real tests and confirm everything is working.
