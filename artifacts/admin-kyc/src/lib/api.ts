@@ -434,6 +434,22 @@ export async function getSignaturesList(params?: {
   return request<SignaturesListResponse>("GET", `/admin/signatures-list${query}`);
 }
 
+export async function sendDailySummary(): Promise<void> {
+  const session = getSession();
+  if (!session) {
+    window.dispatchEvent(new CustomEvent("admin:session-expired"));
+    throw new Error("Session expired");
+  }
+  const res = await fetch(`${API_ROOT}/admin/send-daily-summary`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${session.token}` },
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({})) as { error?: string };
+    throw new Error(body.error ?? `HTTP ${res.status}`);
+  }
+}
+
 export async function exportSignatureAuditLog(search?: string): Promise<void> {
   const session = getSession();
   if (!session) {

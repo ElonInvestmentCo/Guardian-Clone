@@ -5,6 +5,7 @@ import {
   notifySignatureVerified,
   notifyHighRiskUser,
 } from "../lib/adminNotifier.js";
+import { triggerDailySummaryNow } from "../lib/dailySummaryScheduler.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import {
@@ -781,6 +782,18 @@ router.post("/admin/verify-signature", requireAdmin, adminRateLimit, validate(Ad
   } catch (err) {
     console.error("[Admin] verify-signature error:", err);
     res.status(500).json({ error: "Failed to verify signature" });
+  }
+});
+
+// ─── Daily Summary Manual Trigger ───────────────────────────────────────────
+
+router.post("/admin/send-daily-summary", requireAdmin, adminRateLimit, async (req: Request, res: Response): Promise<void> => {
+  try {
+    await triggerDailySummaryNow();
+    res.json({ success: true, message: "Daily summary email dispatched" });
+  } catch (err) {
+    console.error("[Admin] send-daily-summary error:", err);
+    res.status(500).json({ error: "Failed to send daily summary" });
   }
 });
 

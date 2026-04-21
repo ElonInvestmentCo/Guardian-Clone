@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useCallback } from "react";
-import { getKycQueue, getAllUsers, getGlobalAudit, getSignatureStats, type SignatureStatus } from "@/lib/api";
+import { getKycQueue, getAllUsers, getGlobalAudit, getSignatureStats, sendDailySummary, type SignatureStatus } from "@/lib/api";
 import { formatDate, actionTypeLabel, actionTypeColor } from "@/lib/utils";
 import {
   useAdminRealtime,
@@ -19,6 +19,8 @@ export default function DashboardView({ onNavigateToSignatures }: Props) {
   const queryClient = useQueryClient();
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [newRegistrations, setNewRegistrations] = useState(0);
+  const [summaryState, setSummaryState] = useState<"idle" | "loading" | "sent" | "error">("idle");
+  const [summaryError, setSummaryError] = useState<string | null>(null);
 
   const pushToast = useCallback((t: Omit<ToastItem, "id">) => {
     setToasts(prev => [...prev, { ...t, id: ++toastCounter }].slice(-5));
@@ -74,6 +76,20 @@ export default function DashboardView({ onNavigateToSignatures }: Props) {
       subtext: `All ${event.totalSteps} steps submitted · ${event.formattedAt}`,
     });
   }, [queryClient, pushToast]);
+
+  const handleSendSummary = useCallback(async () => {
+    setSummaryState("loading");
+    setSummaryError(null);
+    try {
+      await sendDailySummary();
+      setSummaryState("sent");
+      setTimeout(() => setSummaryState("idle"), 5000);
+    } catch (err) {
+      setSummaryError(err instanceof Error ? err.message : "Failed to send");
+      setSummaryState("error");
+      setTimeout(() => setSummaryState("idle"), 6000);
+    }
+  }, []);
 
   const { status } = useAdminRealtime({
     onNewRegistration: handleNewRegistration,
@@ -430,10 +446,69 @@ export default function DashboardView({ onNavigateToSignatures }: Props) {
         </div>
       </div>
 
+      {/* ── Daily Summary ─────────────────────────────────────────────── */}
+      <div className="card-safee mb-4">
+        <div className="card-header">
+          <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <i className="bi bi-envelope-paper-fill" style={{ color: "#0D6EFD" }} />
+            Daily Compliance Summary
+          </span>
+          <span style={{ fontSize: 12, color: "#94A3B8", fontWeight: 400 }}>
+            Auto-sends at 8:00 AM ET every day
+          </span>
+        </div>
+        <div className="card-body">
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+            <div>
+              <p style={{ margin: 0, fontSize: 14, color: "#374151", lineHeight: 1.6 }}>
+                Sends a live digest to the admin inbox with new user registrations, pending KYC approvals,
+                flagged accounts, and signature activity from the past 24 hours.
+              </p>
+              {summaryState === "sent" && (
+                <p style={{ margin: "8px 0 0", fontSize: 13, color: "#16A34A", fontWeight: 600 }}>
+                  <i className="bi bi-check-circle-fill" style={{ marginRight: 6 }} />
+                  Summary email sent successfully
+                </p>
+              )}
+              {summaryState === "error" && (
+                <p style={{ margin: "8px 0 0", fontSize: 13, color: "#DC3545", fontWeight: 600 }}>
+                  <i className="bi bi-exclamation-circle-fill" style={{ marginRight: 6 }} />
+                  {summaryError ?? "Failed to send — check email configuration"}
+                </p>
+              )}
+            </div>
+            <button
+              onClick={handleSendSummary}
+              disabled={summaryState === "loading"}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                padding: "10px 20px", borderRadius: 8, border: "none",
+                background: summaryState === "sent" ? "#16A34A" : summaryState === "error" ? "#DC3545" : "#0D6EFD",
+                color: "#fff", fontWeight: 600, fontSize: 14, cursor: summaryState === "loading" ? "wait" : "pointer",
+                opacity: summaryState === "loading" ? 0.7 : 1,
+                transition: "background 0.2s, opacity 0.2s",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {summaryState === "loading" && (
+                <span style={{ width: 14, height: 14, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.7s linear infinite", display: "inline-block" }} />
+              )}
+              {summaryState === "loading" ? "Sending..." :
+               summaryState === "sent"    ? "Sent!" :
+               summaryState === "error"   ? "Retry" :
+               "Send Summary Now"}
+            </button>
+          </div>
+        </div>
+      </div>
+
       <style>{`
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.4; }
+        }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
         }
       `}</style>
     </div>
