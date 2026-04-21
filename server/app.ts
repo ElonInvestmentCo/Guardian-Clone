@@ -27,10 +27,17 @@ const allowedOrigins = [
   "https://guardiantrading.com",
   "https://www.guardiantrading.com",
   "https://guardian-clone-production.up.railway.app",
+  "https://guardian-trading-api-production.up.railway.app",
   "https://guardian-trading.vercel.app",
   "https://guardian-clone-admin-kyc.vercel.app",
   "https://guardian-trading-api.onrender.com",
 ];
+
+// Automatically allow the Railway public domain (set by Railway at runtime)
+const railwayDomain = process.env.RAILWAY_PUBLIC_DOMAIN;
+if (railwayDomain) {
+  allowedOrigins.push(`https://${railwayDomain}`);
+}
 
 // Allow additional origins via ALLOWED_ORIGINS env var (comma-separated)
 const extraOrigins = process.env.ALLOWED_ORIGINS;

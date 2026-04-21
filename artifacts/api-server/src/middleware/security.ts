@@ -139,7 +139,7 @@ export function securityHeaders(_req: Request, res: Response, next: NextFunction
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https:",
-      "connect-src 'self' https://guardian-clone-production.up.railway.app https://api.coingecko.com wss: https://*.livechatinc.com https://*.lc.chat",
+      "connect-src 'self' https://guardian-clone-production.up.railway.app https://guardian-trading-api-production.up.railway.app https://api.coingecko.com wss: https://*.livechatinc.com https://*.lc.chat",
       "frame-src 'self' https://www.google.com https://*.livechatinc.com https://*.lc.chat",
       "object-src 'none'",
       "base-uri 'self'",
@@ -261,9 +261,13 @@ export function hotlinkProtection(req: Request, res: Response, next: NextFunctio
     const allowed = [
       "guardiiantrading.com",
       "www.guardiiantrading.com",
+      "guardian-clone-production.up.railway.app",
+      "guardian-trading-api-production.up.railway.app",
       "localhost",
     ];
 
+    const railwayDomain = process.env.RAILWAY_PUBLIC_DOMAIN ?? "";
+    if (railwayDomain) allowed.push(railwayDomain);
     const repl = process.env.REPLIT_DEV_DOMAIN ?? "";
     if (repl) allowed.push(repl);
     const replDeploy = process.env.REPLIT_DOMAINS ?? "";
