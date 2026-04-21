@@ -9,13 +9,7 @@ const FROM_ADDRESS   = "Guardian Trading <support@guardiiantrading.com>";
 const COMPANY_LINE   = "Guardian Trading &mdash; A Division of Velocity Clearing, LLC. Member FINRA/SIPC.";
 const ADDRESS_LINE   = "1301 Route 36, Suite 109, Hazlet, NJ 07730";
 const SUPPORT_EMAIL  = "support@guardiiantrading.com";
-function resolveAppBase(): string {
-  if (process.env["APP_URL"]) return process.env["APP_URL"]!.replace(/\/$/, "");
-  const railwayDomain = process.env["RAILWAY_PUBLIC_DOMAIN"];
-  if (railwayDomain) return `https://${railwayDomain}`;
-  return "https://guardian-trading-api-production.up.railway.app";
-}
-const LOGO_URL = `${resolveAppBase()}/assets/logo.png`;
+const LOGO_URL = "https://www.guardiantrading.com/wp-content/uploads/2026/03/img-guardian-reversed-291x63-1-291x63.png";
 
 // ---------------------------------------------------------------------------
 // Config helpers
@@ -112,8 +106,8 @@ function notifShell(
             <td align="center"
                 style="background:linear-gradient(135deg,#0d1b2e 0%,#1a3560 100%);
                        padding:28px 40px 20px;">
-              <img src="${LOGO_URL}" alt="Guardian Trading" width="35" height="41"
-                   style="display:block;width:35px;height:41px;margin:0 auto 10px;"/>
+              <img src="${LOGO_URL}" alt="Guardian Trading" width="200" height="43"
+                   style="display:block;width:200px;height:43px;margin:0 auto 10px;"/>
               <p style="margin:0;font-size:10px;font-weight:700;color:#5baad4;
                          letter-spacing:0.12em;text-transform:uppercase;">
                 GUARDIAN TRADING &mdash; ADMIN ALERT

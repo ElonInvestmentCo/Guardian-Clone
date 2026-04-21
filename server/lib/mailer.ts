@@ -1,13 +1,7 @@
 import { Resend } from "resend";
 
 const FROM_ADDRESS = "Guardian Trading <support@guardiiantrading.com>";
-function resolveAppBase(): string {
-  if (process.env["APP_URL"]) return process.env["APP_URL"]!.replace(/\/$/, "");
-  const railwayDomain = process.env["RAILWAY_PUBLIC_DOMAIN"];
-  if (railwayDomain) return `https://${railwayDomain}`;
-  return "https://guardian-trading-api-production.up.railway.app";
-}
-const LOGO_URL = `${resolveAppBase()}/assets/logo.png`;
+const LOGO_URL = "https://www.guardiantrading.com/wp-content/uploads/2026/03/img-guardian-reversed-291x63-1-291x63.png";
 const SUPPORT_EMAIL = "support@guardiiantrading.com";
 const COMPANY_LINE = "Guardian Trading &mdash; A Division of Velocity Clearing, LLC. Member FINRA/SIPC.";
 const ADDRESS_LINE = "1301 Route 36, Suite 109, Hazlet, NJ 07730";
@@ -129,8 +123,8 @@ function emailShell(content: string): string {
                   <td align="center">
                     <img src="${LOGO_URL}"
                          alt="Guardian Trading"
-                         width="35" height="41"
-                         style="display:block;width:35px;height:41px;margin:0 auto 14px;" />
+                         width="200" height="43"
+                         style="display:block;width:200px;height:43px;margin:0 auto 14px;" />
                   </td>
                 </tr>
                 <tr>
