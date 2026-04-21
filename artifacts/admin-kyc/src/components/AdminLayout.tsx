@@ -4,7 +4,7 @@ import { getAdminNotifications, markAdminNotificationsRead } from "@/lib/api";
 import type { AdminNotification } from "@/lib/api";
 import { useTheme } from "@/context/ThemeContext";
 
-export type View = "dashboard" | "kyc" | "risk" | "audit" | "users" | "activity" | "registrations" | "sig-audit" | "signatures";
+export type View = "dashboard" | "kyc" | "risk" | "audit" | "users" | "activity" | "registrations" | "sig-audit" | "signatures" | "fund-requests";
 
 interface NavItem { id: View; label: string; icon: string; }
 
@@ -12,6 +12,7 @@ const NAV: NavItem[] = [
   { id: "dashboard",     label: "Dashboard",        icon: "bi-speedometer2" },
   { id: "kyc",           label: "KYC Queue",         icon: "bi-clipboard-check" },
   { id: "users",         label: "Users",             icon: "bi-people" },
+  { id: "fund-requests", label: "Fund Requests",     icon: "bi-cash-coin" },
   { id: "signatures",    label: "Signatures",        icon: "bi-pen-fill" },
   { id: "registrations", label: "Registrations",     icon: "bi-person-plus" },
   { id: "risk",          label: "Risk Events",       icon: "bi-exclamation-triangle" },

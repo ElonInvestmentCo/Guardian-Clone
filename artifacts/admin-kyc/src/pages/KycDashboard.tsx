@@ -10,6 +10,7 @@ import ActivityLogsView        from "@/pages/ActivityLogsView";
 import RegistrationLogView     from "@/pages/RegistrationLogView";
 import SignatureAuditLogView   from "@/pages/SignatureAuditLogView";
 import SignaturesView          from "@/pages/SignaturesView";
+import FundRequestsView       from "@/pages/FundRequestsView";
 import { useLoading } from "@/context/LoadingContext";
 import type { SignatureStatus } from "@/lib/api";
 
