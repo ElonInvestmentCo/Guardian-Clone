@@ -70,6 +70,7 @@ export default function KycDashboard() {
       {activeView === "audit"        && <AuditLogView />}
       {activeView === "registrations"&& <RegistrationLogView />}
       {activeView === "sig-audit"    && <SignatureAuditLogView />}
+      {activeView === "fund-requests"&& <FundRequestsView />}
     </AdminLayout>
   );
 }

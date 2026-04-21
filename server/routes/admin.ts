@@ -1000,7 +1000,8 @@ router.get("/admin/fund-requests", adminRateLimit, requireAdmin, async (_req: Re
   try {
     const pool = getPool();
     const result = await pool.query(
-      `SELECT id, email, type, amount, note, status, admin_note, created_at, resolved_at
+      `SELECT id, email, type, amount, note, status, admin_note AS "adminNote",
+              created_at AS "createdAt", resolved_at AS "reviewedAt"
        FROM fund_requests ORDER BY created_at DESC LIMIT 200`
     );
     res.json({ requests: result.rows });
