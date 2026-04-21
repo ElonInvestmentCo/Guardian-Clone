@@ -1,0 +1,53 @@
+There is a critical sync issue between the user onboarding flow and the admin dashboard.
+
+A user has successfully completed the onboarding process and is currently on the **“Application Pending / Pending Review”** page on the frontend, which confirms the submission went through.
+
+However, in the admin dashboard (KYC Queue), it still shows:
+
+* **0 applicants total**
+* “No applicants match the current filter”
+
+This is incorrect — there is clearly a pending user awaiting approval, but the admin system is not detecting or displaying it.
+
+You need to investigate and fix the following:
+
+1. **Data Persistence**
+
+   * Ensure that when a user completes onboarding, their application is actually being saved to the database.
+   * Verify the write operation is successful (no silent failures).
+
+2. **Environment / Database Mismatch**
+
+   * Confirm both frontend (guardiantrading.com) and admin dashboard (Replit/Railway) are connected to the **same production database**.
+   * Check if one is writing to a different DB (dev vs prod).
+
+3. **API Integration**
+
+   * Ensure the admin dashboard is fetching from the correct API endpoint.
+   * Validate that `/kyc`, `/applications`, or equivalent endpoints return the submitted user.
+
+4. **CORS / Domain Issues**
+
+   * Confirm requests from guardiantrading.com are not being blocked or dropped.
+   * Double-check ALLOWED_ORIGINS and API base URLs.
+
+5. **Status Mapping**
+
+   * Ensure submitted users are correctly marked as `pending` and not being filtered out due to incorrect status values.
+
+6. **Real-Time / Refresh Issue**
+
+   * Add automatic polling or real-time updates so new applicants appear immediately in the admin dashboard.
+
+7. **Logging**
+
+   * Add logs on:
+
+     * User submission
+     * Database insert
+     * Admin fetch request
+   * So we can trace exactly where the breakdown is happening.
+
+This is a critical issue because admins cannot see or approve users even though submissions are successful.
+
+Fix this so that any newly submitted application immediately appears in the admin KYC queue under “Pending”.
