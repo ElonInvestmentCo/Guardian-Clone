@@ -42,6 +42,7 @@ import DashboardPortfolio from "@/pages/dashboard/Portfolio";
 import DashboardStatements from "@/pages/dashboard/Statements";
 import DashboardNotifications from "@/pages/dashboard/Notifications";
 import DashboardSettings from "@/pages/dashboard/Settings";
+import DashboardIntegrations from "@/pages/dashboard/Integrations";
 import KycResubmit from "@/pages/KycResubmit";
 import KycReviewing from "@/pages/KycReviewing";
 import TradingServices from "@/pages/TradingServices";
@@ -129,6 +130,7 @@ function Router() {
       <Route path="/portfolio" component={DashboardPortfolio} />
       <Route path="/statements" component={DashboardStatements} />
       <Route path="/notifications" component={DashboardNotifications} />
+      <Route path="/integrations" component={DashboardIntegrations} />
       <Route path="/settings" component={DashboardSettings} />
 
       {/* ── Analytics ─────────────────────────────────────────────────── */}

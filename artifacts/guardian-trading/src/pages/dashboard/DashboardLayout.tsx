@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Briefcase, ShoppingCart, PieChart,
   FileText, Settings, LogOut, Sun, Moon, Search, Bell,
   TrendingUp, TrendingDown, ChevronDown, BarChart3,
-  X, CheckCheck, ExternalLink,
+  X, CheckCheck, ExternalLink, Plug,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import VerifiedBadge from "@/components/VerifiedBadge";
@@ -22,6 +22,7 @@ const NAV = [
   { icon: PieChart,        label: "Portfolio",      href: "/portfolio"     },
   { icon: FileText,        label: "Statements",     href: "/statements"    },
   { icon: Bell,            label: "Notifications",  href: "/notifications" },
+  { icon: Plug,            label: "Integrations",   href: "/integrations"  },
   { icon: Settings,        label: "Settings",       href: "/settings"      },
 ];
 
