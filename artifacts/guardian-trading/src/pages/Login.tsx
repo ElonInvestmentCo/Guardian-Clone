@@ -100,12 +100,7 @@ export default function Login() {
   return (
     <div
       className="min-h-screen flex items-center justify-center p-4"
-      style={{
-        backgroundImage: "url('/images/abstract-bg.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
-      }}
+      style={{ background: "#f5f5f5" }}
     >
       <div className="w-full" style={{ maxWidth: "560px" }}>
         {/* Card */}
