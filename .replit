@@ -67,7 +67,7 @@ args = "PORT=8080 BASE_PATH=/admin-kyc/ API_PORT=3001 pnpm --filter @workspace/a
 waitForPort = 8080
 
   [agent]
-  stack = "PNPM_WORKSPACE"
+stack = "BEST_EFFORT_FALLBACK"
 expertMode = true
   integrations = ["resend:1.0.0"]
 
