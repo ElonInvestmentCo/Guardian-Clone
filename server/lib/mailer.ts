@@ -1,8 +1,28 @@
 import { Resend } from "resend";
 
 const FROM_ADDRESS = "Guardian Trading <support@guardiiantrading.com>";
-const LOGO_URL = "https://www.guardiantrading.com/wp-content/uploads/2026/03/img-guardian-reversed-291x63-1-291x63.png";
 const SUPPORT_EMAIL = "support@guardiiantrading.com";
+
+/**
+ * Build the logo URL at send-time so it resolves against the live server
+ * domain rather than a hard-coded external URL that may be unreachable.
+ *
+ * Priority:
+ *   1. APP_BASE_URL env var  (set this in production to your real domain)
+ *   2. REPLIT_DEV_DOMAIN     (automatically set in Replit dev environment)
+ *   3. localhost fallback    (images won't load in real emails, but avoids crashes)
+ */
+function getLogoUrl(): string {
+  const appBase = process.env["APP_BASE_URL"];
+  if (appBase) {
+    return `${appBase.replace(/\/$/, "")}/assets/logo-email.png`;
+  }
+  const replitDomain = process.env["REPLIT_DEV_DOMAIN"];
+  if (replitDomain) {
+    return `https://${replitDomain}:3001/assets/logo-email.png`;
+  }
+  return "http://localhost:3001/assets/logo-email.png";
+}
 const COMPANY_LINE = "Guardian Trading &mdash; A Division of Velocity Clearing, LLC. Member FINRA/SIPC.";
 const ADDRESS_LINE = "1301 Route 36, Suite 109, Hazlet, NJ 07730";
 
@@ -121,10 +141,10 @@ function emailShell(content: string): string {
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td align="center">
-                    <img src="${LOGO_URL}"
+                    <img src="${getLogoUrl()}"
                          alt="Guardian Trading"
-                         width="200" height="43"
-                         style="display:block;width:200px;height:43px;margin:0 auto 14px;" />
+                         width="291" height="63"
+                         style="display:block;width:200px;height:auto;margin:0 auto 14px;" />
                   </td>
                 </tr>
                 <tr>
