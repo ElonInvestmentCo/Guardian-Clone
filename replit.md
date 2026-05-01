@@ -45,9 +45,9 @@ admin/                # Alternate admin source (dev)
 
 ## Running the Project
 All three workflows run in parallel via the "Project" button:
-- `API Server`: `PORT=3001 pnpm run dev:server`
-- `Guardian Trading`: `pnpm --filter @workspace/guardian-trading run dev` on port 3000
-- `Admin KYC`: `pnpm --filter @workspace/admin-kyc run dev` on port 8080
+- `API Server`: `PORT=3001 pnpm run dev:server` on port 3001
+- `Guardian Trading`: `PORT=5000 API_PORT=3001 pnpm run dev:client` on port 5000 (main webview)
+- `Admin KYC`: `PORT=8080 API_PORT=3001 pnpm run dev:admin` on port 8080
 
 ## Environment Variables
 - `DATABASE_URL` — PostgreSQL connection string (auto-provided by Replit PostgreSQL module)
