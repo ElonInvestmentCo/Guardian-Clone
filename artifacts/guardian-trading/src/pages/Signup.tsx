@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import { Link, useLocation } from "wouter";
 import { getApiBase } from "@/lib/api";
 import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
+import guardianLogo from "@assets/GuardianLogo.svg";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -107,7 +108,12 @@ export default function Signup() {
   return (
     <div
       className="min-h-screen flex items-center justify-center p-6"
-      style={{ background: "#f0f0f0" }}
+      style={{
+        backgroundImage: "url('/images/abstract-bg.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
     >
       <div className="w-full" style={{ maxWidth: "620px" }}>
         <div
@@ -124,6 +130,19 @@ export default function Signup() {
             className="text-center px-6 sm:px-10 pt-7 pb-6"
             style={{ borderBottom: "1px solid #e0e0e0" }}
           >
+            <div className="flex items-center justify-center mb-5">
+              <img
+                src={guardianLogo}
+                alt="Guardian Trading"
+                style={{
+                  width: "100%",
+                  maxWidth: "280px",
+                  height: "auto",
+                  objectFit: "contain",
+                  display: "block",
+                }}
+              />
+            </div>
             <h1
               className="font-semibold leading-snug"
               style={{ color: "#3a7bd5", fontSize: "24px" }}
