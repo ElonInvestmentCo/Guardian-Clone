@@ -17,11 +17,10 @@ export function getPool(): pg.Pool {
       connectionString.includes("railway") ||
       connectionString.includes("render") ||
       connectionString.includes("supabase") ||
-      connectionString.includes("neon") ||
-      process.env.NODE_ENV === "production";
+      connectionString.includes("neon");
     pool = new Pool({
       connectionString,
-      ssl: isRemote ? { rejectUnauthorized: true } : false,
+      ssl: isRemote ? { rejectUnauthorized: false } : false,
       max: 10,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,
