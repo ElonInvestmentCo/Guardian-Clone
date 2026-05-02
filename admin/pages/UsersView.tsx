@@ -11,6 +11,7 @@ import {
 import { formatDateShort } from "@/lib/utils";
 import { RiskBadge, StatusBadge } from "@/components/Badges";
 import CreateUserModal from "@/components/CreateUserModal";
+import { toast } from "@/lib/guardian-toast";
 
 const STATUS_FILTERS: { value: string; label: string }[] = [
   { value: "",          label: "All" },
@@ -43,8 +44,6 @@ export default function UsersView({ onOpenProfile }: Props) {
   const [sortKey,      setSortKey]      = useState<SortKey>("createdAt");
   const [sortAsc,      setSortAsc]      = useState(false);
   const [showCreate,   setShowCreate]   = useState(false);
-  const [actionMsg,    setActionMsg]    = useState<{ type: "ok" | "err"; text: string } | null>(null);
-
   const qc = useQueryClient();
 
   const { data, isLoading, isError, refetch, isFetching } = useQuery({
@@ -52,14 +51,9 @@ export default function UsersView({ onOpenProfile }: Props) {
     queryFn: () => getAllUsers({ status: statusFilter || undefined, role: roleFilter || undefined }),
   });
 
-  const showMsg = (type: "ok" | "err", text: string) => {
-    setActionMsg({ type, text });
-    setTimeout(() => setActionMsg(null), 4000);
-  };
-
-  const suspendMut  = useMutation({ mutationFn: (email: string) => suspendUser(email),    onSuccess: () => { showMsg("ok", "User suspended");    qc.invalidateQueries({ queryKey: ["all-users"] }); }, onError: (e: Error) => showMsg("err", e.message) });
-  const banMut      = useMutation({ mutationFn: (email: string) => banUser(email),        onSuccess: () => { showMsg("ok", "User banned");        qc.invalidateQueries({ queryKey: ["all-users"] }); }, onError: (e: Error) => showMsg("err", e.message) });
-  const reactivateMut = useMutation({ mutationFn: (email: string) => reactivateUser(email), onSuccess: () => { showMsg("ok", "User reactivated"); qc.invalidateQueries({ queryKey: ["all-users"] }); }, onError: (e: Error) => showMsg("err", e.message) });
+  const suspendMut  = useMutation({ mutationFn: (email: string) => suspendUser(email),    onSuccess: () => { toast.success("User suspended");    qc.invalidateQueries({ queryKey: ["all-users"] }); }, onError: (e: Error) => toast.error(e.message) });
+  const banMut      = useMutation({ mutationFn: (email: string) => banUser(email),        onSuccess: () => { toast.success("User banned");        qc.invalidateQueries({ queryKey: ["all-users"] }); }, onError: (e: Error) => toast.error(e.message) });
+  const reactivateMut = useMutation({ mutationFn: (email: string) => reactivateUser(email), onSuccess: () => { toast.success("User reactivated"); qc.invalidateQueries({ queryKey: ["all-users"] }); }, onError: (e: Error) => toast.error(e.message) });
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -101,11 +95,6 @@ export default function UsersView({ onOpenProfile }: Props) {
             </span>
           </div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            {actionMsg && (
-              <div className={`alert ${actionMsg.type === "ok" ? "alert-success" : "alert-danger"} py-1 px-3 mb-0`} style={{ fontSize: 12 }}>
-                {actionMsg.text}
-              </div>
-            )}
             <button className="btn btn-success btn-sm" onClick={() => setShowCreate(true)}>
               <i className="bi bi-plus me-1" />New User
             </button>

@@ -9,6 +9,7 @@ import {
   type AuditEntry,
 } from "@/lib/api";
 import { formatDate, getProfileField, riskColors } from "@/lib/utils";
+import { toast } from "@/lib/guardian-toast";
 import { RiskBadge, StatusBadge, SeverityBadge } from "@/components/Badges";
 
 interface Props {
@@ -39,19 +40,12 @@ export default function UserPanel({ user, onClose, onAction, onOpenProfile }: Pr
   const [actionNote, setActionNote] = useState("");
   const [rejectReason, setRejectReason] = useState("");
   const [resubmitFields, setResubmitFields] = useState<string[]>([]);
-  const [actionMsg, setActionMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
-
   const qc = useQueryClient();
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["user-details", user.email],
     queryFn: () => getUserDetails(user.email),
   });
-
-  const showMsg = (type: "ok" | "err", text: string) => {
-    setActionMsg({ type, text });
-    setTimeout(() => setActionMsg(null), 5000);
-  };
 
   const refresh = () => {
     refetch();
@@ -63,20 +57,20 @@ export default function UserPanel({ user, onClose, onAction, onOpenProfile }: Pr
 
   const approveMut = useMutation({
     mutationFn: () => approveUser(user.email, actionNote || undefined),
-    onSuccess: () => { showMsg("ok", "User approved successfully"); refresh(); },
-    onError:   (e: Error) => showMsg("err", e.message),
+    onSuccess: () => { toast.success("User approved successfully"); refresh(); },
+    onError:   (e: Error) => toast.error(e.message),
   });
 
   const rejectMut = useMutation({
     mutationFn: () => rejectUser(user.email, rejectReason, actionNote || undefined),
-    onSuccess: () => { showMsg("ok", "User rejected"); refresh(); },
-    onError:   (e: Error) => showMsg("err", e.message),
+    onSuccess: () => { toast.success("User rejected"); refresh(); },
+    onError:   (e: Error) => toast.error(e.message),
   });
 
   const resubmitMut = useMutation({
     mutationFn: () => requestResubmission(user.email, resubmitFields.length > 0 ? resubmitFields : undefined, actionNote || undefined),
-    onSuccess: () => { showMsg("ok", "Resubmission requested"); setResubmitFields([]); refresh(); },
-    onError:   (e: Error) => showMsg("err", e.message),
+    onSuccess: () => { toast.success("Resubmission requested"); setResubmitFields([]); refresh(); },
+    onError:   (e: Error) => toast.error(e.message),
   });
 
   const profile   = data?.profile   ?? {};
@@ -311,12 +305,6 @@ export default function UserPanel({ user, onClose, onAction, onOpenProfile }: Pr
       </div>
 
       <div style={{ padding: "14px 20px", borderTop: "1px solid #E5E7EB", background: "#F8FAFC", flexShrink: 0 }}>
-        {actionMsg && (
-          <div className={`alert ${actionMsg.type === "ok" ? "alert-success" : "alert-danger"} py-2 px-3 mb-2`} style={{ fontSize: 12 }}>
-            {actionMsg.text}
-          </div>
-        )}
-
         <textarea
           value={actionNote}
           onChange={(e) => setActionNote(e.target.value)}
@@ -380,7 +368,7 @@ export default function UserPanel({ user, onClose, onAction, onOpenProfile }: Pr
             label="✗ Reject"
             onClick={() => {
               if (!rejectReason.trim()) {
-                showMsg("err", "Please provide a reason for rejection");
+                toast.error("Please provide a reason for rejection");
                 return;
               }
               rejectMut.mutate();

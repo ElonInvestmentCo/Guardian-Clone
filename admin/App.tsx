@@ -10,6 +10,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { PageLoader } from "@/components/PageLoader";
 import AntiScrape from "@/components/AntiScrape";
 import { ScrollAndFormReset } from "@/components/ScrollAndFormReset";
+import { GuardianToaster } from "@/lib/guardian-toast";
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
   constructor(props: { children: ReactNode }) {
@@ -110,6 +111,7 @@ function App() {
             </WouterRouter>
             <AntiScrape />
             <PageLoader />
+            <GuardianToaster />
           </LoadingProvider>
         </QueryClientProvider>
       </ThemeProvider>

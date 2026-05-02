@@ -23,6 +23,7 @@ import {
 } from "@/lib/api";
 import { formatDate, getProfileField, riskColors, actionTypeLabel, actionTypeColor } from "@/lib/utils";
 import { RiskBadge, StatusBadge, SeverityBadge } from "@/components/Badges";
+import { toast } from "@/lib/guardian-toast";
 
 type ProfileTab = "profile" | "risk" | "audit" | "balance" | "actions";
 
@@ -53,7 +54,6 @@ export default function UserProfileView({ email, onBack }: Props) {
   const [editFirst,       setEditFirst]       = useState("");
   const [editLast,        setEditLast]        = useState("");
   const [editMode,        setEditMode]        = useState(false);
-  const [actionMsg,       setActionMsg]       = useState<{ type: "ok" | "err"; text: string } | null>(null);
   const [confirmDel,      setConfirmDel]      = useState(false);
   const [auditFilter,     setAuditFilter]     = useState("");
 
@@ -69,11 +69,6 @@ export default function UserProfileView({ email, onBack }: Props) {
     queryFn: () => getUserDocuments(email),
   });
 
-  const showMsg = (type: "ok" | "err", text: string) => {
-    setActionMsg({ type, text });
-    setTimeout(() => setActionMsg(null), 5000);
-  };
-
   const refresh = () => {
     refetch();
     qc.invalidateQueries({ queryKey: ["all-users"] });
@@ -81,18 +76,18 @@ export default function UserProfileView({ email, onBack }: Props) {
     qc.invalidateQueries({ queryKey: ["global-audit"] });
   };
 
-  const approveMut   = useMutation({ mutationFn: () => approveUser(email, actionNote || undefined),                    onSuccess: () => { showMsg("ok", "User approved successfully"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
-  const rejectMut    = useMutation({ mutationFn: () => rejectUser(email, rejectReason, actionNote || undefined), onSuccess: () => { showMsg("ok", "User rejected"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
-  const resubmitMut  = useMutation({ mutationFn: () => requestResubmission(email, resubmitFields.length > 0 ? resubmitFields : undefined, actionNote || undefined), onSuccess: () => { showMsg("ok", "Resubmission requested — user notified"); setResubmitFields([]); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
-  const suspendMut   = useMutation({ mutationFn: () => suspendUser(email, actionNote || undefined),                    onSuccess: () => { showMsg("ok", "User suspended"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
-  const banMut       = useMutation({ mutationFn: () => banUser(email, banReason || undefined, actionNote || undefined), onSuccess: () => { showMsg("ok", "User banned"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
-  const reactivateMut = useMutation({ mutationFn: () => reactivateUser(email, actionNote || undefined),                onSuccess: () => { showMsg("ok", "User reactivated"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
-  const roleMut      = useMutation({ mutationFn: () => assignRole(email, selectedRole, actionNote || undefined),       onSuccess: () => { showMsg("ok", `Role set to ${selectedRole}`); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
-  const balanceMut   = useMutation({ mutationFn: () => setBalance(email, Number(newBalance), Number(newProfit), balanceNote, txType), onSuccess: () => { showMsg("ok", "Balance updated successfully"); setConfirmBalance(false); setNewBalance(""); setNewProfit(""); setBalanceNote(""); setTxType("adjustment"); refresh(); }, onError: (e: Error) => { showMsg("err", e.message); setConfirmBalance(false); } });
-  const flagMut      = useMutation({ mutationFn: () => flagUser(email, flagReason || undefined, actionNote || undefined), onSuccess: () => { showMsg("ok", "User flagged"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
-  const resetPwMut   = useMutation({ mutationFn: () => resetPassword(email, actionNote || undefined),                  onSuccess: () => { showMsg("ok", "Password reset"); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
-  const updateMut    = useMutation({ mutationFn: () => updateUser(email, editFirst || undefined, editLast || undefined, actionNote || undefined), onSuccess: () => { showMsg("ok", "Profile updated"); setEditMode(false); refresh(); }, onError: (e: Error) => showMsg("err", e.message) });
-  const deleteMut    = useMutation({ mutationFn: () => deleteUser(email, actionNote || undefined),                     onSuccess: () => { showMsg("ok", "User deleted"); onBack(); }, onError: (e: Error) => showMsg("err", e.message) });
+  const approveMut   = useMutation({ mutationFn: () => approveUser(email, actionNote || undefined),                    onSuccess: () => { toast.success("User approved successfully"); refresh(); }, onError: (e: Error) => toast.error(e.message) });
+  const rejectMut    = useMutation({ mutationFn: () => rejectUser(email, rejectReason, actionNote || undefined), onSuccess: () => { toast.success("User rejected"); refresh(); }, onError: (e: Error) => toast.error(e.message) });
+  const resubmitMut  = useMutation({ mutationFn: () => requestResubmission(email, resubmitFields.length > 0 ? resubmitFields : undefined, actionNote || undefined), onSuccess: () => { toast.success("Resubmission requested — user notified"); setResubmitFields([]); refresh(); }, onError: (e: Error) => toast.error(e.message) });
+  const suspendMut   = useMutation({ mutationFn: () => suspendUser(email, actionNote || undefined),                    onSuccess: () => { toast.success("User suspended"); refresh(); }, onError: (e: Error) => toast.error(e.message) });
+  const banMut       = useMutation({ mutationFn: () => banUser(email, banReason || undefined, actionNote || undefined), onSuccess: () => { toast.success("User banned"); refresh(); }, onError: (e: Error) => toast.error(e.message) });
+  const reactivateMut = useMutation({ mutationFn: () => reactivateUser(email, actionNote || undefined),                onSuccess: () => { toast.success("User reactivated"); refresh(); }, onError: (e: Error) => toast.error(e.message) });
+  const roleMut      = useMutation({ mutationFn: () => assignRole(email, selectedRole, actionNote || undefined),       onSuccess: () => { toast.success(`Role set to ${selectedRole}`); refresh(); }, onError: (e: Error) => toast.error(e.message) });
+  const balanceMut   = useMutation({ mutationFn: () => setBalance(email, Number(newBalance), Number(newProfit), balanceNote, txType), onSuccess: () => { toast.success("Balance updated successfully"); setConfirmBalance(false); setNewBalance(""); setNewProfit(""); setBalanceNote(""); setTxType("adjustment"); refresh(); }, onError: (e: Error) => { toast.error(e.message); setConfirmBalance(false); } });
+  const flagMut      = useMutation({ mutationFn: () => flagUser(email, flagReason || undefined, actionNote || undefined), onSuccess: () => { toast.success("User flagged"); refresh(); }, onError: (e: Error) => toast.error(e.message) });
+  const resetPwMut   = useMutation({ mutationFn: () => resetPassword(email, actionNote || undefined),                  onSuccess: () => { toast.success("Password reset"); refresh(); }, onError: (e: Error) => toast.error(e.message) });
+  const updateMut    = useMutation({ mutationFn: () => updateUser(email, editFirst || undefined, editLast || undefined, actionNote || undefined), onSuccess: () => { toast.success("Profile updated"); setEditMode(false); refresh(); }, onError: (e: Error) => toast.error(e.message) });
+  const deleteMut    = useMutation({ mutationFn: () => deleteUser(email, actionNote || undefined),                     onSuccess: () => { toast.success("User deleted"); onBack(); }, onError: (e: Error) => toast.error(e.message) });
 
   const profile  = data?.profile  ?? {};
   const risk     = data?.risk;

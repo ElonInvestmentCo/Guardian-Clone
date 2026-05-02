@@ -3,7 +3,7 @@ import AnalyticsLayout from "@/components/analytics/AnalyticsLayout";
 import { Plus, Copy, Trash2, Globe, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/lib/guardian-toast";
 
 interface Project {
   id: string;
@@ -43,7 +43,7 @@ export default function Projects() {
   useEffect(() => { void loadProjects(); }, []);
 
   async function createProject() {
-    if (!form.name || !form.domain) { toast({ title: "Fill in all fields", variant: "destructive" }); return; }
+    if (!form.name || !form.domain) { toast.error("Fill in all fields"); return; }
     setCreating(true);
     try {
       const r = await fetch(`${API}/analytics/projects`, {
@@ -55,12 +55,12 @@ export default function Projects() {
         setForm({ name: "", domain: "" });
         setShowForm(false);
         await loadProjects();
-        toast({ title: "Project created!" });
+        toast.success("Project created!");
       } else {
-        toast({ title: "Failed to create project", variant: "destructive" });
+        toast.error("Failed to create project");
       }
     } catch {
-      toast({ title: "Network error. Please try again.", variant: "destructive" });
+      toast.error("Network error. Please try again.");
     }
     setCreating(false);
   }
@@ -69,11 +69,11 @@ export default function Projects() {
     if (!confirm("Delete this project and all its data?")) return;
     try {
       const r = await fetch(`${API}/analytics/projects/${id}`, { method: "DELETE" });
-      if (!r.ok) { toast({ title: "Failed to delete project", variant: "destructive" }); return; }
+      if (!r.ok) { toast.error("Failed to delete project"); return; }
       await loadProjects();
-      toast({ title: "Project deleted" });
+      toast.success("Project deleted");
     } catch {
-      toast({ title: "Network error. Please try again.", variant: "destructive" });
+      toast.error("Network error. Please try again.");
     }
   }
 
