@@ -329,6 +329,45 @@ export async function rejectFundRequest(id: string, adminNote?: string): Promise
   await request("POST", `/admin/fund-requests/${encodeURIComponent(id)}/reject`, { adminNote });
 }
 
+// ── Orders ─────────────────────────────────────────────────────────────────────
+
+export type OrderSide   = "Buy" | "Sell";
+export type OrderType   = "Market" | "Limit" | "Stop" | "Stop Limit";
+export type OrderStatus = "Active" | "Filled" | "Cancelled" | "Pending";
+
+export interface AdminOrder {
+  id: string;
+  email: string;
+  symbol: string;
+  side: OrderSide;
+  type: OrderType;
+  qty: number;
+  price: number | null;
+  filled: number;
+  status: OrderStatus;
+  createdAt: string;
+}
+
+export interface AdminOrdersResponse {
+  orders: AdminOrder[];
+  total: number;
+}
+
+export async function getAdminOrders(params?: {
+  email?: string;
+  symbol?: string;
+  side?: OrderSide;
+  status?: OrderStatus;
+}): Promise<AdminOrdersResponse> {
+  const q = new URLSearchParams();
+  if (params?.email)  q.set("email",  params.email);
+  if (params?.symbol) q.set("symbol", params.symbol);
+  if (params?.side)   q.set("side",   params.side);
+  if (params?.status) q.set("status", params.status);
+  const qs = q.toString() ? `?${q.toString()}` : "";
+  return request<AdminOrdersResponse>("GET", `/admin/orders${qs}`);
+}
+
 export async function fetchDocumentBlobUrl(email: string, role: string): Promise<string> {
   const session = getSession();
   if (!session) throw new Error("Not authenticated");

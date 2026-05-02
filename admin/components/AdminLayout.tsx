@@ -4,18 +4,19 @@ import { clearSession, getFundRequests } from "@/lib/api";
 import { useTheme } from "@/context/ThemeContext";
 import { isChimeMuted, setChimeMuted } from "@/lib/guardian-toast";
 
-export type View = "dashboard" | "kyc" | "risk" | "audit" | "users" | "activity" | "funds";
+export type View = "dashboard" | "kyc" | "risk" | "audit" | "users" | "activity" | "funds" | "orders";
 
 interface NavItem { id: View; label: string; icon: string; }
 
 const NAV: NavItem[] = [
-  { id: "dashboard", label: "Dashboard", icon: "bi-speedometer2" },
-  { id: "kyc", label: "KYC Queue", icon: "bi-clipboard-check" },
-  { id: "users", label: "Users", icon: "bi-people" },
-  { id: "funds", label: "Fund Requests", icon: "bi-cash-stack" },
-  { id: "risk", label: "Risk Events", icon: "bi-exclamation-triangle" },
-  { id: "activity", label: "Activity Logs", icon: "bi-activity" },
-  { id: "audit", label: "Audit Log", icon: "bi-shield-check" },
+  { id: "dashboard", label: "Dashboard",    icon: "bi-speedometer2" },
+  { id: "kyc",       label: "KYC Queue",    icon: "bi-clipboard-check" },
+  { id: "users",     label: "Users",        icon: "bi-people" },
+  { id: "funds",     label: "Fund Requests", icon: "bi-cash-stack" },
+  { id: "orders",    label: "Orders",       icon: "bi-bar-chart-line" },
+  { id: "risk",      label: "Risk Events",  icon: "bi-exclamation-triangle" },
+  { id: "activity",  label: "Activity Logs", icon: "bi-activity" },
+  { id: "audit",     label: "Audit Log",    icon: "bi-shield-check" },
 ];
 
 const TYPE_ICONS: Record<string, string> = {

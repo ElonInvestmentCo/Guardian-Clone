@@ -1121,6 +1121,67 @@ router.post("/admin/fund-requests/:id/reject", adminRateLimit, requireAdmin, val
   }
 });
 
+// ─── Admin Orders ────────────────────────────────────────────────────────────
+
+router.get("/admin/orders", adminRateLimit, requireAdmin, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const pool = getPool();
+    const { email, symbol, side, status } = req.query as Record<string, string | undefined>;
+
+    const conditions: string[] = [];
+    const params: unknown[] = [];
+    let idx = 1;
+
+    if (email?.trim()) {
+      conditions.push(`email ILIKE $${idx++}`);
+      params.push(`%${email.trim()}%`);
+    }
+    if (symbol?.trim()) {
+      conditions.push(`symbol ILIKE $${idx++}`);
+      params.push(`%${symbol.trim().toUpperCase()}%`);
+    }
+    const ALLOWED_SIDES = ["Buy", "Sell"];
+    if (side && ALLOWED_SIDES.includes(side)) {
+      conditions.push(`side = $${idx++}`);
+      params.push(side);
+    }
+    const ALLOWED_STATUSES = ["Active", "Filled", "Cancelled", "Pending"];
+    if (status && ALLOWED_STATUSES.includes(status)) {
+      conditions.push(`status = $${idx++}`);
+      params.push(status);
+    }
+
+    const where = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+    const sql = `
+      SELECT id, email, symbol, side, type, qty, price, filled, status,
+             created_at AS "createdAt"
+      FROM user_orders
+      ${where}
+      ORDER BY created_at DESC
+      LIMIT 1000
+    `;
+
+    const result = await pool.query(sql, params);
+    const orders = result.rows.map((r: Record<string, unknown>) => ({
+      id: r.id,
+      email: r.email,
+      symbol: r.symbol,
+      side: r.side,
+      type: r.type,
+      qty: parseFloat(String(r.qty)),
+      price: r.price !== null ? parseFloat(String(r.price)) : null,
+      filled: parseFloat(String(r.filled)),
+      status: r.status,
+      createdAt: r.createdAt,
+    }));
+
+    res.json({ orders, total: orders.length });
+  } catch (err) {
+    console.error("[Admin] orders list error:", err);
+    res.status(500).json({ error: "Failed to fetch orders" });
+  }
+});
+
 // ─── Admin Notifications ────────────────────────────────────────────────────
 
 router.get(
