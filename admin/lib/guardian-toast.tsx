@@ -60,6 +60,36 @@ const ToastContext = createContext<{ toasts: ToastItem[] }>({ toasts: [] });
 export const useToastItems = () => useContext(ToastContext);
 
 // ---------------------------------------------------------------------------
+// Success chime — synthesised via Web Audio API (no audio file needed)
+// ---------------------------------------------------------------------------
+function playSuccessChime() {
+  try {
+    const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+
+    function note(freq: number, startAt: number, duration: number, gain: number) {
+      const osc = ctx.createOscillator();
+      const amp = ctx.createGain();
+      osc.connect(amp);
+      amp.connect(ctx.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + startAt);
+      amp.gain.setValueAtTime(0, ctx.currentTime + startAt);
+      amp.gain.linearRampToValueAtTime(gain, ctx.currentTime + startAt + 0.01);
+      amp.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + startAt + duration);
+      osc.start(ctx.currentTime + startAt);
+      osc.stop(ctx.currentTime + startAt + duration);
+    }
+
+    note(880, 0.0,  0.35, 0.09);
+    note(1320, 0.13, 0.45, 0.07);
+
+    setTimeout(() => ctx.close(), 1000);
+  } catch {
+    // Web Audio not available — silently skip
+  }
+}
+
+// ---------------------------------------------------------------------------
 // CSS keyframes — injected once into <head> on first render
 // ---------------------------------------------------------------------------
 const STYLE_ID = "gt-toast-keyframes";
@@ -214,6 +244,7 @@ function SingleToast({ item, index, onRemove }: SingleToastProps) {
 
   useEffect(() => {
     injectKeyframes();
+    if (item.variant === "success") playSuccessChime();
     const show = setTimeout(() => setVisible(true), 16);
     timerRef.current = setTimeout(() => {
       setVisible(false);
@@ -223,7 +254,7 @@ function SingleToast({ item, index, onRemove }: SingleToastProps) {
       clearTimeout(show);
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [item.id, item.duration, onRemove]);
+  }, [item.id, item.duration, item.variant, onRemove]);
 
   const handleMouseEnter = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
