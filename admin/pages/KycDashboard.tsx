@@ -8,6 +8,7 @@ import AuditLogView      from "@/pages/AuditLogView";
 import UsersView         from "@/pages/UsersView";
 import UserProfileView   from "@/pages/UserProfileView";
 import ActivityLogsView  from "@/pages/ActivityLogsView";
+import FundRequestsView  from "@/pages/FundRequestsView";
 import { useLoading } from "@/context/LoadingContext";
 import {
   useAdminRealtime,
@@ -96,6 +97,7 @@ export default function KycDashboard() {
       {activeView === "dashboard" && <DashboardView realtimeStatus={realtimeStatus} />}
       {activeView === "kyc"      && <KycQueueView onOpenProfile={(email) => openProfile(email, "kyc")} />}
       {activeView === "users"    && <UsersView onOpenProfile={(email) => openProfile(email, "users")} />}
+      {activeView === "funds"    && <FundRequestsView />}
       {activeView === "risk"     && <RiskEventsView />}
       {activeView === "activity" && <ActivityLogsView onOpenProfile={(email) => openProfile(email, "activity")} />}
       {activeView === "audit"    && <AuditLogView />}

@@ -295,6 +295,40 @@ export async function getUserDocuments(email: string): Promise<UserDocumentsResp
   return request<UserDocumentsResponse>("GET", `/admin/user-documents/${encodeURIComponent(email)}`);
 }
 
+// ── Fund Requests ──────────────────────────────────────────────────────────────
+
+export type FundRequestStatus = "pending" | "approved" | "rejected";
+export type FundRequestType   = "deposit" | "withdrawal";
+
+export interface FundRequest {
+  id: string;
+  email: string;
+  type: FundRequestType;
+  amount: string;
+  note: string | null;
+  status: FundRequestStatus;
+  adminNote: string | null;
+  createdAt: string;
+  reviewedAt: string | null;
+}
+
+export interface FundRequestsResponse {
+  requests: FundRequest[];
+}
+
+export async function getFundRequests(status?: FundRequestStatus): Promise<FundRequestsResponse> {
+  const qs = status ? `?status=${status}` : "";
+  return request<FundRequestsResponse>("GET", `/admin/fund-requests${qs}`);
+}
+
+export async function approveFundRequest(id: string, adminNote?: string): Promise<void> {
+  await request("POST", `/admin/fund-requests/${encodeURIComponent(id)}/approve`, { adminNote });
+}
+
+export async function rejectFundRequest(id: string, adminNote?: string): Promise<void> {
+  await request("POST", `/admin/fund-requests/${encodeURIComponent(id)}/reject`, { adminNote });
+}
+
 export async function fetchDocumentBlobUrl(email: string, role: string): Promise<string> {
   const session = getSession();
   if (!session) throw new Error("Not authenticated");
