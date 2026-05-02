@@ -69,7 +69,7 @@ waitForPort = 8080
   [agent]
 stack = "BEST_EFFORT_FALLBACK"
 expertMode = true
-  integrations = ["resend:1.0.0"]
+integrations = ["resend:1.0.0", "javascript_openai_ai_integrations:2.0.0"]
 
   [postMerge]
   path = "scripts/post-merge.sh"
