@@ -80,11 +80,27 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
   const notifRef = useRef<HTMLDivElement>(null);
   const { theme, toggleTheme } = useTheme();
   const [chimeMuted, setChimeMutedState] = useState(() => isChimeMuted());
+  const [mutePill, setMutePill] = useState<{ visible: boolean; hiding: boolean; muted: boolean }>({ visible: false, hiding: false, muted: false });
+  const mutePillTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mutePillHideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleToggleMute = useCallback(() => {
     setChimeMutedState(prev => {
       const next = !prev;
       setChimeMuted(next);
+
+      if (mutePillTimer.current) clearTimeout(mutePillTimer.current);
+      if (mutePillHideTimer.current) clearTimeout(mutePillHideTimer.current);
+
+      setMutePill({ visible: true, hiding: false, muted: next });
+
+      mutePillTimer.current = setTimeout(() => {
+        setMutePill(p => ({ ...p, hiding: true }));
+        mutePillHideTimer.current = setTimeout(() => {
+          setMutePill(p => ({ ...p, visible: false, hiding: false }));
+        }, 300);
+      }, 1600);
+
       return next;
     });
   }, []);
@@ -361,6 +377,13 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
           {children}
         </div>
       </main>
+
+      {mutePill.visible && (
+        <div className={`gt-mute-pill${mutePill.hiding ? " hiding" : ""}`}>
+          <i className={`bi ${mutePill.muted ? "bi-volume-mute-fill" : "bi-volume-up-fill"}`} style={{ fontSize: 15 }} />
+          {mutePill.muted ? "Muted" : "Sound on"}
+        </div>
+      )}
     </div>
   );
 }
