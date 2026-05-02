@@ -60,79 +60,146 @@ const ToastContext = createContext<{ toasts: ToastItem[] }>({ toasts: [] });
 export const useToastItems = () => useContext(ToastContext);
 
 // ---------------------------------------------------------------------------
-// Individual toast visual
+// CSS keyframes — injected once into <head> on first render
 // ---------------------------------------------------------------------------
-const VARIANT_STYLES: Record<
-  ToastVariant,
-  { bg: string; iconBg: string; iconColor: string; glow: string; Icon: () => JSX.Element }
-> = {
+const STYLE_ID = "gt-toast-keyframes";
+
+function injectKeyframes() {
+  if (typeof document === "undefined") return;
+  if (document.getElementById(STYLE_ID)) return;
+  const style = document.createElement("style");
+  style.id = STYLE_ID;
+  style.textContent = `
+    /* Icon circle spring-pop — success */
+    @keyframes gt-icon-pop {
+      0%   { transform: scale(0.3); opacity: 0; }
+      55%  { transform: scale(1.18); opacity: 1; }
+      75%  { transform: scale(0.93); }
+      100% { transform: scale(1.0); opacity: 1; }
+    }
+    /* Checkmark stroke draw */
+    @keyframes gt-check-draw {
+      from { stroke-dashoffset: 22; }
+      to   { stroke-dashoffset: 0; }
+    }
+    /* Icon circle for other variants — simpler fade+scale */
+    @keyframes gt-icon-in {
+      0%   { transform: scale(0.45); opacity: 0; }
+      60%  { transform: scale(1.08); opacity: 1; }
+      100% { transform: scale(1.0);  opacity: 1; }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+// ---------------------------------------------------------------------------
+// Variant config
+// ---------------------------------------------------------------------------
+type VariantConfig = {
+  bg: string;
+  iconBg: string;
+  iconColor: string;
+  glow: string;
+};
+
+const VARIANT_STYLES: Record<ToastVariant, VariantConfig> = {
   success: {
     bg: "#0d1a0d",
     iconBg: "#4ade80",
     iconColor: "#14532d",
     glow: "rgba(74,222,128,0.14)",
-    Icon: () => (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <path
-          d="M4 10.5L8 14.5L16 6.5"
-          stroke="currentColor"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
   },
   error: {
     bg: "#1a0d0d",
     iconBg: "#f87171",
     iconColor: "#7f1d1d",
     glow: "rgba(248,113,113,0.14)",
-    Icon: () => (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <path
-          d="M6 6L14 14M14 6L6 14"
-          stroke="currentColor"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
   },
   warning: {
     bg: "#1a150d",
     iconBg: "#fbbf24",
     iconColor: "#78350f",
     glow: "rgba(251,191,36,0.14)",
-    Icon: () => (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <path
-          d="M10 6V11M10 13.5V14"
-          stroke="currentColor"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
   },
   info: {
     bg: "#0d1020",
     iconBg: "#60a5fa",
     iconColor: "#1e3a5f",
     glow: "rgba(96,165,250,0.14)",
-    Icon: () => (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <path
-          d="M10 9V14M10 6.5V7"
-          stroke="currentColor"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
   },
 };
 
+// ---------------------------------------------------------------------------
+// Animated icon
+// ---------------------------------------------------------------------------
+function SuccessIcon({ animKey }: { animKey: string }) {
+  return (
+    <svg
+      key={animKey}
+      width="22"
+      height="22"
+      viewBox="0 0 20 20"
+      fill="none"
+      style={{ display: "block", overflow: "visible" }}
+    >
+      <path
+        d="M3.5 10.5L7.5 14.5L16.5 5.5"
+        stroke="currentColor"
+        strokeWidth="2.3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeDasharray="22"
+        strokeDashoffset="22"
+        style={{
+          animation: `gt-check-draw 420ms cubic-bezier(0.22, 1, 0.36, 1) 210ms both`,
+        }}
+      />
+    </svg>
+  );
+}
+
+function ErrorIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path
+        d="M6 6L14 14M14 6L6 14"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function WarningIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path
+        d="M10 6V11M10 13.5V14"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function InfoIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path
+        d="M10 9V14M10 6.5V7"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Individual toast visual
+// ---------------------------------------------------------------------------
 interface SingleToastProps {
   item: ToastItem;
   index: number;
@@ -142,10 +209,11 @@ interface SingleToastProps {
 function SingleToast({ item, index, onRemove }: SingleToastProps) {
   const [visible, setVisible] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const style = VARIANT_STYLES[item.variant];
-  const { Icon } = style;
+  const s = VARIANT_STYLES[item.variant];
+  const isSuccess = item.variant === "success";
 
   useEffect(() => {
+    injectKeyframes();
     const show = setTimeout(() => setVisible(true), 16);
     timerRef.current = setTimeout(() => {
       setVisible(false);
@@ -184,11 +252,11 @@ function SingleToast({ item, index, onRemove }: SingleToastProps) {
         minHeight: "68px",
         padding: "12px 20px 12px 14px",
         borderRadius: "20px",
-        background: style.bg,
+        background: s.bg,
         border: "1px solid rgba(255,255,255,0.07)",
         boxShadow:
           "0 12px 40px rgba(0,0,0,0.65), 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04)",
-        backgroundImage: `radial-gradient(ellipse at 56px 50%, ${style.glow} 0%, transparent 62%)`,
+        backgroundImage: `radial-gradient(ellipse at 56px 50%, ${s.glow} 0%, transparent 62%)`,
         cursor: "pointer",
         transition: "opacity 300ms ease, transform 300ms cubic-bezier(0.34, 1.2, 0.64, 1)",
         opacity: visible ? 1 : 0,
@@ -198,22 +266,33 @@ function SingleToast({ item, index, onRemove }: SingleToastProps) {
         WebkitUserSelect: "none",
       }}
     >
-      {/* Circle icon */}
+      {/* Animated circle icon */}
       <div
         style={{
           flexShrink: 0,
           width: "44px",
           height: "44px",
           borderRadius: "50%",
-          background: style.iconBg,
+          background: s.iconBg,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: style.iconColor,
-          boxShadow: `0 0 0 4px ${style.glow.replace("0.14", "0.2")}, 0 2px 8px rgba(0,0,0,0.3)`,
+          color: s.iconColor,
+          boxShadow: `0 0 0 4px ${s.glow.replace("0.14", "0.2")}, 0 2px 8px rgba(0,0,0,0.3)`,
+          animation: isSuccess
+            ? "gt-icon-pop 500ms cubic-bezier(0.34, 1.56, 0.64, 1) both"
+            : "gt-icon-in 380ms cubic-bezier(0.34, 1.4, 0.64, 1) both",
         }}
       >
-        <Icon />
+        {isSuccess ? (
+          <SuccessIcon animKey={item.id} />
+        ) : item.variant === "error" ? (
+          <ErrorIcon />
+        ) : item.variant === "warning" ? (
+          <WarningIcon />
+        ) : (
+          <InfoIcon />
+        )}
       </div>
 
       {/* Text */}
