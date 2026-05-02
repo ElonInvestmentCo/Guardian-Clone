@@ -81,11 +81,13 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
   const { theme, toggleTheme } = useTheme();
   const [chimeMuted, setChimeMutedState] = useState(() => isChimeMuted());
 
-  const handleToggleMute = () => {
-    const next = !chimeMuted;
-    setChimeMutedState(next);
-    setChimeMuted(next);
-  };
+  const handleToggleMute = useCallback(() => {
+    setChimeMutedState(prev => {
+      const next = !prev;
+      setChimeMuted(next);
+      return next;
+    });
+  }, []);
 
   const fetchNotifications = useCallback(async () => {
     const token = getToken();
@@ -132,10 +134,21 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setNotifOpen(false);
+
+      if (
+        e.key === "m" || e.key === "M"
+      ) {
+        const tag = (e.target as HTMLElement)?.tagName;
+        const editable = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT"
+          || (e.target as HTMLElement)?.isContentEditable;
+        if (!editable && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          handleToggleMute();
+        }
+      }
     }
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, []);
+  }, [handleToggleMute]);
 
   const handleLogout = () => {
     clearSession();
