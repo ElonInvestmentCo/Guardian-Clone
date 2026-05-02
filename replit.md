@@ -3,6 +3,7 @@
 A comprehensive financial trading platform with KYC/AML compliance, an admin dashboard, and an AI-powered trading assistant.
 
 ## Recent Changes
+- **Fraud detection alerts:** `server/routes/fraud.ts` + `artifacts/api-server/src/routes/fraud.ts` — fraud engine now fires a high-risk email alert to `ADMIN_EMAIL` whenever a user scores ≥50 (high/critical), throttled to once per 24 hours per user.
 - **Critical fix — DB SSL:** `artifacts/api-server/src/lib/db.ts` — changed `rejectUnauthorized: true` to `rejectUnauthorized: false` to fix production database connection failures causing "Service temporarily unavailable" on login/signup.
 - **Production build:** All three artifacts built successfully (`guardian-trading/dist/public`, `admin-kyc/dist/public`, `api-server/dist/index.cjs`).
 - **Deposit/Withdraw Modal:** `Overview.tsx` — both buttons now open a fund request modal. Requests POST to `/api/user/fund-request`, creating an admin notification and a user confirmation notification.

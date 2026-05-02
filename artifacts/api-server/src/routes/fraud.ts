@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { evaluateRisk, type RiskScore } from "../lib/fraud/riskEngine.js";
 import { getUserProfileData, setUserProfileMeta, readMaster } from "../lib/userDataStore.js";
 import { validate, FraudRiskSchema } from "../lib/validation.js";
+import { sendHighRiskAlertEmail } from "../lib/mailer.js";
 
 const router = Router();
 
@@ -28,6 +29,8 @@ function requireAuth(req: Request, res: Response, next: NextFunction): void {
   res.status(401).json({ error: "Authentication required" });
 }
 
+const HIGH_RISK_ALERT_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24 hours
+
 router.post("/api/fraud/risk-score", requireAuth, validate(FraudRiskSchema), async (req: Request, res: Response): Promise<void> => {
   try {
     const { email } = req.body as { email: string };
@@ -40,6 +43,22 @@ router.post("/api/fraud/risk-score", requireAuth, validate(FraudRiskSchema), asy
     if (history.length > 20) history.splice(0, history.length - 20);
     await setUserProfileMeta(email, "_riskHistory", history);
     await setUserProfileMeta(email, "_latestRisk",  result);
+
+    // Fire high-risk email alert for "high" (≥50) or "critical" (≥75) users,
+    // throttled to once per 24 hours per user to prevent alert spam.
+    if (result.score >= 50) {
+      const lastAlertTs = profile._lastHighRiskAlertAt as number | undefined;
+      const now = Date.now();
+      if (!lastAlertTs || now - lastAlertTs > HIGH_RISK_ALERT_COOLDOWN_MS) {
+        await setUserProfileMeta(email, "_lastHighRiskAlertAt", now);
+        sendHighRiskAlertEmail({
+          email,
+          riskScore: result.score,
+          riskLevel: result.level,
+          flags: result.flags.map((f) => `[${f.severity.toUpperCase()}] ${f.description}`),
+        }).catch((err) => console.error("[Fraud] High-risk alert email failed:", err));
+      }
+    }
 
     res.json(result);
   } catch (err) {

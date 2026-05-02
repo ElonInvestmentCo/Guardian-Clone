@@ -431,3 +431,99 @@ export async function sendVerificationEmail(
     return { success: false, error: msg };
   }
 }
+
+// ---------------------------------------------------------------------------
+// Admin high-risk fraud alert
+// ---------------------------------------------------------------------------
+export async function sendHighRiskAlertEmail(params: {
+  email: string;
+  riskScore: number;
+  riskLevel: string;
+  flags: string[];
+}): Promise<void> {
+  const adminEmail = (process.env["ADMIN_EMAIL"] ?? "").trim();
+  if (!adminEmail) {
+    console.warn("[Mailer] ADMIN_EMAIL not set — skipping high-risk alert");
+    return;
+  }
+
+  const creds = await getResendCredentials();
+  if (!creds) {
+    console.error("[Mailer] Cannot send high-risk alert — email not configured");
+    return;
+  }
+
+  const client = new Resend(creds.apiKey);
+  const ts = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
+  const levelColor = params.riskLevel === "critical" ? "#DC2626" : "#EA580C";
+  const flagList = params.flags.length > 0
+    ? params.flags.map((f) => `<li style="margin:4px 0;">${f}</li>`).join("")
+    : "<li>No specific flags recorded</li>";
+
+  const body = `
+  <tr>
+    <td align="center" style="padding:28px 40px 0;">
+      <span style="display:inline-block;padding:4px 14px;border-radius:20px;
+                   background:#FEE2E2;color:#DC2626;
+                   font-size:11px;font-weight:700;letter-spacing:0.08em;
+                   text-transform:uppercase;">🚨 High Risk Alert</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:20px 40px 0;font-size:22px;font-weight:700;color:#0d1b2e;text-align:center;">
+      High Risk User Detected
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:8px 40px 20px;font-size:13px;color:#5a6376;text-align:center;">
+      The fraud detection engine has flagged a user as high risk.
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 40px;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:13px;">
+        <tr style="border-bottom:1px solid #e8edf5;">
+          <td style="padding:10px 0;color:#5a6376;width:40%;">Email</td>
+          <td style="padding:10px 0;color:#0d1b2e;font-weight:600;">${params.email}</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e8edf5;">
+          <td style="padding:10px 0;color:#5a6376;">Risk Score</td>
+          <td style="padding:10px 0;color:${levelColor};font-weight:700;">${params.riskScore} / 100</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e8edf5;">
+          <td style="padding:10px 0;color:#5a6376;">Risk Level</td>
+          <td style="padding:10px 0;color:${levelColor};font-weight:700;">${params.riskLevel.toUpperCase()}</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e8edf5;">
+          <td style="padding:10px 0;color:#5a6376;">Detected At</td>
+          <td style="padding:10px 0;color:#0d1b2e;font-weight:600;">${ts} ET</td>
+        </tr>
+        <tr>
+          <td style="padding:10px 0;color:#5a6376;vertical-align:top;">Flags</td>
+          <td style="padding:10px 0;color:#0d1b2e;">
+            <ul style="margin:0;padding-left:18px;">${flagList}</ul>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>`;
+
+  const html = emailShell(body);
+
+  try {
+    const result = await client.emails.send({
+      from: FROM_ADDRESS,
+      to: adminEmail,
+      subject: `🚨 High Risk User Detected — ${params.email}`,
+      html,
+    });
+    if (result.error) {
+      console.error(`[Mailer] Resend error sending high-risk alert — ${result.error.message}`);
+    } else {
+      console.log(`[Mailer] High-risk alert sent for ${params.email} — id: ${result.data?.id}`);
+    }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`[Mailer] Exception sending high-risk alert:`, msg);
+  }
+}
