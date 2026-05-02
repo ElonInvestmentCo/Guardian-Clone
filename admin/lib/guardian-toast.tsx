@@ -60,9 +60,23 @@ const ToastContext = createContext<{ toasts: ToastItem[] }>({ toasts: [] });
 export const useToastItems = () => useContext(ToastContext);
 
 // ---------------------------------------------------------------------------
+// Chime mute preference — persisted in localStorage
+// ---------------------------------------------------------------------------
+const MUTE_KEY = "gt-chime-muted";
+
+export function isChimeMuted(): boolean {
+  try { return localStorage.getItem(MUTE_KEY) === "1"; } catch { return false; }
+}
+
+export function setChimeMuted(muted: boolean): void {
+  try { muted ? localStorage.setItem(MUTE_KEY, "1") : localStorage.removeItem(MUTE_KEY); } catch { /* ignore */ }
+}
+
+// ---------------------------------------------------------------------------
 // Success chime — synthesised via Web Audio API (no audio file needed)
 // ---------------------------------------------------------------------------
 function playSuccessChime() {
+  if (isChimeMuted()) return;
   try {
     const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
 

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { clearSession } from "@/lib/api";
 import { useTheme } from "@/context/ThemeContext";
+import { isChimeMuted, setChimeMuted } from "@/lib/guardian-toast";
 
 export type View = "dashboard" | "kyc" | "risk" | "audit" | "users" | "activity";
 
@@ -78,6 +79,13 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
   const profileRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
   const { theme, toggleTheme } = useTheme();
+  const [chimeMuted, setChimeMutedState] = useState(() => isChimeMuted());
+
+  const handleToggleMute = () => {
+    const next = !chimeMuted;
+    setChimeMutedState(next);
+    setChimeMuted(next);
+  };
 
   const fetchNotifications = useCallback(async () => {
     const token = getToken();
@@ -230,6 +238,15 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
           title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
         >
           <i className={`bi ${theme === "light" ? "bi-moon-stars-fill" : "bi-sun-fill"}`} />
+        </button>
+
+        <button
+          className="theme-toggle-btn"
+          onClick={handleToggleMute}
+          aria-label={chimeMuted ? "Unmute success chime" : "Mute success chime"}
+          title={chimeMuted ? "Unmute success chime" : "Mute success chime"}
+        >
+          <i className={`bi ${chimeMuted ? "bi-volume-mute-fill" : "bi-volume-up-fill"}`} />
         </button>
 
         {/* Notification Bell */}
