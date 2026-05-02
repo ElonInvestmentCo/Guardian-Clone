@@ -45,6 +45,12 @@ export default defineConfig({
       strict: false,
     },
     proxy: {
+      "/api/realtime": {
+        target: `http://localhost:${apiPort}`,
+        changeOrigin: true,
+        secure: false,
+        ws: true,
+      },
       "/api": {
         target: `http://localhost:${apiPort}`,
         changeOrigin: true,

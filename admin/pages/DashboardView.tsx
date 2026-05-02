@@ -1,8 +1,30 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback } from "react";
 import { getKycQueue, getAllUsers, getGlobalAudit } from "@/lib/api";
 import { formatDate, actionTypeLabel, actionTypeColor } from "@/lib/utils";
+import { useAdminRealtime, type RegistrationEvent, type ApplicationCompleteEvent } from "@/hooks/useAdminRealtime";
 
 export default function DashboardView() {
+  const queryClient = useQueryClient();
+
+  const handleNewRegistration = useCallback((_event: RegistrationEvent) => {
+    queryClient.invalidateQueries({ queryKey: ["dashboard-users"] });
+    queryClient.invalidateQueries({ queryKey: ["dashboard-queue"] });
+    queryClient.invalidateQueries({ queryKey: ["kyc-queue"] });
+    queryClient.invalidateQueries({ queryKey: ["all-users"] });
+  }, [queryClient]);
+
+  const handleApplicationComplete = useCallback((_event: ApplicationCompleteEvent) => {
+    queryClient.invalidateQueries({ queryKey: ["dashboard-queue"] });
+    queryClient.invalidateQueries({ queryKey: ["kyc-queue"] });
+    queryClient.invalidateQueries({ queryKey: ["all-users"] });
+  }, [queryClient]);
+
+  const { status } = useAdminRealtime({
+    onNewRegistration: handleNewRegistration,
+    onApplicationComplete: handleApplicationComplete,
+  });
+
   const { data: queueData, isLoading: queueLoading } = useQuery({
     queryKey: ["dashboard-queue"],
     queryFn: () => getKycQueue({ limit: 100 }),
@@ -44,6 +66,24 @@ export default function DashboardView() {
 
   return (
     <div>
+      <div style={{ marginBottom: 16 }}>
+        <span style={{
+          display: "inline-flex", alignItems: "center", gap: 7,
+          padding: "5px 12px", borderRadius: 999,
+          background: status === "connected" ? "rgba(25,135,84,0.1)" : "#F9FAFB",
+          border: `1px solid ${status === "connected" ? "rgba(25,135,84,0.25)" : "#e5e7eb"}`,
+          fontSize: 12, fontWeight: 500,
+          color: status === "connected" ? "#198754" : "#9CA3AF",
+        }}>
+          <span style={{
+            width: 7, height: 7, borderRadius: "50%", flexShrink: 0,
+            background: status === "connected" ? "#198754" : "#D1D5DB",
+            boxShadow: status === "connected" ? "0 0 0 2px rgba(25,135,84,0.3)" : "none",
+          }} />
+          {status === "connected" ? "Live sync active" : status === "connecting" ? "Connecting..." : "Disconnected — retrying"}
+        </span>
+      </div>
+
       <div className="row g-3 mb-4">
         <div className="col-12 col-sm-6 col-xl-3">
           <div className="stat-card" style={{ background: "linear-gradient(135deg, #0D6EFD, #0B5ED7)" }}>
