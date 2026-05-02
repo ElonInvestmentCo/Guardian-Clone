@@ -1,0 +1,128 @@
+{
+  "colorScheme": "light",
+  "fonts": [
+    {
+      "family": "Open Sans",
+      "role": "body"
+    }
+  ],
+  "colors": {
+    "primary": "#94A3B8",
+    "secondary": "#86B7FE",
+    "accent": "#0D6EFD",
+    "background": "#F1F2F7",
+    "textPrimary": "#0D6EFD",
+    "link": "#0D6EFD"
+  },
+  "typography": {
+    "fontFamilies": {
+      "primary": "Open Sans",
+      "heading": "Open Sans"
+    },
+    "fontStacks": {
+      "heading": [
+        "Open Sans",
+        "sans-serif"
+      ],
+      "body": [
+        "Open Sans",
+        "sans-serif"
+      ],
+      "paragraph": [
+        "Open Sans",
+        "sans-serif"
+      ]
+    },
+    "fontSizes": {
+      "h1": "16px",
+      "h2": "16px",
+      "body": "13px"
+    }
+  },
+  "spacing": {
+    "baseUnit": 4,
+    "borderRadius": "8px"
+  },
+  "components": {
+    "input": {
+      "background": "#FFFFFF",
+      "textColor": "#212529",
+      "borderColor": "#DEE2E6",
+      "borderRadius": "6px",
+      "borderRadiusCorners": {
+        "topLeft": "6px",
+        "topRight": "6px",
+        "bottomRight": "6px",
+        "bottomLeft": "6px"
+      },
+      "shadow": "none"
+    },
+    "buttonPrimary": {
+      "background": "#0D6EFD",
+      "textColor": "#FFFFFF",
+      "borderRadius": "6px",
+      "borderRadiusCorners": {
+        "topLeft": "6px",
+        "topRight": "6px",
+        "bottomRight": "6px",
+        "bottomLeft": "6px"
+      },
+      "shadow": "none"
+    }
+  },
+  "images": {
+    "logo": "https://guardian-trading-api-production.up.railway.app/admin-kyc/logo-white.png",
+    "favicon": "https://guardian-trading-api-production.up.railway.app/admin-kyc/favicon.svg",
+    "ogImage": null,
+    "logoAlt": "Guardian Trading"
+  },
+  "__llm_logo_reasoning": {
+    "selectedIndex": 0,
+    "reasoning": "Selected #0 because it is visible, has a large size, and matches the brand name 'Guardian Trading' from the alt text. It is the only candidate and fits the brand context.",
+    "confidence": 0.8,
+    "source": "llm"
+  },
+  "__llm_button_reasoning": {
+    "primary": {
+      "index": 0,
+      "text": "Sign In",
+      "reasoning": "The button with text 'Sign In' uses a vibrant blue color (#0D6EFD), which is a strong indicator of a primary call-to-action due to its prominence and action-oriented text."
+    },
+    "secondary": {
+      "index": -1,
+      "text": "N/A",
+      "reasoning": "There is only one button detected, so no secondary button is available with a different color."
+    },
+    "confidence": 0.9
+  },
+  "personality": {
+    "tone": "professional",
+    "energy": "medium",
+    "targetAudience": "financial professionals"
+  },
+  "designSystem": {
+    "framework": "bootstrap",
+    "componentLibrary": ""
+  },
+  "confidence": {
+    "buttons": 0.9,
+    "colors": 0.9,
+    "overall": 0.9
+  },
+  "__llm_metadata": {
+    "logoSelection": {
+      "llmCalled": true,
+      "llmSucceeded": true,
+      "finalSource": "llm",
+      "rawLogoSelection": {
+        "selectedLogoIndex": 0,
+        "selectedLogoReasoning": "Selected #0 because it is visible, has a large size, and matches the brand name 'Guardian Trading' from the alt text. It is the only candidate and fits the brand context.",
+        "confidence": 0.8
+      }
+    },
+    "buttonClassification": {
+      "llmCalled": true,
+      "llmSucceeded": true
+    }
+  }
+}
