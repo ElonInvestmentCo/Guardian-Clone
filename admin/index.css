@@ -73,6 +73,17 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition:
+    background-color 380ms ease,
+    background 380ms ease,
+    color 380ms ease,
+    border-color 380ms ease,
+    box-shadow 380ms ease !important;
+}
+
 body {
   font-family: 'Open Sans', sans-serif !important;
   background: var(--body-bg) !important;

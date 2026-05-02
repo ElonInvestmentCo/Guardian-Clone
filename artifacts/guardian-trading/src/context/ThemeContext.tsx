@@ -185,7 +185,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   }, [theme]);
 
-  const toggleTheme = () => setTheme((t) => (t === "light" ? "dark" : "light"));
+  const toggleTheme = () => {
+    const el = document.documentElement;
+    el.classList.add("theme-transitioning");
+    setTheme((t) => (t === "light" ? "dark" : "light"));
+    window.setTimeout(() => el.classList.remove("theme-transitioning"), 500);
+  };
   const colors = theme === "light" ? LIGHT_COLORS : DARK_COLORS;
 
   return (

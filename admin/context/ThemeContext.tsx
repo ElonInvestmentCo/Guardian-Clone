@@ -52,11 +52,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const toggleTheme = useCallback(() => {
+    const el = document.documentElement;
+    el.classList.add("theme-transitioning");
     setTheme((prev) => {
       const next = prev === "light" ? "dark" : "light";
       localStorage.setItem(STORAGE_KEY, next);
       return next;
     });
+    window.setTimeout(() => el.classList.remove("theme-transitioning"), 500);
   }, []);
 
   return (
