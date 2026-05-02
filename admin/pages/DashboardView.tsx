@@ -1,29 +1,13 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { getKycQueue, getAllUsers, getGlobalAudit } from "@/lib/api";
 import { formatDate, actionTypeLabel, actionTypeColor } from "@/lib/utils";
-import { useAdminRealtime, type RegistrationEvent, type ApplicationCompleteEvent } from "@/hooks/useAdminRealtime";
+import type { ConnectionStatus } from "@/hooks/useAdminRealtime";
 
-export default function DashboardView() {
-  const queryClient = useQueryClient();
+interface Props {
+  realtimeStatus: ConnectionStatus;
+}
 
-  const handleNewRegistration = useCallback((_event: RegistrationEvent) => {
-    queryClient.invalidateQueries({ queryKey: ["dashboard-users"] });
-    queryClient.invalidateQueries({ queryKey: ["dashboard-queue"] });
-    queryClient.invalidateQueries({ queryKey: ["kyc-queue"] });
-    queryClient.invalidateQueries({ queryKey: ["all-users"] });
-  }, [queryClient]);
-
-  const handleApplicationComplete = useCallback((_event: ApplicationCompleteEvent) => {
-    queryClient.invalidateQueries({ queryKey: ["dashboard-queue"] });
-    queryClient.invalidateQueries({ queryKey: ["kyc-queue"] });
-    queryClient.invalidateQueries({ queryKey: ["all-users"] });
-  }, [queryClient]);
-
-  const { status } = useAdminRealtime({
-    onNewRegistration: handleNewRegistration,
-    onApplicationComplete: handleApplicationComplete,
-  });
+export default function DashboardView({ realtimeStatus: status }: Props) {
 
   const { data: queueData, isLoading: queueLoading } = useQuery({
     queryKey: ["dashboard-queue"],
