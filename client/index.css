@@ -34,33 +34,32 @@
 }
 
 :root {
-  /* Real Guardian Trading brand: #151515 bg, #76D0F4 accent */
-  --background: 0 0% 8%;
+  --background: 0 0% 0%;
   --foreground: 0 0% 100%;
-  --primary: 201 84% 71%;
+  --primary: 217 91% 60%;
   --primary-foreground: 0 0% 0%;
-  --card: 0 0% 11%;
+  --card: 0 0% 4%;
   --card-foreground: 0 0% 100%;
-  --border: 0 0% 18%;
-  --muted: 0 0% 14%;
-  --muted-foreground: 0 0% 60%;
-  --accent: 201 84% 71%;
+  --border: 0 0% 10%;
+  --muted: 0 0% 7%;
+  --muted-foreground: 0 0% 55%;
+  --accent: 217 91% 60%;
   --accent-foreground: 0 0% 0%;
-  --secondary: 0 0% 14%;
+  --secondary: 0 0% 7%;
   --secondary-foreground: 0 0% 100%;
-  --destructive: 0 63% 45%;
+  --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
-  --input: 0 0% 18%;
-  --ring: 201 84% 71%;
+  --input: 0 0% 10%;
+  --ring: 217 91% 60%;
 
-  --sidebar: 0 0% 8%;
+  --sidebar: 0 0% 0%;
   --sidebar-foreground: 0 0% 100%;
-  --sidebar-border: 0 0% 18%;
-  --sidebar-primary: 201 84% 71%;
+  --sidebar-border: 0 0% 10%;
+  --sidebar-primary: 217 91% 60%;
   --sidebar-primary-foreground: 0 0% 0%;
-  --sidebar-accent: 0 0% 14%;
+  --sidebar-accent: 0 0% 7%;
   --sidebar-accent-foreground: 0 0% 100%;
-  --sidebar-ring: 201 84% 71%;
+  --sidebar-ring: 217 91% 60%;
 }
 
 @layer base {
