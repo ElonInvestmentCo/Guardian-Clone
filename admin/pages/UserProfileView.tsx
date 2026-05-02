@@ -351,7 +351,7 @@ export default function UserProfileView({ email, onBack }: Props) {
                                 window.open(blobUrl, "_blank");
                                 setTimeout(() => URL.revokeObjectURL(blobUrl), 300000);
                               } catch {
-                                showMsg("err", "Failed to load document");
+                                toast.error("Failed to load document");
                               }
                             }}
                             style={{
@@ -486,14 +486,6 @@ export default function UserProfileView({ email, onBack }: Props) {
             {/* ── Balance tab ───────────────────────────────────────── */}
             {tab === "balance" && (
               <div style={{ maxWidth: "560px" }}>
-                {actionMsg && (
-                  <div style={{
-                    padding: "10px 14px", borderRadius: "6px", fontSize: "13px", marginBottom: "16px",
-                    background: actionMsg.type === "ok" ? "#F0FDF4" : "#FEF2F2",
-                    color: actionMsg.type === "ok" ? "#16A34A" : "#DC2626",
-                    border: `1px solid ${actionMsg.type === "ok" ? "#BBF7D0" : "#FECACA"}`,
-                  }}>{actionMsg.text}</div>
-                )}
 
                 <Card title="Current Balance">
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", padding: "4px 0" }}>
@@ -560,9 +552,9 @@ export default function UserProfileView({ email, onBack }: Props) {
                       </div>
                       <button
                         onClick={() => {
-                          if (!newBalance || !newProfit) { showMsg("err", "Balance and profit values are required"); return; }
-                          if (Number(newBalance) < 0) { showMsg("err", "Balance cannot be negative"); return; }
-                          if (!balanceNote.trim()) { showMsg("err", "A reason/note is required for all balance changes"); return; }
+                          if (!newBalance || !newProfit) { toast.error("Balance and profit values are required"); return; }
+                          if (Number(newBalance) < 0) { toast.error("Balance cannot be negative"); return; }
+                          if (!balanceNote.trim()) { toast.error("A reason/note is required for all balance changes"); return; }
                           setConfirmBalance(true);
                         }}
                         disabled={!newBalance || !newProfit || !balanceNote.trim()}
@@ -680,17 +672,6 @@ export default function UserProfileView({ email, onBack }: Props) {
             {tab === "actions" && (
               <div style={{ maxWidth: "500px", display: "flex", flexDirection: "column", gap: "16px" }}>
 
-                {actionMsg && (
-                  <div style={{
-                    padding: "10px 14px", borderRadius: "6px", fontSize: "13px",
-                    background: actionMsg.type === "ok" ? "#F0FDF4" : "#FEF2F2",
-                    color: actionMsg.type === "ok" ? "#16A34A" : "#DC2626",
-                    border: `1px solid ${actionMsg.type === "ok" ? "#BBF7D0" : "#FECACA"}`,
-                  }}>
-                    {actionMsg.text}
-                  </div>
-                )}
-
                 <Card title="Admin Note (applies to all actions)">
                   <textarea value={actionNote} onChange={(e) => setActionNote(e.target.value)}
                     placeholder="Optional admin note for the audit log…" rows={2}
@@ -733,7 +714,7 @@ export default function UserProfileView({ email, onBack }: Props) {
                       label="✗ Reject"
                       onClick={() => {
                         if (!rejectReason.trim()) {
-                          showMsg("err", "Please provide a reason for rejection");
+                          toast.error("Please provide a reason for rejection");
                           return;
                         }
                         rejectMut.mutate();
@@ -816,7 +797,7 @@ export default function UserProfileView({ email, onBack }: Props) {
                       style={{ width: "100%", boxSizing: "border-box", padding: "7px 9px", border: "1px solid #E5E7EB", borderRadius: "4px", fontSize: "12px", marginBottom: "6px" }} />
                     {!confirmBan ? (
                       <ActionBtn label="⛔ Ban User" onClick={() => {
-                        if (!banReason.trim()) { showMsg("err", "Please provide a reason for the ban"); return; }
+                        if (!banReason.trim()) { toast.error("Please provide a reason for the ban"); return; }
                         setConfirmBan(true);
                       }} loading={false} color="#7C3AED" hoverColor="#6D28D9" fullWidth />
                     ) : (
@@ -844,7 +825,7 @@ export default function UserProfileView({ email, onBack }: Props) {
                     </div>
                     {!confirmRole ? (
                       <ActionBtn label="Assign Role" onClick={() => {
-                        if ((selectedRole || currentRole) === currentRole && !selectedRole) { showMsg("err", "Select a different role first"); return; }
+                        if ((selectedRole || currentRole) === currentRole && !selectedRole) { toast.error("Select a different role first"); return; }
                         setConfirmRole(true);
                       }} loading={false} color="#1E3A5F" hoverColor="#162D4A" />
                     ) : (
