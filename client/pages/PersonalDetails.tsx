@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
-import { getCountries, getStates, getCities, getStateLabel, type LocationOption } from "@/lib/location/locationService";
+import { getCountries, getStates, getCities, getStateLabel, findStateCode, type LocationOption } from "@/lib/location/locationService";
 import OnboardingShell from "@/components/OnboardingShell";
 import SearchableSelect from "@/components/SearchableSelect";
+import AddressAutocomplete, { type AddressFill } from "@/components/AddressAutocomplete";
 import { nameField, addressField, phoneFormat, zipCode as validateZip, required, type FieldErrors, hasErrors } from "@/lib/validation";
 
 const fieldStyle: React.CSSProperties = {
@@ -51,6 +52,7 @@ export default function PersonalDetails() {
   const [stateOptions, setStateOptions] = useState<LocationOption[]>(country ? getStates(country) : []);
   const [cityOptions, setCityOptions] = useState<string[]>(state ? getCities(state) : []);
   const isInitialMount = useRef(true);
+  const pendingFillRef = useRef<{ state: string; city: string; zipCode: string } | null>(null);
 
   const countries = getCountries();
 
@@ -59,6 +61,15 @@ export default function PersonalDetails() {
     if (!country) { setStateOptions([]); setState(""); setCity(""); setCityOptions([]); return; }
     const states = getStates(country);
     setStateOptions(states);
+    if (pendingFillRef.current) {
+      const { state: ps, city: pc, zipCode: pz } = pendingFillRef.current;
+      pendingFillRef.current = null;
+      setState(ps);
+      setCity(pc);
+      setCityOptions(ps ? getCities(ps) : []);
+      if (pz) setZipCode(pz);
+      return;
+    }
     setState("");
     setCity("");
     setCityOptions([]);
@@ -66,8 +77,7 @@ export default function PersonalDetails() {
 
   useEffect(() => {
     if (!state) { setCityOptions([]); return; }
-    const cities = getCities(state);
-    setCityOptions(cities);
+    setCityOptions(getCities(state));
   }, [state]);
 
   const validateAll = (): FieldErrors<Fields> => {
@@ -110,6 +120,35 @@ export default function PersonalDetails() {
     }
   };
 
+  const handleAddressFill = ({ street, city: fc, stateLong, stateShort, countryCode, zipCode }: AddressFill) => {
+    if (street) setAddress(street);
+
+    const resolvedCountry = countryCode || country;
+    const resolvedState = resolvedCountry
+      ? findStateCode(resolvedCountry, stateLong, stateShort)
+      : stateLong || stateShort;
+
+    if (countryCode && countryCode !== country) {
+      pendingFillRef.current = { state: resolvedState, city: fc, zipCode };
+      setCountry(countryCode);
+    } else {
+      const newCities = resolvedState ? getCities(resolvedState) : [];
+      setState(resolvedState);
+      setCity(fc);
+      setCityOptions(newCities);
+      if (zipCode) setZipCode(zipCode);
+    }
+
+    setTouched((prev) => ({
+      ...prev,
+      address: true,
+      country: true,
+      state: true,
+      city: true,
+      zipCode: true,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const allTouched: Partial<Record<Fields, boolean>> = {};
@@ -126,6 +165,7 @@ export default function PersonalDetails() {
 
   const showError = (field: Fields) => errors[field] && touched[field];
 
+  const showCityDropdown = cityOptions.length > 0 && (!city || cityOptions.includes(city));
   const cityLocationOptions: LocationOption[] = cityOptions.map((c) => ({ code: c, label: c }));
 
   return (
@@ -176,14 +216,13 @@ export default function PersonalDetails() {
 
             <div className="mb-4">
               <FieldLabel required>Address</FieldLabel>
-              <input
+              <AddressAutocomplete
                 value={address}
-                onChange={(e) => handleChange("address", e.target.value, setAddress)}
+                onChange={(v) => handleChange("address", v, setAddress)}
                 onBlur={() => markTouched("address")}
+                onAddressFill={handleAddressFill}
+                hasError={!!showError("address")}
                 placeholder="Street address"
-                style={showError("address") ? errorBorderStyle : fieldStyle}
-                className="focus:outline-none"
-                autoComplete="street-address"
               />
               {showError("address") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.address}</p>}
             </div>
@@ -250,7 +289,7 @@ export default function PersonalDetails() {
 
               <div>
                 <FieldLabel required>City</FieldLabel>
-                {cityOptions.length > 0 ? (
+                {showCityDropdown ? (
                   <SearchableSelect
                     value={city}
                     onChange={(v) => { setCity(v); if (touched.city) setTimeout(() => validateField("city"), 0); }}
@@ -266,11 +305,11 @@ export default function PersonalDetails() {
                     onChange={(e) => handleChange("city", e.target.value, setCity)}
                     onBlur={() => markTouched("city")}
                     placeholder={state || (country && stateOptions.length === 0) ? "Enter city name" : "Select state first"}
-                    disabled={!state && stateOptions.length > 0}
+                    disabled={!state && stateOptions.length > 0 && cityOptions.length === 0}
                     style={{
                       ...fieldStyle,
                       border: `1px solid ${showError("city") ? "#e53e3e" : "#ccd3da"}`,
-                      opacity: (!state && stateOptions.length > 0) ? 0.5 : 1,
+                      opacity: (!state && stateOptions.length > 0 && cityOptions.length === 0) ? 0.5 : 1,
                     }}
                     className="focus:outline-none"
                   />

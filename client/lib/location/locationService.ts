@@ -2327,3 +2327,26 @@ export function getStateLabel(countryCode: string): string {
     default: return "State / Region";
   }
 }
+
+export function findStateCode(countryCode: string, stateLong: string, stateShort?: string): string {
+  const states = getStates(countryCode);
+  if (states.length === 0) return stateLong || stateShort || "";
+
+  if (stateShort) {
+    const byShort = states.find((s) => s.code.toLowerCase() === stateShort.toLowerCase());
+    if (byShort) return byShort.code;
+    const byShortLabel = states.find((s) => s.label.toLowerCase() === stateShort.toLowerCase());
+    if (byShortLabel) return byShortLabel.code;
+  }
+
+  if (stateLong) {
+    const byCode = states.find((s) => s.code.toLowerCase() === stateLong.toLowerCase());
+    if (byCode) return byCode.code;
+    const byLabel = states.find((s) => s.label.toLowerCase() === stateLong.toLowerCase());
+    if (byLabel) return byLabel.code;
+    const partial = states.find((s) => s.label.toLowerCase().startsWith(stateLong.toLowerCase()));
+    if (partial) return partial.code;
+  }
+
+  return stateLong || stateShort || "";
+}

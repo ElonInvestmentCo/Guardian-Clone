@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { Briefcase, User, UserCircle, Landmark, GraduationCap } from "lucide-react";
 import { useOnboardingStep } from "@/lib/onboarding/useOnboardingStep";
 import OnboardingShell from "@/components/OnboardingShell";
-import { getCountries, getStates, getCities, getStateLabel, type LocationOption } from "@/lib/location/locationService";
+import { getCountries, getStates, getCities, getStateLabel, findStateCode, type LocationOption } from "@/lib/location/locationService";
 import SearchableSelect from "@/components/SearchableSelect";
+import AddressAutocomplete, { type AddressFill } from "@/components/AddressAutocomplete";
 import { required, nameField, addressField, phoneFormat, type FieldErrors, hasErrors } from "@/lib/validation";
 
 const EMPLOYMENT_OPTIONS = [
@@ -105,6 +106,28 @@ export default function ProfessionalDetails() {
 
   const showError = (field: Fields) => errors[field] && touched[field];
 
+  const handleAddressFill = ({ street, city: fc, stateLong, stateShort, countryCode }: AddressFill) => {
+    const resolvedCountry = countryCode || form.country;
+    const resolvedState = resolvedCountry
+      ? findStateCode(resolvedCountry, stateLong, stateShort)
+      : stateLong || stateShort;
+
+    setForm((f) => ({
+      ...f,
+      ...(street && { employerAddress: street }),
+      ...(countryCode && { country: countryCode }),
+      state: resolvedState,
+      city: fc,
+    }));
+    setTouched((prev) => ({
+      ...prev,
+      employerAddress: true,
+      country: true,
+      state: true,
+      city: true,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (needsEmployer) {
@@ -121,6 +144,7 @@ export default function ProfessionalDetails() {
     await submit(payload);
   };
 
+  const showCityDropdown = cityOptions.length > 0 && (!form.city || cityOptions.includes(form.city));
   const cityLocationOptions: LocationOption[] = cityOptions.map((c) => ({ code: c, label: c }));
 
   return (
@@ -172,7 +196,14 @@ export default function ProfessionalDetails() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-4">
                   <div>
                     <FieldLabel req>Address Of Employer</FieldLabel>
-                    <input style={showError("employerAddress") ? errorFieldStyle : fieldStyle} className="focus:outline-none" value={form.employerAddress} onChange={(e) => { set("employerAddress")(e.target.value); if (touched.employerAddress) setTimeout(() => validateField("employerAddress"), 0); }} onBlur={() => markTouched("employerAddress")} autoComplete="street-address" />
+                    <AddressAutocomplete
+                      value={form.employerAddress}
+                      onChange={(v) => { set("employerAddress")(v); if (touched.employerAddress) setTimeout(() => validateField("employerAddress"), 0); }}
+                      onBlur={() => markTouched("employerAddress")}
+                      onAddressFill={handleAddressFill}
+                      hasError={!!showError("employerAddress")}
+                      placeholder="Street address"
+                    />
                     {showError("employerAddress") && <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.employerAddress}</p>}
                   </div>
                   <div>
@@ -213,7 +244,7 @@ export default function ProfessionalDetails() {
                   </div>
                   <div>
                     <FieldLabel req>City</FieldLabel>
-                    {cityOptions.length > 0 ? (
+                    {showCityDropdown ? (
                       <SearchableSelect
                         value={form.city}
                         onChange={(v) => { set("city")(v); if (touched.city) setTimeout(() => validateField("city"), 0); }}
