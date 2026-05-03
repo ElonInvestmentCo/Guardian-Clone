@@ -10,6 +10,7 @@ import { OnboardingGuard } from "@/lib/onboarding/OnboardingGuard";
 import { ThemeProvider } from "@/context/ThemeContext";
 import AntiScrape from "@/components/AntiScrape";
 import NeedHelpCard from "@/components/NeedHelpCard";
+import GuardianAiWidget from "@/components/GuardianAiWidget";
 import { ScrollAndFormReset } from "@/components/ScrollAndFormReset";
 
 import Home from "@/pages/Home";
@@ -149,6 +150,7 @@ function App() {
                 <Router />
               </OnboardingProvider>
             </WouterRouter>
+            <GuardianAiWidget />
             <NeedHelpCard />
             <AntiScrape />
             <PageLoader />

@@ -148,9 +148,14 @@
   }
 }
 
+/* Push the LiveChat button above the Guardian AI widget */
+#guardian-ai-widget {
+  bottom: calc(102px + env(safe-area-inset-bottom, 0px)) !important;
+  right: 20px !important;
+}
 @media (max-width: 767px) {
   #guardian-ai-widget {
-    bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
+    bottom: calc(94px + env(safe-area-inset-bottom, 0px)) !important;
     max-width: calc(100vw - 32px) !important;
     right: 16px !important;
   }
