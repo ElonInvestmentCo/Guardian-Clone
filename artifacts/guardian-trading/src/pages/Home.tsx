@@ -163,7 +163,7 @@ export default function Home() {
             <div className="flex-1 max-w-[520px]">
               <p className="text-[11px] sm:text-[13px] font-bold tracking-widest uppercase text-white mb-4">TAKE ON THE MARKETS WITH GUARDIAN</p>
               <h1 className="text-[1.9rem] sm:text-[2.4rem] lg:text-5xl font-display font-bold leading-tight text-white mb-8">
-                Optimized services, tools and support designed specifically for active traders.
+                Optimised services, tools and support designed specifically for active traders.
               </h1>
               <Link
                 href="/signup"
@@ -197,15 +197,15 @@ export default function Home() {
         />
       </div>
 
-      {/* ── WHY DO ACTIVE TRADERS USE GUARDIAN? ── */}
+      {/* ── HOW DO ACTIVE TRADERS USE GUARDIAN? ── */}
       <section id="services" className="bg-[#1c1c1c] py-20 px-4">
         <div className="max-w-[1200px] mx-auto">
           <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-3">
-            Why Do Active Traders Use Guardian?
+            How Do Active Traders Use Guardian?
           </h2>
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="flex-1">
-              <h3 className="text-2xl text-white font-bold mb-5">Pricing. Routing. Service.</h3>
+              <h3 className="text-2xl text-white font-bold mb-5">Pinning, Your Direction</h3>
               <p className="text-white text-[15px] leading-relaxed mb-4">
                 Guardian Trading's mission is simple; to provide active traders with high-performance tools,
                 comprehensive services, competitive pricing, and proactive client support to maximize their
@@ -237,7 +237,7 @@ export default function Home() {
             {/* Left: heading */}
             <div className="flex-shrink-0 lg:w-[280px] px-10 py-10 flex items-center">
               <h2 className="text-2xl font-bold text-white leading-snug">
-                Control Your Costs With Customized Commissions
+                Control Your Costs With Industry-Leading Pricing
               </h2>
             </div>
 
@@ -265,6 +265,19 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Trading Destinations */}
+          <div className="bg-[#181818] mt-[2px] flex flex-col sm:flex-row">
+            <div className="flex-shrink-0 sm:w-[280px] px-10 py-7 flex items-center border-b sm:border-b-0 sm:border-r border-white/5">
+              <p className="text-white font-bold text-[16px]">Trading Destinations</p>
+            </div>
+            <div className="flex-1 px-10 py-7 flex items-center">
+              <p className="text-[#aaa] text-[14px] leading-relaxed">
+                Access 30+ order routing options including ALGO and dark pool routes, ECN rebates,
+                and direct market access to major U.S. exchanges.
+              </p>
+            </div>
+          </div>
+
           {/* Disclaimer */}
           <p className="text-[12px] text-white mt-5 leading-relaxed">
             *Options commission does not include standard pass-through fees such as the Options Reporting Fee, Options
@@ -286,12 +299,12 @@ export default function Home() {
               </p>
               <ul className="space-y-[18px]">
                 {[
-                  "Execute orders quickly",
-                  "In-house stock borrow desk for locates and overnight borrows",
-                  "30+ Order routing options including ALGO and dark pool routes",
+                  "Smart Order Router",
+                  "OTC Markets",
+                  "IOI Alerts",
+                  "OTC Market Maker",
                   "ECN Rebates",
                   "Access to Liquidity",
-                  "Connect your trading via an API",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-[#ccc] text-[14px] leading-snug">
                     <Play
@@ -358,7 +371,7 @@ export default function Home() {
                   className="text-white font-bold group-hover:text-[#1ab8d4] transition-colors"
                   style={{ fontSize: "15px", letterSpacing: "0.01em" }}
                 >
-                  Stock Locates And Borrows
+                  Small Load Borrows
                 </span>
                 <img
                   src={arrowBtn}
@@ -397,12 +410,12 @@ export default function Home() {
             Trading Technology
           </h2>
 
-          {/* Card 1 — Our OMS Platforms */}
+          {/* Card 1 — Our DMA Platform */}
           <div className="mb-[6px] bg-[#111] flex flex-col lg:flex-row">
             {/* Left */}
             <div className="lg:w-[42%] px-8 lg:px-10 py-8 lg:py-10 flex flex-col justify-center">
               <h3 className="text-[22px] lg:text-[26px] font-bold text-white mb-7 leading-tight">
-                Our OMS Platforms
+                Our DMA Platform
               </h3>
               <div className="flex items-start gap-10">
                 {/* DAS Trader Pro */}
@@ -449,12 +462,12 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Card 2 — Our Infrastructure */}
+          {/* Card 2 — Get Infrastructure */}
           <div className="bg-[#111] flex flex-col lg:flex-row">
             {/* Left */}
             <div className="lg:w-[42%] px-8 lg:px-10 py-8 lg:py-10 flex flex-col justify-center">
               <h3 className="text-[22px] lg:text-[26px] font-bold text-white mb-2 leading-tight">
-                Our Infrastructure
+                Get Infrastructure
               </h3>
               <p className="text-white text-[11px] font-bold tracking-[0.18em] uppercase mb-6">
                 SPEED. EFFICIENCY. ACCESS.

@@ -33,6 +33,14 @@ export function Navbar() {
     { name: "Contact Us", href: "/contact-us" },
   ];
 
+  const mobileNavLinks = [
+    { name: "ABOUT",    href: "/about" },
+    { name: "PLATFORM", href: "/platforms" },
+    { name: "PRICING",  href: "/equities-options" },
+    { name: "PRODUCTS", href: "/services/trading-services" },
+    { name: "GET US",   href: "/contact-us" },
+  ];
+
   const headerBg = scrolled ? "#000000" : "#151515";
 
   return (
@@ -179,22 +187,25 @@ export function Navbar() {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 flex flex-col lg:hidden"
-          style={{ background: "#151515", paddingTop: "78px" }}
+          className="fixed inset-0 z-40 flex flex-col lg:hidden overflow-y-auto"
+          style={{ background: "#0a0a0a", paddingTop: "78px" }}
         >
-          <div className="flex flex-col px-8 py-4 gap-0">
-            {navLinks.map((link) => (
+          <div className="flex flex-col px-8 py-6 gap-0">
+            {mobileNavLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
                 style={{
-                  color: "white", fontSize: "17px", fontWeight: 600,
-                  padding: "14px 0",
-                  borderBottom: "1px solid rgba(255,255,255,0.07)",
+                  color: "white",
+                  fontSize: "15px",
+                  fontWeight: 700,
+                  letterSpacing: "0.08em",
+                  padding: "16px 0",
+                  borderBottom: "1px solid rgba(255,255,255,0.08)",
                   textDecoration: "none",
                   display: "block",
                 }}
-                data-testid={`link-mobile-${link.name.toLowerCase()}`}
+                data-testid={`link-mobile-${link.name.toLowerCase().replace(/\s/g, "-")}`}
               >
                 {link.name}
               </Link>
@@ -202,43 +213,38 @@ export function Navbar() {
           </div>
           <div className="px-8 mt-6 flex flex-col gap-3">
             <Link
-              href="/login"
-              style={{
-                display: "block", padding: "14px",
-                background: "#3f88c4",
-                color: "white", textAlign: "center",
-                fontSize: "15px", fontWeight: 600,
-                textDecoration: "none", borderRadius: "6px",
-              }}
-              data-testid="link-mobile-login"
-            >
-              Login
-            </Link>
-            <Link
-              href="/login"
-              style={{
-                display: "block", padding: "14px",
-                border: "1.5px solid #3a6fa8",
-                color: "white", textAlign: "center",
-                fontSize: "15px", fontWeight: 600,
-                textDecoration: "none", borderRadius: "4px",
-              }}
-              data-testid="link-mobile-client-portal"
-            >
-              Client Portal BETA
-            </Link>
-            <Link
               href="/signup"
               style={{
-                display: "block", padding: "14px",
-                background: "#2a6abf",
-                color: "white", textAlign: "center",
-                fontSize: "15px", fontWeight: 700,
-                textDecoration: "none", borderRadius: "4px",
+                display: "block",
+                padding: "14px 20px",
+                background: "#3b5bdb",
+                color: "white",
+                textAlign: "center",
+                fontSize: "15px",
+                fontWeight: 600,
+                textDecoration: "none",
+                borderRadius: "4px",
               }}
-              data-testid="link-mobile-create-account"
+              data-testid="link-mobile-trade-now"
             >
-              Create Account
+              Trade Now
+            </Link>
+            <Link
+              href="/login"
+              style={{
+                display: "block",
+                padding: "14px 20px",
+                background: "#3b5bdb",
+                color: "white",
+                textAlign: "center",
+                fontSize: "15px",
+                fontWeight: 600,
+                textDecoration: "none",
+                borderRadius: "4px",
+              }}
+              data-testid="link-mobile-open-account"
+            >
+              Open Account with
             </Link>
           </div>
         </div>
