@@ -268,7 +268,7 @@ export default function GuardianAiWidget() {
         .gt-ai-launcher {
           position: fixed;
           bottom: 24px;
-          right: 20px;
+          left: 20px;
           z-index: 9990;
           width: 62px;
           height: 62px;
@@ -350,7 +350,7 @@ export default function GuardianAiWidget() {
         .gt-ai-panel {
           position: fixed;
           bottom: 100px;
-          right: 20px;
+          left: 20px;
           z-index: 9991;
           width: 360px;
           max-width: calc(100vw - 32px);
@@ -365,7 +365,7 @@ export default function GuardianAiWidget() {
           will-change: transform, opacity;
           backface-visibility: hidden;
           -webkit-backface-visibility: hidden;
-          transform-origin: bottom right;
+          transform-origin: bottom left;
           animation: gtAiPanelIn 0.32s cubic-bezier(0.22,1,0.36,1) forwards;
           contain: layout style;
         }
@@ -764,7 +764,7 @@ export default function GuardianAiWidget() {
         @media (max-width: 479px) {
           .gt-ai-launcher {
             bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-            right: 16px;
+            left: 16px;
             width: 56px;
             height: 56px;
           }
@@ -774,8 +774,8 @@ export default function GuardianAiWidget() {
           }
           .gt-ai-panel {
             bottom: calc(88px + env(safe-area-inset-bottom, 0px));
-            right: 12px;
             left: 12px;
+            right: 12px;
             width: auto;
             max-width: 100%;
           }
