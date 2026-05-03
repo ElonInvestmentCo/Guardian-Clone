@@ -29,6 +29,63 @@ function getGuestEmail(): string {
   return guest;
 }
 
+/* ─── Inline markdown renderer ─────────────────────────────────── */
+function renderInline(text: string): React.ReactNode[] {
+  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**") && part.length > 4)
+      return <strong key={i} style={{ color: "#fff", fontWeight: 700 }}>{part.slice(2, -2)}</strong>;
+    if (part.startsWith("*") && part.endsWith("*") && part.length > 2)
+      return <em key={i} style={{ color: "rgba(255,255,255,0.82)", fontStyle: "italic" }}>{part.slice(1, -1)}</em>;
+    if (part.startsWith("`") && part.endsWith("`") && part.length > 2)
+      return <code key={i} className="gt-ai-code">{part.slice(1, -1)}</code>;
+    return part;
+  });
+}
+
+function renderMd(text: string): React.ReactNode {
+  const lines = text.split("\n");
+  const nodes: React.ReactNode[] = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i].trimEnd();
+    if (/^[━─=\-]{3,}$/.test(line)) {
+      nodes.push(<div key={i} className="gt-ai-hr" />);
+      i++; continue;
+    }
+    if (line.startsWith("### ")) {
+      nodes.push(<p key={i} className="gt-ai-h3">{renderInline(line.slice(4))}</p>);
+      i++; continue;
+    }
+    if (line.startsWith("## ")) {
+      nodes.push(<p key={i} className="gt-ai-h2">{renderInline(line.slice(3))}</p>);
+      i++; continue;
+    }
+    if (line.startsWith("# ")) {
+      nodes.push(<p key={i} className="gt-ai-h1">{renderInline(line.slice(2))}</p>);
+      i++; continue;
+    }
+    const listMatch = line.match(/^(\s*)([-•*]|\d+\.)\s+(.+)$/);
+    if (listMatch) {
+      const indented = listMatch[1].length > 0;
+      nodes.push(
+        <p key={i} className={`gt-ai-li${indented ? " gt-ai-li-in" : ""}`}>
+          <span className="gt-ai-li-dot">·</span>
+          <span>{renderInline(listMatch[3])}</span>
+        </p>
+      );
+      i++; continue;
+    }
+    if (line.trim() === "") {
+      if (nodes.length > 0) nodes.push(<div key={`g${i}`} className="gt-ai-gap" />);
+      i++; continue;
+    }
+    nodes.push(<p key={i} className="gt-ai-p">{renderInline(line)}</p>);
+    i++;
+  }
+  return <>{nodes}</>;
+}
+
 /* ─── Voice-wave bars displayed while AI is typing ────────────── */
 function VoiceWave() {
   return (
@@ -57,7 +114,7 @@ function ChatBubble({ msg, glow }: { msg: Message; glow: boolean }) {
         {msg.streaming && msg.content === "" ? (
           <VoiceWave />
         ) : (
-          <span className="gt-ai-text">{msg.content}</span>
+          <div className="gt-ai-md">{renderMd(msg.content)}</div>
         )}
         {msg.streaming && msg.content !== "" && (
           <span className="gt-ai-cursor" aria-hidden="true" />
@@ -494,6 +551,71 @@ export default function GuardianAiWidget() {
           background: linear-gradient(135deg, #4F7EF7, #7C5AF8);
           color: #fff;
           border-bottom-right-radius: 4px;
+        }
+
+        /* ── Markdown rendering ────────────────────────────── */
+        .gt-ai-md {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          width: 100%;
+        }
+        .gt-ai-md p { margin: 0; }
+        .gt-ai-md .gt-ai-p {
+          font-size: 13px;
+          line-height: 1.55;
+          color: rgba(255,255,255,0.92);
+        }
+        .gt-ai-msg.user .gt-ai-md .gt-ai-p { color: rgba(255,255,255,0.95); }
+        .gt-ai-md .gt-ai-h1 {
+          font-size: 14px;
+          font-weight: 700;
+          color: #fff;
+          letter-spacing: -0.02em;
+          margin-top: 2px;
+        }
+        .gt-ai-md .gt-ai-h2 {
+          font-size: 13.5px;
+          font-weight: 700;
+          color: #fff;
+          letter-spacing: -0.01em;
+          margin-top: 2px;
+        }
+        .gt-ai-md .gt-ai-h3 {
+          font-size: 13px;
+          font-weight: 600;
+          color: rgba(255,255,255,0.9);
+        }
+        .gt-ai-md .gt-ai-li {
+          display: flex;
+          align-items: flex-start;
+          gap: 5px;
+          font-size: 13px;
+          line-height: 1.5;
+          color: rgba(255,255,255,0.88);
+        }
+        .gt-ai-md .gt-ai-li-dot {
+          color: #4F7EF7;
+          font-size: 16px;
+          line-height: 1.35;
+          flex-shrink: 0;
+          font-weight: 700;
+        }
+        .gt-ai-md .gt-ai-li-in { padding-left: 10px; }
+        .gt-ai-md .gt-ai-hr {
+          border: none;
+          border-top: 1px solid rgba(255,255,255,0.1);
+          width: 100%;
+          margin: 1px 0;
+        }
+        .gt-ai-md .gt-ai-gap { height: 5px; }
+        .gt-ai-code {
+          background: rgba(255,255,255,0.1);
+          padding: 1px 5px;
+          border-radius: 4px;
+          font-family: 'Fira Code', 'JetBrains Mono', monospace;
+          font-size: 11.5px;
+          color: #93C5FD;
         }
 
         /* Streaming cursor */
