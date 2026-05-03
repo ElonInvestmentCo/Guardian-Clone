@@ -358,14 +358,24 @@ export async function getAdminOrders(params?: {
   symbol?: string;
   side?: OrderSide;
   status?: OrderStatus;
+  since?: string;
+  countOnly?: boolean;
 }): Promise<AdminOrdersResponse> {
   const q = new URLSearchParams();
-  if (params?.email)  q.set("email",  params.email);
-  if (params?.symbol) q.set("symbol", params.symbol);
-  if (params?.side)   q.set("side",   params.side);
-  if (params?.status) q.set("status", params.status);
+  if (params?.email)     q.set("email",     params.email);
+  if (params?.symbol)    q.set("symbol",    params.symbol);
+  if (params?.side)      q.set("side",      params.side);
+  if (params?.status)    q.set("status",    params.status);
+  if (params?.since)     q.set("since",     params.since);
+  if (params?.countOnly) q.set("countOnly", "1");
   const qs = q.toString() ? `?${q.toString()}` : "";
   return request<AdminOrdersResponse>("GET", `/admin/orders${qs}`);
+}
+
+export async function getAdminOrders24hCount(): Promise<number> {
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const res = await getAdminOrders({ since, countOnly: true });
+  return res.total;
 }
 
 export async function fetchDocumentBlobUrl(email: string, role: string): Promise<string> {

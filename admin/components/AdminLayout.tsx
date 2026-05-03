@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { clearSession, getFundRequests } from "@/lib/api";
+import { clearSession, getFundRequests, getAdminOrders24hCount } from "@/lib/api";
 import { useTheme } from "@/context/ThemeContext";
 import { isChimeMuted, setChimeMuted } from "@/lib/guardian-toast";
 
@@ -215,6 +215,13 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
   });
   const pendingFundCount = pendingFundData?.requests.length ?? 0;
 
+  const { data: orders24hCount = 0 } = useQuery({
+    queryKey: ["admin-orders-24h-count"],
+    queryFn: getAdminOrders24hCount,
+    staleTime: 60_000,
+    refetchInterval: 120_000,
+  });
+
   const basePath = import.meta.env.BASE_URL || "/";
 
   return (
@@ -236,24 +243,13 @@ export default function AdminLayout({ activeView, setActiveView, children }: Pro
                 <i className={`bi ${icon}`} />
                 {label}
                 {id === "funds" && pendingFundCount > 0 && (
-                  <span style={{
-                    marginLeft: "auto",
-                    minWidth: 20,
-                    height: 20,
-                    borderRadius: 10,
-                    background: activeView === id ? "rgba(255,255,255,0.25)" : "#FFC107",
-                    color: activeView === id ? "#fff" : "#1a1a1a",
-                    fontSize: 11,
-                    fontWeight: 700,
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: "0 6px",
-                    lineHeight: 1,
-                    boxShadow: activeView === id ? "none" : "0 1px 4px rgba(255,193,7,0.45)",
-                    flexShrink: 0,
-                  }}>
+                  <span className="nav-count-badge yellow">
                     {pendingFundCount > 99 ? "99+" : pendingFundCount}
+                  </span>
+                )}
+                {id === "orders" && orders24hCount > 0 && (
+                  <span className="nav-count-badge blue">
+                    {orders24hCount > 999 ? "999+" : orders24hCount}
                   </span>
                 )}
               </button>

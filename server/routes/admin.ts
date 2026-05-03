@@ -1126,7 +1126,7 @@ router.post("/admin/fund-requests/:id/reject", adminRateLimit, requireAdmin, val
 router.get("/admin/orders", adminRateLimit, requireAdmin, async (req: Request, res: Response): Promise<void> => {
   try {
     const pool = getPool();
-    const { email, symbol, side, status } = req.query as Record<string, string | undefined>;
+    const { email, symbol, side, status, since, countOnly } = req.query as Record<string, string | undefined>;
 
     const conditions: string[] = [];
     const params: unknown[] = [];
@@ -1150,8 +1150,23 @@ router.get("/admin/orders", adminRateLimit, requireAdmin, async (req: Request, r
       conditions.push(`status = $${idx++}`);
       params.push(status);
     }
+    if (since) {
+      const sinceDate = new Date(since);
+      if (!isNaN(sinceDate.getTime())) {
+        conditions.push(`created_at >= $${idx++}`);
+        params.push(sinceDate.toISOString());
+      }
+    }
 
     const where = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+    if (countOnly === "1") {
+      const countSql = `SELECT COUNT(*)::int AS total FROM user_orders ${where}`;
+      const countResult = await getPool().query(countSql, params);
+      res.json({ orders: [], total: countResult.rows[0]?.total ?? 0 });
+      return;
+    }
+
     const sql = `
       SELECT id, email, symbol, side, type, qty, price, filled, status,
              created_at AS "createdAt"
