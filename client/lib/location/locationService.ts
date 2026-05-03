@@ -858,6 +858,598 @@ const STATES_BY_COUNTRY: Record<string, LocationOption[]> = {
     { code: "TNN", label: "Tainan" },
     { code: "TPE", label: "Taipei" },
   ]),
+
+  VE: alpha([
+    { code: "DC_VE", label: "Capital District" },
+    { code: "ANZ", label: "Anzoátegui" },
+    { code: "CAR", label: "Carabobo" },
+    { code: "BOL_VE", label: "Bolívar" },
+    { code: "MIR", label: "Miranda" },
+    { code: "ZUL", label: "Zulia" },
+  ]),
+
+  BO: alpha([
+    { code: "BEN", label: "Beni" },
+    { code: "CBB", label: "Cochabamba" },
+    { code: "LP_BO", label: "La Paz" },
+    { code: "OR_BO", label: "Oruro" },
+    { code: "POT", label: "Potosí" },
+    { code: "SCZ", label: "Santa Cruz" },
+    { code: "TJA", label: "Tarija" },
+  ]),
+
+  EC: alpha([
+    { code: "AZU", label: "Azuay" },
+    { code: "ELO", label: "El Oro" },
+    { code: "GUA_EC", label: "Guayas" },
+    { code: "IMB", label: "Imbabura" },
+    { code: "MAN_EC", label: "Manabí" },
+    { code: "PIC", label: "Pichincha" },
+    { code: "TUN", label: "Tungurahua" },
+  ]),
+
+  PY: alpha([
+    { code: "APA", label: "Alto Paraná" },
+    { code: "ASU", label: "Asunción" },
+    { code: "CEN_PY", label: "Central" },
+    { code: "COR_PY", label: "Cordillera" },
+    { code: "ITA", label: "Itapúa" },
+    { code: "MIS_PY", label: "Misiones" },
+  ]),
+
+  UY: alpha([
+    { code: "CAN_UY", label: "Canelones" },
+    { code: "COL_UY", label: "Colonia" },
+    { code: "MAL_UY", label: "Maldonado" },
+    { code: "MON_UY", label: "Montevideo" },
+    { code: "SJO_UY", label: "San José" },
+  ]),
+
+  GT: alpha([
+    { code: "ESC", label: "Escuintla" },
+    { code: "GUA_GT", label: "Guatemala" },
+    { code: "IZA", label: "Izabal" },
+    { code: "QUE_GT", label: "Quetzaltenango" },
+    { code: "SAC", label: "Sacatepéquez" },
+  ]),
+
+  HN: alpha([
+    { code: "CHO", label: "Choluteca" },
+    { code: "COR_HN", label: "Cortés" },
+    { code: "FM_HN", label: "Francisco Morazán" },
+    { code: "OLN", label: "Olancho" },
+    { code: "YOR", label: "Yoro" },
+  ]),
+
+  SV: alpha([
+    { code: "LIB", label: "La Libertad" },
+    { code: "SAM", label: "San Miguel" },
+    { code: "SAN_SV", label: "Santa Ana" },
+    { code: "SON_SV", label: "Sonsonate" },
+    { code: "SS_SV", label: "San Salvador" },
+  ]),
+
+  NI: alpha([
+    { code: "CHI_NI", label: "Chinandega" },
+    { code: "GRA", label: "Granada" },
+    { code: "LEO", label: "León" },
+    { code: "MAN_NI", label: "Managua" },
+  ]),
+
+  CU: alpha([
+    { code: "CMT", label: "Camagüey" },
+    { code: "HAB", label: "Havana" },
+    { code: "HOL", label: "Holguín" },
+    { code: "SCU", label: "Santiago de Cuba" },
+    { code: "VCL", label: "Villa Clara" },
+  ]),
+
+  DO: alpha([
+    { code: "DIS_DO", label: "Distrito Nacional" },
+    { code: "LAR_DO", label: "La Romana" },
+    { code: "SDO", label: "Santo Domingo" },
+    { code: "SPM", label: "San Pedro de Macorís" },
+    { code: "STO_DO", label: "Santiago" },
+  ]),
+
+  HT: alpha([
+    { code: "ARB", label: "Artibonite" },
+    { code: "CEN_HT", label: "Centre" },
+    { code: "NRD", label: "Nord" },
+    { code: "OUE", label: "Ouest" },
+  ]),
+
+  PR: alpha([
+    { code: "BAY_PR", label: "Bayamón" },
+    { code: "CAG", label: "Caguas" },
+    { code: "CAR_PR", label: "Carolina" },
+    { code: "PON_PR", label: "Ponce" },
+    { code: "SJN", label: "San Juan" },
+  ]),
+
+  ET: alpha([
+    { code: "ADD", label: "Addis Ababa" },
+    { code: "AMH", label: "Amhara" },
+    { code: "DIR_ET", label: "Dire Dawa" },
+    { code: "ORM", label: "Oromia" },
+    { code: "SNK", label: "SNNPR" },
+    { code: "SOM_ET", label: "Somali" },
+    { code: "TGR", label: "Tigray" },
+  ]),
+
+  TZ: alpha([
+    { code: "ARU", label: "Arusha" },
+    { code: "DAR", label: "Dar es Salaam" },
+    { code: "DOD", label: "Dodoma" },
+    { code: "MBY", label: "Mbeya" },
+    { code: "MOR_TZ", label: "Morogoro" },
+    { code: "MWA", label: "Mwanza" },
+    { code: "TAN_TZ", label: "Tanga" },
+    { code: "ZAN", label: "Zanzibar" },
+  ]),
+
+  MA: alpha([
+    { code: "CAS", label: "Casablanca-Settat" },
+    { code: "FES", label: "Fès-Meknès" },
+    { code: "MAR_MA", label: "Marrakesh-Safi" },
+    { code: "ORI", label: "Oriental" },
+    { code: "RBC", label: "Rabat-Salé-Kénitra" },
+    { code: "SOU_MA", label: "Souss-Massa" },
+    { code: "TAN_MA", label: "Tanger-Tétouan-Al Hoceïma" },
+  ]),
+
+  DZ: alpha([
+    { code: "ALG", label: "Algiers" },
+    { code: "ANN_DZ", label: "Annaba" },
+    { code: "BLI", label: "Blida" },
+    { code: "CON_DZ", label: "Constantine" },
+    { code: "ORA", label: "Oran" },
+    { code: "SET_DZ", label: "Sétif" },
+    { code: "TLE", label: "Tlemcen" },
+  ]),
+
+  AO: alpha([
+    { code: "BIE", label: "Bié" },
+    { code: "HUA", label: "Huambo" },
+    { code: "HUI", label: "Huíla" },
+    { code: "LNO", label: "Lunda Norte" },
+    { code: "LUA_AO", label: "Luanda" },
+    { code: "MAL_AO", label: "Malanje" },
+  ]),
+
+  CM: alpha([
+    { code: "ADA", label: "Adamaoua" },
+    { code: "CEN_CM", label: "Centre" },
+    { code: "LIT_CM", label: "Littoral" },
+    { code: "NOR_CM", label: "North West" },
+    { code: "OUE_CM", label: "Ouest" },
+    { code: "SOR_CM", label: "South West" },
+  ]),
+
+  MZ: alpha([
+    { code: "GZA", label: "Gaza" },
+    { code: "INH", label: "Inhambane" },
+    { code: "MAP_MZ", label: "Maputo" },
+    { code: "NAM_MZ", label: "Nampula" },
+    { code: "SOF_MZ", label: "Sofala" },
+    { code: "ZAM", label: "Zambézia" },
+  ]),
+
+  ZW: alpha([
+    { code: "BUL_ZW", label: "Bulawayo" },
+    { code: "HAR_ZW", label: "Harare" },
+    { code: "MAN_ZW", label: "Manicaland" },
+    { code: "MAS_ZW", label: "Mashonaland East" },
+    { code: "MID_ZW", label: "Midlands" },
+  ]),
+
+  ZM: alpha([
+    { code: "COP", label: "Copperbelt" },
+    { code: "EAS_ZM", label: "Eastern" },
+    { code: "LUA_ZM", label: "Luapula" },
+    { code: "LUS_ZM", label: "Lusaka" },
+    { code: "SHE_ZM", label: "Southern" },
+  ]),
+
+  UG: alpha([
+    { code: "CEN_UG", label: "Central" },
+    { code: "EAS_UG", label: "Eastern" },
+    { code: "KAM_UG", label: "Kampala" },
+    { code: "NOR_UG", label: "Northern" },
+    { code: "WES_UG", label: "Western" },
+  ]),
+
+  SN: alpha([
+    { code: "DKR", label: "Dakar" },
+    { code: "DIO", label: "Diourbel" },
+    { code: "SEN_LO", label: "Saint-Louis" },
+    { code: "THI", label: "Thiès" },
+    { code: "ZIG", label: "Ziguinchor" },
+  ]),
+
+  CI: alpha([
+    { code: "ABI", label: "Abidjan" },
+    { code: "GOM_CI", label: "Gôh-Djiboua" },
+    { code: "MEN_CI", label: "Montagnes" },
+    { code: "VBR", label: "Vallée du Bandama" },
+  ]),
+
+  RW: alpha([
+    { code: "EAS_RW", label: "Eastern" },
+    { code: "KIG", label: "Kigali" },
+    { code: "NOR_RW", label: "Northern" },
+    { code: "SOU_RW", label: "Southern" },
+    { code: "WES_RW", label: "Western" },
+  ]),
+
+  LY: alpha([
+    { code: "BEN_LY", label: "Benghazi" },
+    { code: "MIS_LY", label: "Misrata" },
+    { code: "TRI_LY", label: "Tripoli" },
+  ]),
+
+  TN: alpha([
+    { code: "KAI_TN", label: "Kairouan" },
+    { code: "SFA", label: "Sfax" },
+    { code: "SOU_TN", label: "Sousse" },
+    { code: "TUN_TN", label: "Tunis" },
+  ]),
+
+  SD: alpha([
+    { code: "GAD", label: "Gedaref" },
+    { code: "KAS_SD", label: "Kassala" },
+    { code: "KHT_SD", label: "Khartoum" },
+    { code: "POR_SD", label: "Port Sudan" },
+  ]),
+
+  CD: alpha([
+    { code: "GOB", label: "Goma (North Kivu)" },
+    { code: "KIN_CD", label: "Kinshasa" },
+    { code: "KIS_CD", label: "Kisangani (Tshopo)" },
+    { code: "LUB_CD", label: "Lubumbashi (Haut-Katanga)" },
+    { code: "MBU", label: "Mbuji-Mayi (Kasai-Oriental)" },
+  ]),
+
+  CG: alpha([
+    { code: "BRZ", label: "Brazzaville" },
+    { code: "KIB", label: "Kouilou" },
+    { code: "PLT_CG", label: "Pointe-Noire" },
+  ]),
+
+  NA: alpha([
+    { code: "ERA_NA", label: "Erongo" },
+    { code: "KHM_NA", label: "Khomas" },
+    { code: "OSH_NA", label: "Oshana" },
+  ]),
+
+  BW: alpha([
+    { code: "KGT", label: "Kgatleng" },
+    { code: "NGW", label: "Ngwaketse" },
+    { code: "SE_BW", label: "South-East" },
+  ]),
+
+  MW: alpha([
+    { code: "BLA_MW", label: "Blantyre" },
+    { code: "LIL_MW", label: "Lilongwe" },
+    { code: "MZU_MW", label: "Mzuzu" },
+  ]),
+
+  ML: alpha([
+    { code: "BKO", label: "Bamako" },
+    { code: "KOU", label: "Koulikoro" },
+    { code: "MOP", label: "Mopti" },
+    { code: "SIK_ML", label: "Sikasso" },
+  ]),
+
+  BF: alpha([
+    { code: "CEN_BF", label: "Centre" },
+    { code: "HBS", label: "Hauts-Bassins" },
+    { code: "PLT_BF", label: "Plateau-Central" },
+  ]),
+
+  NE: alpha([
+    { code: "MAR_NE", label: "Maradi" },
+    { code: "NIA_NE", label: "Niamey" },
+    { code: "TAH", label: "Tahoua" },
+    { code: "ZIN_NE", label: "Zinder" },
+  ]),
+
+  IQ: alpha([
+    { code: "ANB", label: "Anbar" },
+    { code: "BGD_IQ", label: "Baghdad" },
+    { code: "BAS_IQ", label: "Basra" },
+    { code: "EBL", label: "Erbil" },
+    { code: "KRB", label: "Karbala" },
+    { code: "NIN", label: "Nineveh" },
+    { code: "NJF", label: "Najaf" },
+    { code: "SUL_IQ", label: "Sulaymaniyah" },
+  ]),
+
+  JO: alpha([
+    { code: "AMM_JO", label: "Amman" },
+    { code: "AQB", label: "Aqaba" },
+    { code: "IRL", label: "Irbid" },
+    { code: "ZRQ", label: "Zarqa" },
+  ]),
+
+  LB: alpha([
+    { code: "BEI", label: "Beirut" },
+    { code: "BEK", label: "Bekaa" },
+    { code: "MTN", label: "Mount Lebanon" },
+    { code: "NOR_LB", label: "North Lebanon" },
+    { code: "SOU_LB", label: "South Lebanon" },
+  ]),
+
+  OM: alpha([
+    { code: "BAT_NO", label: "Batinah North" },
+    { code: "BAT_SO", label: "Batinah South" },
+    { code: "DHO", label: "Dhofar" },
+    { code: "MSQ", label: "Muscat" },
+  ]),
+
+  YE: alpha([
+    { code: "ADE_YE", label: "Aden" },
+    { code: "HOD", label: "Hudaydah" },
+    { code: "IBB", label: "Ibb" },
+    { code: "SAN_YE", label: "Sana'a" },
+    { code: "TAI", label: "Taiz" },
+  ]),
+
+  IR: alpha([
+    { code: "AZB_E", label: "East Azerbaijan" },
+    { code: "FAR_IR", label: "Fars" },
+    { code: "GIL", label: "Gilan" },
+    { code: "ISF", label: "Isfahan" },
+    { code: "KER_IR", label: "Kerman" },
+    { code: "KHO", label: "Khorasan Razavi" },
+    { code: "KHZ", label: "Khuzestan" },
+    { code: "MAZ", label: "Mazandaran" },
+    { code: "TEH", label: "Tehran" },
+  ]),
+
+  BH: alpha([
+    { code: "CAP_BH", label: "Capital" },
+    { code: "CEN_BH", label: "Central" },
+    { code: "MUH", label: "Muharraq" },
+    { code: "NOR_BH", label: "Northern" },
+    { code: "SOU_BH", label: "Southern" },
+  ]),
+
+  PS: alpha([
+    { code: "GAZ", label: "Gaza Strip" },
+    { code: "WBK", label: "West Bank" },
+  ]),
+
+  SY: alpha([
+    { code: "ALE", label: "Aleppo" },
+    { code: "DAM_SY", label: "Damascus" },
+    { code: "HMA", label: "Hama" },
+    { code: "HMS", label: "Homs" },
+    { code: "LAT", label: "Latakia" },
+  ]),
+
+  KZ: alpha([
+    { code: "AKT_KZ", label: "Aktobe" },
+    { code: "ALA_KZ", label: "Almaty" },
+    { code: "AST_KZ", label: "Astana" },
+    { code: "KAR_KZ", label: "Karaganda" },
+    { code: "SHM_KZ", label: "Shymkent" },
+  ]),
+
+  UZ: alpha([
+    { code: "AND_UZ", label: "Andijan" },
+    { code: "BUK_UZ", label: "Bukhara" },
+    { code: "FAR_UZ", label: "Fergana" },
+    { code: "NAM_UZ", label: "Namangan" },
+    { code: "SAM_UZ", label: "Samarkand" },
+    { code: "TAS_UZ", label: "Tashkent" },
+  ]),
+
+  AZ: alpha([
+    { code: "BAK_AZ", label: "Baku" },
+    { code: "GAN_AZ", label: "Ganja" },
+    { code: "SUM_AZ", label: "Sumqayit" },
+  ]),
+
+  AM: alpha([
+    { code: "ARA_AM", label: "Ararat" },
+    { code: "GEG_AM", label: "Gegharkunik" },
+    { code: "SHI_AM", label: "Shirak" },
+    { code: "YER_AM", label: "Yerevan" },
+  ]),
+
+  GE: alpha([
+    { code: "AJA", label: "Adjara" },
+    { code: "IMR_GE", label: "Imereti" },
+    { code: "KVT", label: "Kvemo Kartli" },
+    { code: "TBS", label: "Tbilisi" },
+  ]),
+
+  MM: alpha([
+    { code: "AYE", label: "Ayeyarwady" },
+    { code: "BAG_MM", label: "Bago" },
+    { code: "MDL", label: "Mandalay" },
+    { code: "NPT", label: "Naypyidaw" },
+    { code: "SAG_MM", label: "Sagaing" },
+    { code: "YGN", label: "Yangon" },
+  ]),
+
+  NP: alpha([
+    { code: "BAG_NP", label: "Bagmati" },
+    { code: "GAB_NP", label: "Gandaki" },
+    { code: "KAR_NP", label: "Karnali" },
+    { code: "KOS_NP", label: "Koshi" },
+    { code: "LUM_NP", label: "Lumbini" },
+    { code: "MAD_NP", label: "Madhesh" },
+    { code: "SUD_NP", label: "Sudurpashchim" },
+  ]),
+
+  LK: alpha([
+    { code: "CEN_LK", label: "Central Province" },
+    { code: "EAS_LK", label: "Eastern Province" },
+    { code: "NOR_LK", label: "Northern Province" },
+    { code: "NWE_LK", label: "North Western Province" },
+    { code: "SOU_LK", label: "Southern Province" },
+    { code: "WES_LK", label: "Western Province" },
+  ]),
+
+  AF: alpha([
+    { code: "BAL_AF", label: "Balkh" },
+    { code: "HER_AF", label: "Herat" },
+    { code: "KBL_AF", label: "Kabul" },
+    { code: "KDH", label: "Kandahar" },
+    { code: "NNR", label: "Nangarhar" },
+  ]),
+
+  KH: alpha([
+    { code: "BTB", label: "Battambang" },
+    { code: "KPT_KH", label: "Kampot" },
+    { code: "PNH", label: "Phnom Penh" },
+    { code: "SRP_KH", label: "Siem Reap" },
+  ]),
+
+  LA: alpha([
+    { code: "CHM", label: "Champasak" },
+    { code: "LPB", label: "Luang Prabang" },
+    { code: "SAV_LA", label: "Savannakhet" },
+    { code: "VTE", label: "Vientiane" },
+  ]),
+
+  MN: alpha([
+    { code: "DRK", label: "Darkhan-Uul" },
+    { code: "ORK", label: "Orkhon" },
+    { code: "ULN", label: "Ulaanbaatar" },
+  ]),
+
+  KG: alpha([
+    { code: "BSH_KG", label: "Bishkek" },
+    { code: "JAL_KG", label: "Jalal-Abad" },
+    { code: "OSH_KG", label: "Osh" },
+  ]),
+
+  TJ: alpha([
+    { code: "DUS_TJ", label: "Dushanbe" },
+    { code: "KHT_TJ", label: "Khatlon" },
+    { code: "SDA_TJ", label: "Sughd" },
+  ]),
+
+  SK: alpha([
+    { code: "BAN_SK", label: "Banská Bystrica" },
+    { code: "BRA_SK", label: "Bratislava" },
+    { code: "KOS_SK", label: "Košice" },
+    { code: "NIT_SK", label: "Nitra" },
+    { code: "PRE_SK", label: "Prešov" },
+    { code: "TRE_SK", label: "Trenčín" },
+    { code: "TRN_SK", label: "Trnava" },
+    { code: "ZIL_SK", label: "Žilina" },
+  ]),
+
+  SI: alpha([
+    { code: "CEL_SI", label: "Celje" },
+    { code: "KRA_SI", label: "Kranj" },
+    { code: "LJU", label: "Ljubljana" },
+    { code: "MBX", label: "Maribor" },
+  ]),
+
+  HR: alpha([
+    { code: "OSI", label: "Osijek-Baranja" },
+    { code: "RIJ", label: "Primorje-Gorski Kotar" },
+    { code: "SPL", label: "Split-Dalmatia" },
+    { code: "ZAD", label: "Zadar" },
+    { code: "ZAG_HR", label: "Zagreb" },
+  ]),
+
+  RS: alpha([
+    { code: "BGD_RS", label: "Belgrade" },
+    { code: "NIS_RS", label: "Southern and Eastern Serbia" },
+    { code: "SNI", label: "Šumadija and Western Serbia" },
+    { code: "VOJ", label: "Vojvodina" },
+  ]),
+
+  BG: alpha([
+    { code: "BUR_BG", label: "Burgas" },
+    { code: "PLV", label: "Plovdiv" },
+    { code: "SOF_BG", label: "Sofia" },
+    { code: "STZ", label: "Stara Zagora" },
+    { code: "VAR_BG", label: "Varna" },
+  ]),
+
+  EE: alpha([
+    { code: "HAR_EE", label: "Harju" },
+    { code: "IDA_EE", label: "Ida-Viru" },
+    { code: "TAR_EE", label: "Tartu" },
+  ]),
+
+  LV: alpha([
+    { code: "DAG_LV", label: "Daugavpils" },
+    { code: "JEL_LV", label: "Jelgava" },
+    { code: "RGA", label: "Riga" },
+  ]),
+
+  LT: alpha([
+    { code: "KAU_LT", label: "Kaunas" },
+    { code: "KLJ", label: "Klaipėda" },
+    { code: "SIA_LT", label: "Šiauliai" },
+    { code: "VIL_LT", label: "Vilnius" },
+  ]),
+
+  IS: alpha([
+    { code: "CAP_IS", label: "Capital Region" },
+    { code: "SOU_IS", label: "Southern Region" },
+    { code: "WES_IS", label: "Western Region" },
+  ]),
+
+  AL: alpha([
+    { code: "DUR_AL", label: "Durrës" },
+    { code: "SHK_AL", label: "Shkodër" },
+    { code: "TIR_AL", label: "Tirana" },
+    { code: "VLO_AL", label: "Vlorë" },
+  ]),
+
+  BA: alpha([
+    { code: "FBH", label: "Federation of BiH" },
+    { code: "SAR_BA", label: "Sarajevo" },
+    { code: "SRP_BA", label: "Republika Srpska" },
+  ]),
+
+  MK: alpha([
+    { code: "PHN_MK", label: "Pelagonia" },
+    { code: "SKP", label: "Skopje" },
+    { code: "VRD_MK", label: "Vardar" },
+  ]),
+
+  ME: alpha([
+    { code: "BDV", label: "Budva" },
+    { code: "NKS", label: "Nikšić" },
+    { code: "POD", label: "Podgorica" },
+  ]),
+
+  BY: alpha([
+    { code: "BRS_BY", label: "Brest" },
+    { code: "GOM_BY", label: "Gomel" },
+    { code: "GRD_BY", label: "Grodno" },
+    { code: "MIN_BY", label: "Minsk" },
+    { code: "MOG_BY", label: "Mogilev" },
+    { code: "VIT_BY", label: "Vitebsk" },
+  ]),
+
+  MD: alpha([
+    { code: "BAL_MD", label: "Bălți" },
+    { code: "CHI_MD", label: "Chișinău" },
+    { code: "TGH_MD", label: "Tiraspol" },
+  ]),
+
+  LU: alpha([
+    { code: "DIF_LU", label: "Differdange" },
+    { code: "ESH_LU", label: "Esch-sur-Alzette" },
+    { code: "LUX_C", label: "Luxembourg City" },
+  ]),
+
+  MT: alpha([
+    { code: "BKR_MT", label: "Birkirkara" },
+    { code: "SLM_MT", label: "Sliema" },
+    { code: "VAL_MT", label: "Valletta" },
+  ]),
 };
 
 const CITIES_BY_STATE: Record<string, string[]> = {
@@ -1292,6 +1884,390 @@ const CITIES_BY_STATE: Record<string, string[]> = {
   TPE: ["Taipei"],
   KHH: ["Kaohsiung"],
   TNN: ["Tainan"],
+
+  MOS: ["Khimki", "Krasnogorsk", "Mytishchi", "Podolsk"],
+  BA_PK: ["Quetta"],
+  BAR: ["Barisal"],
+  CEN_KE: ["Nyeri", "Thika"],
+  BGL: ["Eisenstadt"],
+  KTN: ["Klagenfurt"],
+  NOE: ["Krems", "Sankt Pölten", "Wiener Neustadt"],
+  VBG: ["Bregenz", "Dornbirn"],
+  AZO: ["Ponta Delgada"],
+  MAD_PT: ["Funchal"],
+  THS: ["Larissa", "Volos"],
+  CON_RO: ["Constanța"],
+  SBH: ["Kota Kinabalu"],
+  SRW: ["Kuching", "Miri"],
+  ASR: ["Abha", "Khamis Mushait"],
+  NTH_IL: ["Acre", "Nahariya", "Nazareth"],
+  STH_IL: ["Ashdod", "Beer Sheva", "Eilat"],
+
+  DC_VE: ["Caracas"],
+  ANZ: ["Barcelona", "Puerto la Cruz"],
+  CAR: ["Valencia"],
+  BOL_VE: ["Ciudad Bolívar", "Puerto Ordaz"],
+  MIR: ["Los Teques", "Petare"],
+  ZUL: ["Cabimas", "Maracaibo"],
+  BEN: ["Trinidad"],
+  CBB: ["Cochabamba"],
+  LP_BO: ["El Alto", "La Paz"],
+  OR_BO: ["Oruro"],
+  POT: ["Potosí"],
+  SCZ: ["Santa Cruz de la Sierra"],
+  TJA: ["Tarija"],
+  AZU: ["Cuenca"],
+  ELO: ["Machala"],
+  GUA_EC: ["Guayaquil", "Samborondón"],
+  IMB: ["Ibarra"],
+  MAN_EC: ["Manta", "Portoviejo"],
+  PIC: ["Quito"],
+  TUN: ["Ambato"],
+  APA: ["Ciudad del Este"],
+  ASU: ["Asunción"],
+  CEN_PY: ["Fernando de la Mora", "Luque", "San Lorenzo"],
+  COR_PY: ["Caacupé"],
+  ITA: ["Encarnación"],
+  MIS_PY: ["San Ignacio"],
+  CAN_UY: ["Canelones", "Las Piedras"],
+  COL_UY: ["Colonia del Sacramento"],
+  MAL_UY: ["Maldonado", "Punta del Este"],
+  MON_UY: ["Montevideo"],
+  SJO_UY: ["San José de Mayo"],
+  ESC: ["Escuintla"],
+  GUA_GT: ["Guatemala City", "Mixco", "Villa Nueva"],
+  IZA: ["Puerto Barrios"],
+  QUE_GT: ["Quetzaltenango"],
+  SAC: ["Antigua Guatemala"],
+  CHO: ["Choluteca"],
+  COR_HN: ["San Pedro Sula"],
+  FM_HN: ["Tegucigalpa"],
+  OLN: ["Juticalpa"],
+  YOR: ["El Progreso"],
+  LIB: ["Santa Tecla"],
+  SAM: ["San Miguel"],
+  SAN_SV: ["Santa Ana"],
+  SON_SV: ["Sonsonate"],
+  SS_SV: ["San Salvador", "Soyapango"],
+  CHI_NI: ["Chinandega"],
+  GRA: ["Granada"],
+  LEO: ["León"],
+  MAN_NI: ["Managua"],
+  CMT: ["Camagüey"],
+  HAB: ["Havana"],
+  HOL: ["Holguín"],
+  SCU: ["Santiago de Cuba"],
+  VCL: ["Santa Clara"],
+  DIS_DO: ["Santo Domingo"],
+  LAR_DO: ["La Romana"],
+  SDO: ["Santo Domingo Este"],
+  SPM: ["San Pedro de Macorís"],
+  STO_DO: ["Santiago de los Caballeros"],
+  ARB: ["Gonaïves", "Saint-Marc"],
+  CEN_HT: ["Hinche"],
+  NRD: ["Cap-Haïtien"],
+  OUE: ["Port-au-Prince"],
+  BAY_PR: ["Bayamón"],
+  CAG: ["Caguas"],
+  CAR_PR: ["Carolina"],
+  PON_PR: ["Ponce"],
+  SJN: ["San Juan"],
+
+  ADD: ["Addis Ababa"],
+  AMH: ["Bahir Dar", "Gondar"],
+  DIR_ET: ["Dire Dawa"],
+  ORM: ["Adama", "Jimma"],
+  SNK: ["Hawassa"],
+  SOM_ET: ["Jigjiga"],
+  TGR: ["Mekele"],
+  ARU: ["Arusha"],
+  DAR: ["Dar es Salaam"],
+  DOD: ["Dodoma"],
+  MBY: ["Mbeya"],
+  MOR_TZ: ["Morogoro"],
+  MWA: ["Mwanza"],
+  TAN_TZ: ["Tanga"],
+  ZAN: ["Zanzibar City"],
+  CAS: ["Casablanca"],
+  FES: ["Fès", "Meknès"],
+  MAR_MA: ["Marrakesh"],
+  ORI: ["Oujda"],
+  RBC: ["Rabat", "Salé"],
+  SOU_MA: ["Agadir"],
+  TAN_MA: ["Tangier", "Tétouan"],
+  ALG: ["Algiers"],
+  ANN_DZ: ["Annaba"],
+  BLI: ["Blida"],
+  CON_DZ: ["Constantine"],
+  ORA: ["Oran"],
+  SET_DZ: ["Sétif"],
+  TLE: ["Tlemcen"],
+  BIE: ["Kuito"],
+  HUA: ["Huambo"],
+  HUI: ["Lubango"],
+  LNO: ["Dundo"],
+  LUA_AO: ["Luanda"],
+  MAL_AO: ["Malanje"],
+  ADA: ["Ngaoundéré"],
+  CEN_CM: ["Yaoundé"],
+  LIT_CM: ["Douala"],
+  NOR_CM: ["Bamenda"],
+  OUE_CM: ["Bafoussam"],
+  SOR_CM: ["Buea"],
+  GZA: ["Xai-Xai"],
+  INH: ["Inhambane"],
+  MAP_MZ: ["Maputo", "Matola"],
+  NAM_MZ: ["Nampula"],
+  SOF_MZ: ["Beira"],
+  ZAM: ["Quelimane"],
+  BUL_ZW: ["Bulawayo"],
+  HAR_ZW: ["Harare"],
+  MAN_ZW: ["Mutare"],
+  MAS_ZW: ["Marondera"],
+  MID_ZW: ["Gweru"],
+  COP: ["Kitwe", "Ndola"],
+  EAS_ZM: ["Chipata"],
+  LUA_ZM: ["Mansa"],
+  LUS_ZM: ["Lusaka"],
+  SHE_ZM: ["Livingstone"],
+  CEN_UG: ["Entebbe", "Jinja"],
+  EAS_UG: ["Mbale"],
+  KAM_UG: ["Kampala"],
+  NOR_UG: ["Gulu"],
+  WES_UG: ["Mbarara"],
+  DIO: ["Diourbel", "Touba"],
+  DKR: ["Dakar"],
+  SEN_LO: ["Saint-Louis"],
+  THI: ["Thiès"],
+  ZIG: ["Ziguinchor"],
+  ABI: ["Abidjan"],
+  GOM_CI: ["Divo", "Gagnoa"],
+  MEN_CI: ["Man"],
+  VBR: ["Bouaké"],
+  EAS_RW: ["Rwamagana"],
+  KIG: ["Kigali"],
+  NOR_RW: ["Musanze"],
+  SOU_RW: ["Huye"],
+  WES_RW: ["Rubavu"],
+  BEN_LY: ["Benghazi"],
+  MIS_LY: ["Misrata"],
+  TRI_LY: ["Tripoli"],
+  KAI_TN: ["Kairouan"],
+  SFA: ["Sfax"],
+  SOU_TN: ["Sousse"],
+  TUN_TN: ["Tunis"],
+  GAD: ["Gedaref"],
+  KAS_SD: ["Kassala"],
+  KHT_SD: ["Khartoum", "Omdurman"],
+  POR_SD: ["Port Sudan"],
+  GOB: ["Goma"],
+  KIN_CD: ["Kinshasa"],
+  KIS_CD: ["Kisangani"],
+  LUB_CD: ["Lubumbashi"],
+  MBU: ["Mbuji-Mayi"],
+  BRZ: ["Brazzaville"],
+  KIB: ["Dolisie"],
+  PLT_CG: ["Pointe-Noire"],
+  ERA_NA: ["Swakopmund", "Walvis Bay"],
+  KHM_NA: ["Windhoek"],
+  OSH_NA: ["Oshakati"],
+  KGT: ["Mochudi"],
+  NGW: ["Kanye", "Lobatse"],
+  SE_BW: ["Gaborone"],
+  BLA_MW: ["Blantyre"],
+  LIL_MW: ["Lilongwe"],
+  MZU_MW: ["Mzuzu"],
+  BKO: ["Bamako"],
+  KOU: ["Koulikoro"],
+  MOP: ["Mopti"],
+  SIK_ML: ["Sikasso"],
+  CEN_BF: ["Koupéla"],
+  HBS: ["Bobo-Dioulasso"],
+  PLT_BF: ["Ziniaré"],
+  MAR_NE: ["Maradi"],
+  NIA_NE: ["Niamey"],
+  TAH: ["Tahoua"],
+  ZIN_NE: ["Zinder"],
+
+  ANB: ["Ramadi"],
+  BGD_IQ: ["Baghdad"],
+  BAS_IQ: ["Basra"],
+  EBL: ["Erbil"],
+  KRB: ["Karbala"],
+  NIN: ["Mosul"],
+  NJF: ["Najaf"],
+  SUL_IQ: ["Sulaymaniyah"],
+  AMM_JO: ["Amman"],
+  AQB: ["Aqaba"],
+  IRL: ["Irbid"],
+  ZRQ: ["Zarqa"],
+  BEI: ["Beirut"],
+  BEK: ["Zahle"],
+  MTN: ["Jounieh"],
+  NOR_LB: ["Tripoli"],
+  SOU_LB: ["Sidon"],
+  BAT_NO: ["Sohar"],
+  BAT_SO: ["Rustaq"],
+  DHO: ["Salalah"],
+  MSQ: ["Muscat"],
+  ADE_YE: ["Aden"],
+  HOD: ["Hudaydah"],
+  IBB: ["Ibb"],
+  SAN_YE: ["Sana'a"],
+  TAI: ["Taiz"],
+  AZB_E: ["Tabriz"],
+  FAR_IR: ["Shiraz"],
+  GIL: ["Rasht"],
+  ISF: ["Isfahan"],
+  KER_IR: ["Kerman"],
+  KHO: ["Mashhad"],
+  KHZ: ["Ahvaz"],
+  MAZ: ["Sari"],
+  TEH: ["Tehran"],
+  CAP_BH: ["Manama"],
+  CEN_BH: ["Isa Town"],
+  MUH: ["Muharraq"],
+  NOR_BH: ["Hamad Town"],
+  SOU_BH: ["Riffa"],
+  GAZ: ["Gaza City"],
+  WBK: ["Ramallah"],
+  ALE: ["Aleppo"],
+  DAM_SY: ["Damascus"],
+  HMA: ["Hama"],
+  HMS: ["Homs"],
+  LAT: ["Latakia"],
+  AKT_KZ: ["Aktobe"],
+  ALA_KZ: ["Almaty"],
+  AST_KZ: ["Astana"],
+  KAR_KZ: ["Karaganda"],
+  SHM_KZ: ["Shymkent"],
+  AND_UZ: ["Andijan"],
+  BUK_UZ: ["Bukhara"],
+  FAR_UZ: ["Fergana"],
+  NAM_UZ: ["Namangan"],
+  SAM_UZ: ["Samarkand"],
+  TAS_UZ: ["Tashkent"],
+  BAK_AZ: ["Baku"],
+  GAN_AZ: ["Ganja"],
+  SUM_AZ: ["Sumqayit"],
+  ARA_AM: ["Artashat"],
+  GEG_AM: ["Sevan"],
+  SHI_AM: ["Gyumri"],
+  YER_AM: ["Yerevan"],
+  AJA: ["Batumi"],
+  IMR_GE: ["Kutaisi"],
+  KVT: ["Rustavi"],
+  TBS: ["Tbilisi"],
+
+  AYE: ["Pathein"],
+  BAG_MM: ["Bago"],
+  MDL: ["Mandalay"],
+  NPT: ["Naypyidaw"],
+  SAG_MM: ["Monywa", "Sagaing"],
+  YGN: ["Yangon"],
+  BAG_NP: ["Kathmandu", "Lalitpur"],
+  GAB_NP: ["Pokhara"],
+  KAR_NP: ["Surkhet"],
+  KOS_NP: ["Biratnagar", "Dharan"],
+  LUM_NP: ["Butwal", "Dhangadhi"],
+  MAD_NP: ["Birgunj", "Janakpur"],
+  SUD_NP: ["Nepalgunj"],
+  CEN_LK: ["Kandy"],
+  EAS_LK: ["Batticaloa", "Trincomalee"],
+  NOR_LK: ["Jaffna"],
+  NWE_LK: ["Kurunegala", "Negombo"],
+  SOU_LK: ["Galle", "Matara"],
+  WES_LK: ["Colombo", "Moratuwa"],
+  BAL_AF: ["Mazar-i-Sharif"],
+  HER_AF: ["Herat"],
+  KBL_AF: ["Kabul"],
+  KDH: ["Kandahar"],
+  NNR: ["Jalalabad"],
+  BTB: ["Battambang"],
+  KPT_KH: ["Kampot"],
+  PNH: ["Phnom Penh"],
+  SRP_KH: ["Siem Reap"],
+  CHM: ["Pakse"],
+  LPB: ["Luang Prabang"],
+  SAV_LA: ["Savannakhet"],
+  VTE: ["Vientiane"],
+  DRK: ["Darkhan"],
+  ORK: ["Erdenet"],
+  ULN: ["Ulaanbaatar"],
+  BSH_KG: ["Bishkek"],
+  JAL_KG: ["Jalal-Abad"],
+  OSH_KG: ["Osh"],
+  DUS_TJ: ["Dushanbe"],
+  KHT_TJ: ["Bokhtar"],
+  SDA_TJ: ["Khujand"],
+
+  BAN_SK: ["Banská Bystrica"],
+  BRA_SK: ["Bratislava"],
+  KOS_SK: ["Košice"],
+  NIT_SK: ["Nitra"],
+  PRE_SK: ["Prešov"],
+  TRE_SK: ["Trenčín"],
+  TRN_SK: ["Trnava"],
+  ZIL_SK: ["Žilina"],
+  CEL_SI: ["Celje"],
+  KRA_SI: ["Kranj"],
+  LJU: ["Ljubljana"],
+  MBX: ["Maribor"],
+  OSI: ["Osijek"],
+  RIJ: ["Rijeka"],
+  SPL: ["Split"],
+  ZAD: ["Zadar"],
+  ZAG_HR: ["Zagreb"],
+  BGD_RS: ["Belgrade"],
+  NIS_RS: ["Niš"],
+  SNI: ["Kragujevac"],
+  VOJ: ["Novi Sad"],
+  BUR_BG: ["Burgas"],
+  PLV: ["Plovdiv"],
+  SOF_BG: ["Sofia"],
+  STZ: ["Stara Zagora"],
+  VAR_BG: ["Varna"],
+  HAR_EE: ["Tallinn"],
+  IDA_EE: ["Narva"],
+  TAR_EE: ["Tartu"],
+  DAG_LV: ["Daugavpils"],
+  JEL_LV: ["Jelgava"],
+  RGA: ["Riga"],
+  KAU_LT: ["Kaunas"],
+  KLJ: ["Klaipėda"],
+  SIA_LT: ["Šiauliai"],
+  VIL_LT: ["Vilnius"],
+  CAP_IS: ["Reykjavík"],
+  SOU_IS: ["Selfoss"],
+  WES_IS: ["Akranes"],
+  DUR_AL: ["Durrës"],
+  SHK_AL: ["Shkodër"],
+  TIR_AL: ["Tirana"],
+  VLO_AL: ["Vlorë"],
+  FBH: ["Mostar", "Tuzla"],
+  SAR_BA: ["Sarajevo"],
+  SRP_BA: ["Banja Luka"],
+  PHN_MK: ["Bitola"],
+  SKP: ["Skopje"],
+  VRD_MK: ["Veles"],
+  BDV: ["Budva", "Kotor"],
+  NKS: ["Nikšić"],
+  POD: ["Podgorica"],
+  BRS_BY: ["Brest"],
+  GOM_BY: ["Gomel"],
+  GRD_BY: ["Grodno"],
+  MIN_BY: ["Minsk"],
+  MOG_BY: ["Mogilev"],
+  VIT_BY: ["Vitebsk"],
+  BAL_MD: ["Bălți"],
+  CHI_MD: ["Chișinău"],
+  TGH_MD: ["Tiraspol"],
+  DIF_LU: ["Differdange"],
+  ESH_LU: ["Esch-sur-Alzette"],
+  LUX_C: ["Luxembourg City"],
+  BKR_MT: ["Birkirkara"],
+  SLM_MT: ["Sliema"],
+  VAL_MT: ["Valletta"],
 };
 
 export function getCountries(): LocationOption[] {
@@ -1315,7 +2291,39 @@ export function getStateLabel(countryCode: string): string {
     case "JP": return "Prefecture";
     case "CH": return "Canton";
     case "DE": return "Bundesland";
+    case "AT": return "Bundesland";
     case "BR": return "Estado";
+    case "MX": return "Estado";
+    case "AR": return "Province";
+    case "FR": return "Région";
+    case "NL": return "Province";
+    case "BE": return "Region";
+    case "IT": return "Region";
+    case "ES": return "Autonomous Community";
+    case "RU": return "Oblast / Region";
+    case "CN": return "Province / Municipality";
+    case "IN": return "State / UT";
+    case "BO": return "Department";
+    case "CO": return "Department";
+    case "EC": return "Province";
+    case "PY": return "Department";
+    case "UY": return "Department";
+    case "VE": return "State";
+    case "GT": return "Department";
+    case "HN": return "Department";
+    case "SV": return "Department";
+    case "DO": return "Province";
+    case "PE": return "Region";
+    case "CL": return "Region";
+    case "MA": return "Region";
+    case "DZ": return "Wilaya";
+    case "ET": return "Region";
+    case "IR": return "Province";
+    case "KZ": return "Region";
+    case "UZ": return "Region";
+    case "NP": return "Province";
+    case "LK": return "Province";
+    case "PL": return "Voivodeship";
     default: return "State / Region";
   }
 }
