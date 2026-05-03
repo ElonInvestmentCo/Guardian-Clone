@@ -195,6 +195,22 @@ export async function initDatabase(): Promise<void> {
     DELETE FROM pending_registrations WHERE expires_at < NOW();
   `);
 
+  await p.query(`
+    CREATE TABLE IF NOT EXISTS chat_sessions (
+      id            TEXT PRIMARY KEY,
+      email         TEXT NOT NULL,
+      title         TEXT NOT NULL DEFAULT 'Conversation',
+      preview       TEXT NOT NULL DEFAULT '',
+      messages      JSONB NOT NULL DEFAULT '[]'::jsonb,
+      message_count INTEGER NOT NULL DEFAULT 0,
+      created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+  await p.query(`
+    CREATE INDEX IF NOT EXISTS idx_chat_sessions_email ON chat_sessions (email, updated_at DESC);
+  `);
+
   console.log("[DB] Database tables initialized successfully");
 }
 

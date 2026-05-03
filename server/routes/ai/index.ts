@@ -1,7 +1,10 @@
 import { Router, type Request, type Response } from "express";
 import { getAiProvider, type AiMessage } from "../../lib/ai/aiService.js";
 import { buildSystemPrompt, buildStakeRecommendation, getStakingData, type UserAccountData, type LiveMarketData } from "../../lib/ai/tradingContext.js";
-import { getRecentMessages, appendMessage, clearConversation, getConversation } from "../../lib/ai/chatStore.js";
+import {
+  getRecentMessages, appendMessage, clearConversation, getConversation,
+  saveCurrentAsSession, listSessions, getSession, deleteSession, restoreSession,
+} from "../../lib/ai/chatStore.js";
 import { aiChatLimit } from "../../middleware/security.js";
 import { validate, AiChatSchema, AuthCheckEmailSchema } from "../../lib/validation.js";
 import { getUserBalance, getUserData } from "../../lib/userDataStore.js";
@@ -122,7 +125,6 @@ router.post("/ai/chat", aiChatLimit, validate(AiChatSchema), async (req: Request
 router.get("/ai/history", validate(AuthCheckEmailSchema), async (req: Request, res: Response): Promise<void> => {
   try {
     const { email } = (req as unknown as { validatedQuery: { email: string } }).validatedQuery;
-
     const conv = await getConversation(email);
     res.json({
       id: conv.id,
@@ -144,6 +146,96 @@ router.post("/ai/clear", validate(AuthCheckEmailSchema), async (req: Request, re
     res.status(500).json({ error: "Failed to clear conversation" });
   }
 });
+
+/* ── Conversation sessions ──────────────────────────────────────── */
+
+router.get("/ai/sessions", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const email = req.query.email as string | undefined;
+    if (!email || typeof email !== "string" || !email.includes("@")) {
+      res.status(400).json({ error: "Valid email required" });
+      return;
+    }
+    const sessions = await listSessions(email.toLowerCase().trim());
+    res.json({ sessions });
+  } catch (err) {
+    console.error("[AI] List sessions error:", err);
+    res.status(500).json({ error: "Failed to load sessions" });
+  }
+});
+
+router.post("/ai/sessions", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email } = req.body as { email: string };
+    if (!email || typeof email !== "string" || !email.includes("@")) {
+      res.status(400).json({ error: "Valid email required" });
+      return;
+    }
+    const normalEmail = email.toLowerCase().trim();
+    const sessionId = await saveCurrentAsSession(normalEmail);
+    if (sessionId) {
+      await clearConversation(normalEmail);
+    }
+    res.json({ sessionId, cleared: true });
+  } catch (err) {
+    console.error("[AI] Save session error:", err);
+    res.status(500).json({ error: "Failed to save session" });
+  }
+});
+
+router.post("/ai/sessions/resume", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, sessionId } = req.body as { email: string; sessionId: string };
+    if (!email || !sessionId) {
+      res.status(400).json({ error: "email and sessionId required" });
+      return;
+    }
+    const normalEmail = email.toLowerCase().trim();
+    const messages = await restoreSession(normalEmail, sessionId);
+    res.json({ messages });
+  } catch (err) {
+    console.error("[AI] Resume session error:", err);
+    res.status(500).json({ error: "Failed to resume session" });
+  }
+});
+
+router.get("/ai/sessions/:id", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const email = req.query.email as string | undefined;
+    if (!email || typeof email !== "string" || !email.includes("@")) {
+      res.status(400).json({ error: "Valid email required" });
+      return;
+    }
+    const session = await getSession(id, email.toLowerCase().trim());
+    if (!session) {
+      res.status(404).json({ error: "Session not found" });
+      return;
+    }
+    res.json(session);
+  } catch (err) {
+    console.error("[AI] Get session error:", err);
+    res.status(500).json({ error: "Failed to load session" });
+  }
+});
+
+router.delete("/ai/sessions/:id", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const email = req.query.email as string | undefined;
+    if (!email || typeof email !== "string" || !email.includes("@")) {
+      res.status(400).json({ error: "Valid email required" });
+      return;
+    }
+    await deleteSession(id, email.toLowerCase().trim());
+    res.json({ success: true });
+  } catch (err) {
+    console.error("[AI] Delete session error:", err);
+    res.status(500).json({ error: "Failed to delete session" });
+  }
+});
+
+/* ── Market / staking ───────────────────────────────────────────── */
 
 router.get("/ai/market", async (_req: Request, res: Response): Promise<void> => {
   try {
@@ -199,7 +291,6 @@ router.get("/ai/stake-calculator", async (req: Request, res: Response): Promise<
       : undefined;
 
     const effectiveBalance = parsedBalance ?? 0;
-
     const result = buildStakeRecommendation(effectiveBalance, riskTolerance, marketCondition);
     res.json({
       balance: effectiveBalance,
