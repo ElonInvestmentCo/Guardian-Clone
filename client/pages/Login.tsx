@@ -92,7 +92,7 @@ export default function Login() {
       {/* Card */}
       <div
         style={{
-          width: "320px",
+          width: "440px",
           backgroundColor: "#ffffff",
           borderRadius: "6px",
           boxShadow: "0 2px 16px rgba(0,0,0,0.13)",
@@ -264,7 +264,7 @@ export default function Login() {
                 href="#"
                 onClick={(e) => e.preventDefault()}
                 style={{
-                  fontSize: "13px",
+                  fontSize: "20px",
                   color: "#337ab8",
                   textDecoration: "none",
                 }}
@@ -277,8 +277,8 @@ export default function Login() {
             <p
               style={{
                 textAlign: "center",
-                fontSize: "13px",
-                color: "#555555",
+                fontSize: "20px",
+                color: "#333333",
                 margin: 0,
                 padding: 0,
               }}
