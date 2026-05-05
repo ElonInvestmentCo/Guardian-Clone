@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { getApiBase } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ export default function Login() {
   const [errors, setErrors] = useState<{ email?: string; password?: string; submit?: string }>({});
   const [loading, setLoading] = useState(false);
   const [, navigate] = useLocation();
+  const { refresh } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,14 +29,24 @@ export default function Login() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
+        credentials: "include",
       });
       const data = await res.json().catch(() => ({}) as Record<string, string>);
       if (res.ok) {
         const userEmail = (data as { email?: string }).email || email;
         sessionStorage.setItem("signupEmail", userEmail);
+
+        await refresh();
+
         try {
-          const statusRes = await fetch(`${base}/api/user/me?email=${encodeURIComponent(userEmail)}`);
-          const statusData = await statusRes.json() as { status?: string; kycComplete?: boolean; completedSteps?: number[] };
+          const statusRes = await fetch(`${base}/api/auth/me`, {
+            credentials: "include",
+          });
+          const statusData = await statusRes.json() as {
+            status?: string;
+            kycComplete?: boolean;
+            completedSteps?: number[];
+          };
           if (statusData.status === "approved") {
             setLoading(false);
             navigate("/dashboard");

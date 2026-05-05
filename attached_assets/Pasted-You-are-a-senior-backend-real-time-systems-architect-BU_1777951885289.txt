@@ -1,0 +1,198 @@
+You are a senior backend + real-time systems architect.
+
+BUILD A FULL REAL-TIME EVENT SYSTEM FOR A SAAS TRADING PLATFORM.
+
+====================================================
+GOAL
+====================================================
+Implement a scalable real-time infrastructure that powers:
+
+- Live trading notifications
+- AI alerts (margin calls, trade signals, risk warnings)
+- Real-time dashboard updates
+- Web + mobile push notifications
+
+All updates must be instant, secure, and user-specific.
+
+====================================================
+1. REAL-TIME ENGINE (Socket.io REQUIRED)
+====================================================
+
+Set up Socket.io server on backend:
+
+CORE REQUIREMENTS:
+- Authenticated socket connections only
+- JWT verification during handshake
+- User-specific rooms:
+  room = user:{userId}
+
+FLOW:
+1. Client connects via Socket.io
+2. Sends JWT token
+3. Backend verifies token
+4. If valid → join user-specific room
+5. If invalid → disconnect
+
+EVENT CHANNELS:
+- trade:executed
+- trade:updated
+- margin:call
+- ai:signal
+- account:balance_update
+- system:notification
+
+====================================================
+2. AI ALERT SYSTEM (EVENT GENERATION LAYER)
+====================================================
+
+Create AI event engine that triggers alerts:
+
+ALERT TYPES:
+
+A. Margin Call Alert
+- Trigger when account equity < maintenance margin
+- Emit:
+  ai:alert
+  payload:
+  {
+    type: "MARGIN_CALL",
+    severity: "HIGH",
+    message: "Your margin level is critical",
+    recommendedAction: "Add funds or close positions"
+  }
+
+B. Trade Signal Alert
+- Trigger when AI generates buy/sell signal
+- Emit:
+  ai:signal
+  payload:
+  {
+    asset,
+    action: BUY | SELL,
+    confidence,
+    entryPrice,
+    stopLoss,
+    takeProfit
+  }
+
+C. Risk Alert
+- Trigger when portfolio risk exceeds threshold
+- Emit:
+  ai:alert
+
+====================================================
+3. REAL-TIME DASHBOARD UPDATES
+====================================================
+
+Frontend must subscribe to socket events:
+
+UPDATE IN REAL TIME:
+- Portfolio balance
+- Active trades
+- PnL changes
+- AI signals
+- Notifications feed
+
+RULE:
+- No manual refresh allowed
+- UI must update instantly via Socket.io events
+
+====================================================
+4. WEB PUSH NOTIFICATIONS (PWA SUPPORT)
+====================================================
+
+Implement Web Push API:
+
+FLOW:
+1. User grants notification permission
+2. Generate VAPID keys on backend
+3. Store push subscription in DB
+4. Send push notifications from backend
+
+EVENTS THAT TRIGGER PUSH:
+- Margin call
+- Large profit/loss event
+- AI high-confidence trade signal
+- Account login from new device
+
+====================================================
+5. MOBILE PUSH NOTIFICATIONS (FUTURE READY)
+====================================================
+
+Design system to support:
+- Firebase Cloud Messaging (FCM)
+
+MOBILE EVENTS:
+- Same events as web push
+- Delivered to mobile app when available
+
+====================================================
+6. SECURITY RULES (CRITICAL)
+====================================================
+
+- Socket connections MUST require JWT authentication
+- Never allow anonymous socket access
+- Every event MUST be user-scoped (no global leaks)
+- Validate all payloads server-side
+- Rate-limit socket events per user
+
+====================================================
+7. BACKEND ARCHITECTURE
+
+Suggested structure:
+
+/realtime
+  socketServer.ts
+  auth.middleware.ts
+  eventEmitter.ts
+  eventHandlers/
+    trades.ts
+    aiAlerts.ts
+    notifications.ts
+
+/services
+  aiEngine.ts
+  riskEngine.ts
+  tradingEngine.ts
+
+====================================================
+8. FRONTEND INTEGRATION
+
+Client must:
+- Connect socket after auth verification (/api/auth/me success)
+- Join user room automatically
+- Listen for events globally
+- Update UI state instantly
+
+STATE MANAGEMENT:
+- Use event-driven store (Redux/Zustand/Context)
+
+====================================================
+9. UX REQUIREMENTS
+
+- Toast notifications for alerts
+- Notification center panel
+- Live updating dashboard cards
+- Sound/vibration optional for critical alerts
+- Smooth animations for updates
+
+====================================================
+10. PERFORMANCE REQUIREMENTS
+
+- Must support thousands of concurrent sockets
+- Use Redis adapter for Socket.io scaling
+- Event batching for heavy updates
+- Debounce frequent price updates
+
+====================================================
+END RESULT
+====================================================
+
+A full enterprise-grade real-time SaaS trading system with:
+
+✔ Live trading updates
+✔ AI-driven alerts
+✔ Margin call detection
+✔ Real-time dashboard
+✔ Web + mobile push notifications
+✔ Secure authenticated Socket.io layer

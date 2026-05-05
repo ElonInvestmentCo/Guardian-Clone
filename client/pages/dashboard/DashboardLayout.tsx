@@ -9,6 +9,7 @@ import {
   MessageCircle, User, CreditCard, Activity, HelpCircle,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
+import { useAuth } from "@/context/AuthContext";
 
 const LOGO_URL = "https://assets.guardiiantrading.com/logo.svg";
 
@@ -55,64 +56,62 @@ interface Props {
   children: React.ReactNode;
 }
 
-interface UserStatus {
-  status: string;
-  kycComplete: boolean;
-  profilePicture: string | null;
-}
-
 export default function DashboardLayout({ children }: Props) {
   const [location, navigate] = useLocation();
   const { theme, colors, toggleTheme } = useTheme();
+  const { user, loading, isAuthenticated, logout } = useAuth();
 
-  const email = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("signupEmail") ?? "" : "";
-  const displayName = email ? email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Trader";
+  const email = user?.email ?? sessionStorage.getItem("signupEmail") ?? "";
+  const displayName = email
+    ? email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+    : "Trader";
 
   const [tickers, setTickers] = useState<TickerItem[]>(INITIAL_TICKERS);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [userStatus, setUserStatus] = useState<UserStatus | null>(null);
   const [gateChecked, setGateChecked] = useState(false);
 
   useEffect(() => {
-    if (!email) { navigate("/login"); return; }
-    const base = getApiBase();
-    fetch(`${base}/api/user/me?email=${encodeURIComponent(email)}`)
-      .then((r) => r.json())
-      .then((data: UserStatus & { completedSteps?: number[] }) => {
-        setUserStatus(data);
-        if (data.status !== "approved") {
-          if (data.status === "resubmit_required" || data.status === "resubmit") {
-            navigate("/kyc/resubmit");
-          } else if (data.status === "reviewing") {
-            navigate("/kyc/reviewing");
-          } else if (data.status === "verified" && data.kycComplete) {
-            navigate("/application-pending");
-          } else if (data.status === "rejected") {
-            navigate("/application-pending");
-          } else if (data.status === "pending" && data.kycComplete) {
-            navigate("/application-pending");
-          } else {
-            const stepPaths = [
-              "/general-details", "/personal-details", "/professional-details",
-              "/id-information", "/income-details", "/risk-tolerance",
-              "/financial-situation", "/investment-experience", "/id-proof-upload",
-              "/funding-details", "/disclosures", "/signatures",
-            ];
-            const nextStep = (data.completedSteps ?? []).length;
-            navigate(stepPaths[nextStep] ?? "/general-details");
-          }
-          return;
-        }
-        setGateChecked(true);
-      })
-      .catch(() => { navigate("/login"); });
-  }, [email]);
+    if (loading) return;
+
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    if (!user) return;
+
+    if (user.status !== "approved") {
+      if (user.status === "resubmit_required" || user.status === "resubmit") {
+        navigate("/kyc/resubmit");
+      } else if (user.status === "reviewing") {
+        navigate("/kyc/reviewing");
+      } else if ((user.status === "verified" || user.status === "pending") && user.kycComplete) {
+        navigate("/application-pending");
+      } else if (user.status === "rejected") {
+        navigate("/application-pending");
+      } else {
+        const stepPaths = [
+          "/general-details", "/personal-details", "/professional-details",
+          "/id-information", "/income-details", "/risk-tolerance",
+          "/financial-situation", "/investment-experience", "/id-proof-upload",
+          "/funding-details", "/disclosures", "/signatures",
+        ];
+        const nextStep = (user.completedSteps ?? []).length;
+        navigate(stepPaths[nextStep] ?? "/general-details");
+      }
+      return;
+    }
+
+    setGateChecked(true);
+  }, [loading, isAuthenticated, user, navigate]);
 
   useEffect(() => {
     if (!email) return;
     const base = getApiBase();
     const fetchNotifs = () => {
-      fetch(`${base}/api/notifications?email=${encodeURIComponent(email)}`)
+      fetch(`${base}/api/notifications?email=${encodeURIComponent(email)}`, {
+        credentials: "include",
+      })
         .then((r) => r.json())
         .then((d: { unreadCount?: number }) => setUnreadCount(d.unreadCount ?? 0))
         .catch(() => {});
@@ -134,7 +133,7 @@ export default function DashboardLayout({ children }: Props) {
     return () => clearInterval(interval);
   }, []);
 
-  if (!gateChecked) {
+  if (loading || !gateChecked) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: colors.bg }}>
         <img src={loaderGif} alt="Loading" draggable={false} style={{ width: 80, height: 80, objectFit: "contain" }} />
@@ -142,12 +141,12 @@ export default function DashboardLayout({ children }: Props) {
     );
   }
 
-  const profilePicUrl = userStatus?.profilePicture
-    ? `${getApiBase()}/api/user/profile-picture/${userStatus.profilePicture}`
+  const profilePicUrl = user?.profilePicture
+    ? `${getApiBase()}/api/user/profile-picture/${user.profilePicture}`
     : null;
 
-  const handleLogout = () => {
-    sessionStorage.clear();
+  const handleLogout = async () => {
+    await logout();
     navigate("/login");
   };
 
@@ -333,7 +332,6 @@ export default function DashboardLayout({ children }: Props) {
         }}>
           {children}
         </div>
-
 
         <nav className="flex md:hidden flex-shrink-0" style={{
           borderTop: `1px solid ${colors.topBarBorder}`,

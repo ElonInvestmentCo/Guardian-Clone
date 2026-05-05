@@ -346,7 +346,7 @@ export default function GuardianAiWidget() {
     setHistoryLoading(true);
     try {
       const email = getGuestEmail();
-      const res = await fetch(`${API_BASE}/api/ai/sessions?email=${encodeURIComponent(email)}`);
+      const res = await fetch(`${API_BASE}/api/ai/sessions`, { credentials: "include" });
       if (res.ok) {
         const data = await res.json() as { sessions: SessionSummary[] };
         setSessions(data.sessions ?? []);
@@ -373,7 +373,8 @@ export default function GuardianAiWidget() {
         await fetch(`${API_BASE}/api/ai/sessions`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: getGuestEmail() }),
+          body: JSON.stringify({}),
+          credentials: "include",
         });
       } catch { /* ignore */ }
     }
@@ -389,7 +390,7 @@ export default function GuardianAiWidget() {
     setViewSession({ id, title, messages: [] });
     try {
       const email = getGuestEmail();
-      const res = await fetch(`${API_BASE}/api/ai/sessions/${id}?email=${encodeURIComponent(email)}`);
+      const res = await fetch(`${API_BASE}/api/ai/sessions/${id}`, { credentials: "include" });
       if (res.ok) {
         const data = await res.json() as { messages: Array<{ role: string; content: string; timestamp?: string }> };
         const msgs: Message[] = (data.messages ?? []).map((m, idx) => ({
@@ -410,7 +411,8 @@ export default function GuardianAiWidget() {
       await fetch(`${API_BASE}/api/ai/sessions/resume`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, sessionId: sess.id }),
+        body: JSON.stringify({ sessionId: sess.id }),
+        credentials: "include",
       });
     } catch { /* ignore */ }
     finally { setSessLoading(false); }
@@ -425,7 +427,7 @@ export default function GuardianAiWidget() {
     setSessions((prev) => prev.filter((s) => s.id !== id));
     try {
       const email = getGuestEmail();
-      await fetch(`${API_BASE}/api/ai/sessions/${id}?email=${encodeURIComponent(email)}`, { method: "DELETE" });
+      await fetch(`${API_BASE}/api/ai/sessions/${id}`, { method: "DELETE", credentials: "include" });
     } catch { /* ignore */ }
   }, []);
 
@@ -452,7 +454,8 @@ export default function GuardianAiWidget() {
       const res = await fetch(`${API_BASE}/api/ai/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, email }),
+        body: JSON.stringify({ message: text }),
+        credentials: "include",
         signal: ctrl.signal,
       });
 

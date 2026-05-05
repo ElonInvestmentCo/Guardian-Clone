@@ -1,5 +1,4 @@
-import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
-import { useState, useEffect } from "react";
+import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GuardianToaster } from "@/lib/guardian-toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +8,9 @@ import { NavigationLoader } from "@/components/NavigationLoader";
 import { OnboardingProvider } from "@/lib/onboarding/OnboardingContext";
 import { OnboardingGuard } from "@/lib/onboarding/OnboardingGuard";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { SocketProvider } from "@/context/SocketContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import AntiScrape from "@/components/AntiScrape";
 import NeedHelpCard from "@/components/NeedHelpCard";
 import GuardianAiWidget from "@/components/GuardianAiWidget";
@@ -59,18 +61,6 @@ import Sessions from "@/pages/analytics/Sessions";
 import Insights from "@/pages/analytics/Insights";
 
 const queryClient = new QueryClient();
-
-function AuthGatedAiWidget() {
-  const [location] = useLocation();
-  const [authed, setAuthed] = useState(() => !!sessionStorage.getItem("signupEmail"));
-
-  useEffect(() => {
-    setAuthed(!!sessionStorage.getItem("signupEmail"));
-  }, [location]);
-
-  if (!authed) return null;
-  return <GuardianAiWidget />;
-}
 
 function Router() {
   return (
@@ -131,19 +121,43 @@ function Router() {
       <Route path="/kyc/resubmit" component={KycResubmit} />
       <Route path="/kyc/reviewing" component={KycReviewing} />
 
-      {/* ── Dashboard ─────────────────────────────────────────────────── */}
-      <Route path="/dashboard" component={DashboardOverview} />
-      <Route path="/markets" component={DashboardMarkets} />
-      <Route path="/positions" component={DashboardPositions} />
-      <Route path="/orders" component={DashboardOrders} />
-      <Route path="/portfolio" component={DashboardPortfolio} />
-      <Route path="/statements" component={DashboardStatements} />
-      <Route path="/notifications" component={DashboardNotifications} />
-      <Route path="/settings" component={DashboardSettings} />
-      <Route path="/profile" component={DashboardProfile} />
-      <Route path="/billing" component={DashboardBilling} />
-      <Route path="/activity" component={DashboardActivity} />
-      <Route path="/support" component={DashboardSupport} />
+      {/* ── Dashboard — all routes protected by JWT cookie auth ────────── */}
+      <Route path="/dashboard">
+        {() => <ProtectedRoute><DashboardOverview /></ProtectedRoute>}
+      </Route>
+      <Route path="/markets">
+        {() => <ProtectedRoute><DashboardMarkets /></ProtectedRoute>}
+      </Route>
+      <Route path="/positions">
+        {() => <ProtectedRoute><DashboardPositions /></ProtectedRoute>}
+      </Route>
+      <Route path="/orders">
+        {() => <ProtectedRoute><DashboardOrders /></ProtectedRoute>}
+      </Route>
+      <Route path="/portfolio">
+        {() => <ProtectedRoute><DashboardPortfolio /></ProtectedRoute>}
+      </Route>
+      <Route path="/statements">
+        {() => <ProtectedRoute><DashboardStatements /></ProtectedRoute>}
+      </Route>
+      <Route path="/notifications">
+        {() => <ProtectedRoute><DashboardNotifications /></ProtectedRoute>}
+      </Route>
+      <Route path="/settings">
+        {() => <ProtectedRoute><DashboardSettings /></ProtectedRoute>}
+      </Route>
+      <Route path="/profile">
+        {() => <ProtectedRoute><DashboardProfile /></ProtectedRoute>}
+      </Route>
+      <Route path="/billing">
+        {() => <ProtectedRoute><DashboardBilling /></ProtectedRoute>}
+      </Route>
+      <Route path="/activity">
+        {() => <ProtectedRoute><DashboardActivity /></ProtectedRoute>}
+      </Route>
+      <Route path="/support">
+        {() => <ProtectedRoute><DashboardSupport /></ProtectedRoute>}
+      </Route>
 
       {/* ── Analytics ─────────────────────────────────────────────────── */}
       <Route path="/analytics" component={Dashboard} />
@@ -164,24 +178,33 @@ function App() {
       <TooltipProvider>
         <LoadingProvider>
           <ThemeProvider>
-            <WouterRouter base={import.meta.env.BASE_URL?.replace(/\/$/, "") ?? "/"}>
-              <OnboardingProvider>
-                <ScrollAndFormReset />
-                <NavigationLoader />
-                <Router />
-              </OnboardingProvider>
-              <AuthGatedAiWidget />
-            </WouterRouter>
-            <NeedHelpCard />
-            <AntiScrape />
-            <PageLoader />
-            <GuardianToaster />
-
+            <AuthProvider>
+              <SocketProvider>
+                <WouterRouter base={import.meta.env.BASE_URL?.replace(/\/$/, "") ?? "/"}>
+                  <OnboardingProvider>
+                    <ScrollAndFormReset />
+                    <NavigationLoader />
+                    <Router />
+                  </OnboardingProvider>
+                  <AuthGatedAiWidget />
+                </WouterRouter>
+                <NeedHelpCard />
+                <AntiScrape />
+                <PageLoader />
+                <GuardianToaster />
+              </SocketProvider>
+            </AuthProvider>
           </ThemeProvider>
         </LoadingProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
+}
+
+function AuthGatedAiWidget() {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) return null;
+  return <GuardianAiWidget />;
 }
 
 export default App;

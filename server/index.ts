@@ -2,6 +2,8 @@ import "dotenv/config";
 import http from "http";
 import app from "./app.js";
 import { createWebSocketServer } from "./lib/realtime.js";
+import { createSocketIOServer } from "./lib/socketServer.js";
+import { startAiAlertEngine } from "./lib/aiAlertEngine.js";
 import { setupAdminCredentials } from "./lib/setupAdmin.js";
 import { initDatabase } from "./lib/db.js";
 import { checkEmailConfig } from "./lib/mailer.js";
@@ -27,6 +29,8 @@ async function start() {
 
   const server = http.createServer(app);
   createWebSocketServer(server);
+  createSocketIOServer(server);
+  startAiAlertEngine();
   server.listen(port, "0.0.0.0", () => {
     console.log(`Server listening on 0.0.0.0:${port}`);
   });

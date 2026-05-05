@@ -6,8 +6,8 @@ import {
   saveCurrentAsSession, listSessions, getSession, deleteSession, restoreSession,
 } from "../../lib/ai/chatStore.js";
 import { aiChatLimit } from "../../middleware/security.js";
-import { validate, AiChatSchema, AuthCheckEmailSchema } from "../../lib/validation.js";
 import { getUserBalance, getUserData } from "../../lib/userDataStore.js";
+import { requireUser } from "../../middleware/requireUser.js";
 
 let marketsCache: { data: LiveMarketData; ts: number } | null = null;
 const MARKET_CACHE_TTL = 60_000;
@@ -41,9 +41,14 @@ async function getLiveMarketData(): Promise<LiveMarketData | undefined> {
 
 const router = Router();
 
-router.post("/ai/chat", aiChatLimit, validate(AiChatSchema), async (req: Request, res: Response): Promise<void> => {
+router.post("/ai/chat", requireUser, aiChatLimit, async (req: Request, res: Response): Promise<void> => {
   try {
-    const { message, email } = req.body as { message: string; email: string };
+    const email = req.user!.email;
+    const { message } = req.body as { message?: string; email?: string };
+    if (!message || typeof message !== "string" || !message.trim()) {
+      res.status(400).json({ error: "message is required" });
+      return;
+    }
 
     await appendMessage(email, "user", message);
 
@@ -122,9 +127,9 @@ router.post("/ai/chat", aiChatLimit, validate(AiChatSchema), async (req: Request
   }
 });
 
-router.get("/ai/history", validate(AuthCheckEmailSchema), async (req: Request, res: Response): Promise<void> => {
+router.get("/ai/history", requireUser, async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email } = (req as unknown as { validatedQuery: { email: string } }).validatedQuery;
+    const email = req.user!.email;
     const conv = await getConversation(email);
     res.json({
       id: conv.id,
@@ -136,9 +141,9 @@ router.get("/ai/history", validate(AuthCheckEmailSchema), async (req: Request, r
   }
 });
 
-router.post("/ai/clear", validate(AuthCheckEmailSchema), async (req: Request, res: Response): Promise<void> => {
+router.post("/ai/clear", requireUser, async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email } = req.body as { email: string };
+    const email = req.user!.email;
     await clearConversation(email);
     res.json({ success: true });
   } catch (err) {
@@ -149,13 +154,9 @@ router.post("/ai/clear", validate(AuthCheckEmailSchema), async (req: Request, re
 
 /* ── Conversation sessions ──────────────────────────────────────── */
 
-router.get("/ai/sessions", async (req: Request, res: Response): Promise<void> => {
+router.get("/ai/sessions", requireUser, async (req: Request, res: Response): Promise<void> => {
   try {
-    const email = req.query.email as string | undefined;
-    if (!email || typeof email !== "string" || !email.includes("@")) {
-      res.status(400).json({ error: "Valid email required" });
-      return;
-    }
+    const email = req.user!.email;
     const sessions = await listSessions(email.toLowerCase().trim());
     res.json({ sessions });
   } catch (err) {
@@ -164,14 +165,9 @@ router.get("/ai/sessions", async (req: Request, res: Response): Promise<void> =>
   }
 });
 
-router.post("/ai/sessions", async (req: Request, res: Response): Promise<void> => {
+router.post("/ai/sessions", requireUser, async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email } = req.body as { email: string };
-    if (!email || typeof email !== "string" || !email.includes("@")) {
-      res.status(400).json({ error: "Valid email required" });
-      return;
-    }
-    const normalEmail = email.toLowerCase().trim();
+    const normalEmail = req.user!.email.toLowerCase().trim();
     const sessionId = await saveCurrentAsSession(normalEmail);
     if (sessionId) {
       await clearConversation(normalEmail);
@@ -183,14 +179,14 @@ router.post("/ai/sessions", async (req: Request, res: Response): Promise<void> =
   }
 });
 
-router.post("/ai/sessions/resume", async (req: Request, res: Response): Promise<void> => {
+router.post("/ai/sessions/resume", requireUser, async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email, sessionId } = req.body as { email: string; sessionId: string };
-    if (!email || !sessionId) {
-      res.status(400).json({ error: "email and sessionId required" });
+    const { sessionId } = req.body as { sessionId?: string };
+    if (!sessionId) {
+      res.status(400).json({ error: "sessionId required" });
       return;
     }
-    const normalEmail = email.toLowerCase().trim();
+    const normalEmail = req.user!.email.toLowerCase().trim();
     const messages = await restoreSession(normalEmail, sessionId);
     res.json({ messages });
   } catch (err) {
@@ -199,14 +195,10 @@ router.post("/ai/sessions/resume", async (req: Request, res: Response): Promise<
   }
 });
 
-router.get("/ai/sessions/:id", async (req: Request, res: Response): Promise<void> => {
+router.get("/ai/sessions/:id", requireUser, async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const email = req.query.email as string | undefined;
-    if (!email || typeof email !== "string" || !email.includes("@")) {
-      res.status(400).json({ error: "Valid email required" });
-      return;
-    }
+    const email = req.user!.email;
     const session = await getSession(id, email.toLowerCase().trim());
     if (!session) {
       res.status(404).json({ error: "Session not found" });
@@ -219,14 +211,10 @@ router.get("/ai/sessions/:id", async (req: Request, res: Response): Promise<void
   }
 });
 
-router.delete("/ai/sessions/:id", async (req: Request, res: Response): Promise<void> => {
+router.delete("/ai/sessions/:id", requireUser, async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const email = req.query.email as string | undefined;
-    if (!email || typeof email !== "string" || !email.includes("@")) {
-      res.status(400).json({ error: "Valid email required" });
-      return;
-    }
+    const email = req.user!.email;
     await deleteSession(id, email.toLowerCase().trim());
     res.json({ success: true });
   } catch (err) {

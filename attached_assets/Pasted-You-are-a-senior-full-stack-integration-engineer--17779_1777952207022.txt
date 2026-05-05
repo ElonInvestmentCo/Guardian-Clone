@@ -1,0 +1,138 @@
+You are a senior full-stack integration engineer.
+
+====================================================
+GOAL
+====================================================
+Integrate the repository:
+https://github.com/ElonInvestmentCo/guardian-trading
+
+into my existing SaaS project:
+Guardian-Clone (already cloned and running)
+
+DO NOT recreate or overwrite the existing SaaS structure.
+
+====================================================
+CRITICAL RULE
+====================================================
+❌ DO NOT re-clone or re-merge Guardian-Clone
+✔ ONLY integrate guardian-trading into the existing project
+
+Guardian-Clone = MAIN SaaS PLATFORM (auth + UI + dashboard)
+guardian-trading = AI TRADING ENGINE MODULE ONLY
+
+====================================================
+STEP 1: CLONE ONLY REQUIRED REPO
+====================================================
+
+Run:
+git clone https://github.com/ElonInvestmentCo/guardian-trading
+
+Then DO NOT run it as a standalone app.
+
+====================================================
+STEP 2: EXTRACT ONLY CORE LOGIC
+====================================================
+
+From guardian-trading, extract ONLY:
+
+✔ Trading engine logic
+✔ AI signal generation system
+✔ Market analysis modules
+✔ Risk management logic
+✔ Margin call detection logic
+
+❌ DO NOT copy:
+- its UI
+- its auth system
+- its routing system
+- its full frontend app (if exists)
+
+====================================================
+STEP 3: INTEGRATION INTO EXISTING PROJECT
+====================================================
+
+Place extracted logic into:
+
+/server/modules/guardian-trading/
+
+or
+
+/backend/modules/guardian-trading/
+
+depending on structure.
+
+====================================================
+STEP 4: CONNECT TO EXISTING API LAYER
+====================================================
+
+Expose functionality through existing backend routes:
+
+/api/ai/signals
+/api/ai/margin-call
+/api/trading/execute
+/api/trading/status
+
+All endpoints must:
+- Use existing JWT authentication
+- Use /api/auth/me verification system
+- Be protected by backend middleware
+
+====================================================
+STEP 5: FRONTEND INTEGRATION RULES
+====================================================
+
+- DO NOT modify existing routing system
+- DO NOT replace current UI or dashboard
+- DO NOT break SaaS layout
+
+ONLY integrate results into existing UI components:
+
+- Dashboard widgets
+- AI alert panel
+- Notification center
+- Trading status cards
+
+Guardian Trading AI UI must remain:
+✔ inside authenticated layout only
+✔ behind ProtectedRoute system
+
+====================================================
+STEP 6: SECURITY REQUIREMENTS
+====================================================
+
+- All trading/AI endpoints must require JWT authentication
+- NEVER allow public access to:
+  /api/ai/*
+  /api/trading/*
+
+- Use existing:
+  - verifyJWT middleware
+  - /api/auth/me session validation
+
+- NEVER expose API keys or secrets in frontend
+
+====================================================
+STEP 7: UI/UX RULES
+====================================================
+
+Maintain existing SaaS design system:
+
+- Pure black & white theme
+  - #ffffff background
+  - #000000 text
+- Minimal enterprise dashboard style
+- Clean card-based layout
+- Smooth transitions only
+- No design override from cloned repo
+
+====================================================
+STEP 8: FINAL RESULT
+====================================================
+
+A single unified SaaS platform:
+
+✔ Guardian-Clone = full SaaS app (auth + UI + dashboard)
+✔ guardian-trading = embedded AI trading engine
+✔ Secure JWT authentication system intact
+✔ Real-time trading AI features integrated
+✔ No duplicate apps or conflicting systems

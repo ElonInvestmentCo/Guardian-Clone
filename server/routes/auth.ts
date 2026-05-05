@@ -1,14 +1,89 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import jwt from "jsonwebtoken";
 import { sendVerificationEmail, sendPasswordResetEmail } from "../lib/mailer.js";
-import { saveUserCredentials, getStoredPasswordHash, getUserData, addAdminNotification } from "../lib/userDataStore.js";
+import { saveUserCredentials, getStoredPasswordHash, getUserData, addAdminNotification, getCompletedStepNumbers, getProfilePicture, getUserProfileData } from "../lib/userDataStore.js";
 import { sensitiveEndpointLimit } from "../middleware/security.js";
 import { validate, AuthLoginSchema, AuthRegisterSchema, AuthCheckEmailSchema, AuthSendVerificationSchema, AuthVerifyCodeSchema, AuthResetPasswordSchema } from "../lib/validation.js";
 import { logSecurity } from "../lib/securityLogger.js";
 import { query } from "../lib/db.js";
 import { broadcastAdmin } from "../lib/realtime.js";
 import { notifyNewUser } from "../lib/adminNotifier.js";
+
+const JWT_EXPIRY = "7d";
+const COOKIE_NAME = "guardian_session";
+
+function getUserJwtSecret(): string {
+  const secret = process.env.SESSION_SECRET ?? process.env.ADMIN_JWT_SECRET;
+  if (!secret && process.env.NODE_ENV === "production") {
+    throw new Error("[Auth] SESSION_SECRET is required in production");
+  }
+  return secret ?? "guardian-user-dev-secret-fallback-v1";
+}
+
+function setSessionCookie(res: import("express").Response, token: string): void {
+  const IS_PROD = process.env.NODE_ENV === "production";
+  res.cookie(COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: IS_PROD,
+    sameSite: IS_PROD ? "strict" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: "/",
+  });
+}
+
+async function buildUserMePayload(email: string): Promise<Record<string, unknown> | null> {
+  const userData = await getUserData(email);
+  if (!userData) return null;
+
+  const [completedSteps, profilePic, profile] = await Promise.all([
+    getCompletedStepNumbers(email),
+    getProfilePicture(email),
+    getUserProfileData(email),
+  ]);
+
+  const status = (userData["status"] as string) ?? "pending";
+  const totalSteps = 12;
+  const kycComplete = completedSteps.length >= totalSteps;
+
+  const settings = (profile["_settings"] as Record<string, unknown>) ?? {};
+  const personalStep = (profile["personal"] as Record<string, unknown>) ?? {};
+  const notifPrefs = (profile["_notificationPreferences"] as Record<string, unknown>) ?? {};
+  const twoFAData = (profile["_2fa"] as Record<string, unknown>) ?? {};
+
+  const str = (key: string, fallbackKey?: string): string =>
+    (settings[key] as string) || (fallbackKey ? (personalStep[fallbackKey] as string) : "") || "";
+
+  return {
+    email,
+    status,
+    kycComplete,
+    completedSteps,
+    totalSteps,
+    profilePicture: profilePic,
+    role: (userData["role"] as string) ?? "user",
+    settings: {
+      firstName: str("firstName", "firstName"),
+      lastName: str("lastName", "lastName"),
+      phone: str("phone", "phoneNumber"),
+      country: str("country", "country"),
+      state: str("state", "state"),
+      city: str("city", "city"),
+    },
+    notificationPreferences: {
+      tradeConfirmations: (notifPrefs["tradeConfirmations"] as boolean) ?? true,
+      priceAlerts: (notifPrefs["priceAlerts"] as boolean) ?? true,
+      orderFills: (notifPrefs["orderFills"] as boolean) ?? true,
+      marketOpen: (notifPrefs["marketOpen"] as boolean) ?? false,
+      marketClose: (notifPrefs["marketClose"] as boolean) ?? false,
+      weeklyReport: (notifPrefs["weeklyReport"] as boolean) ?? true,
+      promotions: (notifPrefs["promotions"] as boolean) ?? false,
+      securityAlerts: (notifPrefs["securityAlerts"] as boolean) ?? true,
+    },
+    twoFAEnabled: (twoFAData["enabled"] as boolean) ?? false,
+  };
+}
 
 const authRouter = Router();
 
@@ -151,11 +226,64 @@ authRouter.post("/auth/login", sensitiveEndpointLimit, validate(AuthLoginSchema)
     }
 
     logAttempt("LOGIN", email, "success");
+
+    const secret = getUserJwtSecret();
+    const token = jwt.sign(
+      { email, iss: "guardian-user", iat: Math.floor(Date.now() / 1000) },
+      secret,
+      { expiresIn: JWT_EXPIRY },
+    );
+    setSessionCookie(res, token);
+
     res.json({ success: true, email });
   } catch (err) {
     console.error("[Auth] LOGIN error:", err);
     res.status(500).json({ error: "Login failed. Please try again." });
   }
+});
+
+authRouter.get("/auth/me", async (req, res) => {
+  try {
+    const cookies = req.cookies as Record<string, string> | undefined;
+    const token = cookies?.[COOKIE_NAME];
+
+    if (!token) {
+      res.status(401).json({ error: "Not authenticated" });
+      return;
+    }
+
+    const secret = getUserJwtSecret();
+    let payload: { email?: string; iss?: string };
+    try {
+      payload = jwt.verify(token, secret) as { email?: string; iss?: string };
+    } catch {
+      res.clearCookie(COOKIE_NAME, { path: "/" });
+      res.status(401).json({ error: "Session expired. Please log in again." });
+      return;
+    }
+
+    if (payload.iss === "guardian-admin" || !payload.email) {
+      res.status(401).json({ error: "Not authenticated" });
+      return;
+    }
+
+    const userPayload = await buildUserMePayload(payload.email);
+    if (!userPayload) {
+      res.status(401).json({ error: "User not found" });
+      return;
+    }
+
+    res.json(userPayload);
+  } catch (err) {
+    console.error("[Auth] ME error:", err);
+    res.status(500).json({ error: "Failed to load user session" });
+  }
+});
+
+authRouter.post("/auth/logout", (req, res) => {
+  res.clearCookie(COOKIE_NAME, { path: "/" });
+  logAttempt("LOGOUT", "unknown", "session cookie cleared");
+  res.json({ success: true });
 });
 
 authRouter.post("/auth/send-verification", sensitiveEndpointLimit, validate(AuthSendVerificationSchema), async (req, res) => {

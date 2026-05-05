@@ -3,17 +3,18 @@
 A comprehensive financial trading platform with KYC/AML compliance, an admin dashboard, and an AI-powered trading assistant.
 
 ## Recent Changes
-- **Global location data expansion:** `client/lib/location/locationService.ts` — expanded from ~90 to 137 countries with state/province data, 701 unique city entries. New countries include all of South/Central America, Caribbean, sub-Saharan Africa, North Africa, Middle East, Central Asia, South/Southeast Asia, and Eastern/Northern Europe. Added `getStateLabel()` support for 30+ country-specific labels (Department, Province, Oblast, etc.).
-- **Shared SearchableSelect component:** `client/components/SearchableSelect.tsx` — new shared virtualized dropdown (max 50 items rendered, "Showing X of Y — type to filter" hint for large lists). Replaces identical inline definitions that were duplicated across all three onboarding pages. Mobile-friendly touch targets, keyboard-accessible search-while-open input.
-- **Onboarding pages deduplicated:** `PersonalDetails.tsx`, `ProfessionalDetails.tsx`, `IdInformation.tsx` — removed local `SearchableSelect` (and `ChevronDown` where safe) function bodies; all now import from the shared component. `ChevronDown` preserved in `IdInformation` for native `<select>` elements.
-- **Custom toast notifications:** `client/lib/guardian-toast.tsx` + `admin/lib/guardian-toast.tsx` — new pill-shaped dark toast system (matching design reference) replaces old Radix toaster in client and inline `actionMsg` state in admin. Supports success/error/warning/info variants with slide-up animation, auto-dismiss (4s), and hover-to-pause. Used via imperative `toast.success()/toast.error()` API across all pages in both apps.
-- **Fraud detection alerts:** `server/routes/fraud.ts` + `artifacts/api-server/src/routes/fraud.ts` — fraud engine now fires a high-risk email alert to `ADMIN_EMAIL` whenever a user scores ≥50 (high/critical), throttled to once per 24 hours per user.
-- **Critical fix — DB SSL:** `artifacts/api-server/src/lib/db.ts` — changed `rejectUnauthorized: true` to `rejectUnauthorized: false` to fix production database connection failures causing "Service temporarily unavailable" on login/signup.
-- **Production build:** All three artifacts built successfully (`guardian-trading/dist/public`, `admin-kyc/dist/public`, `api-server/dist/index.cjs`).
-- **Deposit/Withdraw Modal:** `Overview.tsx` — both buttons now open a fund request modal. Requests POST to `/api/user/fund-request`, creating an admin notification and a user confirmation notification.
-- **Fund Request Endpoint:** `server/routes/profile.ts` — new `POST /api/user/fund-request` endpoint, validated with `FundRequestSchema`.
-- **Security (Zod strict mode):** `server/lib/validation.ts` — `AuthLoginSchema` and `AuthRegisterSchema` now use `.strict()` to reject extra properties.
-- **New validation schema:** `FundRequestSchema` added to `server/lib/validation.ts`.
+- **JWT + HTTP-only cookie auth system:** `server/routes/auth.ts` — `POST /api/auth/login` now signs a 7-day JWT and sets it as an HTTP-only `guardian_session` cookie (SameSite=Lax in dev, Strict in prod). New `GET /api/auth/me` endpoint reads the cookie, verifies the JWT, and returns full user profile. New `POST /api/auth/logout` clears the cookie. JWT secret uses `SESSION_SECRET` env var (falls back to `ADMIN_JWT_SECRET`).
+- **requireUser middleware:** `server/middleware/requireUser.ts` — reads JWT from HTTP-only cookie or `Authorization: Bearer` header. Rejects admin tokens. Attaches `req.user = { email }` for protected routes.
+- **Protected AI routes:** All `/api/ai/chat`, `/api/ai/history`, `/api/ai/clear`, `/api/ai/sessions/*` endpoints now require `requireUser`. Email is sourced from the JWT, not the request body.
+- **AuthContext + useAuth hook:** `client/context/AuthContext.tsx` — React context that calls `GET /api/auth/me` on mount. Exposes `isAuthenticated`, `user`, `loading`, `refresh()`, `logout()`. Used throughout the dashboard.
+- **ProtectedRoute component:** `client/components/ProtectedRoute.tsx` — redirects to `/login` if not authenticated. Shows a shimmer skeleton during auth check.
+- **Dashboard gate rewritten:** `client/pages/dashboard/DashboardLayout.tsx` — email now sourced from `useAuth().user` (not sessionStorage). Logout calls `POST /api/auth/logout` to clear server-side cookie. All 12 dashboard routes in `App.tsx` are now wrapped with `<ProtectedRoute>`.
+- **Login page updated:** `client/pages/Login.tsx` — adds `credentials: "include"` to login and auth/me fetch calls. After login, calls `GET /api/auth/me` for user status routing.
+- **GuardianAiWidget secured:** `client/components/GuardianAiWidget.tsx` — all API fetch calls now include `credentials: "include"`. Widget is only rendered when `useAuth().isAuthenticated` is true.
+- **Socket.io real-time system:** `server/lib/socketServer.ts` — Socket.io server initialized on the same HTTP server as Express. JWT auth during handshake (reads `guardian_session` cookie). Users join `user:{email}` rooms on connect. Events: `ai:alert`, `ai:signal`, `trade:executed`, `account:balance_update`, `system:notification`.
+- **AI Alert Engine:** `server/lib/aiAlertEngine.ts` — periodic margin call detection (every 5 min). Functions: `emitTradeSignal()`, `emitMarginCall()`, `emitRiskAlert()`, `emitBalanceUpdate()`, `emitTradeExecuted()`, `emitSystemNotification()`.
+- **SocketContext:** `client/context/SocketContext.tsx` — connects Socket.io after `isAuthenticated` is true. Disconnects on logout. Shows toast alerts for `ai:alert`, `ai:signal`, `trade:executed`, and `system:notification` events.
+- **socket.io + socket.io-client** packages added (v4.8.3).
 
 ## Architecture
 
@@ -27,10 +28,10 @@ This is a **pnpm monorepo** with three main services running in parallel:
 
 ## Key Technologies
 - **Frontend:** React 19, Vite, Tailwind CSS 4, TanStack Query, Wouter, Radix UI
-- **Backend:** Node.js, Express 5, Drizzle ORM, PostgreSQL, WebSockets
-- **AI:** OpenAI SDK (trading assistant, fraud detection)
+- **Backend:** Node.js, Express 5, Drizzle ORM, PostgreSQL, WebSockets, Socket.io v4
+- **AI:** OpenAI SDK (trading assistant, fraud detection, real-time alerts)
 - **Email:** Resend
-- **Auth:** JWT, bcryptjs, otplib (2FA)
+- **Auth:** JWT HTTP-only cookies (`guardian_session`), bcryptjs, otplib (2FA)
 
 ## Workspace Structure
 ```
@@ -59,6 +60,7 @@ All three workflows run in parallel via the "Project" button:
 ## Environment Variables
 - `DATABASE_URL` — PostgreSQL connection string (auto-provided by Replit PostgreSQL module)
 - `PORT` — Set per workflow (3001 for API, 5000 for client, 8080 for admin)
+- `SESSION_SECRET` — Secret for signing user JWT session cookies (REQUIRED in prod; falls back to `ADMIN_JWT_SECRET`)
 - `ADMIN_JWT_SECRET`, `ADMIN_SECRET`, `INTERNAL_API_KEY`, `USER_DATA_KEY` — Auth secrets (set in .replit userenv)
 - `CMC_API_KEY` — CoinMarketCap API key
 - `AI_INTEGRATIONS_OPENAI_API_KEY` — Managed by Replit OpenAI integration (auto-provided)
