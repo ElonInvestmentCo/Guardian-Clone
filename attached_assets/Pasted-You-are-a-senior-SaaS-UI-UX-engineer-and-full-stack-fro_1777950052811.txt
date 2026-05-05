@@ -1,0 +1,62 @@
+You are a senior SaaS UI/UX engineer and full-stack frontend designer.
+
+TASK:
+After a user successfully signs in or signs up, automatically redirect them into a personalized account dashboard system. The UI must switch from public/auth pages to a private authenticated account experience.
+
+DESIGN REQUIREMENTS:
+- Build a modern SaaS-style UI
+- Use a clean, minimal aesthetic with ONLY these colors:
+  - Primary: #ffffff (white)
+  - Secondary/Text: #000000 (black)
+- Use subtle shadows, spacing, and grid layouts for a premium feel
+- Mobile-first responsive design (must work perfectly on phone, tablet, desktop)
+
+AUTH FLOW LOGIC:
+1. User signs up or logs in successfully
+2. System verifies authentication token/session
+3. Immediately redirect user to /dashboard (or account home)
+4. Replace public UI with authenticated account UI (no overlap)
+
+ACCOUNT UI STRUCTURE (ALL PAGES REQUIRED):
+Create a full SaaS dashboard system including:
+
+- /dashboard (main overview page with stats cards)
+- /profile (user profile & settings)
+- /settings (account settings, security, password, preferences)
+- /billing (subscription plan, invoices, upgrade/downgrade)
+- /notifications (alerts, system messages)
+- /activity (login history, system logs)
+- /support (help center, contact support)
+- /logout (secure session termination)
+
+DASHBOARD FEATURES:
+- Sidebar navigation (collapsible)
+- Top navbar with user avatar + dropdown menu
+- Real-time session state handling
+- Persistent authentication across refresh
+- Clean card-based layout for analytics
+- Smooth page transitions (SPA behavior preferred)
+
+UX REQUIREMENTS:
+- Seamless transition from login → dashboard (no reload flicker)
+- Show loading state while verifying session
+- Display user-specific data dynamically
+- Prevent unauthenticated access to private routes
+- Auto-redirect to login if session expires
+
+TECH REQUIREMENTS (ASSUMED):
+- SaaS-ready architecture
+- Component-based structure (React/Vue/Next.js style preferred)
+- Protected routes middleware
+- Token-based authentication (JWT or session cookies)
+- Scalable folder structure for pages/modules
+
+BONUS ENHANCEMENTS:
+- Dark-mode ready architecture (even if not enabled yet)
+- Animated sidebar transitions
+- Notification badges
+- Reusable UI components system
+- Clean API integration layer for user data
+
+GOAL:
+Deliver a production-ready SaaS dashboard system with a modern black-and-white UI that activates immediately after authentication and provides a complete account management experience.

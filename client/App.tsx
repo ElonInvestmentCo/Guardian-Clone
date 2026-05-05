@@ -44,6 +44,10 @@ import DashboardPortfolio from "@/pages/dashboard/Portfolio";
 import DashboardStatements from "@/pages/dashboard/Statements";
 import DashboardNotifications from "@/pages/dashboard/Notifications";
 import DashboardSettings from "@/pages/dashboard/Settings";
+import DashboardProfile from "@/pages/dashboard/Profile";
+import DashboardBilling from "@/pages/dashboard/Billing";
+import DashboardActivity from "@/pages/dashboard/Activity";
+import DashboardSupport from "@/pages/dashboard/Support";
 import KycResubmit from "@/pages/KycResubmit";
 import KycReviewing from "@/pages/KycReviewing";
 import NotFound from "@/pages/not-found";
@@ -136,6 +140,10 @@ function Router() {
       <Route path="/statements" component={DashboardStatements} />
       <Route path="/notifications" component={DashboardNotifications} />
       <Route path="/settings" component={DashboardSettings} />
+      <Route path="/profile" component={DashboardProfile} />
+      <Route path="/billing" component={DashboardBilling} />
+      <Route path="/activity" component={DashboardActivity} />
+      <Route path="/support" component={DashboardSupport} />
 
       {/* ── Analytics ─────────────────────────────────────────────────── */}
       <Route path="/analytics" component={Dashboard} />

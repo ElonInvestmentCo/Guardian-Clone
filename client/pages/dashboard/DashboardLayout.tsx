@@ -6,22 +6,31 @@ import {
   LayoutDashboard, Briefcase, ShoppingCart, PieChart,
   FileText, Settings, LogOut, Sun, Moon, Search, Bell,
   TrendingUp, TrendingDown, ChevronDown, BarChart3,
-  MessageCircle,
+  MessageCircle, User, CreditCard, Activity, HelpCircle,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 
 const LOGO_URL = "https://assets.guardiiantrading.com/logo.svg";
 
-const NAV = [
-  { icon: LayoutDashboard, label: "Dashboard",     href: "/dashboard"     },
-  { icon: BarChart3,       label: "Markets",        href: "/markets"       },
-  { icon: Briefcase,       label: "Positions",      href: "/positions"     },
-  { icon: ShoppingCart,    label: "Orders",         href: "/orders"        },
-  { icon: PieChart,        label: "Portfolio",      href: "/portfolio"     },
-  { icon: FileText,        label: "Statements",     href: "/statements"    },
-  { icon: Bell,            label: "Notifications",  href: "/notifications" },
-  { icon: Settings,        label: "Settings",       href: "/settings"      },
+const TRADING_NAV = [
+  { icon: LayoutDashboard, label: "Dashboard",    href: "/dashboard"     },
+  { icon: BarChart3,       label: "Markets",       href: "/markets"       },
+  { icon: Briefcase,       label: "Positions",     href: "/positions"     },
+  { icon: ShoppingCart,    label: "Orders",        href: "/orders"        },
+  { icon: PieChart,        label: "Portfolio",     href: "/portfolio"     },
+  { icon: FileText,        label: "Statements",    href: "/statements"    },
 ];
+
+const ACCOUNT_NAV = [
+  { icon: Bell,        label: "Notifications", href: "/notifications" },
+  { icon: User,        label: "Profile",       href: "/profile"       },
+  { icon: CreditCard,  label: "Billing",       href: "/billing"       },
+  { icon: Activity,    label: "Activity",      href: "/activity"      },
+  { icon: HelpCircle,  label: "Support",       href: "/support"       },
+  { icon: Settings,    label: "Settings",      href: "/settings"      },
+];
+
+const NAV = [...TRADING_NAV, ...ACCOUNT_NAV];
 
 interface TickerItem {
   symbol: string;
@@ -152,25 +161,45 @@ export default function DashboardLayout({ children }: Props) {
           </Link>
         </div>
 
-        <nav className="flex flex-col gap-0.5 flex-1" style={{ padding: "8px 12px" }}>
-          {NAV.map(({ icon: Icon, label, href }) => {
+        <nav className="flex flex-col flex-1 overflow-y-auto" style={{ padding: "8px 12px", gap: 0 }}>
+          <p style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: colors.sidebarTextMuted, padding: "4px 12px 6px", marginBottom: "2px" }}>Trading</p>
+          {TRADING_NAV.map(({ icon: Icon, label, href }) => {
             const isActive = location === href || (href !== "/dashboard" && location.startsWith(href));
             return (
               <Link key={label} href={href}>
                 <div
                   className="flex items-center gap-3 rounded-lg cursor-pointer"
-                  style={{
-                    padding: "10px 12px",
-                    background: isActive ? colors.sidebarItemActiveBg : "transparent",
-                    color: isActive ? colors.sidebarItemActive : colors.sidebarText,
-                    transition: "all 0.15s ease",
-                  }}
+                  style={{ padding: "9px 12px", background: isActive ? colors.sidebarItemActiveBg : "transparent", color: isActive ? colors.sidebarItemActive : colors.sidebarText, transition: "all 0.15s ease" }}
                   onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = colors.sidebarItemHover; }}
                   onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
                 >
-                  <Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />
-                  <span style={{ fontSize: "13.5px", fontWeight: isActive ? 600 : 400, letterSpacing: "-0.01em" }}>{label}</span>
+                  <Icon size={17} strokeWidth={isActive ? 2.2 : 1.8} />
+                  <span style={{ fontSize: "13px", fontWeight: isActive ? 600 : 400, letterSpacing: "-0.01em" }}>{label}</span>
                   {isActive && <div style={{ marginLeft: "auto", width: "4px", height: "4px", borderRadius: "50%", background: colors.sidebarItemActive }} />}
+                </div>
+              </Link>
+            );
+          })}
+          <div style={{ height: "1px", background: colors.sidebarBorder, margin: "8px 0" }} />
+          <p style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: colors.sidebarTextMuted, padding: "4px 12px 6px", marginBottom: "2px" }}>Account</p>
+          {ACCOUNT_NAV.map(({ icon: Icon, label, href }) => {
+            const isActive = location === href || (href !== "/dashboard" && location.startsWith(href));
+            return (
+              <Link key={label} href={href}>
+                <div
+                  className="flex items-center gap-3 rounded-lg cursor-pointer"
+                  style={{ padding: "9px 12px", background: isActive ? colors.sidebarItemActiveBg : "transparent", color: isActive ? colors.sidebarItemActive : colors.sidebarText, transition: "all 0.15s ease" }}
+                  onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = colors.sidebarItemHover; }}
+                  onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+                >
+                  <Icon size={17} strokeWidth={isActive ? 2.2 : 1.8} />
+                  <span style={{ fontSize: "13px", fontWeight: isActive ? 600 : 400, letterSpacing: "-0.01em" }}>{label}</span>
+                  {label === "Notifications" && unreadCount > 0 && (
+                    <span className="ml-auto flex items-center justify-center rounded-full text-white" style={{ width: "16px", height: "16px", background: colors.red, fontSize: "9px", fontWeight: 700 }}>
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                  {isActive && label !== "Notifications" && <div style={{ marginLeft: "auto", width: "4px", height: "4px", borderRadius: "50%", background: colors.sidebarItemActive }} />}
                 </div>
               </Link>
             );
@@ -311,13 +340,27 @@ export default function DashboardLayout({ children }: Props) {
           background: colors.sidebar,
           paddingBottom: "env(safe-area-inset-bottom, 0px)",
         }}>
-          {NAV.map(({ icon: Icon, label, href }) => {
+          {[
+            { icon: LayoutDashboard, label: "Home",      href: "/dashboard"     },
+            { icon: BarChart3,       label: "Markets",   href: "/markets"       },
+            { icon: PieChart,        label: "Portfolio", href: "/portfolio"     },
+            { icon: Bell,            label: "Alerts",    href: "/notifications" },
+            { icon: User,            label: "Account",   href: "/profile"       },
+          ].map(({ icon: Icon, label, href }) => {
             const isActive = location === href || (href !== "/dashboard" && location.startsWith(href));
             return (
               <Link key={label} href={href}
                 className="flex flex-1 flex-col items-center gap-0.5 py-2"
                 style={{ color: isActive ? colors.accent : colors.textMuted, textDecoration: "none", background: "none" }}>
-                <Icon size={18} strokeWidth={isActive ? 2.2 : 1.5} />
+                <div className="relative">
+                  <Icon size={18} strokeWidth={isActive ? 2.2 : 1.5} />
+                  {label === "Alerts" && unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex items-center justify-center rounded-full text-white"
+                      style={{ width: "12px", height: "12px", background: colors.red, fontSize: "7px", fontWeight: 700 }}>
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                </div>
                 <span style={{ fontSize: "9px", fontWeight: isActive ? 700 : 400 }}>{label}</span>
               </Link>
             );

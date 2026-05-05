@@ -1,0 +1,195 @@
+You are a senior SaaS frontend + backend architect.
+
+====================================================
+GOAL
+====================================================
+Refactor the application so that "Guardian Trading AI" is completely hidden from all public pages and only accessible after fully verified authentication.
+
+This must be a production-grade secure SaaS architecture using JWT + HTTP-only cookies + backend session verification.
+
+====================================================
+AUTH SYSTEM (MANDATORY - NO FRONTEND STORAGE AUTH)
+====================================================
+
+❌ DO NOT use sessionStorage or localStorage for authentication
+
+User is considered authenticated ONLY when:
+- A valid JWT exists in HTTP-only cookies OR Authorization header
+- AND backend confirms validity via session verification endpoint
+
+====================================================
+1. CENTRAL AUTH SYSTEM
+====================================================
+
+Create a reusable hook:
+
+useAuth()
+
+It must return:
+{
+  isAuthenticated: boolean,
+  user: object | null,
+  loading: boolean
+}
+
+AUTH BEHAVIOR:
+- On app startup, always call:
+  GET /api/auth/me
+- Backend verifies JWT and session validity
+- Returns user if valid, otherwise returns 401
+
+Frontend must rely ONLY on this response.
+
+====================================================
+2. BACKEND AUTH VERIFICATION (CRITICAL)
+====================================================
+
+Create endpoint:
+
+GET /api/auth/me
+
+Backend must:
+- Read JWT from HTTP-only cookie or Authorization header
+- Verify JWT signature
+- Validate session (if stored in DB)
+- Return:
+  { user } if valid
+  401 Unauthorized if invalid
+
+====================================================
+3. JWT + COOKIE SECURITY SYSTEM
+====================================================
+
+Authentication flow:
+
+Login / Signup:
+- Backend generates JWT
+- Stores it in HTTP-only cookie
+- Cookie settings:
+  - HttpOnly: true
+  - Secure: true
+  - SameSite: Strict or Lax
+
+Logout:
+- Backend clears cookie securely
+
+IMPORTANT:
+- NEVER expose JWT to frontend JavaScript
+- NEVER store auth token in sessionStorage/localStorage
+
+====================================================
+4. ROUTE PROTECTION (FRONTEND)
+====================================================
+
+Create ProtectedRoute wrapper:
+
+Logic:
+- If loading → show loading UI
+- If not authenticated → redirect to /login
+- If authenticated → render protected page
+
+====================================================
+5. SERVER-SIDE ROUTE GUARDS (MANDATORY)
+====================================================
+
+All sensitive API routes must be protected:
+
+- /api/user/*
+- /api/ai/*
+- /api/dashboard/*
+- /api/billing/*
+- /api/settings/*
+
+Middleware required:
+- verifyJWT middleware
+- reject unauthorized requests with 401
+- NEVER trust frontend state for security
+
+====================================================
+6. AI COMPONENT GATING RULE
+====================================================
+
+"Guardian Trading AI" must:
+
+❌ NEVER appear in public routes:
+  /, /about, /platforms, /login, /signup
+
+✅ ONLY appear when:
+- Backend-authenticated user exists
+- useAuth().isAuthenticated === true
+
+It must ONLY exist inside the authenticated layout tree.
+
+====================================================
+7. UI ARCHITECTURE (SaaS STRUCTURE)
+====================================================
+
+PUBLIC LAYOUT:
+- Landing page
+- Marketing pages
+- Login / Signup
+- NO AI component
+- NO dashboard features
+
+AUTHENTICATED LAYOUT:
+- Sidebar navigation
+- Dashboard
+- Profile page
+- Settings page
+- Billing page
+- Guardian Trading AI enabled
+
+====================================================
+8. UI DESIGN SYSTEM
+====================================================
+
+- SaaS modern enterprise UI
+- Strict black & white theme:
+  - #ffffff backgrounds
+  - #000000 text
+- Minimal, clean layout
+- Card-based dashboard design
+- Smooth transitions between states
+- Loading skeletons during auth check
+
+====================================================
+9. AUTH BEHAVIOR FLOW (IMPORTANT CHANGE)
+====================================================
+
+- App loads → call GET /api/auth/me
+- Backend verifies JWT
+
+IF VALID:
+→ set authenticated state internally
+→ render authenticated layout
+
+IF INVALID:
+→ render public layout only
+
+IMPORTANT RULE:
+- DO NOT instantly switch UI after login or signup
+- UI must only change AFTER successful verification via /api/auth/me
+- Authentication state change happens ONLY after backend confirmation cycle
+
+On logout:
+→ backend clears cookie
+→ frontend resets auth state
+→ AI disappears immediately
+
+====================================================
+10. SECURITY RULES (NON-NEGOTIABLE)
+====================================================
+
+- NEVER trust frontend-only authentication
+- NEVER rely on sessionStorage/localStorage for auth
+- ALWAYS verify authentication on backend
+- ALWAYS protect AI endpoints server-side
+- FRONTEND is UI ONLY, not security enforcement
+
+====================================================
+11. IMPORTANT ARCHITECTURE RULE
+====================================================
+
+- DO NOT render "Guardian Trading AI" in App.tsx globally
+- It must ONLY exist inside authenticated layout components
+- Public routes must never import or reference it
