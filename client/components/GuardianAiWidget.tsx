@@ -229,6 +229,32 @@ export default function GuardianAiWidget() {
     setVoiceSupported(!!getSRCtor());
   }, []);
 
+  /* Check AI provider availability on mount */
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${API_BASE}/api/ai/provider`)
+      .then((r) => r.json())
+      .then((data: { provider?: string; error?: string }) => {
+        if (cancelled) return;
+        if (!data.provider || data.provider === "none") {
+          setMessages([{
+            id: "sys-no-ai",
+            role: "assistant",
+            content: "⚠️ Guardian AI is not currently configured on this server. Please contact your administrator to set up the AI provider, then refresh the page.",
+          }]);
+        }
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setMessages([{
+          id: "sys-offline",
+          role: "assistant",
+          content: "⚠️ Guardian AI is unreachable right now. Please check your connection or try again later.",
+        }]);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
   /* Auto-scroll to bottom */
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -430,7 +456,16 @@ export default function GuardianAiWidget() {
         signal: ctrl.signal,
       });
 
-      if (!res.ok || !res.body) throw new Error("AI service unavailable");
+      if (!res.ok) {
+        let errMsg = `Request failed (${res.status})`;
+        try {
+          const body = await res.json() as { error?: string };
+          if (body.error) errMsg = body.error;
+        } catch { /* ignore */ }
+        throw new Error(errMsg);
+      }
+
+      if (!res.body) throw new Error("No response body from AI service");
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -445,26 +480,42 @@ export default function GuardianAiWidget() {
         buf = lines.pop() ?? "";
         for (const line of lines) {
           if (!line.startsWith("data: ")) continue;
+          let parsed: { content?: string; done?: boolean; error?: string } | null = null;
           try {
-            const json = JSON.parse(line.slice(6)) as { content?: string; done?: boolean; error?: string };
-            if (json.error) throw new Error(json.error);
-            if (json.content) {
-              accumulated += json.content;
-              const snap = accumulated;
-              setMessages((prev) => prev.map((m) => m.id === aiId ? { ...m, content: snap, streaming: true } : m));
-            }
-            if (json.done) {
-              setMessages((prev) => prev.map((m) => m.id === aiId ? { ...m, streaming: false } : m));
-              setLastAiId(aiId);
-              if (!open) { setLaunchGlow(true); setTimeout(() => setLaunchGlow(false), 1800); }
-            }
-          } catch { /* ignore partial lines */ }
+            parsed = JSON.parse(line.slice(6)) as { content?: string; done?: boolean; error?: string };
+          } catch {
+            continue;
+          }
+          if (parsed.error) throw new Error(parsed.error);
+          if (parsed.content) {
+            accumulated += parsed.content;
+            const snap = accumulated;
+            setMessages((prev) => prev.map((m) => m.id === aiId ? { ...m, content: snap, streaming: true } : m));
+          }
+          if (parsed.done) {
+            setMessages((prev) => prev.map((m) => m.id === aiId ? { ...m, streaming: false } : m));
+            setLastAiId(aiId);
+            if (!open) { setLaunchGlow(true); setTimeout(() => setLaunchGlow(false), 1800); }
+          }
         }
       }
     } catch (err: unknown) {
       if ((err as { name?: string }).name === "AbortError") return;
+      const msg = err instanceof Error ? err.message : "";
+      let display: string;
+      if (msg.toLowerCase().includes("rate") || msg.toLowerCase().includes("slow down") || msg.includes("429")) {
+        display = "You're sending messages too quickly. Please wait a moment and try again.";
+      } else if (msg.toLowerCase().includes("no ai provider") || msg.toLowerCase().includes("not configured")) {
+        display = "Guardian AI is not yet configured on this server. Please contact support.";
+      } else if (msg.toLowerCase().includes("failed to fetch") || msg.toLowerCase().includes("network") || msg.toLowerCase().includes("load failed")) {
+        display = "Unable to reach Guardian AI. Please check your connection and try again.";
+      } else if (msg.toLowerCase().includes("ai service error") || msg.toLowerCase().includes("500")) {
+        display = "Guardian AI encountered a server error. Please try again shortly.";
+      } else {
+        display = "Guardian AI is temporarily unavailable. Please try again in a moment.";
+      }
       setMessages((prev) => prev.map((m) =>
-        m.id === aiId ? { ...m, content: "Sorry, I couldn't connect right now. Please try again.", streaming: false } : m
+        m.id === aiId ? { ...m, content: display, streaming: false } : m
       ));
     } finally {
       setBusy(false);

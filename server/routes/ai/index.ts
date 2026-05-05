@@ -313,4 +313,30 @@ router.get("/ai/provider", (_req: Request, res: Response): void => {
   }
 });
 
+router.get("/ai/status", (_req: Request, res: Response): void => {
+  const hasOpenAi = !!(process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.AI_INTEGRATIONS_OPENAI_BASE_URL);
+  const hasGrok = !!(process.env.XAI_API_KEY || process.env.GROK_API_KEY);
+  const hasCloudflare = !!(process.env.CLOUDFLARE_API_TOKEN && process.env.CLOUDFLARE_ACCOUNT_ID);
+
+  try {
+    const provider = getAiProvider();
+    res.json({
+      configured: true,
+      provider: provider.name,
+      message: `Guardian AI is active using the ${provider.name} provider.`,
+    });
+  } catch (err) {
+    res.json({
+      configured: false,
+      provider: null,
+      message: "No AI provider is configured. Set AI_INTEGRATIONS_OPENAI_API_KEY, XAI_API_KEY, or CLOUDFLARE_API_TOKEN.",
+      hints: {
+        openai: hasOpenAi,
+        grok: hasGrok,
+        cloudflare: hasCloudflare,
+      },
+    });
+  }
+});
+
 export default router;
