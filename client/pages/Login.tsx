@@ -84,8 +84,7 @@ export default function Login() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundImage: "url(/assets/bgLogin.png)",
-        backgroundRepeat: "repeat",
+        backgroundColor: "#ffffff",
       }}
     >
       <div
