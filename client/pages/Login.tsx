@@ -244,7 +244,7 @@ export default function Login() {
                 type="submit"
                 disabled={loading}
                 style={{
-                  backgroundColor: "#2f6fbe",
+                  backgroundColor: "#337ab8",
                   color: "#ffffff",
                   border: "none",
                   borderRadius: "4px",
@@ -265,7 +265,7 @@ export default function Login() {
                 onClick={(e) => e.preventDefault()}
                 style={{
                   fontSize: "13px",
-                  color: "#2f6fbe",
+                  color: "#337ab8",
                   textDecoration: "none",
                 }}
               >
@@ -288,7 +288,7 @@ export default function Login() {
                 href="/signup"
                 onClick={(e) => { e.preventDefault(); navigate("/general-details"); }}
                 style={{
-                  color: "#2f6fbe",
+                  color: "#337ab8",
                   textDecoration: "none",
                   fontWeight: "500",
                 }}
