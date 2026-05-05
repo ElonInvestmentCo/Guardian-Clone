@@ -1,4 +1,5 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
+import { useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GuardianToaster } from "@/lib/guardian-toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -54,6 +55,18 @@ import Sessions from "@/pages/analytics/Sessions";
 import Insights from "@/pages/analytics/Insights";
 
 const queryClient = new QueryClient();
+
+function AuthGatedAiWidget() {
+  const [location] = useLocation();
+  const [authed, setAuthed] = useState(() => !!sessionStorage.getItem("signupEmail"));
+
+  useEffect(() => {
+    setAuthed(!!sessionStorage.getItem("signupEmail"));
+  }, [location]);
+
+  if (!authed) return null;
+  return <GuardianAiWidget />;
+}
 
 function Router() {
   return (
@@ -149,8 +162,8 @@ function App() {
                 <NavigationLoader />
                 <Router />
               </OnboardingProvider>
+              <AuthGatedAiWidget />
             </WouterRouter>
-            <GuardianAiWidget />
             <NeedHelpCard />
             <AntiScrape />
             <PageLoader />
