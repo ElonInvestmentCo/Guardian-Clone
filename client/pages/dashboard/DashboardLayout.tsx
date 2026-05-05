@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Briefcase, ShoppingCart, PieChart,
   FileText, Settings, LogOut, Sun, Moon, Search, Bell,
   TrendingUp, TrendingDown, ChevronDown, BarChart3,
-  MessageCircle, User, CreditCard, Activity, HelpCircle,
+  MessageCircle, User, CreditCard, Activity, HelpCircle, Cpu,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
@@ -16,6 +16,7 @@ const LOGO_URL = "https://assets.guardiiantrading.com/logo.svg";
 const TRADING_NAV = [
   { icon: LayoutDashboard, label: "Dashboard",    href: "/dashboard"     },
   { icon: BarChart3,       label: "Markets",       href: "/markets"       },
+  { icon: Cpu,             label: "AI Trading",    href: "/trading"       },
   { icon: Briefcase,       label: "Positions",     href: "/positions"     },
   { icon: ShoppingCart,    label: "Orders",        href: "/orders"        },
   { icon: PieChart,        label: "Portfolio",     href: "/portfolio"     },

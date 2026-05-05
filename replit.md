@@ -15,6 +15,11 @@ A comprehensive financial trading platform with KYC/AML compliance, an admin das
 - **AI Alert Engine:** `server/lib/aiAlertEngine.ts` — periodic margin call detection (every 5 min). Functions: `emitTradeSignal()`, `emitMarginCall()`, `emitRiskAlert()`, `emitBalanceUpdate()`, `emitTradeExecuted()`, `emitSystemNotification()`.
 - **SocketContext:** `client/context/SocketContext.tsx` — connects Socket.io after `isAuthenticated` is true. Disconnects on logout. Shows toast alerts for `ai:alert`, `ai:signal`, `trade:executed`, and `system:notification` events.
 - **socket.io + socket.io-client** packages added (v4.8.3).
+- **Guardian Trading Engine module integrated:** `server/modules/guardian-trading/` — full trading engine embedded as a server-side module. Contains: `marketAnalysis.ts` (RSI, trend detection, volatility, support/resistance), `riskManager.ts` (position sizing, portfolio risk, order validation), `marginEngine.ts` (margin levels, liquidation detection), `tradeExecutor.ts` (order simulation with slippage model), `signalEngine.ts` (AI signal generation via OpenAI + technical fallback, 15-min cache).
+- **New API endpoints:** `GET /api/ai/signals` (AI trade signals, protected), `GET /api/ai/margin-call` (margin status, protected), `GET /api/trading/status` (account + risk status, protected), `POST /api/trading/execute` (simulated order execution, protected), `POST /api/trading/position-size` (position sizing calculator, protected). All require JWT cookie auth.
+- **AI Trading dashboard page:** `client/pages/dashboard/Trading.tsx` — new dashboard page at `/trading`. Shows AI Signals Panel (live signals from Guardian Intelligence), Trade Order Form (simulated BUY/SELL execution), Trading Status Card (balance, risk, margin), and Margin Call Banner (auto-shown when margin is low).
+- **Trading components:** `client/components/trading/AiSignalsPanel.tsx`, `MarginCallBanner.tsx`, `TradingStatusCard.tsx`, `TradeOrderForm.tsx`.
+- **Nav updated:** "AI Trading" added to the sidebar Trading section (Cpu icon, `/trading` route).
 
 ## Architecture
 

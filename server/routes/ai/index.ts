@@ -8,6 +8,8 @@ import {
 import { aiChatLimit } from "../../middleware/security.js";
 import { getUserBalance, getUserData } from "../../lib/userDataStore.js";
 import { requireUser } from "../../middleware/requireUser.js";
+import { generateSignals } from "../../modules/guardian-trading/signalEngine.js";
+import { calculateMarginLevel } from "../../modules/guardian-trading/marginEngine.js";
 
 let marketsCache: { data: LiveMarketData; ts: number } | null = null;
 const MARKET_CACHE_TTL = 60_000;
@@ -289,6 +291,39 @@ router.get("/ai/stake-calculator", async (req: Request, res: Response): Promise<
   } catch (err) {
     console.error("[AI] Stake calculator error:", err);
     res.status(500).json({ error: "Failed to calculate stake recommendation" });
+  }
+});
+
+/* ── Guardian Trading Engine — signals & margin ─────────────────── */
+
+router.get("/ai/signals", requireUser, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const marketData = await getLiveMarketData();
+    if (!marketData || marketData.coins.length === 0) {
+      res.status(503).json({ error: "Market data unavailable — cannot generate signals" });
+      return;
+    }
+    const result = await generateSignals(marketData.coins);
+    res.json(result);
+  } catch (err) {
+    console.error("[AI/Signals] Error:", err);
+    res.status(500).json({ error: "Failed to generate trading signals" });
+  }
+});
+
+router.get("/ai/margin-call", requireUser, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const email = req.user!.email;
+    const bal = await getUserBalance(email);
+    const margin = calculateMarginLevel(bal.balance, 0);
+    res.json({
+      margin,
+      email,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.error("[AI/MarginCall] Error:", err);
+    res.status(500).json({ error: "Failed to assess margin status" });
   }
 });
 

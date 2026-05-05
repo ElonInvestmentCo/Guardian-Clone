@@ -17,6 +17,7 @@ import twoFARouter from "./twofa.js";
 import contactRouter from "./contact.js";
 import aiRouter from "./ai/index.js";
 import placesRouter from "./places.js";
+import tradingRouter from "./trading.js";
 
 const router: IRouter = Router();
 
@@ -38,5 +39,6 @@ router.use(twoFARouter);
 router.use(contactRouter);
 router.use(aiRouter);
 router.use(placesRouter);
+router.use(tradingRouter);
 
 export default router;

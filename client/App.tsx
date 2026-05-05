@@ -50,6 +50,7 @@ import DashboardProfile from "@/pages/dashboard/Profile";
 import DashboardBilling from "@/pages/dashboard/Billing";
 import DashboardActivity from "@/pages/dashboard/Activity";
 import DashboardSupport from "@/pages/dashboard/Support";
+import DashboardTrading from "@/pages/dashboard/Trading";
 import KycResubmit from "@/pages/KycResubmit";
 import KycReviewing from "@/pages/KycReviewing";
 import NotFound from "@/pages/not-found";
@@ -157,6 +158,9 @@ function Router() {
       </Route>
       <Route path="/support">
         {() => <ProtectedRoute><DashboardSupport /></ProtectedRoute>}
+      </Route>
+      <Route path="/trading">
+        {() => <ProtectedRoute><DashboardTrading /></ProtectedRoute>}
       </Route>
 
       {/* ── Analytics ─────────────────────────────────────────────────── */}
