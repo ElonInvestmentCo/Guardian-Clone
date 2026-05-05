@@ -5,6 +5,7 @@ import { getApiBase } from "@/lib/api";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; submit?: string }>({});
   const [loading, setLoading] = useState(false);
   const [, navigate] = useLocation();
@@ -85,172 +86,216 @@ export default function Login() {
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "#ffffff",
+        fontFamily: "'Segoe UI', Arial, sans-serif",
       }}
     >
+      {/* Card */}
       <div
         style={{
-          width: "380px",
-          border: "1px solid #aaaaaa",
-          boxShadow: "3px 3px 8px rgba(0,0,0,0.3)",
+          width: "320px",
+          backgroundColor: "#ffffff",
+          borderRadius: "6px",
+          boxShadow: "0 2px 16px rgba(0,0,0,0.13)",
+          overflow: "hidden",
+          border: "1px solid #e8e8e8",
         }}
       >
-        {/* Logo section — white background */}
-        <div style={{ backgroundColor: "#ffffff", lineHeight: 0, borderBottom: "1px solid #cccccc" }}>
-          <img
-            src="/assets/icLogo_Login.png"
-            alt="InteliClear Post Trade Solutions"
-            style={{ width: "100%", display: "block" }}
-          />
-        </div>
+        {/* Blue top accent bar */}
+        <div style={{ height: "4px", backgroundColor: "#2f6fbe" }} />
 
-        {/* Form section — vivid blue gradient */}
-        <div
-          style={{
-            background: "linear-gradient(to bottom, #3CB8EF 0%, #7DD4F5 35%, #C2EBFB 80%, #DAFAFF 100%)",
-            padding: "8px 0 18px 0",
-          }}
-        >
-          {/* "Log In" title */}
-          <p
+        <div style={{ padding: "28px 32px 24px 32px" }}>
+          {/* Logo row */}
+          <div
             style={{
-              color: "#ffffff",
-              textAlign: "center",
-              fontSize: "14px",
-              fontFamily: "Arial, sans-serif",
-              margin: "6px 0 12px 0",
-              padding: 0,
-              textShadow: "0 1px 2px rgba(0,0,0,0.15)",
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "24px",
             }}
           >
-            Log In
-          </p>
+            <img
+              src="/assets/GuardianLogo.svg"
+              alt="Guardian Trading"
+              style={{ height: "72px", width: "auto", display: "block" }}
+            />
+          </div>
+
+          {/* Title */}
+          <h2
+            style={{
+              margin: "0 0 20px 0",
+              fontSize: "22px",
+              fontWeight: "700",
+              color: "#1a1a2e",
+              letterSpacing: "0",
+              lineHeight: "1.2",
+            }}
+          >
+            Client Portal Login
+          </h2>
 
           <form onSubmit={handleSubmit} noValidate>
-            <table
-              style={{
-                margin: "0 auto",
-                borderCollapse: "separate",
-                borderSpacing: "0 8px",
-              }}
-            >
-              <tbody>
-                <tr>
-                  <td
-                    style={{
-                      color: "#000066",
-                      fontSize: "13px",
-                      fontFamily: "Arial, sans-serif",
-                      fontWeight: "bold",
-                      textAlign: "right",
-                      paddingRight: "6px",
-                      whiteSpace: "nowrap",
-                      verticalAlign: "middle",
-                    }}
-                  >
-                    User Name:
-                  </td>
-                  <td style={{ verticalAlign: "middle" }}>
-                    <input
-                      type="email"
-                      autoComplete="email"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
-                      }}
-                      style={{
-                        width: "120px",
-                        height: "20px",
-                        fontSize: "12px",
-                        fontFamily: "Arial, sans-serif",
-                        border: "1px solid #888888",
-                        padding: "0 3px",
-                        boxSizing: "border-box",
-                        outline: "none",
-                        backgroundColor: "#ffffff",
-                      }}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td
-                    style={{
-                      color: "#000066",
-                      fontSize: "13px",
-                      fontFamily: "Arial, sans-serif",
-                      fontWeight: "bold",
-                      textAlign: "right",
-                      paddingRight: "6px",
-                      whiteSpace: "nowrap",
-                      verticalAlign: "middle",
-                    }}
-                  >
-                    Password:
-                  </td>
-                  <td style={{ verticalAlign: "middle" }}>
-                    <input
-                      type="password"
-                      autoComplete="current-password"
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                        if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
-                      }}
-                      style={{
-                        width: "120px",
-                        height: "20px",
-                        fontSize: "12px",
-                        fontFamily: "Arial, sans-serif",
-                        border: "1px solid #888888",
-                        padding: "0 3px",
-                        boxSizing: "border-box",
-                        outline: "none",
-                        backgroundColor: "#ffffff",
-                      }}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            {/* Email input */}
+            <div style={{ marginBottom: "12px" }}>
+              <input
+                type="email"
+                autoComplete="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+                }}
+                style={{
+                  width: "100%",
+                  boxSizing: "border-box",
+                  height: "44px",
+                  padding: "0 14px",
+                  fontSize: "14px",
+                  color: "#333333",
+                  backgroundColor: "#f3f4f6",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: "4px",
+                  outline: "none",
+                  fontFamily: "inherit",
+                }}
+              />
+            </div>
+
+            {/* Password input */}
+            <div style={{ marginBottom: "16px", position: "relative" }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+                }}
+                style={{
+                  width: "100%",
+                  boxSizing: "border-box",
+                  height: "44px",
+                  padding: "0 42px 0 14px",
+                  fontSize: "14px",
+                  color: "#333333",
+                  backgroundColor: "#f3f4f6",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: "4px",
+                  outline: "none",
+                  fontFamily: "inherit",
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "0",
+                  display: "flex",
+                  alignItems: "center",
+                  color: "#666666",
+                }}
+              >
+                {showPassword ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                    <line x1="1" y1="1" x2="23" y2="23"/>
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                )}
+              </button>
+            </div>
 
             {errors.submit && (
               <p
                 style={{
                   color: "#cc0000",
-                  textAlign: "center",
-                  fontSize: "11px",
-                  fontFamily: "Arial, sans-serif",
-                  margin: "6px 10px 0",
+                  fontSize: "12px",
+                  margin: "0 0 12px 0",
                   padding: 0,
-                  fontWeight: "bold",
                 }}
               >
                 {errors.submit}
               </p>
             )}
 
-            <div style={{ textAlign: "center", marginTop: "12px" }}>
+            {/* Login button row */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "20px",
+              }}
+            >
               <button
                 type="submit"
                 disabled={loading}
                 style={{
-                  fontSize: "13px",
-                  fontFamily: "Arial, sans-serif",
-                  padding: "3px 18px",
+                  backgroundColor: "#2f6fbe",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "4px",
+                  padding: "10px 24px",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  fontFamily: "inherit",
                   cursor: loading ? "default" : "pointer",
-                  backgroundColor: "#ece9d8",
-                  border: "2px solid",
-                  borderTopColor: "#ffffff",
-                  borderLeftColor: "#ffffff",
-                  borderBottomColor: "#888888",
-                  borderRightColor: "#888888",
-                  color: "#000000",
-                  opacity: loading ? 0.7 : 1,
+                  opacity: loading ? 0.75 : 1,
+                  letterSpacing: "0.02em",
                 }}
               >
-                {loading ? "Logging in..." : "Log In"}
+                {loading ? "Logging in..." : "Login"}
               </button>
+
+              <a
+                href="#"
+                onClick={(e) => e.preventDefault()}
+                style={{
+                  fontSize: "13px",
+                  color: "#2f6fbe",
+                  textDecoration: "none",
+                }}
+              >
+                Forgot Password ?
+              </a>
             </div>
+
+            {/* Need an account */}
+            <p
+              style={{
+                textAlign: "center",
+                fontSize: "13px",
+                color: "#555555",
+                margin: 0,
+                padding: 0,
+              }}
+            >
+              Need An Account{" "}
+              <a
+                href="/signup"
+                onClick={(e) => { e.preventDefault(); navigate("/general-details"); }}
+                style={{
+                  color: "#2f6fbe",
+                  textDecoration: "none",
+                  fontWeight: "500",
+                }}
+              >
+                Open Now →
+              </a>
+            </p>
           </form>
         </div>
       </div>
