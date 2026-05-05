@@ -24,7 +24,7 @@ export default function Home() {
     <Layout>
       {/* ── NEWS / BLOG ANNOUNCEMENT BAR ── */}
       {newsBannerVisible && (
-        <div style={{ backgroundColor: "#141414", marginTop: "78px" }}>
+        <div style={{ marginTop: "78px" }}>
           <div
             className="flex items-center justify-between"
             style={{
@@ -32,7 +32,6 @@ export default function Home() {
               margin: "0 auto",
               height: "44px",
               padding: "0 24px",
-              backgroundColor: "#121212",
               borderBottom: "1px solid #212e33",
             }}
           >
@@ -146,7 +145,6 @@ export default function Home() {
         style={{
           paddingTop: newsBannerVisible ? "60px" : "138px",
           paddingBottom: "80px",
-          backgroundColor: "#141414",
           minHeight: "520px",
         }}
       >
@@ -190,7 +188,7 @@ export default function Home() {
       </section>
 
       {/* ── BENZINGA AWARD BANNER ── */}
-      <div style={{ backgroundColor: "#141414" }}>
+      <div>
         <img
           src={benzingaReview}
           alt="Reviewed by Benzinga 2024 — Preferred Broker for Short Selling"
@@ -202,7 +200,7 @@ export default function Home() {
       </div>
 
       {/* ── WHY DO ACTIVE TRADERS USE GUARDIAN? ── */}
-      <section id="services" className="bg-[#1c1c1c] py-20 px-4">
+      <section id="services" className="py-20 px-4">
         <div className="max-w-[1200px] mx-auto">
           <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-3">
             Why Do Active Traders Use Guardian?
@@ -234,10 +232,10 @@ export default function Home() {
       </section>
 
       {/* ── PRICING CARDS ── */}
-      <section id="pricing" className="bg-[#1c1c1c] py-10 px-4">
+      <section id="pricing" className="py-10 px-4">
         <div className="max-w-[1100px] mx-auto">
           {/* Single dark card — heading left, pricing right */}
-          <div className="bg-[#181818] flex flex-col lg:flex-row">
+          <div className="flex flex-col lg:flex-row">
             {/* Left: heading */}
             <div className="flex-shrink-0 lg:w-[280px] px-10 py-10 flex items-center">
               <h2 className="text-2xl font-bold text-[#93c5fd] leading-snug">
@@ -278,7 +276,7 @@ export default function Home() {
       </section>
 
       {/* ── MASTER YOUR ORDER FLOW ── */}
-      <section className="bg-[#141414] py-16 lg:py-20 px-4">
+      <section className="py-16 lg:py-20 px-4">
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-center">
             <div className="flex-1 max-w-[480px]">
@@ -321,7 +319,7 @@ export default function Home() {
       </section>
 
       {/* ── LOCATES & STOCK BORROWS ── */}
-      <section className="bg-[#141414] py-16 lg:py-20 px-4">
+      <section className="py-16 lg:py-20 px-4">
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-center">
             {/* Text — top on mobile, right on desktop */}
@@ -369,7 +367,7 @@ export default function Home() {
       </section>
 
       {/* ── TRADING TECHNOLOGY ── */}
-      <section className="relative bg-[#1c1c1c] py-16 px-4 overflow-hidden">
+      <section className="relative py-16 px-4 overflow-hidden">
         {/* Background vector chart lines */}
         <img
           src={bgVector}
@@ -385,7 +383,7 @@ export default function Home() {
           </h2>
 
           {/* Card 1 — Our OMS Platforms */}
-          <div className="mb-[6px] bg-[#111] flex flex-col lg:flex-row">
+          <div className="mb-[6px] flex flex-col lg:flex-row">
             {/* Left */}
             <div className="lg:w-[42%] px-8 lg:px-10 py-8 lg:py-10 flex flex-col justify-center">
               <h3 className="text-[22px] lg:text-[26px] font-bold text-white mb-7 leading-tight">
@@ -437,7 +435,7 @@ export default function Home() {
           </div>
 
           {/* Card 2 — Our Infrastructure */}
-          <div className="bg-[#111] flex flex-col lg:flex-row">
+          <div className="flex flex-col lg:flex-row">
             {/* Left */}
             <div className="lg:w-[42%] px-8 lg:px-10 py-8 lg:py-10 flex flex-col justify-center">
               <h3 className="text-[22px] lg:text-[26px] font-bold text-white mb-2 leading-tight">
@@ -469,7 +467,7 @@ export default function Home() {
       </section>
 
       {/* ── EXPERIENCE THE GUARDIAN DIFFERENCE (CTA) ── */}
-      <section className="bg-[#0d0d0d] py-20 px-4 border-t border-white/5 text-center">
+      <section className="py-20 px-4 border-t border-white/5 text-center">
         <div className="max-w-[700px] mx-auto">
           <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-4">
             Experience the Guardian Difference
