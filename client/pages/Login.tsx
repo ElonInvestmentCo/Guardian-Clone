@@ -84,26 +84,19 @@ export default function Login() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#ffffff",
         backgroundImage: "url(/assets/bgLogin.png)",
         backgroundRepeat: "repeat",
       }}
     >
       <div
         style={{
-          width: "252px",
-          border: "1px solid #888888",
-          boxShadow: "2px 2px 5px rgba(0,0,0,0.25)",
+          width: "380px",
+          border: "1px solid #aaaaaa",
+          boxShadow: "3px 3px 8px rgba(0,0,0,0.3)",
         }}
       >
-        {/* Logo section — white */}
-        <div
-          style={{
-            backgroundColor: "#ffffff",
-            padding: "0",
-            lineHeight: 0,
-          }}
-        >
+        {/* Logo section — white background */}
+        <div style={{ backgroundColor: "#ffffff", lineHeight: 0, borderBottom: "1px solid #cccccc" }}>
           <img
             src="/assets/icLogo_Login.png"
             alt="InteliClear Post Trade Solutions"
@@ -111,21 +104,23 @@ export default function Login() {
           />
         </div>
 
-        {/* Form section — blue gradient */}
+        {/* Form section — vivid blue gradient */}
         <div
           style={{
-            background: "linear-gradient(to bottom, #3099C9 0%, #99CCDD 65%, #C4E5F4 100%)",
-            padding: "6px 0 14px 0",
+            background: "linear-gradient(to bottom, #3CB8EF 0%, #7DD4F5 35%, #C2EBFB 80%, #DAFAFF 100%)",
+            padding: "8px 0 18px 0",
           }}
         >
+          {/* "Log In" title */}
           <p
             style={{
               color: "#ffffff",
               textAlign: "center",
-              fontSize: "13px",
+              fontSize: "14px",
               fontFamily: "Arial, sans-serif",
-              margin: "4px 0 10px 0",
+              margin: "6px 0 12px 0",
               padding: 0,
+              textShadow: "0 1px 2px rgba(0,0,0,0.15)",
             }}
           >
             Log In
@@ -136,18 +131,19 @@ export default function Login() {
               style={{
                 margin: "0 auto",
                 borderCollapse: "separate",
-                borderSpacing: "2px 6px",
+                borderSpacing: "0 8px",
               }}
             >
               <tbody>
                 <tr>
                   <td
                     style={{
-                      color: "#ffffff",
-                      fontSize: "12px",
+                      color: "#000066",
+                      fontSize: "13px",
                       fontFamily: "Arial, sans-serif",
+                      fontWeight: "bold",
                       textAlign: "right",
-                      paddingRight: "4px",
+                      paddingRight: "6px",
                       whiteSpace: "nowrap",
                       verticalAlign: "middle",
                     }}
@@ -164,14 +160,15 @@ export default function Login() {
                         if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
                       }}
                       style={{
-                        width: "68px",
-                        height: "17px",
-                        fontSize: "11px",
+                        width: "120px",
+                        height: "20px",
+                        fontSize: "12px",
                         fontFamily: "Arial, sans-serif",
-                        border: "1px solid #666666",
-                        padding: "0 2px",
+                        border: "1px solid #888888",
+                        padding: "0 3px",
                         boxSizing: "border-box",
                         outline: "none",
+                        backgroundColor: "#ffffff",
                       }}
                     />
                   </td>
@@ -179,11 +176,12 @@ export default function Login() {
                 <tr>
                   <td
                     style={{
-                      color: "#ffffff",
-                      fontSize: "12px",
+                      color: "#000066",
+                      fontSize: "13px",
                       fontFamily: "Arial, sans-serif",
+                      fontWeight: "bold",
                       textAlign: "right",
-                      paddingRight: "4px",
+                      paddingRight: "6px",
                       whiteSpace: "nowrap",
                       verticalAlign: "middle",
                     }}
@@ -200,14 +198,15 @@ export default function Login() {
                         if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
                       }}
                       style={{
-                        width: "68px",
-                        height: "17px",
-                        fontSize: "11px",
+                        width: "120px",
+                        height: "20px",
+                        fontSize: "12px",
                         fontFamily: "Arial, sans-serif",
-                        border: "1px solid #666666",
-                        padding: "0 2px",
+                        border: "1px solid #888888",
+                        padding: "0 3px",
                         boxSizing: "border-box",
                         outline: "none",
+                        backgroundColor: "#ffffff",
                       }}
                     />
                   </td>
@@ -218,30 +217,34 @@ export default function Login() {
             {errors.submit && (
               <p
                 style={{
-                  color: "#ffeeee",
+                  color: "#cc0000",
                   textAlign: "center",
                   fontSize: "11px",
                   fontFamily: "Arial, sans-serif",
-                  margin: "4px 6px 0",
+                  margin: "6px 10px 0",
                   padding: 0,
+                  fontWeight: "bold",
                 }}
               >
                 {errors.submit}
               </p>
             )}
 
-            <div style={{ textAlign: "center", marginTop: "10px" }}>
+            <div style={{ textAlign: "center", marginTop: "12px" }}>
               <button
                 type="submit"
                 disabled={loading}
                 style={{
-                  fontSize: "12px",
+                  fontSize: "13px",
                   fontFamily: "Arial, sans-serif",
-                  padding: "2px 14px",
+                  padding: "3px 18px",
                   cursor: loading ? "default" : "pointer",
                   backgroundColor: "#ece9d8",
                   border: "2px solid",
-                  borderColor: "#ffffff #808080 #808080 #ffffff",
+                  borderTopColor: "#ffffff",
+                  borderLeftColor: "#ffffff",
+                  borderBottomColor: "#888888",
+                  borderRightColor: "#888888",
                   color: "#000000",
                   opacity: loading ? 0.7 : 1,
                 }}
