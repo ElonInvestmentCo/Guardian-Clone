@@ -58,11 +58,12 @@ All three workflows run in parallel via the "Project" button:
 
 ## Environment Variables
 - `DATABASE_URL` — PostgreSQL connection string (auto-provided by Replit PostgreSQL module)
-- `PORT` — Set per workflow (3001 for API, 3000 for client, 8080 for admin)
+- `PORT` — Set per workflow (3001 for API, 5000 for client, 8080 for admin)
 - `ADMIN_JWT_SECRET`, `ADMIN_SECRET`, `INTERNAL_API_KEY`, `USER_DATA_KEY` — Auth secrets (set in .replit userenv)
 - `CMC_API_KEY` — CoinMarketCap API key
-- `OPENAI_API_KEY` — For AI trading assistant features
-- `RESEND_API_KEY` — For email communications via Resend
+- `AI_INTEGRATIONS_OPENAI_API_KEY` — Managed by Replit OpenAI integration (auto-provided)
+- `AI_INTEGRATIONS_OPENAI_BASE_URL` — Managed by Replit OpenAI integration (auto-provided)
+- `RESEND_API_KEY` — For email communications via Resend (must be set manually as a secret)
 - `ADMIN_EMAIL` — Destination address for all admin alert emails (e.g. admin_alerts@guardiantrading.com)
 - `SIGNATURE_THRESHOLD` — Pending signature count that triggers a high-pending alert (default: 10)
 
