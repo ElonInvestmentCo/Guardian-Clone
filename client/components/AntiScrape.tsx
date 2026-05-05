@@ -29,6 +29,7 @@ export default function AntiScrape() {
     }
 
     function blockKeyboard(e: KeyboardEvent) {
+      if (!e.key) return;
       const key = e.key.toLowerCase();
       const ctrl = e.ctrlKey || e.metaKey;
       const editable = isEditableTarget(e);

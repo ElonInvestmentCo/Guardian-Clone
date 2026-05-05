@@ -63,7 +63,7 @@ function buildCloudflareProvider(): AiProvider {
 function buildOpenAiProvider(): AiProvider {
   const client = new OpenAI({
     apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY ?? "",
-    baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+    baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || undefined,
   });
 
   return {
@@ -71,7 +71,7 @@ function buildOpenAiProvider(): AiProvider {
 
     async *chatStream(messages: AiMessage[]): AsyncIterable<AiStreamChunk> {
       const stream = await client.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-5.4",
         max_completion_tokens: 8192,
         messages,
         stream: true,
@@ -86,7 +86,7 @@ function buildOpenAiProvider(): AiProvider {
 
     async chat(messages: AiMessage[]): Promise<string> {
       const resp = await client.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-5.4",
         max_completion_tokens: 8192,
         messages,
       });
@@ -146,7 +146,7 @@ export function getAiProvider(): AiProvider {
     if (grokKey) {
       console.log("[AI] Using Grok (xAI) provider");
       _provider = buildGrokProvider();
-    } else if (process.env.AI_INTEGRATIONS_OPENAI_BASE_URL) {
+    } else if (process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.AI_INTEGRATIONS_OPENAI_BASE_URL) {
       console.log("[AI] Using OpenAI provider (Replit integration)");
       _provider = buildOpenAiProvider();
     } else {
