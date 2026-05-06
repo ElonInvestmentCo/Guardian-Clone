@@ -4,6 +4,7 @@ import { ArrowUpRight, ArrowDownRight, Wallet, TrendingUp, BarChart3, ArrowRight
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
 import TradingViewChart from "@/components/TradingViewChart";
+import { useAuth } from "@/context/AuthContext";
 
 function EmptyState({ icon: Icon, title, message }: { icon: React.ElementType; title: string; message: string }) {
   const { colors } = useTheme();
@@ -18,10 +19,10 @@ function EmptyState({ icon: Icon, title, message }: { icon: React.ElementType; t
   );
 }
 
-
 export default function Overview() {
   const { colors } = useTheme();
-  const email = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("signupEmail") ?? "" : "";
+  const { user } = useAuth();
+  const email = user?.email ?? (typeof sessionStorage !== "undefined" ? sessionStorage.getItem("signupEmail") ?? "" : "");
 
   const [balance, setBalance] = useState(0);
   const [profit, setProfit] = useState(0);
@@ -79,12 +80,15 @@ export default function Overview() {
             ))}
           </div>
 
-          <div className="rounded-xl mb-6" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, overflow: "hidden" }}>
-            <div style={{ padding: "16px 20px 12px" }}>
-              <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary }}>Market Chart</p>
-              <p style={{ fontSize: "11px", color: colors.textMuted, marginTop: "2px" }}>AAPL — Advanced Chart</p>
+          {/* ── Live Advanced Chart ─────────────────────────────────── */}
+          <div className="rounded-xl mb-6" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "16px 20px 20px", overflow: "hidden" }}>
+            <div className="flex items-center justify-between mb-1">
+              <div>
+                <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary }}>Live Market Chart</p>
+                <p style={{ fontSize: "11px", color: colors.textMuted, marginTop: "2px" }}>Advanced chart · RSI · MACD · Bollinger Bands · Volume</p>
+              </div>
             </div>
-            <TradingViewChart />
+            <TradingViewChart height={500} />
           </div>
 
           <div className="rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "20px" }}>
@@ -123,6 +127,12 @@ export default function Overview() {
           <div className="flex gap-2 mb-6">
             <button style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, border: "none", borderRadius: "10px", background: colors.accent, color: "#fff", cursor: "pointer" }}>Deposit</button>
             <button style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, border: `1px solid ${colors.btnBorder}`, borderRadius: "10px", background: colors.btnBg, color: colors.textSub, cursor: "pointer" }}>Withdraw</button>
+          </div>
+
+          {/* ── Mini chart in sidebar ─────────────────────────────── */}
+          <div className="rounded-xl mb-4" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "14px", overflow: "hidden" }}>
+            <p style={{ fontSize: "12px", fontWeight: 600, color: colors.textPrimary, marginBottom: "10px" }}>Quick Chart</p>
+            <TradingViewChart height={200} compact />
           </div>
 
           <div className="rounded-xl p-4" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}` }}>

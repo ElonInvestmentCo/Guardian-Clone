@@ -3,8 +3,9 @@ import { LoadingOverlay } from "@/components/LoadingOverlay";
 import { RefreshCw } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
-
+import TradingViewChart, { type ChartSymbol } from "@/components/TradingViewChart";
 import { getApiBase } from "@/lib/api";
+
 const API = getApiBase();
 
 interface CoinData {
@@ -43,6 +44,7 @@ export default function Markets() {
   const [coins, setCoins] = useState<CoinData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [chartSymbol, setChartSymbol] = useState<ChartSymbol>("BINANCE:BTCUSDT");
 
   const fetchMarkets = useCallback(() => {
     setLoading(true);
@@ -64,7 +66,7 @@ export default function Markets() {
 
   useEffect(() => {
     fetchMarkets();
-    const interval = setInterval(fetchMarkets, 30000); // 30 seconds
+    const interval = setInterval(fetchMarkets, 30000);
     return () => clearInterval(interval);
   }, [fetchMarkets]);
 
@@ -73,19 +75,35 @@ export default function Markets() {
       <div style={{ padding: "24px" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
           <div>
-            <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary, margin: 0 }}>Crypto Markets</h1>
-            <p style={{ fontSize: "13px", color: colors.textMuted, margin: "4px 0 0" }}>Live cryptocurrency prices</p>
+            <h1 style={{ fontSize: "22px", fontWeight: 700, color: colors.textPrimary, margin: 0 }}>Markets</h1>
+            <p style={{ fontSize: "13px", color: colors.textMuted, margin: "4px 0 0" }}>Live prices · Advanced charts · Real-time data</p>
           </div>
           <button onClick={fetchMarkets} style={{
-            padding: "8px", borderRadius: "8px", border: `1px solid ${colors.inputBorder}`,
+            padding: "8px 14px", borderRadius: "8px", border: `1px solid ${colors.inputBorder}`,
             background: colors.inputBg, color: colors.textSub, cursor: "pointer",
-            display: "flex", alignItems: "center", gap: "4px"
+            display: "flex", alignItems: "center", gap: "6px", fontSize: "13px",
           }}>
             <RefreshCw size={14} />
             Refresh
           </button>
         </div>
 
+        {/* ── Advanced chart ─────────────────────────────────────────── */}
+        <div className="rounded-xl mb-6" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "16px 20px 20px", overflow: "hidden" }}>
+          <div className="mb-1">
+            <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary }}>Advanced Market Chart</p>
+            <p style={{ fontSize: "11px", color: colors.textMuted, marginTop: "2px" }}>
+              Select a symbol below to view its chart · RSI · MACD · Bollinger Bands · Volume
+            </p>
+          </div>
+          <TradingViewChart
+            symbol={chartSymbol}
+            height={520}
+            onSymbolChange={setChartSymbol}
+          />
+        </div>
+
+        {/* ── Crypto table ───────────────────────────────────────────── */}
         {error && (
           <div style={{ padding: "16px", background: "#FEF2F2", border: "1px solid #FECACA", borderRadius: "8px", marginBottom: "16px", color: "#DC2626", fontSize: "13px" }}>
             {error}
@@ -95,7 +113,7 @@ export default function Markets() {
         <div style={{ position: "relative", minHeight: "200px" }}>
           <LoadingOverlay loading={loading} />
           <div style={{
-            background: colors.card ?? "#fff", border: `1px solid ${colors.inputBorder}`,
+            background: colors.card, border: `1px solid ${colors.inputBorder}`,
             borderRadius: "12px", overflow: "hidden",
           }}>
             <div style={{ overflowX: "auto" }}>
@@ -111,7 +129,12 @@ export default function Markets() {
                 </thead>
                 <tbody>
                   {coins.map((coin, index) => (
-                    <tr key={coin.symbol} style={{ borderBottom: index < coins.length - 1 ? `1px solid ${colors.inputBorder}` : "none" }}>
+                    <tr
+                      key={coin.symbol}
+                      style={{ borderBottom: index < coins.length - 1 ? `1px solid ${colors.inputBorder}` : "none", cursor: "pointer", transition: "background 0.12s" }}
+                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = colors.tableRowHoverBg}
+                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = ""}
+                    >
                       <td style={{ padding: "12px 14px", fontSize: "14px", color: colors.textPrimary }}>
                         <div style={{ display: "flex", flexDirection: "column" }}>
                           <span style={{ fontWeight: 600 }}>{coin.name}</span>

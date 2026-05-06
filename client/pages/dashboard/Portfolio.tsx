@@ -1,6 +1,7 @@
 import { PieChart as PieChartIcon, TrendingUp } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
+import TradingViewChart from "@/components/TradingViewChart";
 
 function EmptyState({ icon: Icon, title, message }: { icon: React.ElementType; title: string; message: string }) {
   const { colors } = useTheme();
@@ -42,15 +43,22 @@ export default function Portfolio() {
           ))}
         </div>
 
+        {/* ── Portfolio Live Chart ────────────────────────────────────── */}
+        <div className="rounded-xl mb-5" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "16px 20px 20px", overflow: "hidden" }}>
+          <div className="mb-1">
+            <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary }}>Portfolio Chart</p>
+            <p style={{ fontSize: "11px", color: colors.textMuted, marginTop: "2px" }}>
+              Live price tracking · Select a symbol to track your holdings
+            </p>
+          </div>
+          <TradingViewChart height={460} />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 mb-5">
-          <div className="lg:col-span-3 rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "20px" }}>
-            <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary, marginBottom: "4px" }}>Live Chart</p>
-            <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "16px" }}>Real-time price tracking</p>
-            <EmptyState
-              icon={TrendingUp}
-              title="No holdings to chart"
-              message="Once you purchase assets, live price charts will appear here."
-            />
+          <div className="lg:col-span-3 rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "16px 20px 20px", overflow: "hidden" }}>
+            <p style={{ fontSize: "14px", fontWeight: 600, color: colors.textPrimary, marginBottom: "4px" }}>Balance Growth</p>
+            <p style={{ fontSize: "11px", color: colors.textMuted, marginBottom: "12px" }}>Track asset performance over time</p>
+            <TradingViewChart height={280} compact />
           </div>
 
           <div className="lg:col-span-2 rounded-xl" style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, padding: "20px" }}>
