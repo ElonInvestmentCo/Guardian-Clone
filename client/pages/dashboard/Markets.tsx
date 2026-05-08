@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { LoadingOverlay } from "@/components/LoadingOverlay";
 import { RefreshCw, TrendingUp } from "lucide-react";
 import DashboardLayout from "./DashboardLayout";
 import { useTheme } from "@/context/ThemeContext";
 import TradingViewChart, { type ChartSymbol } from "@/components/TradingViewChart";
 import Sparkline from "@/components/Sparkline";
+import VolumeBar from "@/components/VolumeBar";
 import { getApiBase } from "@/lib/api";
 
 const API = getApiBase();
@@ -157,6 +158,12 @@ export default function Markets() {
     if (entry) setActiveRow(entry[0]);
   };
 
+  /* ── Max volume for bar scaling (memoised, recalcs only on coins change) */
+  const maxVolume = useMemo(
+    () => coins.reduce((m, c) => Math.max(m, c.volume_24h), 0),
+    [coins]
+  );
+
   /* ── Active coin ───────────────────────────────────────────────── */
   const activeCoin = coins.find(c =>
     c.symbol.toLowerCase().replace(/usdt?$/, "") === activeRow ||
@@ -235,13 +242,13 @@ export default function Markets() {
                 <thead>
                   <tr style={{ borderBottom: `1px solid ${colors.inputBorder}` }}>
                     {[
-                      { label: "Coin",       width: undefined },
-                      { label: "Price",      width: "120px"   },
-                      { label: "24h",        width: "90px"    },
-                      { label: "7d Trend",   width: "100px"   },
-                      { label: "Market Cap", width: "120px"   },
-                      { label: "Volume",     width: "110px"   },
-                      { label: "",           width: "80px"    },
+                      { label: "Coin",       width: undefined  },
+                      { label: "Price",      width: "120px"    },
+                      { label: "24h",        width: "90px"     },
+                      { label: "7d Trend",   width: "100px"    },
+                      { label: "Market Cap", width: "120px"    },
+                      { label: "24h Volume", width: "180px"    },
+                      { label: "",           width: "80px"     },
                     ].map(({ label, width }) => (
                       <th
                         key={label}
@@ -340,9 +347,9 @@ export default function Markets() {
                           {formatMarketCap(coin.market_cap)}
                         </td>
 
-                        {/* Volume */}
-                        <td style={{ padding: "11px 14px", fontSize: "13px", color: colors.textPrimary, whiteSpace: "nowrap" }}>
-                          {formatVolume(coin.volume_24h)}
+                        {/* 24h Volume bar */}
+                        <td style={{ padding: "10px 14px", color: colors.textMuted }}>
+                          <VolumeBar volume={coin.volume_24h} maxVolume={maxVolume} />
                         </td>
 
                         {/* Chart indicator */}
