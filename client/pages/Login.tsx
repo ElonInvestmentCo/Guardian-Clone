@@ -23,6 +23,11 @@ export default function Login() {
     }
     setErrors({});
     setLoading(true);
+    const loadStart = Date.now();
+    const ensureMin = async () => {
+      const elapsed = Date.now() - loadStart;
+      if (elapsed < 400) await new Promise(r => setTimeout(r, 400 - elapsed));
+    };
     try {
       const base = getApiBase();
       const res = await fetch(`${base}/api/auth/login`, {
@@ -47,12 +52,11 @@ export default function Login() {
             kycComplete?: boolean;
             completedSteps?: number[];
           };
+          await ensureMin();
           if (statusData.status === "approved") {
-            setLoading(false);
             navigate("/dashboard");
           } else if (statusData.status === "verified" || statusData.status === "pending") {
             if (statusData.kycComplete) {
-              setLoading(false);
               navigate("/application-pending");
             } else {
               const completedSteps = statusData.completedSteps ?? [];
@@ -63,30 +67,28 @@ export default function Login() {
                 "/financial-situation", "/investment-experience", "/id-proof-upload",
                 "/funding-details", "/disclosures", "/signatures",
               ];
-              setLoading(false);
               navigate(stepPaths[nextStep] ?? "/general-details");
             }
           } else if (statusData.status === "rejected") {
-            setLoading(false);
             setErrors({ submit: "Your account application has been rejected. Please contact support." });
           } else if (statusData.status === "resubmit") {
-            setLoading(false);
             navigate("/general-details");
           } else {
-            setLoading(false);
             navigate("/general-details");
           }
         } catch {
-          setLoading(false);
+          await ensureMin();
           setErrors({ submit: "Unable to verify account status. Please try again." });
         }
       } else {
-        setLoading(false);
+        await ensureMin();
         setErrors({ submit: (data as { error?: string }).error || "Invalid credentials." });
       }
     } catch {
-      setLoading(false);
+      await ensureMin();
       setErrors({ submit: "Unable to connect. Please try again." });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -269,7 +271,23 @@ export default function Login() {
                   letterSpacing: "0.02em",
                 }}
               >
-                {loading ? "Logging in..." : "Login"}
+                {loading ? (
+                <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <svg
+                    className="animate-spin"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  >
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                  </svg>
+                  Logging in…
+                </span>
+              ) : "Login"}
               </button>
 
               <a

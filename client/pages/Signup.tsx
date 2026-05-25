@@ -38,6 +38,7 @@ export default function Signup() {
     const requestId = ++latestRequestId.current;
 
     setEmailChecking(true);
+    const checkStart = Date.now();
 
     try {
       const base = getApiBase();
@@ -72,7 +73,12 @@ export default function Signup() {
       if (requestId !== latestRequestId.current) return;
       setErrors((p) => ({ ...p, email: "Connection issue, please check your network." }));
     } finally {
-      if (requestId === latestRequestId.current) setEmailChecking(false);
+      if (requestId === latestRequestId.current) {
+        // Minimum 400ms display to avoid a jarring flash
+        const elapsed = Date.now() - checkStart;
+        if (elapsed < 400) await new Promise(r => setTimeout(r, 400 - elapsed));
+        setEmailChecking(false);
+      }
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -117,6 +123,11 @@ export default function Signup() {
     }
     setErrors({});
     setLoading(true);
+    const loadStart = Date.now();
+    const ensureMinDisplay = async () => {
+      const elapsed = Date.now() - loadStart;
+      if (elapsed < 400) await new Promise(r => setTimeout(r, 400 - elapsed));
+    };
     try {
       const base = getApiBase();
       const res = await fetch(`${base}/api/auth/send-verification`, {
@@ -126,11 +137,13 @@ export default function Signup() {
       });
       const data = await res.json().catch(() => ({})) as { error?: string; emailSkipped?: boolean };
       if (!res.ok) {
+        await ensureMinDisplay();
         setErrors({ submit: data.error || "Failed to send verification email. Please try again." });
         return;
       }
       sessionStorage.setItem("verificationEmail", email);
       sessionStorage.setItem("signupEmail", email);
+      await ensureMinDisplay();
       if (data.emailSkipped) {
         setSent(true);
         setTimeout(() => navigate("/general-details"), 600);
@@ -139,6 +152,7 @@ export default function Signup() {
         setTimeout(() => navigate("/email-verification"), 600);
       }
     } catch {
+      await ensureMinDisplay();
       setErrors({ submit: "Unable to connect. Please check your connection and try again." });
     } finally {
       setLoading(false);
@@ -224,16 +238,30 @@ export default function Signup() {
                       <span
                         style={{
                           position: "absolute",
-                          right: "12px",
+                          right: "10px",
                           top: "50%",
                           transform: "translateY(-50%)",
-                          fontSize: "11px",
-                          color: "#888",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "5px",
                           pointerEvents: "none",
-                          whiteSpace: "nowrap",
                         }}
                       >
-                        Checking…
+                        <svg
+                          className="animate-spin"
+                          width="13"
+                          height="13"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#888"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                        >
+                          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                        </svg>
+                        <span style={{ fontSize: "11px", color: "#888", whiteSpace: "nowrap" }}>
+                          Checking…
+                        </span>
                       </span>
                     )}
                   </div>

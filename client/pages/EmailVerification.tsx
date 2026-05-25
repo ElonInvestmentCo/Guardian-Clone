@@ -46,6 +46,11 @@ export default function EmailVerification() {
     setResending(true);
     setError("");
     setResendSuccess(false);
+    const resendStart = Date.now();
+    const ensureMin = async () => {
+      const elapsed = Date.now() - resendStart;
+      if (elapsed < 400) await new Promise(r => setTimeout(r, 400 - elapsed));
+    };
     try {
       const base = getApiBase();
       const res = await fetch(`${base}/api/auth/send-verification`, {
@@ -55,15 +60,18 @@ export default function EmailVerification() {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({})) as { error?: string };
+        await ensureMin();
         setError(data.error || "Failed to resend code. Please try again.");
         return;
       }
+      await ensureMin();
       setResendSuccess(true);
       setInputCode("");
       setCooldown(RESEND_COOLDOWN);
       setTimeout(() => inputRef.current?.focus(), 50);
       setTimeout(() => setResendSuccess(false), 4000);
     } catch {
+      await ensureMin();
       setError("Unable to connect. Please check your connection and try again.");
     } finally {
       setResending(false);
@@ -88,6 +96,11 @@ export default function EmailVerification() {
 
     setError("");
     setVerifying(true);
+    const verifyStart = Date.now();
+    const ensureMin = async () => {
+      const elapsed = Date.now() - verifyStart;
+      if (elapsed < 400) await new Promise(r => setTimeout(r, 400 - elapsed));
+    };
 
     try {
       const base = getApiBase();
@@ -99,17 +112,20 @@ export default function EmailVerification() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({})) as { error?: string };
+        await ensureMin();
         setError(data.error || "Something went wrong. Please try again.");
-        setVerifying(false);
         return;
       }
 
+      await ensureMin();
       sessionStorage.setItem("signupEmail", email);
       sessionStorage.removeItem("verificationEmail");
       sessionStorage.removeItem("verificationDevMode");
       navigate("/general-details");
     } catch {
+      await ensureMin();
       setError("Unable to verify. Please check your connection and try again.");
+    } finally {
       setVerifying(false);
     }
   };
