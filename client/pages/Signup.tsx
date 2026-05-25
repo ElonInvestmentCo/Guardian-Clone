@@ -35,8 +35,9 @@ export default function Signup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: emailToCheck }),
       });
+      if (!res.ok) return; // rate limit or server error — don't show false positive
       const data = await res.json() as { available?: boolean };
-      if (!data.available) {
+      if (data.available === false) {
         setErrors((p) => ({ ...p, email: "An account with this email already exists. Please log in instead." }));
       }
     } catch { /* network error — will be caught on submit */ }
