@@ -2,9 +2,12 @@ import { useEffect } from "react";
 
 export default function AntiScrape() {
   useEffect(() => {
-    function blockContextMenu(e: MouseEvent) {
-      e.preventDefault();
-      return false;
+    function blockImageContextMenu(e: MouseEvent) {
+      const t = e.target as HTMLElement;
+      if (t && (t.tagName === "IMG" || t.tagName === "VIDEO" || t.tagName === "CANVAS")) {
+        e.preventDefault();
+        return false;
+      }
     }
 
     function blockKeyboard(e: KeyboardEvent) {
@@ -15,7 +18,7 @@ export default function AntiScrape() {
       if (ctrl && key === "u") e.preventDefault();
       if (ctrl && key === "s") e.preventDefault();
       if (ctrl && key === "p") e.preventDefault();
-      if (ctrl && e.shiftKey && ["i", "j", "c", "k", "m"].includes(key)) e.preventDefault();
+      if (ctrl && e.shiftKey && ["i", "j", "k", "m"].includes(key)) e.preventDefault();
       if (e.key === "F12") e.preventDefault();
       if (e.key === "PrintScreen") {
         e.preventDefault();
@@ -39,7 +42,7 @@ export default function AntiScrape() {
       document.body.style.visibility = "visible";
     }
 
-    document.addEventListener("contextmenu", blockContextMenu);
+    document.addEventListener("contextmenu", blockImageContextMenu);
     document.addEventListener("keydown", blockKeyboard);
     document.addEventListener("dragstart", blockDragStart);
     window.addEventListener("beforeprint", blockBeforePrint);
@@ -74,13 +77,10 @@ export default function AntiScrape() {
         for (const node of mutation.addedNodes) {
           if (node instanceof HTMLImageElement) {
             node.setAttribute("draggable", "false");
-            node.addEventListener("contextmenu", blockContextMenu);
           }
           if (node instanceof HTMLElement) {
-            const imgs = node.querySelectorAll("img");
-            imgs.forEach((img) => {
+            node.querySelectorAll("img").forEach((img) => {
               img.setAttribute("draggable", "false");
-              img.addEventListener("contextmenu", blockContextMenu);
             });
           }
         }
@@ -93,7 +93,7 @@ export default function AntiScrape() {
     });
 
     return () => {
-      document.removeEventListener("contextmenu", blockContextMenu);
+      document.removeEventListener("contextmenu", blockImageContextMenu);
       document.removeEventListener("keydown", blockKeyboard);
       document.removeEventListener("dragstart", blockDragStart);
       window.removeEventListener("beforeprint", blockBeforePrint);
