@@ -7,44 +7,16 @@ export default function AntiScrape() {
       return false;
     }
 
-    function isEditableTarget(e: Event): boolean {
-      const t = e.target as HTMLElement;
-      if (!t) return false;
-      const tag = t.tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA") return true;
-      if (t.isContentEditable) return true;
-      return false;
-    }
-
-    function blockCopycut(e: ClipboardEvent) {
-      if (isEditableTarget(e)) return;
-      e.preventDefault();
-      return false;
-    }
-
-    function blockSelectStart(e: Event) {
-      if (isEditableTarget(e)) return;
-      e.preventDefault();
-      return false;
-    }
-
     function blockKeyboard(e: KeyboardEvent) {
       if (!e.key) return;
       const key = e.key.toLowerCase();
       const ctrl = e.ctrlKey || e.metaKey;
-      const editable = isEditableTarget(e);
 
       if (ctrl && key === "u") e.preventDefault();
       if (ctrl && key === "s") e.preventDefault();
       if (ctrl && key === "p") e.preventDefault();
-      if (ctrl && key === "a" && !editable) e.preventDefault();
-      if (ctrl && key === "c" && !editable) e.preventDefault();
-      if (ctrl && key === "x" && !editable) e.preventDefault();
-      if (ctrl && key === "v" && !editable) e.preventDefault();
       if (ctrl && e.shiftKey && ["i", "j", "c", "k", "m"].includes(key)) e.preventDefault();
       if (e.key === "F12") e.preventDefault();
-      if (ctrl && key === "g") e.preventDefault();
-      if (ctrl && key === "h") e.preventDefault();
       if (e.key === "PrintScreen") {
         e.preventDefault();
         navigator.clipboard.writeText("").catch(() => {});
@@ -52,8 +24,11 @@ export default function AntiScrape() {
     }
 
     function blockDragStart(e: DragEvent) {
-      e.preventDefault();
-      return false;
+      const t = e.target as HTMLElement;
+      if (t && (t.tagName === "IMG" || t.tagName === "VIDEO" || t.tagName === "CANVAS")) {
+        e.preventDefault();
+        return false;
+      }
     }
 
     function blockBeforePrint() {
@@ -65,9 +40,6 @@ export default function AntiScrape() {
     }
 
     document.addEventListener("contextmenu", blockContextMenu);
-    document.addEventListener("copy", blockCopycut);
-    document.addEventListener("cut", blockCopycut);
-    document.addEventListener("selectstart", blockSelectStart);
     document.addEventListener("keydown", blockKeyboard);
     document.addEventListener("dragstart", blockDragStart);
     window.addEventListener("beforeprint", blockBeforePrint);
@@ -75,20 +47,7 @@ export default function AntiScrape() {
 
     const style = document.createElement("style");
     style.textContent = `
-      *, *::before, *::after {
-        -webkit-user-select: none !important;
-        -moz-user-select: none !important;
-        -ms-user-select: none !important;
-        user-select: none !important;
-        -webkit-touch-callout: none !important;
-      }
-      input, textarea, [contenteditable="true"] {
-        -webkit-user-select: text !important;
-        -moz-user-select: text !important;
-        -ms-user-select: text !important;
-        user-select: text !important;
-      }
-      img, video, canvas, svg, picture, source {
+      img, video, canvas, picture, source {
         -webkit-user-drag: none !important;
         pointer-events: none !important;
       }
@@ -135,9 +94,6 @@ export default function AntiScrape() {
 
     return () => {
       document.removeEventListener("contextmenu", blockContextMenu);
-      document.removeEventListener("copy", blockCopycut);
-      document.removeEventListener("cut", blockCopycut);
-      document.removeEventListener("selectstart", blockSelectStart);
       document.removeEventListener("keydown", blockKeyboard);
       document.removeEventListener("dragstart", blockDragStart);
       window.removeEventListener("beforeprint", blockBeforePrint);
