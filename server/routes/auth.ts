@@ -4,7 +4,7 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { sendVerificationEmail, sendPasswordResetEmail } from "../lib/mailer.js";
 import { saveUserCredentials, getStoredPasswordHash, getUserData, addAdminNotification, getCompletedStepNumbers, getProfilePicture, getUserProfileData } from "../lib/userDataStore.js";
-import { sensitiveEndpointLimit } from "../middleware/security.js";
+import { sensitiveEndpointLimit, checkEmailLimit } from "../middleware/security.js";
 import { validate, AuthLoginSchema, AuthRegisterSchema, AuthCheckEmailSchema, AuthSendVerificationSchema, AuthVerifyCodeSchema, AuthResetPasswordSchema } from "../lib/validation.js";
 import { logSecurity } from "../lib/securityLogger.js";
 import { query } from "../lib/db.js";
@@ -131,14 +131,17 @@ function logAttempt(action: string, email: string, detail?: string) {
   console.log(`[Auth][${ts}] ${action} — email=${email}${detail ? ` ${detail}` : ""}`);
 }
 
-authRouter.post("/auth/check-email", sensitiveEndpointLimit, validate(AuthCheckEmailSchema), async (req, res) => {
+authRouter.post("/auth/check-email", checkEmailLimit, validate(AuthCheckEmailSchema), async (req, res) => {
   try {
     const { email } = req.body as { email: string };
+    console.log(`[Auth][CHECK_EMAIL] Lookup — email=${email}`);
     const existing = await getUserData(email);
-    res.json({ available: !existing });
+    const available = !existing;
+    console.log(`[Auth][CHECK_EMAIL] Result — email=${email} available=${available}`);
+    res.json({ success: true, available, error: null });
   } catch (err) {
-    console.error("[Auth] CHECK_EMAIL error:", err);
-    res.status(500).json({ error: "Email check failed" });
+    console.error("[Auth][CHECK_EMAIL] DB error:", err);
+    res.status(500).json({ success: false, available: null, error: "Email check failed. Please try again." });
   }
 });
 

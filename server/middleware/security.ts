@@ -175,6 +175,20 @@ export const sensitiveEndpointLimit = rateLimit({
   validate: { xForwardedForHeader: false },
 });
 
+export const checkEmailLimit = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
+  handler: (req, res) => {
+    const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? req.ip ?? "unknown";
+    logSecurity("RATE_LIMIT", req, `check-email rate limit exceeded — ip=${ip}`);
+    console.warn(`[Auth][CHECK_EMAIL] Rate limit hit — ip=${ip}`);
+    res.status(429).json({ success: false, available: null, error: "Too many attempts. Please wait before trying again." });
+  },
+});
+
 export const aiChatLimit = rateLimit({
   windowMs: 60 * 1000,
   max: 20,

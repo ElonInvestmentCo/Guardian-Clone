@@ -21,36 +21,70 @@ export default function Signup() {
   }>({});
   const [, navigate] = useLocation();
   const emailCheckTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastCheckedEmail = useRef("");
+  const abortRef = useRef<AbortController | null>(null);
+  const latestRequestId = useRef(0);
+
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const checkEmailAvailability = useCallback(async (emailToCheck: string) => {
-    if (!emailToCheck || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailToCheck)) return;
-    if (emailToCheck === lastCheckedEmail.current) return;
-    lastCheckedEmail.current = emailToCheck;
+    if (!emailToCheck || !EMAIL_RE.test(emailToCheck)) return;
+
+    // Cancel any in-flight request
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    // Stale-response guard: only apply the result if this is still the latest request
+    const requestId = ++latestRequestId.current;
+
     setEmailChecking(true);
+
     try {
       const base = getApiBase();
       const res = await fetch(`${base}/api/auth/check-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: emailToCheck }),
+        signal: controller.signal,
       });
-      if (!res.ok) return; // rate limit or server error — don't show false positive
-      const data = await res.json() as { available?: boolean };
+
+      if (requestId !== latestRequestId.current) return; // stale — newer request is in flight
+
+      if (!res.ok) {
+        if (res.status === 429) {
+          setErrors((p) => ({ ...p, email: "Too many attempts, please wait a moment." }));
+        } else if (res.status >= 500) {
+          setErrors((p) => ({ ...p, email: "Server error, please try again." }));
+        }
+        // Any other non-200: silently ignore — never show a false positive
+        return;
+      }
+
+      const data = await res.json() as { success?: boolean; available?: boolean | null; error?: string | null };
+
+      if (requestId !== latestRequestId.current) return; // stale
+
       if (data.available === false) {
         setErrors((p) => ({ ...p, email: "An account with this email already exists. Please log in instead." }));
       }
-    } catch { /* network error — will be caught on submit */ }
-    finally { setEmailChecking(false); }
-  }, []);
+    } catch (err) {
+      if ((err as Error)?.name === "AbortError") return; // cancelled — not an error
+      if (requestId !== latestRequestId.current) return;
+      setErrors((p) => ({ ...p, email: "Connection issue, please check your network." }));
+    } finally {
+      if (requestId === latestRequestId.current) setEmailChecking(false);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
-    if (errors.email) setErrors((p) => ({ ...p, email: undefined }));
-    lastCheckedEmail.current = "";
+    setErrors((p) => ({ ...p, email: undefined }));
+    // Reset stale-guard so a re-check fires even if the address is the same after clearing
+    latestRequestId.current++;
+    abortRef.current?.abort();
     if (emailCheckTimer.current) clearTimeout(emailCheckTimer.current);
-    if (value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      emailCheckTimer.current = setTimeout(() => checkEmailAvailability(value), 600);
+    if (value && EMAIL_RE.test(value)) {
+      emailCheckTimer.current = setTimeout(() => checkEmailAvailability(value), 500);
     }
   };
 
@@ -169,7 +203,7 @@ export default function Signup() {
                   <label className="block text-sm mb-[6px]" style={{ color: "#333" }}>
                     Email <span style={{ color: "#e53e3e" }}>*</span>
                   </label>
-                  <div className="gt-input-wrap">
+                  <div className="gt-input-wrap" style={{ position: "relative" }}>
                     <input
                       type="email"
                       value={email}
@@ -181,11 +215,27 @@ export default function Signup() {
                         background: "#e8e8e8",
                         border: "none",
                         borderRadius: "3px",
-                        padding: "13px 14px",
+                        padding: "13px 40px 13px 14px",
                         color: "#333",
                         height: "46px",
                       }}
                     />
+                    {emailChecking && (
+                      <span
+                        style={{
+                          position: "absolute",
+                          right: "12px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          fontSize: "11px",
+                          color: "#888",
+                          pointerEvents: "none",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        Checking…
+                      </span>
+                    )}
                   </div>
                   {errors.email && (
                     <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.email}</p>
