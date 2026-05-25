@@ -1,0 +1,146 @@
+{
+  "colorScheme": "dark",
+  "fonts": [
+    {
+      "family": "Roboto",
+      "role": "body"
+    },
+    {
+      "family": "Roboto Condensed",
+      "role": "heading"
+    }
+  ],
+  "colors": {
+    "primary": "#1E6FC4",
+    "secondary": "#76D1F5",
+    "accent": "#1E6FC4",
+    "background": "#060B14",
+    "textPrimary": "#060B14",
+    "link": "#374151"
+  },
+  "typography": {
+    "fontFamilies": {
+      "primary": "Roboto",
+      "heading": "Roboto Condensed"
+    },
+    "fontStacks": {
+      "heading": [
+        "Roboto",
+        "sans-serif"
+      ],
+      "body": [
+        "Roboto",
+        "sans-serif"
+      ],
+      "paragraph": [
+        "Roboto",
+        "sans-serif"
+      ]
+    },
+    "fontSizes": {
+      "h1": "48px",
+      "h2": "36px",
+      "body": "13px"
+    }
+  },
+  "spacing": {
+    "baseUnit": 4,
+    "borderRadius": "1px"
+  },
+  "components": {
+    "input": {
+      "background": "#12151C",
+      "textColor": "#C8D8E4",
+      "borderColor": "#233642",
+      "borderRadius": "2px",
+      "borderRadiusCorners": {
+        "topLeft": "2px",
+        "topRight": "2px",
+        "bottomRight": "2px",
+        "bottomLeft": "2px"
+      },
+      "shadow": "none"
+    },
+    "buttonPrimary": {
+      "background": "#1E6FC4",
+      "textColor": "#FFFFFF",
+      "borderRadius": "0px",
+      "borderRadiusCorners": {
+        "topLeft": "0px",
+        "topRight": "0px",
+        "bottomRight": "0px",
+        "bottomLeft": "0px"
+      },
+      "shadow": "none"
+    },
+    "buttonSecondary": {
+      "background": "#141414",
+      "textColor": "#FFFFFF",
+      "borderColor": "#1AB8D4",
+      "borderRadius": "0px",
+      "borderRadiusCorners": {
+        "topLeft": "0px",
+        "topRight": "0px",
+        "bottomRight": "0px",
+        "bottomLeft": "0px"
+      },
+      "shadow": "none"
+    }
+  },
+  "images": {
+    "logo": "https://www.guardiiantrading.com/assets/guardian_logo_reversed-D24bK1aW.png",
+    "favicon": "https://www.guardiiantrading.com/favicon.png",
+    "ogImage": null,
+    "logoHref": "File saved at: attached_assets/logoHref.html",
+    "logoAlt": "Guardian Trading Logo"
+  },
+  "__llm_logo_reasoning": {
+    "selectedIndex": 0,
+    "reasoning": "Selected #0 because it is visible, located in the header, links to the homepage, and the alt text matches the brand name 'Guardian Trading'.",
+    "confidence": 0.95,
+    "source": "llm"
+  },
+  "__llm_button_reasoning": {
+    "primary": {
+      "index": 3,
+      "text": "Open An Account",
+      "reasoning": "Button #3 ('Open An Account') uses the vibrant brand color #1E6FC4, making it the most prominent and action-oriented CTA on the page."
+    },
+    "secondary": {
+      "index": 0,
+      "text": "Start Trading",
+      "reasoning": "Button #0 ('Start Trading') is a secondary action with a different dark background color (#141414) and complements the primary CTA."
+    },
+    "confidence": 0.95
+  },
+  "personality": {
+    "tone": "professional",
+    "energy": "medium",
+    "targetAudience": "traders and financial professionals"
+  },
+  "designSystem": {
+    "framework": "tailwind",
+    "componentLibrary": ""
+  },
+  "confidence": {
+    "buttons": 0.95,
+    "colors": 0.9,
+    "overall": 0.925
+  },
+  "__llm_metadata": {
+    "logoSelection": {
+      "llmCalled": true,
+      "llmSucceeded": true,
+      "finalSource": "llm",
+      "rawLogoSelection": {
+        "selectedLogoIndex": 0,
+        "selectedLogoReasoning": "Selected #0 because it is visible, located in the header, links to the homepage, and the alt text matches the brand name 'Guardian Trading'.",
+        "confidence": 0.95
+      }
+    },
+    "buttonClassification": {
+      "llmCalled": true,
+      "llmSucceeded": true
+    }
+  }
+}
