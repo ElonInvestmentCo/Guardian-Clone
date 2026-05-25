@@ -89,14 +89,20 @@ export default function Signup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const data = await res.json().catch(() => ({})) as { error?: string };
+      const data = await res.json().catch(() => ({})) as { error?: string; emailSkipped?: boolean };
       if (!res.ok) {
         setErrors({ submit: data.error || "Failed to send verification email. Please try again." });
         return;
       }
       sessionStorage.setItem("verificationEmail", email);
-      setSent(true);
-      setTimeout(() => navigate("/email-verification"), 600);
+      sessionStorage.setItem("signupEmail", email);
+      if (data.emailSkipped) {
+        setSent(true);
+        setTimeout(() => navigate("/general-details"), 600);
+      } else {
+        setSent(true);
+        setTimeout(() => navigate("/email-verification"), 600);
+      }
     } catch {
       setErrors({ submit: "Unable to connect. Please check your connection and try again." });
     } finally {

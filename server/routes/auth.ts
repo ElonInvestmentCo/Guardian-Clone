@@ -328,6 +328,27 @@ authRouter.post("/auth/send-verification", sensitiveEndpointLimit, validate(Auth
     if (!mailResult.success) {
       const reason = mailResult.error ?? "unknown error";
       logAttempt("SEND_VERIFICATION", email, `email delivery failed: ${reason}`);
+
+      // In development without email configured: auto-register and skip verification
+      if (process.env.NODE_ENV !== "production" && reason.includes("RESEND_API_KEY")) {
+        console.warn(`[Auth] Email not configured — auto-registering ${email} without verification (dev mode)`);
+        const pending = await query(
+          `SELECT password_hash FROM pending_registrations WHERE email = $1 AND expires_at > NOW()`,
+          [email.toLowerCase()]
+        );
+        if (pending.rows.length > 0) {
+          const existingUser = await getUserData(email);
+          if (!existingUser) {
+            const hash = pending.rows[0].password_hash as string;
+            await saveUserCredentials(email, hash);
+            logAttempt("SEND_VERIFICATION", email, "auto-registered (email service not configured)");
+          }
+          await query(`DELETE FROM pending_registrations WHERE email = $1`, [email.toLowerCase()]);
+        }
+        res.json({ success: true, emailSkipped: true });
+        return;
+      }
+
       console.error(`[Auth] Resend failure for ${email}: ${reason}`);
       res.status(500).json({
         error: "Failed to send verification email. Please try again or contact support.",
