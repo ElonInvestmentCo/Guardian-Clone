@@ -26,19 +26,11 @@ export function Navbar() {
 
   const navLinks = [
     { name: "About",      href: "/about" },
-    { name: "Services",   href: "/services/trading-services" },
+    { name: "Services",   href: "/#services" },
     { name: "Platforms",  href: "/platforms" },
-    { name: "Pricing",    href: "/equities-options" },
-    { name: "Insights",   href: "/blog" },
-    { name: "Contact Us", href: "/contact-us" },
-  ];
-
-  const mobileNavLinks = [
-    { name: "ABOUT",    href: "/about" },
-    { name: "PLATFORM", href: "/platforms" },
-    { name: "PRICING",  href: "/equities-options" },
-    { name: "PRODUCTS", href: "/services/trading-services" },
-    { name: "GET US",   href: "/contact-us" },
+    { name: "Pricing",    href: "/#pricing" },
+    { name: "Insights",   href: "/#insights" },
+    { name: "Contact Us", href: "/contact" },
   ];
 
   const headerBg = scrolled ? "#000000" : "#151515";
@@ -60,14 +52,14 @@ export function Navbar() {
             <img
               src={logoSrc}
               alt="Guardian Trading Logo"
-              className="hidden sm:block h-[58px]"
+              className="hidden sm:block h-[40px]"
               style={{ width: "auto", objectFit: "contain" }}
               data-testid="img-logo"
             />
             <img
               src={logoMobileSrc}
               alt="Guardian Trading Logo"
-              className="block sm:hidden h-[50px]"
+              className="block sm:hidden h-[36px]"
               style={{ width: "auto", objectFit: "contain" }}
               data-testid="img-logo-mobile"
             />
@@ -187,25 +179,22 @@ export function Navbar() {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 flex flex-col lg:hidden overflow-y-auto"
-          style={{ background: "#0a0a0a", paddingTop: "78px" }}
+          className="fixed inset-0 z-40 flex flex-col lg:hidden"
+          style={{ background: "#151515", paddingTop: "78px" }}
         >
-          <div className="flex flex-col px-8 py-6 gap-0">
-            {mobileNavLinks.map((link) => (
+          <div className="flex flex-col px-8 py-4 gap-0">
+            {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
                 style={{
-                  color: "white",
-                  fontSize: "15px",
-                  fontWeight: 700,
-                  letterSpacing: "0.08em",
-                  padding: "16px 0",
-                  borderBottom: "1px solid rgba(255,255,255,0.08)",
+                  color: "white", fontSize: "17px", fontWeight: 600,
+                  padding: "14px 0",
+                  borderBottom: "1px solid rgba(255,255,255,0.07)",
                   textDecoration: "none",
                   display: "block",
                 }}
-                data-testid={`link-mobile-${link.name.toLowerCase().replace(/\s/g, "-")}`}
+                data-testid={`link-mobile-${link.name.toLowerCase()}`}
               >
                 {link.name}
               </Link>
@@ -213,38 +202,43 @@ export function Navbar() {
           </div>
           <div className="px-8 mt-6 flex flex-col gap-3">
             <Link
-              href="/signup"
+              href="/login"
               style={{
-                display: "block",
-                padding: "14px 20px",
-                background: "#3b5bdb",
-                color: "white",
-                textAlign: "center",
-                fontSize: "15px",
-                fontWeight: 600,
-                textDecoration: "none",
-                borderRadius: "4px",
+                display: "block", padding: "14px",
+                background: "#3f88c4",
+                color: "white", textAlign: "center",
+                fontSize: "15px", fontWeight: 600,
+                textDecoration: "none", borderRadius: "6px",
               }}
-              data-testid="link-mobile-trade-now"
+              data-testid="link-mobile-login"
             >
-              Trade Now
+              Login
             </Link>
             <Link
               href="/login"
               style={{
-                display: "block",
-                padding: "14px 20px",
-                background: "#3b5bdb",
-                color: "white",
-                textAlign: "center",
-                fontSize: "15px",
-                fontWeight: 600,
-                textDecoration: "none",
-                borderRadius: "4px",
+                display: "block", padding: "14px",
+                border: "1.5px solid #3a6fa8",
+                color: "white", textAlign: "center",
+                fontSize: "15px", fontWeight: 600,
+                textDecoration: "none", borderRadius: "4px",
               }}
-              data-testid="link-mobile-open-account"
+              data-testid="link-mobile-client-portal"
             >
-              Open Account with
+              Client Portal BETA
+            </Link>
+            <Link
+              href="/signup"
+              style={{
+                display: "block", padding: "14px",
+                background: "#2a6abf",
+                color: "white", textAlign: "center",
+                fontSize: "15px", fontWeight: 700,
+                textDecoration: "none", borderRadius: "4px",
+              }}
+              data-testid="link-mobile-create-account"
+            >
+              Create Account
             </Link>
           </div>
         </div>
