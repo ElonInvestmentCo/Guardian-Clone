@@ -337,7 +337,7 @@ router.get("/ai/provider", (_req: Request, res: Response): void => {
 });
 
 router.get("/ai/status", (_req: Request, res: Response): void => {
-  const hasOpenAi = !!(process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.AI_INTEGRATIONS_OPENAI_BASE_URL);
+  const hasOpenAi = !!(process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY || process.env.AI_INTEGRATIONS_OPENAI_BASE_URL);
   const hasGrok = !!(process.env.XAI_API_KEY || process.env.GROK_API_KEY);
   const hasCloudflare = !!(process.env.CLOUDFLARE_API_TOKEN && process.env.CLOUDFLARE_ACCOUNT_ID);
 
