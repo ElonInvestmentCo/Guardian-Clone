@@ -18,6 +18,7 @@ import contactRouter from "./contact.js";
 import aiRouter from "./ai/index.js";
 import placesRouter from "./places.js";
 import tradingRouter from "./trading.js";
+import stocksRouter from "./stocks.js";
 
 const router: IRouter = Router();
 
@@ -40,5 +41,6 @@ router.use(contactRouter);
 router.use(aiRouter);
 router.use(placesRouter);
 router.use(tradingRouter);
+router.use(stocksRouter);
 
 export default router;
