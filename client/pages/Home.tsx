@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Link } from "wouter";
-import { X, Star, ArrowRight, Play } from "lucide-react";
+import { X, Play } from "lucide-react";
 
 import heroPlatform from "@assets/IMG_7967_1773721659915.png";
 import shieldChart from "@assets/IMG_7968_1773721659915.png";
-import monitorPlatform from "@assets/IMG_7969_1773721659915.png";
-import stockBorrows from "@assets/IMG_7970_1773721659915.png";
+import monitorPlatform from "@assets/img-sterling-trader-monitor-563x411_1773944312230.png";
+import stockBorrows from "@assets/img-locates-stock-borrows-581x372_1773944312230.png";
 import dasLogo from "@assets/DAS-icon-50x50_1773948931248.png";
 import sterlingLogo from "@assets/sterling-icon-50x50_1773948931249.png";
 
@@ -14,7 +14,8 @@ import bgVector from "@assets/img-background-vector-1_1773948931248.png";
 import heroPattern from "@assets/pattern_1773965291387.png";
 
 import infraIcon from "@assets/ico-our-infrastructure-132x72_1773948931248.png";
-import benzingaReview from "@assets/benzinga-review.jpg";
+import benzingaBanner from "@assets/img-benzinga-short-selling-review-1-846x218-1_1773944312228.jpg";
+import arrowBtn from "@assets/Guardian_Trading_-_Google_Chrome_4_15_2026_3_12_55_PM-fotor-bg_1776475354489.png";
 
 export default function Home() {
   const [newsBannerVisible, setNewsBannerVisible] = useState(true);
@@ -24,7 +25,7 @@ export default function Home() {
     <Layout>
       {/* ── NEWS / BLOG ANNOUNCEMENT BAR ── */}
       {newsBannerVisible && (
-        <div style={{ marginTop: "78px" }}>
+        <div style={{ backgroundColor: "#141414", marginTop: "78px" }}>
           <div
             className="flex items-center justify-between"
             style={{
@@ -32,27 +33,24 @@ export default function Home() {
               margin: "0 auto",
               height: "44px",
               padding: "0 24px",
+              backgroundColor: "#121212",
               borderBottom: "1px solid #212e33",
             }}
           >
-            <div className="flex items-center min-w-0" style={{ gap: "10px" }}>
+            <div className="flex items-center min-w-0 overflow-hidden" style={{ gap: "10px" }}>
               <span
+                className="flex-shrink-0"
                 style={{
                   width: "8px",
                   height: "8px",
                   borderRadius: "50%",
                   background: "linear-gradient(180deg, #5bc5f0 0%, #0a8fd4 100%)",
-                  flexShrink: 0,
                   boxShadow: "0 0 6px 2px rgba(54, 172, 245, 0.45), 0 0 12px 4px rgba(54, 172, 245, 0.2)",
                 }}
               />
               <span
-                style={{
-                  color: "#f5f9fc",
-                  fontSize: "13px",
-                  fontWeight: 500,
-                  whiteSpace: "nowrap",
-                }}
+                className="hidden sm:inline flex-shrink-0"
+                style={{ color: "#f5f9fc", fontSize: "13px", fontWeight: 500 }}
               >
                 New on the blog
               </span>
@@ -60,14 +58,15 @@ export default function Home() {
                 href="https://www.guardiiantrading.com/how-to-prepare-your-das-trader-pro-for-advanced-hotkeys-scripting/"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="overflow-hidden"
                 style={{
                   color: "#76d1f5",
                   fontSize: "13px",
                   fontWeight: 500,
-                  whiteSpace: "nowrap",
                   textDecoration: "none",
-                  overflow: "hidden",
                   textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  minWidth: 0,
                 }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.textDecoration = "underline"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.textDecoration = "none"; }}
@@ -143,9 +142,13 @@ export default function Home() {
       <section
         className="relative overflow-hidden"
         style={{
-          paddingTop: newsBannerVisible ? "60px" : "138px",
-          paddingBottom: "80px",
-          minHeight: "520px",
+          backgroundColor: "#141414",
+          minHeight: newsBannerVisible ? "calc(100vh - 122px)" : "calc(100vh - 78px)",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          paddingTop: "40px",
+          paddingBottom: "40px",
         }}
       >
         {/* Dotted bar-chart pattern — right-side section background */}
@@ -157,13 +160,13 @@ export default function Home() {
           style={{ opacity: 0.55, filter: "brightness(1.15) saturate(1.1)" }}
         />
 
-        <div className="max-w-[1200px] mx-auto px-4 relative z-10">
+        <div className="max-w-[1200px] mx-auto px-4 relative z-10 w-full">
           <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
             {/* Left column */}
             <div className="flex-1 max-w-[520px]">
-              <p className="text-[13px] font-bold tracking-widest uppercase text-white mb-4">TAKE ON THE MARKETS WITH GUARDIAN</p>
-              <h1 className="text-[2.6rem] lg:text-5xl font-display font-bold leading-tight text-white mb-8">
-                Optimized services, tools and support designed specifically for active traders.
+              <p className="text-[11px] sm:text-[13px] font-bold tracking-widest uppercase text-white mb-4">TAKE ON THE MARKETS WITH GUARDIAN</p>
+              <h1 className="text-[1.9rem] sm:text-[2.4rem] lg:text-5xl font-display font-bold leading-tight text-white mb-8">
+                Optimised services, tools and support designed specifically for active traders.
               </h1>
               <Link
                 href="/signup"
@@ -188,26 +191,24 @@ export default function Home() {
       </section>
 
       {/* ── BENZINGA AWARD BANNER ── */}
-      <div>
+      <div style={{ backgroundColor: "#141414" }}>
         <img
-          src={benzingaReview}
+          src={benzingaBanner}
           alt="Reviewed by Benzinga 2024 — Preferred Broker for Short Selling"
-          width={846}
-          height={218}
           loading="lazy"
-          style={{ display: "block", width: "846px", maxWidth: "100%", height: "auto", aspectRatio: "846 / 218", margin: "0 auto" }}
+          style={{ display: "block", width: "846px", maxWidth: "100%", height: "auto", margin: "0 auto" }}
         />
       </div>
 
-      {/* ── WHY DO ACTIVE TRADERS USE GUARDIAN? ── */}
-      <section id="services" className="py-20 px-4">
+      {/* ── HOW DO ACTIVE TRADERS USE GUARDIAN? ── */}
+      <section id="services" className="bg-[#1c1c1c] py-20 px-4">
         <div className="max-w-[1200px] mx-auto">
           <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-3">
-            Why Do Active Traders Use Guardian?
+            How Do Active Traders Use Guardian?
           </h2>
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="flex-1">
-              <h3 className="text-2xl text-white font-bold mb-5">Pricing. Routing. Service.</h3>
+              <h3 className="text-2xl text-white font-bold mb-5">Pinning, Your Direction</h3>
               <p className="text-white text-[15px] leading-relaxed mb-4">
                 Guardian Trading's mission is simple; to provide active traders with high-performance tools,
                 comprehensive services, competitive pricing, and proactive client support to maximize their
@@ -232,14 +233,14 @@ export default function Home() {
       </section>
 
       {/* ── PRICING CARDS ── */}
-      <section id="pricing" className="py-10 px-4">
+      <section id="pricing" className="bg-[#1c1c1c] py-10 px-4">
         <div className="max-w-[1100px] mx-auto">
           {/* Single dark card — heading left, pricing right */}
-          <div className="flex flex-col lg:flex-row">
+          <div className="bg-[#181818] flex flex-col lg:flex-row">
             {/* Left: heading */}
             <div className="flex-shrink-0 lg:w-[280px] px-10 py-10 flex items-center">
-              <h2 className="text-2xl font-bold text-[#93c5fd] leading-snug">
-                Control Your Costs With Customized Commissions
+              <h2 className="text-2xl font-bold text-white leading-snug">
+                Control Your Costs With Industry Leading Pricing
               </h2>
             </div>
 
@@ -247,28 +248,41 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row flex-1">
               {/* Options Contracts */}
               <div className="flex-1 px-10 py-10">
-                <p className="text-[#93c5fd] font-bold text-[17px] mb-1">Options Contracts</p>
-                <p className="text-[11px] text-[#93c5fd] uppercase tracking-[0.18em] mb-4">AS LOW AS:</p>
-                <p className="font-bold leading-none text-[#93c5fd] mb-4" style={{ fontSize: "clamp(52px,7vw,80px)" }}>
+                <p className="text-white font-bold text-[17px] mb-1">Options Contracts</p>
+                <p className="text-[11px] text-white uppercase tracking-[0.18em] mb-4">AS LOW AS:</p>
+                <p className="font-bold leading-none mb-4" style={{ fontSize: "clamp(52px,7vw,80px)", color: "#76d1f5" }}>
                   <sup className="text-[40%] align-super">$</sup>0.15
                 </p>
-                <p className="text-[11px] text-[#93c5fd] uppercase tracking-[0.18em]">PER CONTRACT*</p>
+                <p className="text-[11px] text-white uppercase tracking-[0.18em]">PER CONTRACT*</p>
               </div>
 
               {/* Equities Commissions */}
               <div className="flex-1 px-10 py-10">
-                <p className="text-[#93c5fd] font-bold text-[17px] mb-1">Equities Commissions</p>
-                <p className="text-[11px] text-[#93c5fd] uppercase tracking-[0.18em] mb-4">AS LOW AS:</p>
-                <p className="font-bold leading-none text-[#93c5fd] mb-4" style={{ fontSize: "clamp(52px,7vw,80px)" }}>
+                <p className="text-white font-bold text-[17px] mb-1">Equities Commissions</p>
+                <p className="text-[11px] text-white uppercase tracking-[0.18em] mb-4">AS LOW AS:</p>
+                <p className="font-bold leading-none mb-4" style={{ fontSize: "clamp(52px,7vw,80px)", color: "#76d1f5" }}>
                   <sup className="text-[40%] align-super">$</sup>0.0005
                 </p>
-                <p className="text-[11px] text-[#93c5fd] uppercase tracking-[0.18em]">PER SHARE</p>
+                <p className="text-[11px] text-white uppercase tracking-[0.18em]">PER SHARE</p>
               </div>
             </div>
           </div>
 
+          {/* Trading Destinations */}
+          <div className="bg-[#181818] mt-[2px] flex flex-col sm:flex-row">
+            <div className="flex-shrink-0 sm:w-[280px] px-10 py-7 flex items-center border-b sm:border-b-0 sm:border-r border-white/5">
+              <p className="text-white font-bold text-[16px]">Trading Destinations</p>
+            </div>
+            <div className="flex-1 px-10 py-7 flex items-center">
+              <p className="text-[#aaa] text-[14px] leading-relaxed">
+                Access 30+ order routing options including ALGO and dark pool routes, ECN rebates,
+                and direct market access to major U.S. exchanges.
+              </p>
+            </div>
+          </div>
+
           {/* Disclaimer */}
-          <p className="text-[12px] text-[#aaa] mt-5 leading-relaxed">
+          <p className="text-[12px] text-white mt-5 leading-relaxed">
             *Options commission does not include standard pass-through fees such as the Options Reporting Fee, Options
             Clearing Corporation or exchange fees on index contracts, etc.*
           </p>
@@ -276,7 +290,7 @@ export default function Home() {
       </section>
 
       {/* ── MASTER YOUR ORDER FLOW ── */}
-      <section className="py-16 lg:py-20 px-4">
+      <section className="bg-[#141414] py-16 lg:py-20 px-4">
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-center">
             <div className="flex-1 max-w-[480px]">
@@ -288,12 +302,12 @@ export default function Home() {
               </p>
               <ul className="space-y-[18px]">
                 {[
-                  "Execute orders quickly",
-                  "In-house stock borrow desk for locates and overnight borrows",
-                  "30+ Order routing options including ALGO and dark pool routes",
+                  "Smart Order Router",
+                  "OTC Markets",
+                  "IOI Alerts",
+                  "OTC Market Maker",
                   "ECN Rebates",
                   "Access to Liquidity",
-                  "Connect your trading via an API",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-[#ccc] text-[14px] leading-snug">
                     <Play
@@ -319,7 +333,7 @@ export default function Home() {
       </section>
 
       {/* ── LOCATES & STOCK BORROWS ── */}
-      <section className="py-16 lg:py-20 px-4">
+      <section className="bg-[#141414] py-16 lg:py-20 px-4">
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-center">
             {/* Text — top on mobile, right on desktop */}
@@ -348,9 +362,26 @@ export default function Home() {
               </ul>
               <Link
                 href="/platforms"
-                className="inline-block border border-primary text-primary text-sm px-5 py-2 hover:bg-primary hover:text-black transition-colors"
+                className="group flex items-center justify-between w-full"
+                style={{
+                  backgroundColor: "#141414",
+                  padding: "18px 22px",
+                  textDecoration: "none",
+                  maxWidth: "420px",
+                }}
               >
-                Stock Locates and Borrows
+                <span
+                  className="text-white font-bold group-hover:text-[#1ab8d4] transition-colors"
+                  style={{ fontSize: "15px", letterSpacing: "0.01em" }}
+                >
+                  Small Load Borrows
+                </span>
+                <img
+                  src={arrowBtn}
+                  alt=""
+                  aria-hidden="true"
+                  style={{ width: "72px", height: "72px", objectFit: "contain", marginLeft: "0px", flexShrink: 0 }}
+                />
               </Link>
             </div>
             {/* Stock borrows screenshot — bottom on mobile, left on desktop */}
@@ -367,7 +398,7 @@ export default function Home() {
       </section>
 
       {/* ── TRADING TECHNOLOGY ── */}
-      <section className="relative py-16 px-4 overflow-hidden">
+      <section className="relative bg-[#1c1c1c] py-16 px-4 overflow-hidden">
         {/* Background vector chart lines */}
         <img
           src={bgVector}
@@ -382,12 +413,12 @@ export default function Home() {
             Trading Technology
           </h2>
 
-          {/* Card 1 — Our OMS Platforms */}
-          <div className="mb-[6px] flex flex-col lg:flex-row">
+          {/* Card 1 — Our DMA Platform */}
+          <div className="mb-[6px] bg-[#111] flex flex-col lg:flex-row">
             {/* Left */}
             <div className="lg:w-[42%] px-8 lg:px-10 py-8 lg:py-10 flex flex-col justify-center">
               <h3 className="text-[22px] lg:text-[26px] font-bold text-white mb-7 leading-tight">
-                Our OMS Platforms
+                Our DMA Platform
               </h3>
               <div className="flex items-start gap-10">
                 {/* DAS Trader Pro */}
@@ -434,12 +465,12 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Card 2 — Our Infrastructure */}
-          <div className="flex flex-col lg:flex-row">
+          {/* Card 2 — Get Infrastructure */}
+          <div className="bg-[#111] flex flex-col lg:flex-row">
             {/* Left */}
             <div className="lg:w-[42%] px-8 lg:px-10 py-8 lg:py-10 flex flex-col justify-center">
               <h3 className="text-[22px] lg:text-[26px] font-bold text-white mb-2 leading-tight">
-                Our Infrastructure
+                Get Infrastructure
               </h3>
               <p className="text-white text-[11px] font-bold tracking-[0.18em] uppercase mb-6">
                 SPEED. EFFICIENCY. ACCESS.
@@ -467,7 +498,7 @@ export default function Home() {
       </section>
 
       {/* ── EXPERIENCE THE GUARDIAN DIFFERENCE (CTA) ── */}
-      <section className="py-20 px-4 border-t border-white/5 text-center">
+      <section className="bg-[#0d0d0d] py-20 px-4 border-t border-white/5 text-center">
         <div className="max-w-[700px] mx-auto">
           <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-4">
             Experience the Guardian Difference
