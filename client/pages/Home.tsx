@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Layout } from "@/components/Layout";
 import { Link } from "wouter";
-import { X, Play } from "lucide-react";
+import { X, Play, ArrowRight } from "lucide-react";
 
 import heroPlatform from "@assets/IMG_7967_1773721659915.png";
 import shieldChart from "@assets/IMG_7968_1773721659915.png";
@@ -17,9 +17,37 @@ import infraIcon from "@assets/ico-our-infrastructure-132x72_1773948931248.png";
 import benzingaBanner from "@assets/img-benzinga-short-selling-review-1-846x218-1_1773944312228.jpg";
 import arrowBtn from "@assets/Guardian_Trading_-_Google_Chrome_4_15_2026_3_12_55_PM-fotor-bg_1776475354489.png";
 
+function useFadeIn() {
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.style.opacity = "1";
+          el.style.transform = "translateY(0)";
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.08 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return ref;
+}
+
 export default function Home() {
   const [newsBannerVisible, setNewsBannerVisible] = useState(true);
   const [email, setEmail] = useState("");
+
+  const refServices = useFadeIn() as React.RefObject<HTMLElement>;
+  const refPricing  = useFadeIn() as React.RefObject<HTMLElement>;
+  const refOrder    = useFadeIn() as React.RefObject<HTMLElement>;
+  const refLocates  = useFadeIn() as React.RefObject<HTMLElement>;
+  const refTech     = useFadeIn() as React.RefObject<HTMLElement>;
+  const refCta      = useFadeIn() as React.RefObject<HTMLElement>;
 
   return (
     <Layout>
@@ -170,10 +198,11 @@ export default function Home() {
               </h1>
               <Link
                 href="/signup"
-                className="inline-block border text-white text-sm px-8 py-3 font-semibold tracking-wide transition-colors hover:bg-white/10"
+                className="inline-flex items-center gap-2 border text-white text-sm px-8 py-3 font-semibold tracking-wide transition-colors hover:bg-white/10 group"
                 style={{ borderColor: "#1ab8d4" }}
               >
                 Start Trading
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
 
@@ -201,7 +230,12 @@ export default function Home() {
       </div>
 
       {/* ── HOW DO ACTIVE TRADERS USE GUARDIAN? ── */}
-      <section id="services" className="bg-[#1c1c1c] py-20 px-4">
+      <section
+        id="services"
+        ref={refServices as React.RefObject<HTMLElement & HTMLDivElement>}
+        className="bg-[#1c1c1c] py-20 px-4"
+        style={{ opacity: 0, transform: "translateY(28px)", transition: "opacity 0.55s ease, transform 0.55s ease" }}
+      >
         <div className="max-w-[1200px] mx-auto">
           <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-3">
             How Do Active Traders Use Guardian?
@@ -233,7 +267,12 @@ export default function Home() {
       </section>
 
       {/* ── PRICING CARDS ── */}
-      <section id="pricing" className="bg-[#1c1c1c] py-10 px-4">
+      <section
+        id="pricing"
+        ref={refPricing as React.RefObject<HTMLElement & HTMLDivElement>}
+        className="bg-[#1c1c1c] py-10 px-4"
+        style={{ opacity: 0, transform: "translateY(28px)", transition: "opacity 0.55s ease, transform 0.55s ease" }}
+      >
         <div className="max-w-[1100px] mx-auto">
           {/* Single dark card — heading left, pricing right */}
           <div className="bg-[#181818] flex flex-col lg:flex-row">
@@ -290,7 +329,11 @@ export default function Home() {
       </section>
 
       {/* ── MASTER YOUR ORDER FLOW ── */}
-      <section className="bg-[#141414] py-16 lg:py-20 px-4">
+      <section
+        ref={refOrder as React.RefObject<HTMLElement & HTMLDivElement>}
+        className="bg-[#141414] py-16 lg:py-20 px-4"
+        style={{ opacity: 0, transform: "translateY(28px)", transition: "opacity 0.55s ease, transform 0.55s ease" }}
+      >
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-center">
             <div className="flex-1 max-w-[480px]">
@@ -333,7 +376,11 @@ export default function Home() {
       </section>
 
       {/* ── LOCATES & STOCK BORROWS ── */}
-      <section className="bg-[#141414] py-16 lg:py-20 px-4">
+      <section
+        ref={refLocates as React.RefObject<HTMLElement & HTMLDivElement>}
+        className="bg-[#141414] py-16 lg:py-20 px-4"
+        style={{ opacity: 0, transform: "translateY(28px)", transition: "opacity 0.55s ease, transform 0.55s ease" }}
+      >
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-center">
             {/* Text — top on mobile, right on desktop */}
@@ -398,7 +445,11 @@ export default function Home() {
       </section>
 
       {/* ── TRADING TECHNOLOGY ── */}
-      <section className="relative bg-[#1c1c1c] py-16 px-4 overflow-hidden">
+      <section
+        ref={refTech as React.RefObject<HTMLElement & HTMLDivElement>}
+        className="relative bg-[#1c1c1c] py-16 px-4 overflow-hidden"
+        style={{ opacity: 0, transform: "translateY(28px)", transition: "opacity 0.55s ease, transform 0.55s ease" }}
+      >
         {/* Background vector chart lines */}
         <img
           src={bgVector}
@@ -498,7 +549,11 @@ export default function Home() {
       </section>
 
       {/* ── EXPERIENCE THE GUARDIAN DIFFERENCE (CTA) ── */}
-      <section className="bg-[#0d0d0d] py-20 px-4 border-t border-white/5 text-center">
+      <section
+        ref={refCta as React.RefObject<HTMLElement & HTMLDivElement>}
+        className="bg-[#0d0d0d] py-20 px-4 border-t border-white/5 text-center"
+        style={{ opacity: 0, transform: "translateY(28px)", transition: "opacity 0.55s ease, transform 0.55s ease" }}
+      >
         <div className="max-w-[700px] mx-auto">
           <h2 className="text-3xl lg:text-4xl font-display font-bold text-white mb-4">
             Experience the Guardian Difference
