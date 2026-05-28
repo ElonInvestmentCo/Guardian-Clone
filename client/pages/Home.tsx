@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Layout } from "@/components/Layout";
 import { Link } from "wouter";
-import { X, Play, ArrowRight } from "lucide-react";
+import { X, Play } from "lucide-react";
 
 import heroPlatform from "@assets/IMG_7967_1773721659915.png";
 import shieldChart from "@assets/IMG_7968_1773721659915.png";
@@ -198,11 +198,10 @@ export default function Home() {
               </h1>
               <Link
                 href="/signup"
-                className="inline-flex items-center gap-2 border text-white text-sm px-8 py-3 font-semibold tracking-wide transition-colors hover:bg-white/10 group"
+                className="inline-block border text-white text-sm px-8 py-3 font-semibold tracking-wide transition-colors hover:bg-white/10"
                 style={{ borderColor: "#1ab8d4" }}
               >
                 Start Trading
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
 
