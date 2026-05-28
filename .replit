@@ -129,4 +129,6 @@ externalPort = 4200
 [userenv.shared]
 NODE_ENV = "development"
 API_PORT = "3001"
+ADMIN_EMAIL = "support@guardiiantrading.com"
+SIGNATURE_THRESHOLD = "10"
   
