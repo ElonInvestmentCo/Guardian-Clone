@@ -12,6 +12,10 @@ interface Quote {
 const API_URL = "/api/stocks/quotes";
 const POLL_MS = 60_000;
 
+const BG = "#080d14";
+const BORDER_BOTTOM = "rgba(58, 123, 213, 0.25)";
+const SEPARATOR = "rgba(58, 123, 213, 0.15)";
+
 function fmt(n: number, decimals = 2) {
   return n.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 }
@@ -19,13 +23,13 @@ function fmt(n: number, decimals = 2) {
 function QuoteItem({ q }: { q: Quote }) {
   const up = q.change > 0;
   const down = q.change < 0;
-  const color = up ? "#22c55e" : down ? "#ef4444" : "#94a3b8";
+  const color = up ? "#22c55e" : down ? "#ef4444" : "#64748b";
   const sign = up ? "+" : "";
 
   return (
     <span
       className="inline-flex items-center gap-[10px] flex-shrink-0"
-      style={{ padding: "0 28px", borderRight: "1px solid rgba(255,255,255,0.07)" }}
+      style={{ padding: "0 28px", borderRight: `1px solid ${SEPARATOR}` }}
     >
       {/* Symbol + company name */}
       <span className="flex flex-col leading-tight">
@@ -34,7 +38,7 @@ function QuoteItem({ q }: { q: Quote }) {
         </span>
         <span
           className="hidden sm:block"
-          style={{ fontSize: "10px", color: "#6b7280", maxWidth: "110px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+          style={{ fontSize: "10px", color: "#5baad4", maxWidth: "110px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
         >
           {q.name}
         </span>
@@ -118,7 +122,7 @@ export function StockTicker() {
   if (error && !quotes.length) return null;
   if (!quotes.length) {
     return (
-      <div style={{ height: "36px", backgroundColor: "#0e0e0e", borderBottom: "1px solid #1a2a30" }} />
+      <div style={{ height: "36px", backgroundColor: BG, borderBottom: `1px solid ${BORDER_BOTTOM}` }} />
     );
   }
 
@@ -128,8 +132,8 @@ export function StockTicker() {
     <div
       style={{
         height: "36px",
-        backgroundColor: "#0e0e0e",
-        borderBottom: "1px solid #1a2a30",
+        backgroundColor: BG,
+        borderBottom: `1px solid ${BORDER_BOTTOM}`,
         overflow: "hidden",
         position: "relative",
         userSelect: "none",
@@ -139,7 +143,7 @@ export function StockTicker() {
       <div
         style={{
           position: "absolute", left: 0, top: 0, bottom: 0, width: "48px", zIndex: 2,
-          background: "linear-gradient(to right, #0e0e0e, transparent)",
+          background: `linear-gradient(to right, ${BG}, transparent)`,
           pointerEvents: "none",
         }}
       />
@@ -147,7 +151,7 @@ export function StockTicker() {
       <div
         style={{
           position: "absolute", right: 0, top: 0, bottom: 0, width: "48px", zIndex: 2,
-          background: "linear-gradient(to left, #0e0e0e, transparent)",
+          background: `linear-gradient(to left, ${BG}, transparent)`,
           pointerEvents: "none",
         }}
       />
