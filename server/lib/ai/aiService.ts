@@ -138,7 +138,7 @@ let _provider: AiProvider | null = null;
 export function getAiProvider(): AiProvider {
   if (_provider) return _provider;
 
-  if (process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.AI_INTEGRATIONS_OPENAI_BASE_URL) {
+  if (process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || process.env.OPENAI_API_KEY) {
     console.log("[AI] Using OpenAI provider (Replit AI integration)");
     _provider = buildOpenAiProvider();
   } else if (process.env.XAI_API_KEY || process.env.GROK_API_KEY) {
