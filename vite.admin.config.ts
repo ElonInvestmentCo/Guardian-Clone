@@ -44,6 +44,9 @@ export default defineConfig({
     port,
     host: "0.0.0.0",
     allowedHosts: true,
+    watch: {
+      ignored: ["**/.local/share/pnpm/**", "**/node_modules/.pnpm/store/**", "**/.git/**"],
+    },
     fs: {
       strict: false,
     },

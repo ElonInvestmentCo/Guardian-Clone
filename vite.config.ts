@@ -44,6 +44,9 @@ export default defineConfig({
     hmr: {
       overlay: false,
     },
+    watch: {
+      ignored: ["**/.local/share/pnpm/**", "**/node_modules/.pnpm/store/**", "**/.git/**"],
+    },
     fs: {
       strict: true,
       deny: ["**/.*"],
