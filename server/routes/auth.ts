@@ -7,6 +7,7 @@ import { saveUserCredentials, getStoredPasswordHash, getUserData, addAdminNotifi
 import { sensitiveEndpointLimit, checkEmailLimit } from "../middleware/security.js";
 import { validate, AuthLoginSchema, AuthRegisterSchema, AuthCheckEmailSchema, AuthSendVerificationSchema, AuthVerifyCodeSchema, AuthResetPasswordSchema } from "../lib/validation.js";
 import { logSecurity } from "../lib/securityLogger.js";
+import { verifyTurnstile } from "../lib/turnstile.js";
 import { query } from "../lib/db.js";
 import { broadcastAdmin } from "../lib/realtime.js";
 import { notifyNewUser } from "../lib/adminNotifier.js";
@@ -203,7 +204,14 @@ authRouter.post("/auth/register", sensitiveEndpointLimit, validate(AuthRegisterS
 
 authRouter.post("/auth/login", sensitiveEndpointLimit, validate(AuthLoginSchema), async (req, res) => {
   try {
-    const { email, password } = req.body as { email: string; password: string };
+    const { email, password, turnstileToken } = req.body as { email: string; password: string; turnstileToken?: string };
+
+    const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? req.ip;
+    const humanVerified = await verifyTurnstile(turnstileToken, ip);
+    if (!humanVerified) {
+      res.status(400).json({ error: "Human verification failed. Please complete the Turnstile check." });
+      return;
+    }
 
     const storedHash = await getStoredPasswordHash(email);
     if (!storedHash) {
@@ -291,7 +299,14 @@ authRouter.post("/auth/logout", (req, res) => {
 
 authRouter.post("/auth/send-verification", sensitiveEndpointLimit, validate(AuthSendVerificationSchema), async (req, res) => {
   try {
-    const { email, password } = req.body as { email: string; password?: string };
+    const { email, password, turnstileToken } = req.body as { email: string; password?: string; turnstileToken?: string };
+
+    const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? req.ip;
+    const humanVerified = await verifyTurnstile(turnstileToken, ip);
+    if (!humanVerified) {
+      res.status(400).json({ error: "Human verification failed. Please complete the Turnstile check." });
+      return;
+    }
 
     const existingUser = await getUserData(email);
     if (existingUser) {

@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import { sensitiveEndpointLimit } from "../middleware/security.js";
 import { validate, ContactSchema } from "../lib/validation.js";
 import { sanitizeForEmail } from "../lib/sanitize.js";
+import { verifyTurnstile } from "../lib/turnstile.js";
 
 const router: IRouter = Router();
 
@@ -39,9 +40,16 @@ async function getResendClient(): Promise<Resend | null> {
 
 router.post("/contact", sensitiveEndpointLimit, validate(ContactSchema), async (req, res) => {
   try {
-    const { name, email, subject, message } = req.body as {
-      name: string; email: string; subject: string; message: string;
+    const { name, email, subject, message, turnstileToken } = req.body as {
+      name: string; email: string; subject: string; message: string; turnstileToken?: string;
     };
+
+    const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? req.ip;
+    const humanVerified = await verifyTurnstile(turnstileToken, ip);
+    if (!humanVerified) {
+      res.status(400).json({ error: "Human verification failed. Please complete the Turnstile check." });
+      return;
+    }
 
     const safeName = sanitizeForEmail(name);
     const safeEmail = sanitizeForEmail(email);

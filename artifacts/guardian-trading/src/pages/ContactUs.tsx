@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
+import TurnstileWidget from "@/components/TurnstileWidget";
+import { getApiBase } from "@/lib/api";
 
 const BG_VECTOR = "https://www.guardiantrading.com/wp-content/uploads/2025/07/img-background-vector-1.png";
-const RECAPTCHA_LOGO = "https://www.gstatic.com/recaptcha/api2/logo_48.png";
 
 export default function ContactUs() {
   const [firstName, setFirstName] = useState("");
@@ -10,6 +11,10 @@ export default function ContactUs() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const MAX_CHARS = 600;
 
   const inputStyle: React.CSSProperties = {
@@ -30,6 +35,44 @@ export default function ContactUs() {
     fontWeight: 600,
     color: "#ffffff",
     marginBottom: "5px",
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!turnstileToken) {
+      setError("Please complete the human verification above.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const base = getApiBase();
+      const res = await fetch(`${base}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: `${firstName} ${lastName}`.trim(),
+          email,
+          subject: "Contact Form Inquiry",
+          message: phone ? `Phone: ${phone}\n\n${message}` : message,
+          turnstileToken,
+        }),
+      });
+      const data = await res.json() as { success?: boolean; error?: string };
+      if (!res.ok) {
+        setError(data.error ?? "Failed to send message. Please try again.");
+        setTurnstileToken("");
+        return;
+      }
+      setSuccess(true);
+    } catch {
+      setError("Unable to connect. Please check your connection and try again.");
+      setTurnstileToken("");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -65,166 +108,199 @@ export default function ContactUs() {
         </section>
 
         {/* ── CONTENT ── */}
-        <section className="py-14 px-6" style={{ position: "relative", zIndex: 1 }}
-      >
-        <div className="max-w-[1100px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-10 lg:gap-16 items-start">
-          {/* Left — Company Info */}
-          <div>
-            <h2 className="text-white font-bold mb-4" style={{ fontSize: "22px" }}>
-              Guardian Trading
-            </h2>
-            <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "15px", lineHeight: 1.6, marginBottom: "16px" }}>
-              A Division of Velocity Clearing, LLC (&ldquo;Velocity&rdquo;). Member FINRA/ SIPC.
-            </p>
-            <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "15px", fontWeight: 600, marginBottom: "28px" }}>
-              All securities and transactions are handled through Velocity.
-            </p>
-
-            <p style={{ color: "#76d1f5", fontSize: "14px", fontWeight: 700, marginBottom: "12px", letterSpacing: "0.03em" }}>
-              For Customer Service
-            </p>
-            <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "14px", lineHeight: 1.7 }}>
-              Please call:{" "}
-              <a href="tel:+15126866045" style={{ color: "#76d1f5", textDecoration: "none", fontWeight: 600 }}>
-                +1 5126866045
-              </a>{" "}
-              During Market Hours or email{" "}
-              <a href="mailto:support@guardiiantrading.com" style={{ color: "#76d1f5", textDecoration: "none", display: "block", marginTop: "2px" }}>
-                support@guardiiantrading.com
-              </a>
-            </p>
-          </div>
-
-          {/* Right — Contact Form */}
-          <div>
-            <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.7)", marginBottom: "18px" }}>
-              <span style={{ color: "#c0392b", fontWeight: 700 }}>*</span>&ldquo;*&rdquo; indicates required fields
-            </p>
-
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              style={{ display: "flex", flexDirection: "column", gap: "18px" }}
-            >
-              {/* Name row */}
-              <div>
-                <label style={labelStyle}>
-                  Name <span style={{ color: "#c0392b" }}>*</span>
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.55)", display: "block", marginBottom: "4px" }}>First</span>
-                    <input
-                      type="text"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      style={inputStyle}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.55)", display: "block", marginBottom: "4px" }}>Last</span>
-                    <input
-                      type="text"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      style={inputStyle}
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Email + Phone row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label style={labelStyle}>
-                    Email <span style={{ color: "#c0392b" }}>*</span>
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    style={inputStyle}
-                    required
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle}>Phone</label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    style={inputStyle}
-                  />
-                </div>
-              </div>
-
-              {/* Message */}
-              <div>
-                <label style={labelStyle}>
-                  Message <span style={{ color: "#c0392b" }}>*</span>
-                </label>
-                <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.55)", marginBottom: "6px" }}>
-                  Enter your message below and we will get back to you as soon as possible!
-                </p>
-                <textarea
-                  value={message}
-                  maxLength={MAX_CHARS}
-                  onChange={(e) => setMessage(e.target.value)}
-                  rows={8}
-                  style={{ ...inputStyle, resize: "vertical", fontFamily: "inherit" }}
-                  required
-                />
-                <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginTop: "4px" }}>
-                  {message.length} of {MAX_CHARS} max characters
-                </p>
-              </div>
-
-              {/* Privacy text */}
-              <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.55)", lineHeight: 1.65 }}>
-                velocityclearingllc.com needs the contact information you provide to us to contact you about our products and services. You may unsubscribe from these communications at any time. For information on how to unsubscribe, as well as our privacy practices and commitment to protecting your privacy, please review our{" "}
-                <a href="#" style={{ color: "#76d1f5", textDecoration: "underline" }}>Privacy Policy</a>.
+        <section className="py-14 px-6" style={{ position: "relative", zIndex: 1 }}>
+          <div className="max-w-[1100px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-10 lg:gap-16 items-start">
+            {/* Left — Company Info */}
+            <div>
+              <h2 className="text-white font-bold mb-4" style={{ fontSize: "22px" }}>
+                Guardian Trading
+              </h2>
+              <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "15px", lineHeight: 1.6, marginBottom: "16px" }}>
+                A Division of Velocity Clearing, LLC (&ldquo;Velocity&rdquo;). Member FINRA/ SIPC.
+              </p>
+              <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "15px", fontWeight: 600, marginBottom: "28px" }}>
+                All securities and transactions are handled through Velocity.
               </p>
 
-              {/* Submit + reCAPTCHA */}
-              <div style={{ display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap" }}>
-                <button
-                  type="submit"
+              <p style={{ color: "#76d1f5", fontSize: "14px", fontWeight: 700, marginBottom: "12px", letterSpacing: "0.03em" }}>
+                For Customer Service
+              </p>
+              <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "14px", lineHeight: 1.7 }}>
+                Please call:{" "}
+                <a href="tel:+15126866045" style={{ color: "#76d1f5", textDecoration: "none", fontWeight: 600 }}>
+                  +1 5126866045
+                </a>{" "}
+                During Market Hours or email{" "}
+                <a href="mailto:support@guardiiantrading.com" style={{ color: "#76d1f5", textDecoration: "none", display: "block", marginTop: "2px" }}>
+                  support@guardiiantrading.com
+                </a>
+              </p>
+            </div>
+
+            {/* Right — Contact Form */}
+            <div>
+              {success ? (
+                <div
                   style={{
-                    background: "linear-gradient(135deg, #4a87c7 0%, #2a5daa 55%, #1e4589 100%)",
-                    color: "#ffffff",
-                    border: "none",
-                    padding: "14px 52px",
-                    fontSize: "15px",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                    borderRadius: "4px",
-                    letterSpacing: "0.04em",
-                    transition: "filter 0.2s, transform 0.15s",
-                    boxShadow: "0 2px 10px rgba(30, 69, 137, 0.35)",
+                    background: "rgba(255,255,255,0.1)",
+                    border: "1px solid rgba(118,209,245,0.4)",
+                    borderRadius: "6px",
+                    padding: "40px 32px",
+                    textAlign: "center",
                   }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = "brightness(1.08)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = "brightness(1)"; }}
-                  onMouseDown={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(0.97)"; }}
-                  onMouseUp={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
                 >
-                  Submit
-                </button>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <img src={RECAPTCHA_LOGO} alt="reCAPTCHA" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
-                  <div>
-                    <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.5)", margin: 0, lineHeight: 1.4 }}>Protected by reCAPTCHA</p>
-                    <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.4)", margin: 0, lineHeight: 1.4 }}>
-                      <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "rgba(255,255,255,0.4)", textDecoration: "underline" }}>Privacy</a>
-                      {" · "}
-                      <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" style={{ color: "rgba(255,255,255,0.4)", textDecoration: "underline" }}>Terms</a>
-                    </p>
+                  <div style={{
+                    width: "52px", height: "52px", borderRadius: "50%",
+                    background: "rgba(118,209,245,0.2)", display: "flex",
+                    alignItems: "center", justifyContent: "center", margin: "0 auto 16px",
+                  }}>
+                    <svg width="26" height="26" fill="none" stroke="#76d1f5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
                   </div>
+                  <p style={{ color: "#fff", fontSize: "18px", fontWeight: 700, marginBottom: "8px" }}>Message Sent!</p>
+                  <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px" }}>
+                    Thanks for reaching out. We&apos;ll get back to you as soon as possible.
+                  </p>
                 </div>
-              </div>
-            </form>
+              ) : (
+                <>
+                  <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.7)", marginBottom: "18px" }}>
+                    <span style={{ color: "#c0392b", fontWeight: 700 }}>*</span>&ldquo;*&rdquo; indicates required fields
+                  </p>
+
+                  <form
+                    onSubmit={handleSubmit}
+                    style={{ display: "flex", flexDirection: "column", gap: "18px" }}
+                  >
+                    {/* Name row */}
+                    <div>
+                      <label style={labelStyle}>
+                        Name <span style={{ color: "#c0392b" }}>*</span>
+                      </label>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.55)", display: "block", marginBottom: "4px" }}>First</span>
+                          <input
+                            type="text"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            style={inputStyle}
+                            required
+                          />
+                        </div>
+                        <div>
+                          <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.55)", display: "block", marginBottom: "4px" }}>Last</span>
+                          <input
+                            type="text"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                            style={inputStyle}
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Email + Phone row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label style={labelStyle}>
+                          Email <span style={{ color: "#c0392b" }}>*</span>
+                        </label>
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          style={inputStyle}
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label style={labelStyle}>Phone</label>
+                        <input
+                          type="tel"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          style={inputStyle}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Message */}
+                    <div>
+                      <label style={labelStyle}>
+                        Message <span style={{ color: "#c0392b" }}>*</span>
+                      </label>
+                      <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.55)", marginBottom: "6px" }}>
+                        Enter your message below and we will get back to you as soon as possible!
+                      </p>
+                      <textarea
+                        value={message}
+                        maxLength={MAX_CHARS}
+                        onChange={(e) => setMessage(e.target.value)}
+                        rows={8}
+                        style={{ ...inputStyle, resize: "vertical", fontFamily: "inherit" }}
+                        required
+                      />
+                      <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginTop: "4px" }}>
+                        {message.length} of {MAX_CHARS} max characters
+                      </p>
+                    </div>
+
+                    {/* Privacy text */}
+                    <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.55)", lineHeight: 1.65 }}>
+                      velocityclearingllc.com needs the contact information you provide to us to contact you about our products and services. You may unsubscribe from these communications at any time. For information on how to unsubscribe, as well as our privacy practices and commitment to protecting your privacy, please review our{" "}
+                      <a href="#" style={{ color: "#76d1f5", textDecoration: "underline" }}>Privacy Policy</a>.
+                    </p>
+
+                    {/* Turnstile widget */}
+                    <div>
+                      <TurnstileWidget
+                        onVerify={(token) => { setTurnstileToken(token); setError(null); }}
+                        onExpire={() => setTurnstileToken("")}
+                        theme="light"
+                      />
+                    </div>
+
+                    {/* Error message */}
+                    {error && (
+                      <p style={{ fontSize: "13px", color: "#ff6b6b", fontWeight: 500 }}>{error}</p>
+                    )}
+
+                    {/* Submit */}
+                    <div>
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        style={{
+                          background: loading
+                            ? "linear-gradient(135deg, #7aaee8 0%, #5585cc 100%)"
+                            : "linear-gradient(135deg, #4a87c7 0%, #2a5daa 55%, #1e4589 100%)",
+                          color: "#ffffff",
+                          border: "none",
+                          padding: "14px 52px",
+                          fontSize: "15px",
+                          fontWeight: 700,
+                          cursor: loading ? "not-allowed" : "pointer",
+                          borderRadius: "4px",
+                          letterSpacing: "0.04em",
+                          transition: "filter 0.2s, transform 0.15s",
+                          boxShadow: "0 2px 10px rgba(30, 69, 137, 0.35)",
+                        }}
+                        onMouseEnter={(e) => { if (!loading) (e.currentTarget as HTMLButtonElement).style.filter = "brightness(1.08)"; }}
+                        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = "brightness(1)"; }}
+                        onMouseDown={(e) => { if (!loading) (e.currentTarget as HTMLButtonElement).style.transform = "scale(0.97)"; }}
+                        onMouseUp={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
+                      >
+                        {loading ? "Sending…" : "Submit"}
+                      </button>
+                    </div>
+                  </form>
+                </>
+              )}
+            </div>
           </div>
-        </div>
         </section>
       </div>
 

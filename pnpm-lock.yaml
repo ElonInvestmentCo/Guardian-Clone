@@ -781,6 +781,9 @@ importers:
       '@livechat/widget-react':
         specifier: ^1.4.0
         version: 1.4.0(react@19.1.0)
+      '@marsidev/react-turnstile':
+        specifier: ^1.5.2
+        version: 1.5.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       dompurify:
         specifier: ^3.4.0
         version: 3.4.0
@@ -1394,6 +1397,12 @@ packages:
     resolution: {integrity: sha512-ynPaq7SHkkcDCt/43w9V9vzDnF2pGsv0Lxav9x4DHG9cGuuKzDmaneJ45jx/C13WKO1AL1pj9B8eKETBZrFx8g==}
     peerDependencies:
       react: ^16.8 || 17 || 18 || 19
+
+  '@marsidev/react-turnstile@1.5.2':
+    resolution: {integrity: sha512-+3aBPxp86JzSC0ZmgyonoGoUEENcUkH3LGahXSpkV87ArvD2DzRCmPgh0FyQk6PQRmJwQJDAfwNavFsxUxMQWA==}
+    peerDependencies:
+      react: ^17.0.2 || ^18.0.0 || ^19.0
+      react-dom: ^17.0.2 || ^18.0.0 || ^19.0
 
   '@noble/hashes@2.0.1':
     resolution: {integrity: sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw==}
@@ -4545,6 +4554,11 @@ snapshots:
     dependencies:
       '@livechat/widget-core': 1.4.0
       react: 19.1.0
+
+  '@marsidev/react-turnstile@1.5.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   '@noble/hashes@2.0.1': {}
 

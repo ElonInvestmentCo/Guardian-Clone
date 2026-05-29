@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import guardianLogo from "@assets/GuardianLogo.svg";
 import { getApiBase } from "@/lib/api";
+import TurnstileWidget from "@/components/TurnstileWidget";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; submit?: string }>({});
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [errors, setErrors] = useState<{ email?: string; password?: string; turnstile?: string; submit?: string }>({});
   const [loading, setLoading] = useState(false);
   const [, navigate] = useLocation();
 
@@ -37,10 +39,17 @@ export default function Login() {
     setLoading(true);
     try {
       const base = getApiBase();
+      if (!turnstileToken) {
+        setErrors({ turnstile: "Please complete the human verification below." });
+        setLoading(false);
+        return;
+      }
+
       const res = await fetch(`${base}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, turnstileToken }),
+        credentials: "include",
       });
       const data = await res.json().catch(() => ({}) as Record<string, string>);
       if (res.ok) {
@@ -233,6 +242,18 @@ export default function Login() {
                 </div>
                 {errors.password && (
                   <p className="mt-1" style={{ fontSize: "12px", color: "#e53e3e" }}>{errors.password}</p>
+                )}
+              </div>
+
+              {/* Turnstile widget */}
+              <div className="mb-5">
+                <TurnstileWidget
+                  onVerify={(token) => { setTurnstileToken(token); setErrors((p) => ({ ...p, turnstile: undefined })); }}
+                  onExpire={() => setTurnstileToken("")}
+                  theme="light"
+                />
+                {errors.turnstile && (
+                  <p className="mt-1" style={{ fontSize: "12px", color: "#e53e3e" }}>{errors.turnstile}</p>
                 )}
               </div>
 
