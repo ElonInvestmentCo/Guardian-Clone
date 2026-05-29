@@ -85,12 +85,12 @@ export default function ContactUs() {
             </p>
             <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "14px", lineHeight: 1.7 }}>
               Please call:{" "}
-              <a href="tel:8886020092" style={{ color: "#76d1f5", textDecoration: "none", fontWeight: 600 }}>
-                888-602-0092
+              <a href="tel:+15126866045" style={{ color: "#76d1f5", textDecoration: "none", fontWeight: 600 }}>
+                +1 5126866045
               </a>{" "}
               During Market Hours or email{" "}
-              <a href="mailto:support@guardiantrading.com" style={{ color: "#76d1f5", textDecoration: "none", display: "block", marginTop: "2px" }}>
-                support@guardiantrading.com
+              <a href="mailto:support@guardiiantrading.com" style={{ color: "#76d1f5", textDecoration: "none", display: "block", marginTop: "2px" }}>
+                support@guardiiantrading.com
               </a>
             </p>
           </div>

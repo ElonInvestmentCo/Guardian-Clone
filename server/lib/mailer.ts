@@ -286,7 +286,7 @@ export async function sendAccountVerifiedEmail(
         You can now log in to the Guardian Trading portal and begin trading.
         If you have any questions, reach out to our support team at
         <a href="mailto:${SUPPORT_EMAIL}" style="color:#3a7bd5;text-decoration:none;">${SUPPORT_EMAIL}</a>
-        or call <a href="tel:8886020092" style="color:#3a7bd5;text-decoration:none;">888-602-0092</a>.
+        or call <a href="tel:+15126866045" style="color:#3a7bd5;text-decoration:none;">+1 5126866045</a>.
       </p>
     </td>
   </tr>`;

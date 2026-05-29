@@ -58,7 +58,7 @@ export function Footer() {
             <div>
               <h4 className="text-[#aaa] text-[11px] font-bold uppercase tracking-widest mb-5">CONTACT</h4>
               <ul className="flex flex-col gap-3">
-                <li><a href="tel:8886020092" className="text-white text-[13px] transition-colors">888-602-0092</a></li>
+                <li><a href="tel:+15126866045" className="text-white text-[13px] transition-colors">+1 5126866045</a></li>
                 <li><a href="mailto:support@guardiiantrading.com" className="text-white text-[13px] transition-colors">support@guardiiantrading.com</a></li>
                 <li><p className="text-white text-[13px] leading-snug">1301 Route 36, Suite 109 Hazlet, NJ 07730</p></li>
               </ul>

@@ -309,8 +309,8 @@ export default function ApplicationPending() {
               <div>
                 <h4 className="text-[11px] font-bold uppercase tracking-widest mb-4" style={{ color: "#aaa" }}>Contact</h4>
                 <div className="flex flex-col gap-2.5">
-                  <a href="tel:8886020092" className="text-[13px] hover:text-white" style={{ color: "#bbb" }}>888-602-0092</a>
-                  <a href="mailto:support@guardiantrading.com" className="text-[13px] hover:text-white" style={{ color: "#bbb" }}>support@guardiantrading.com</a>
+                  <a href="tel:+15126866045" className="text-[13px] hover:text-white" style={{ color: "#bbb" }}>+1 5126866045</a>
+                  <a href="mailto:support@guardiiantrading.com" className="text-[13px] hover:text-white" style={{ color: "#bbb" }}>support@guardiiantrading.com</a>
                   <p className="text-[13px]" style={{ color: "#bbb" }}>1301 Route 36 Suite 109 Hazlet, NJ 07730</p>
                 </div>
               </div>
