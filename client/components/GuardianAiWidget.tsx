@@ -454,7 +454,7 @@ export default function GuardianAiWidget() {
       const res = await fetch(`${API_BASE}/api/ai/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({ message: text, guestId: email }),
         credentials: "include",
         signal: ctrl.signal,
       });

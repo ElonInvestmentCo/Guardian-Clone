@@ -8,6 +8,7 @@ import {
 import { aiChatLimit } from "../../middleware/security.js";
 import { getUserBalance, getUserData } from "../../lib/userDataStore.js";
 import { requireUser } from "../../middleware/requireUser.js";
+import jwt from "jsonwebtoken";
 import { generateSignals } from "../../modules/guardian-trading/signalEngine.js";
 import { calculateMarginLevel } from "../../modules/guardian-trading/marginEngine.js";
 
@@ -41,12 +42,36 @@ async function getLiveMarketData(): Promise<LiveMarketData | undefined> {
   }
 }
 
+function resolveEmail(req: Request): string | null {
+  const cookies = req.cookies as Record<string, string> | undefined;
+  const token = cookies?.guardian_session
+    ?? (req.headers.authorization?.startsWith("Bearer ") ? req.headers.authorization.slice(7) : undefined);
+  if (token) {
+    try {
+      const secret = process.env.SESSION_SECRET ?? process.env.ADMIN_JWT_SECRET ?? "guardian-user-dev-secret-fallback-v1";
+      const payload = jwt.verify(token, secret) as { email?: string; iss?: string };
+      if (payload.email && payload.iss !== "guardian-admin") return payload.email;
+    } catch { /* expired/invalid — fall through to guest */ }
+  }
+  const body = req.body as { guestId?: string; email?: string };
+  const raw = (body.guestId ?? body.email ?? "").toString();
+  if (raw.length > 4) {
+    const sanitized = raw.replace(/[^a-zA-Z0-9@._+-]/g, "").slice(0, 100);
+    if (sanitized.length > 4) return sanitized;
+  }
+  return null;
+}
+
 const router = Router();
 
-router.post("/ai/chat", requireUser, aiChatLimit, async (req: Request, res: Response): Promise<void> => {
+router.post("/ai/chat", aiChatLimit, async (req: Request, res: Response): Promise<void> => {
   try {
-    const email = req.user!.email;
-    const { message } = req.body as { message?: string; email?: string };
+    const email = resolveEmail(req);
+    if (!email) {
+      res.status(401).json({ error: "Authentication required" });
+      return;
+    }
+    const { message } = req.body as { message?: string; email?: string; guestId?: string };
     if (!message || typeof message !== "string" || !message.trim()) {
       res.status(400).json({ error: "message is required" });
       return;
