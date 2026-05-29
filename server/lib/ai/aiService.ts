@@ -138,20 +138,17 @@ let _provider: AiProvider | null = null;
 export function getAiProvider(): AiProvider {
   if (_provider) return _provider;
 
-  if (process.env.CLOUDFLARE_API_TOKEN) {
+  if (process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.AI_INTEGRATIONS_OPENAI_BASE_URL) {
+    console.log("[AI] Using OpenAI provider (Replit AI integration)");
+    _provider = buildOpenAiProvider();
+  } else if (process.env.XAI_API_KEY || process.env.GROK_API_KEY) {
+    console.log("[AI] Using Grok (xAI) provider");
+    _provider = buildGrokProvider();
+  } else if (process.env.CLOUDFLARE_API_TOKEN) {
     console.log("[AI] Using Cloudflare AI provider (gpt-5)");
     _provider = buildCloudflareProvider();
   } else {
-    const grokKey = process.env.XAI_API_KEY || process.env.GROK_API_KEY;
-    if (grokKey) {
-      console.log("[AI] Using Grok (xAI) provider");
-      _provider = buildGrokProvider();
-    } else if (process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.AI_INTEGRATIONS_OPENAI_BASE_URL) {
-      console.log("[AI] Using OpenAI provider (Replit integration)");
-      _provider = buildOpenAiProvider();
-    } else {
-      throw new Error("No AI provider configured. Set CLOUDFLARE_API_TOKEN for Cloudflare, XAI_API_KEY for Grok, or provision the OpenAI integration.");
-    }
+    throw new Error("No AI provider configured. Provision the OpenAI integration in Replit, or set XAI_API_KEY for Grok.");
   }
 
   return _provider;
