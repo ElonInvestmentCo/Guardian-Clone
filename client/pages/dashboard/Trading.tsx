@@ -4,6 +4,7 @@ import AiSignalsPanel from "@/components/trading/AiSignalsPanel";
 import MarginCallBanner from "@/components/trading/MarginCallBanner";
 import TradingStatusCard from "@/components/trading/TradingStatusCard";
 import TradeOrderForm from "@/components/trading/TradeOrderForm";
+import VoiceAgentPanel from "@/components/trading/VoiceAgentPanel";
 import { Cpu } from "lucide-react";
 
 export default function Trading() {
@@ -35,6 +36,7 @@ export default function Trading() {
           </div>
 
           <div className="flex flex-col gap-5" style={{ width: "100%", maxWidth: "340px" }}>
+            <VoiceAgentPanel />
             <TradingStatusCard />
           </div>
         </div>
