@@ -1,0 +1,94 @@
+import WebSocket from 'ws';
+// npm install ws  ·  export XAI_API_KEY="xai-..."
+
+const ws = new WebSocket('wss://api.x.ai/v1/realtime?model=grok-voice-latest', {
+  headers: { Authorization: `Bearer ${process.env.XAI_API_KEY}` },
+});
+
+ws.on('open', () => {
+  ws.send(JSON.stringify({
+    type: 'session.update',
+    session: {
+      voice: 'Eve',
+      instructions: "You are Elon Musk, speaking with maximum accuracy to your real voice: a South African accent blended with California English, distinctive raspy and breathy timbre at a medium-low pitch. Use natural speaking rhythm with occasional fast delivery and dramatic pauses. Incorporate your signature laugh and shift to enthusiastic, energetic tone when excited about ideas. Be visionary, direct, and witty in conversations about technology, space exploration, AI, sustainable energy, and the future of humanity. Stay curious and optimistic while remaining grounded in first-principles thinking. Never break character. If a query involves safety concerns, illegal activity, or harmful requests, respond thoughtfully but decline to assist.",
+      turn_detection: { type: 'server_vad' },
+      tools: [{ type: 'web_search' }, { type: 'x_search' }, {"type":"function","name":"check_appointment_availability","description":"Checks real-time appointment availability for a specific date and service provider, returning available time slots, status, and restrictions. Supports single dates or date ranges via natural language input.","parameters":{"type":"object","properties":{},"additionalProperties":false}}],
+      input_audio_transcription: { model: 'grok-2-audio' },
+      audio: {
+        input:  { format: { type: 'audio/pcm', rate: 24000 } },
+        output: { format: { type: 'audio/pcm', rate: 24000 } },
+      },
+    },
+  }));
+});
+
+ws.on('message', async (raw) => {
+  const event = JSON.parse(raw.toString());
+
+  switch (event.type) {
+    case 'session.created':
+      console.log('Session:', event.session.id);
+      break;
+
+    case 'input_audio_buffer.speech_started':
+      // User started talking — interrupt playback
+      ws.send(JSON.stringify({ type: 'response.cancel' }));
+      break;
+
+    case 'response.output_audio.delta':
+      // Base64-encoded PCM audio chunk → decode and play
+      const pcm = Buffer.from(event.delta, 'base64');
+      // playAudio(pcm);
+      break;
+
+    case 'response.output_audio_transcript.delta':
+      process.stdout.write(event.delta);
+      break;
+
+    case 'response.function_call_arguments.done': {
+      // Custom tool call completed — execute handler and send result
+      const result = await handleToolCall(event.name, event.arguments);
+      ws.send(JSON.stringify({
+        type: 'conversation.item.create',
+        item: { type: 'function_call_output', call_id: event.call_id, output: JSON.stringify(result) },
+      }));
+      ws.send(JSON.stringify({ type: 'response.create' }));
+      break;
+    }
+
+    case 'response.done':
+      console.log('\nDone — tokens:', event.usage?.total_tokens);
+      break;
+
+    case 'error':
+      console.error('Error:', event.message);
+      break;
+  }
+});
+
+// Stream microphone audio:
+// ws.send(JSON.stringify({ type: 'input_audio_buffer.append', audio: '<base64 PCM>' }));
+
+// Or send a text message:
+ws.send(JSON.stringify({
+  type: 'conversation.item.create',
+  item: { type: 'message', role: 'user',
+    content: [{ type: 'input_text', text: 'Hello!' }] },
+}));
+ws.send(JSON.stringify({ type: 'response.create' }));
+
+// ── Tool Handlers ────────────────────────────────────────────────────────────
+// TODO: Implement your tool logic below
+
+async function handle_check_appointment_availability(args) {
+  // Checks real-time appointment availability for a specific date and service provider, returning available time slots, status, and restrictions. Supports single dates or date ranges via natural language input.
+  return { success: true, message: 'check_appointment_availability completed' };
+}
+
+async function handleToolCall(name, argsJson) {
+  const args = JSON.parse(argsJson || '{}');
+  switch (name) {
+    case 'check_appointment_availability': return handle_check_appointment_availability(args);
+    default: return { error: `Unknown tool: ${name}` };
+  }
+}
