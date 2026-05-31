@@ -1,4 +1,6 @@
-import { useState, useEffect, useRef, useCallback, useId } from "react";
+import { useState, useEffect, useRef, useCallback, useId, lazy, Suspense } from "react";
+
+const VoiceAgentModal = lazy(() => import("./VoiceAgentModal"));
 
 const AI_AVATAR = "/images/ai-avatar.gif";
 
@@ -195,6 +197,7 @@ function Spinner() {
 export default function GuardianAiWidget() {
   /* Chat state */
   const [open, setOpen] = useState(false);
+  const [showVoiceAgent, setShowVoiceAgent] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -1417,6 +1420,22 @@ export default function GuardianAiWidget() {
               </div>
             </div>
 
+            {/* Voice Agent button */}
+            <button
+              className="gt-ai-header-btn"
+              onClick={() => setShowVoiceAgent(true)}
+              aria-label="Open Voice AI"
+              title="Voice AI"
+              style={{ color: "rgba(139,92,246,0.8)" }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="9" y="2" width="6" height="11" rx="3" />
+                <path d="M5 10a7 7 0 0 0 14 0" />
+                <line x1="12" y1="19" x2="12" y2="22" />
+                <line x1="9" y1="22" x2="15" y2="22" />
+              </svg>
+            </button>
+
             {/* History toggle */}
             <button
               className={`gt-ai-header-btn${showHistory ? " active" : ""}`}
@@ -1615,6 +1634,13 @@ export default function GuardianAiWidget() {
             </>
           )}
         </div>
+      )}
+
+      {/* ── Voice Agent Modal ──────────────────────────────────────── */}
+      {showVoiceAgent && (
+        <Suspense fallback={null}>
+          <VoiceAgentModal onClose={() => setShowVoiceAgent(false)} />
+        </Suspense>
       )}
     </>
   );
