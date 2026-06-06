@@ -41,6 +41,8 @@ function useFadeIn() {
 export default function Home() {
   const [newsBannerVisible, setNewsBannerVisible] = useState(true);
   const [email, setEmail] = useState("");
+  const [subscribeLoading, setSubscribeLoading] = useState(false);
+  const [subscribeMessage, setSubscribeMessage] = useState("");
 
   const refServices = useFadeIn() as React.RefObject<HTMLElement>;
   const refPricing  = useFadeIn() as React.RefObject<HTMLElement>;
@@ -49,23 +51,61 @@ export default function Home() {
   const refTech     = useFadeIn() as React.RefObject<HTMLElement>;
   const refCta      = useFadeIn() as React.RefObject<HTMLElement>;
 
+  const handleSubscribe = async () => {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setSubscribeMessage("Please enter a valid email address");
+      return;
+    }
+
+    setSubscribeLoading(true);
+    setSubscribeMessage("");
+
+    try {
+      const response = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (response.ok) {
+        setSubscribeMessage("✓ Successfully subscribed!");
+        setEmail("");
+        setTimeout(() => setSubscribeMessage(""), 3000);
+      } else {
+        const error = await response.json();
+        setSubscribeMessage(error.message || "Subscription failed. Please try again.");
+      }
+    } catch (err) {
+      setSubscribeMessage("Error subscribing. Please try again later.");
+      console.error("Subscribe error:", err);
+    } finally {
+      setSubscribeLoading(false);
+    }
+  };
+
+  const handleSubscribeKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSubscribe();
+    }
+  };
+
   return (
     <Layout>
       {/* ── NEWS / BLOG ANNOUNCEMENT BAR ── */}
       {newsBannerVisible && (
         <div style={{ backgroundColor: "#141414", marginTop: "78px" }}>
           <div
-            className="flex items-center justify-between"
+            className="flex items-center justify-between flex-wrap gap-3 sm:gap-0 sm:flex-nowrap"
             style={{
               maxWidth: "1200px",
               margin: "0 auto",
-              height: "44px",
-              padding: "0 24px",
+              minHeight: "44px",
+              padding: "12px 24px",
               backgroundColor: "#121212",
               borderBottom: "1px solid #212e33",
             }}
           >
-            <div className="flex items-center min-w-0 overflow-hidden" style={{ gap: "10px" }}>
+            <div className="flex items-center min-w-0 overflow-hidden flex-shrink-0" style={{ gap: "10px", order: 1 }}>
               <span
                 className="flex-shrink-0"
                 style={{
@@ -103,44 +143,61 @@ export default function Home() {
               </a>
             </div>
 
-            <div className="flex items-center flex-shrink-0" style={{ gap: "0" }}>
+            <div className="flex items-center flex-shrink-0 w-full sm:w-auto gap-2" style={{ order: 2, justifyContent: "flex-start" }}>
               <input
                 type="email"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="hidden sm:block"
+                onKeyPress={handleSubscribeKeyPress}
                 style={{
                   backgroundColor: "#12151c",
                   border: "1px solid #233642",
                   color: "#c8d8e4",
                   fontSize: "13px",
-                  padding: "0 14px",
+                  padding: "0 12px",
                   height: "34px",
-                  width: "180px",
+                  flex: "1 1 auto",
+                  minWidth: "140px",
+                  maxWidth: "200px",
                   outline: "none",
                   borderRadius: "2px",
+                  boxSizing: "border-box",
                 }}
               />
               <button
-                className="hidden sm:block"
+                onClick={handleSubscribe}
+                disabled={subscribeLoading}
                 style={{
-                  background: "linear-gradient(135deg, #3a8fd4 0%, #2a6ab5 50%, #4a6ea0 100%)",
+                  background: subscribeLoading
+                    ? "linear-gradient(135deg, #2a6ab5 0%, #1a5a95 50%, #3a5e90 100%)"
+                    : "linear-gradient(135deg, #3a8fd4 0%, #2a6ab5 50%, #4a6ea0 100%)",
                   color: "#ffffff",
-                  fontSize: "14px",
+                  fontSize: "13px",
                   fontWeight: 600,
-                  padding: "0 20px",
+                  padding: "0 16px",
                   height: "34px",
                   border: "none",
-                  cursor: "pointer",
+                  cursor: subscribeLoading ? "not-allowed" : "pointer",
                   whiteSpace: "nowrap",
                   letterSpacing: "0.02em",
-                  transition: "filter 0.2s ease",
+                  transition: "filter 0.2s ease, opacity 0.2s ease",
+                  opacity: subscribeLoading ? 0.7 : 1,
+                  minWidth: "fit-content",
+                  boxSizing: "border-box",
                 }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.filter = "brightness(1.15)"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.filter = "brightness(1)"; }}
+                onMouseEnter={(e) => {
+                  if (!subscribeLoading) {
+                    (e.currentTarget as HTMLElement).style.filter = "brightness(1.15)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!subscribeLoading) {
+                    (e.currentTarget as HTMLElement).style.filter = "brightness(1)";
+                  }
+                }}
               >
-                Subscribe
+                {subscribeLoading ? "Subscribing..." : "Subscribe"}
               </button>
               <button
                 onClick={() => setNewsBannerVisible(false)}
@@ -150,11 +207,11 @@ export default function Home() {
                   border: "none",
                   cursor: "pointer",
                   padding: "6px 8px",
-                  marginLeft: "8px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   transition: "color 0.2s ease",
+                  flexShrink: 0,
                 }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#ffffff"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#9db4c7"; }}
@@ -162,6 +219,21 @@ export default function Home() {
                 <X className="w-4 h-4" strokeWidth={2.5} />
               </button>
             </div>
+
+            {subscribeMessage && (
+              <div
+                style={{
+                  order: 3,
+                  width: "100%",
+                  fontSize: "12px",
+                  color: subscribeMessage.includes("✓") ? "#4ade80" : "#ef4444",
+                  marginTop: "4px",
+                  textAlign: "left",
+                }}
+              >
+                {subscribeMessage}
+              </div>
+            )}
           </div>
         </div>
       )}
