@@ -29,8 +29,8 @@
     "pg": "^8.20.0",
     "qrcode": "^1.5.4",
     "resend": "^6.9.4",
-    "sanitize-html": "^2.17.3",
-    "ws": "^8.19.0",
+    "sanitize-html": "^2.17.4",
+    "ws": "^8.20.1",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -44,7 +44,7 @@
     "@types/qrcode": "^1.5.6",
     "@types/sanitize-html": "^2.16.1",
     "@types/ws": "^8.18.1",
-    "esbuild": "^0.27.3",
+    "esbuild": "^0.28.1",
     "tsx": "catalog:"
   }
 }
