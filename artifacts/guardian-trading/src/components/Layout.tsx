@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
+import { StockTicker } from "./StockTicker";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 
 interface LayoutProps {
@@ -22,7 +23,10 @@ export function Layout({
           <meta name="description" content={description} />
         </Helmet>
         <Navbar />
-        <main className="flex-1">
+        <div className="fixed top-[78px] left-0 right-0 z-40">
+          <StockTicker />
+        </div>
+        <main className="flex-1" style={{ paddingTop: "36px" }}>
           {children}
         </main>
         <Footer />
