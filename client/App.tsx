@@ -17,6 +17,7 @@ import GuardianAiWidget from "@/components/GuardianAiWidget";
 import { ScrollAndFormReset } from "@/components/ScrollAndFormReset";
 
 import Home from "@/pages/Home";
+import DasHotkeysScripting from "@/pages/blog/DasHotkeysScripting";
 import About from "@/pages/About";
 import Platforms from "@/pages/Platforms";
 import Login from "@/pages/Login";
@@ -68,6 +69,10 @@ function Router() {
     <Switch>
       {/* ── Public routes ─────────────────────────────────────────────── */}
       <Route path="/" component={Home} />
+      <Route
+        path="/how-to-prepare-your-das-trader-pro-for-advanced-hotkeys-scripting"
+        component={DasHotkeysScripting}
+      />
       <Route path="/about" component={About} />
       <Route path="/platforms" component={Platforms} />
       <Route path="/login" component={Login} />

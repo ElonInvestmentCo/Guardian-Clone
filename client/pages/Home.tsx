@@ -122,10 +122,8 @@ export default function Home() {
               >
                 New on the blog
               </span>
-              <a
-                href="https://www.guardiiantrading.com/how-to-prepare-your-das-trader-pro-for-advanced-hotkeys-scripting/"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/how-to-prepare-your-das-trader-pro-for-advanced-hotkeys-scripting"
                 className="overflow-hidden"
                 style={{
                   color: "#76d1f5",
@@ -140,7 +138,7 @@ export default function Home() {
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.textDecoration = "none"; }}
               >
                 DAS Trader Pro hotkeys by Peter Benci
-              </a>
+              </Link>
             </div>
 
             <div className="flex items-center flex-shrink-0 w-full sm:w-auto gap-2" style={{ order: 2, justifyContent: "flex-start" }}>
