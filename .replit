@@ -81,17 +81,6 @@ packages = ["nano", "railway"]
 
   [userenv]
 
-  [uservenv.shared]
-ADMIN_JWT_SECRET = "your-admin-jwt-secret-here"
-ADMIN_SECRET = "your-admin-secret-here"
-INTERNAL_API_KEY = "your-internal-api-key-here"
-USER_DATA_KEY = "your-user-data-key-here"
-CMC_API_KEY = "your-cmc-api-key-here"
-ADMIN_EMAIL = "support@guardiiantrading.com"
-SIGNATURE_THRESHOLD = "10"
-RESEND_API_KEY = "your-resend-api-key-here"
-OPENAI_API_KEY = "your-openai-api-key-here"
-
 [[ports]]
 localPort = 3000
 externalPort = 3000
@@ -127,4 +116,3 @@ NODE_ENV = "development"
 API_PORT = "3001"
 ADMIN_EMAIL = "support@guardiiantrading.com"
 SIGNATURE_THRESHOLD = "10"
-  
