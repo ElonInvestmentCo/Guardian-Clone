@@ -290,12 +290,14 @@ export default function Home() {
 
       {/* ── BENZINGA AWARD BANNER ── */}
       <div style={{ backgroundColor: "#141414" }}>
-        <img
-          src={benzingaBanner}
-          alt="Reviewed by Benzinga 2024 — Preferred Broker for Short Selling"
-          loading="lazy"
-          style={{ display: "block", width: "846px", maxWidth: "100%", height: "auto", margin: "0 auto" }}
-        />
+        <Link href="/signup" style={{ display: "block", width: "846px", maxWidth: "100%", margin: "0 auto" }}>
+          <img
+            src={benzingaBanner}
+            alt="Reviewed by Benzinga 2024 — Preferred Broker for Short Selling"
+            loading="lazy"
+            style={{ display: "block", width: "100%", height: "auto", cursor: "pointer" }}
+          />
+        </Link>
       </div>
 
       {/* ── HOW DO ACTIVE TRADERS USE GUARDIAN? ── */}
