@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import { Link, useLocation } from "wouter";
 import { getApiBase } from "@/lib/api";
 import loaderGif from "@assets/D63BF694-BB76-43CE-AFFB-E54A8FFDFBC5_1775805898246.gif";
+import TurnstileWidget from "@/components/TurnstileWidget";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [emailChecking, setEmailChecking] = useState(false);
@@ -17,6 +19,7 @@ export default function Signup() {
     email?: string;
     password?: string;
     confirmPassword?: string;
+    turnstile?: string;
     submit?: string;
   }>({});
   const [, navigate] = useLocation();
@@ -121,6 +124,10 @@ export default function Signup() {
       setErrors(validationErrors);
       return;
     }
+    if (!turnstileToken) {
+      setErrors({ turnstile: "Please complete the human verification below." });
+      return;
+    }
     setErrors({});
     setLoading(true);
     const loadStart = Date.now();
@@ -133,11 +140,12 @@ export default function Signup() {
       const res = await fetch(`${base}/api/auth/send-verification`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, turnstileToken }),
       });
       const data = await res.json().catch(() => ({})) as { error?: string; emailSkipped?: boolean };
       if (!res.ok) {
         await ensureMinDisplay();
+        if (data.error?.toLowerCase().includes("turnstile")) setTurnstileToken("");
         setErrors({ submit: data.error || "Failed to send verification email. Please try again." });
         return;
       }
@@ -388,6 +396,20 @@ export default function Signup() {
                   </div>
                   {errors.confirmPassword && (
                     <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.confirmPassword}</p>
+                  )}
+                </div>
+
+                <div className="mb-5">
+                  <TurnstileWidget
+                    onVerify={(token) => {
+                      setTurnstileToken(token);
+                      setErrors((p) => ({ ...p, turnstile: undefined }));
+                    }}
+                    onExpire={() => setTurnstileToken("")}
+                    theme="light"
+                  />
+                  {errors.turnstile && (
+                    <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.turnstile}</p>
                   )}
                 </div>
 

@@ -2,12 +2,14 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { getApiBase } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
+import TurnstileWidget from "@/components/TurnstileWidget";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; submit?: string }>({});
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [errors, setErrors] = useState<{ email?: string; password?: string; turnstile?: string; submit?: string }>({});
   const [loading, setLoading] = useState(false);
   const [, navigate] = useLocation();
   const { refresh } = useAuth();
@@ -19,6 +21,10 @@ export default function Login() {
     if (!password) newErrors.password = "Required";
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      return;
+    }
+    if (!turnstileToken) {
+      setErrors({ turnstile: "Please complete the human verification below." });
       return;
     }
     setErrors({});
@@ -33,10 +39,13 @@ export default function Login() {
       const res = await fetch(`${base}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, turnstileToken }),
         credentials: "include",
       });
       const data = await res.json().catch(() => ({}) as Record<string, string>);
+      if (!res.ok && res.status === 400 && (data as { error?: string }).error?.toLowerCase().includes("turnstile")) {
+        setTurnstileToken("");
+      }
       if (res.ok) {
         const userEmail = (data as { email?: string }).email || email;
         sessionStorage.setItem("signupEmail", userEmail);
@@ -230,6 +239,22 @@ export default function Login() {
                   </svg>
                 )}
               </button>
+            </div>
+
+            <div style={{ margin: "0 0 16px 0" }}>
+              <TurnstileWidget
+                onVerify={(token) => {
+                  setTurnstileToken(token);
+                  setErrors((prev) => ({ ...prev, turnstile: undefined }));
+                }}
+                onExpire={() => setTurnstileToken("")}
+                theme="light"
+              />
+              {errors.turnstile && (
+                <p style={{ color: "#cc0000", fontSize: "12px", margin: "6px 0 0 0", padding: 0 }}>
+                  {errors.turnstile}
+                </p>
+              )}
             </div>
 
             {errors.submit && (
