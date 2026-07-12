@@ -81,6 +81,14 @@ packages = ["nano", "railway"]
 
   [userenv]
 
+[userenv.development]
+
+[userenv.shared]
+NODE_ENV = "development"
+API_PORT = "3001"
+ADMIN_EMAIL = "support@guardiiantrading.com"
+SIGNATURE_THRESHOLD = "10"
+
 [[ports]]
 localPort = 3000
 externalPort = 3000
@@ -108,11 +116,3 @@ externalPort = 3003
 [[ports]]
 localPort = 8083
 externalPort = 4200
-
-[userenv.development]
-
-[userenv.shared]
-NODE_ENV = "development"
-API_PORT = "3001"
-ADMIN_EMAIL = "support@guardiiantrading.com"
-SIGNATURE_THRESHOLD = "10"
