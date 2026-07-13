@@ -12,12 +12,23 @@ stale duplicate. `scripts/dev-start.sh` documents this as an intentionally "lock
 *dev preview only* — only the three named root workflows (API Server, Guardian Trading, Admin KYC)
 should be used for dev; the artifacts-managed workflows are meant to stay disabled no-ops.
 
-**Why this matters:** `.replit`'s `[deployment]` block (`scripts/build-production.sh` + the
-`run` command) builds and runs the stale `artifacts/api-server` tree, NOT the root code — so a
-production deploy would ship an outdated app even though dev preview (root) is up to date and
-correct. This mismatch was NOT fixed automatically (it's a real architectural decision — which
-tree is canonical for prod — filed as a follow-up task instead of guessed at).
+**Why this matters:** the real production host for this project is Railway (`guardiiantrading.com`,
+not Replit's own Deployments), and its Railway service (`guardian-trading-api` in project
+`nurturing-vision`) was configured with `buildCommand`/`startCommand` targeting the
+`@workspace/api-server` pnpm filter — i.e. the stale `artifacts/api-server` tree — while the root
+app has all current features (StockTicker, Turnstile, auth fixes). This caused prod to look like a
+months-old build even though `master` on GitHub was current and Railway had deployed that exact
+commit; the *commit* was right but the *build/start commands* pointed at the wrong workspace, so
+`.replit`'s own `[deployment]` block pointing at `artifacts/*` was a red herring for this symptom.
+**Fixed**: Railway service's `buildCommand`/`startCommand` were changed (via Railway's GraphQL API,
+`backboard.railway.com/graphql/v2`, using a personal `RAILWAY_TOKEN` as a Bearer token — note the
+CLI's `RAILWAY_TOKEN` env var expects a *project* token and errors "Project Token not found" on a
+personal account token, but the GraphQL API accepts it fine) to `pnpm install && pnpm run build`
+/ `pnpm run start` (root scripts), then redeployed via `serviceInstanceRedeploy`.
 
 **How to apply:** Before touching deployment config or claiming "the app is ready to deploy,"
-verify whether `[deployment]` still points at `artifacts/*`. If so, either resync artifacts/ from
-root, or repoint the build/run to root — don't assume dev-preview parity means deploy parity.
+check what a project's *actual* production host runs — for Railway, query
+`project.services.serviceInstances.source`/`buildCommand`/`startCommand` via the GraphQL API rather
+than assuming `.replit`'s `[deployment]` block is authoritative. A deployed commit hash matching
+`master` does NOT mean the right code is running if the build/start commands target a stale
+workspace filter.
