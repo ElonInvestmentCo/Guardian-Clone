@@ -1,19 +1,11 @@
 import { Link } from "wouter";
 import { Layout } from "@/components/Layout";
+import { BlogCategoryNav } from "@/components/blog/BlogCategoryNav";
 
 import heroPattern from "@assets/pattern_1773965291387.png";
 import scriptBuilderBasic from "@assets/das-hotkeys-script-builder-basic.png";
 import scriptBuilderVariables from "@assets/das-hotkeys-script-builder-variables.png";
 import configManagement from "@assets/das-hotkeys-configuration-management.png";
-
-const CATEGORY_LINKS = [
-  { name: "All Blogs", href: "/blog" },
-  { name: "DAS Hotkeys", href: "/category/das-hotkeys" },
-  { name: "Margin", href: "/category/margin" },
-  { name: "Risk Management", href: "/category/risk-management" },
-  { name: "Short Selling", href: "/category/short-selling" },
-  { name: "Tools", href: "/category/tools" },
-];
 
 const H2 = "text-white font-display font-bold text-[32px] leading-tight mt-14 mb-4";
 const P = "text-[#c9ced3] text-[15px] leading-[1.75] mb-4";
@@ -34,27 +26,7 @@ export default function DasHotkeysScripting() {
       title="How to prepare your DAS Trader Pro for advanced hotkeys scripting | Guardian Trading"
       description="DAS Trader Pro hotkeys, custom variables, and advanced scripting explained — by Peter Benci. Learn to automate orders, conditional actions, and more."
     >
-      {/* Category sub-nav — marginTop clears the fixed navbar + sticky ticker, matching Home.tsx's news bar */}
-      <div className="bg-[#9a9ea4]" style={{ marginTop: "78px" }}>
-        <div className="max-w-[1200px] mx-auto px-6 flex flex-wrap items-center gap-x-8 gap-y-0">
-          {CATEGORY_LINKS.map((c) => {
-            const isActive = c.name === "DAS Hotkeys";
-            return (
-              <Link
-                key={c.name}
-                href={c.href}
-                className={`relative text-[13px] font-medium py-3 border-b-2 transition-colors ${
-                  isActive
-                    ? "text-white border-[#5fc4f0]"
-                    : "text-[#e4e6e8] border-transparent hover:text-white"
-                }`}
-              >
-                {c.name}
-              </Link>
-            );
-          })}
-        </div>
-      </div>
+      <BlogCategoryNav activeSlug="das-hotkeys" />
 
       <div className="bg-[#141414]">
       <article className="relative bg-[#242223] max-w-[1200px] mx-auto">
