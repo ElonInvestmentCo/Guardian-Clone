@@ -1,10 +1,13 @@
 const VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-const DEV_SECRET = "1x0000000000000000000000000000000AA";
 
 export async function verifyTurnstile(token: string | undefined, ip?: string): Promise<boolean> {
   if (!token) return false;
 
-  const secret = process.env.TURNSTILE_SECRET_KEY ?? DEV_SECRET;
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+  if (!secret) {
+    console.error("[Turnstile] TURNSTILE_SECRET_KEY is not configured — failing closed (rejecting all verification attempts).");
+    return false;
+  }
 
   try {
     const body = new URLSearchParams({ secret, response: token });

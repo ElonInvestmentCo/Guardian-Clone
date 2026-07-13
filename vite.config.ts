@@ -9,13 +9,6 @@ const apiPort = Number(process.env.API_PORT) || 3001;
 
 export default defineConfig({
   base: "/",
-  // Bridge non-VITE_-prefixed Replit secrets into the client build. Vite only
-  // auto-exposes env vars prefixed with VITE_, but Cloudflare Turnstire site
-  // keys are stored as plain secrets (TURNSTILE_SITE_KEY) since the key itself
-  // isn't sensitive but we don't want to force a VITE_ prefix on the secret name.
-  define: {
-    "import.meta.env.VITE_TURNSTILE_SITE_KEY": JSON.stringify(process.env.TURNSTILE_SITE_KEY ?? ""),
-  },
   plugins: [
     react(),
     tailwindcss(),
