@@ -1,6 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Condensed:wght@400;700&display=swap');
 @import "tailwindcss";
 
+/* Hide the browser's built-in password reveal/clear affordances (e.g. Edge's
+   native eye icon) so only our custom show/hide eye icon renders inside
+   password fields — otherwise Edge overlays its own icon on top of ours. */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
 @theme inline {
   --font-sans: 'Roboto', sans-serif;
   --font-display: 'Roboto Condensed', sans-serif;
