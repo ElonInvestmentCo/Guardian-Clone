@@ -1,0 +1,177 @@
+IMPORTANT: Create a permanent AI handoff document at the root of this repository named:
+
+AI_HANDOFF.md
+
+This file is intended for every future AI agent (including Replit AI) that works on this project.
+
+It must be kept up to date after every major change.
+
+The document should contain the following sections:
+
+# Guardian Trading AI Handoff
+
+## Project Overview
+Describe the project architecture, frontend, backend, database, and deployment.
+
+## Current Production
+Production URL:
+https://www.guardiantrading.com
+
+## Repository
+GitHub repository currently connected to Railway.
+
+## Deployment
+Document:
+
+- Railway project
+- Service names
+- Deployment commands
+- Build commands
+- Start commands
+- Deployment branch
+- Current deployment process
+
+## Environment Variables
+
+List every required environment variable.
+
+DO NOT include secret values.
+
+Only list names such as:
+
+OPENAI_API_KEY
+DATABASE_URL
+TURNSTILE_SECRET_KEY
+VITE_TURNSTILE_SITE_KEY
+RESEND_API_KEY
+CMC_API_KEY
+etc.
+
+## Completed Work
+
+Maintain a checklist.
+
+Examples:
+
+✅ Fixed Railway deployment building wrong workspace.
+
+✅ Production now deploys the root application.
+
+✅ Homepage matches production layout.
+
+✅ Market ticker working.
+
+✅ Cloudflare Turnstile integrated.
+
+✅ Browser password reveal icon removed.
+
+✅ Blog crawling completed.
+
+✅ blogPosts.ts generated.
+
+✅ Article pages rebuilt.
+
+Continue adding completed work here.
+
+## Remaining Tasks
+
+Maintain another checklist of everything still left to complete.
+
+Examples:
+
+☐ Finish remaining blog article pages.
+
+☐ Finish category pages.
+
+☐ Verify every page matches production.
+
+☐ Improve dashboard.
+
+☐ Continue UI modernization.
+
+☐ Performance optimizations.
+
+## Design Standards
+
+Document the design rules used throughout the website:
+
+- Colors
+- Fonts
+- Typography
+- Spacing
+- Container widths
+- Borders
+- Buttons
+- Cards
+- Navigation
+- Blog styling
+
+Whenever styling is copied from the live Guardian Trading website, record the exact values here.
+
+## Important References
+
+Production:
+
+https://www.guardiantrading.com
+
+Blog:
+
+https://www.guardiantrading.com/blog/
+
+Categories:
+
+https://www.guardiantrading.com/category/margin/
+
+https://www.guardiantrading.com/category/risk-management/
+
+https://www.guardiantrading.com/category/short-selling/
+
+https://www.guardiantrading.com/category/tools/
+
+Reference Article:
+
+https://www.guardiantrading.com/how-to-prepare-your-das-trader-pro-for-advanced-hotkeys-scripting/
+
+## Rules For Future AI Agents
+
+Future AI agents MUST:
+
+- Read this file before making any changes.
+- Never redesign pages that are intended to match the live Guardian Trading website.
+- Always compare against production before changing layouts.
+- Preserve completed work.
+- Continue from the latest checkpoint instead of starting over.
+- Update this document after every major task.
+- Record every deployment issue and its resolution.
+- Record every file modified.
+- Record every new page completed.
+- Record any architectural decisions.
+- Leave detailed notes for the next AI.
+
+## Current Status
+
+Maintain a running project status.
+
+Include:
+
+Current milestone
+
+Current priority
+
+Known issues
+
+Recently completed work
+
+Next recommended tasks
+
+## Changelog
+
+After every significant change, append a dated entry describing:
+
+- What changed
+- Why it changed
+- Files modified
+- Deployment performed
+- Verification completed
+
+This document should become the single source of truth for the project and must always be updated before ending any work session.
