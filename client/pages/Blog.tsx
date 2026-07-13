@@ -1,116 +1,106 @@
 import { useParams } from "wouter";
 import { Layout } from "@/components/Layout";
 import { BlogCategoryNav } from "@/components/blog/BlogCategoryNav";
-import { BlogPostCard } from "@/components/blog/BlogPostCard";
+import { BlogListRow } from "@/components/blog/BlogListRow";
 import { BlogPagination } from "@/components/blog/BlogPagination";
 import { getPaginatedPosts, getPostsByCategory, getPostHref } from "@/data/blogPosts";
 import { Link } from "wouter";
 
+// ─── Decorative bar-chart graphic in the hero card's right edge, matching
+// the production All Blogs hero ────────────────────────────────────────────
+function HeroBars() {
+  const heights = [8, 14, 10, 20, 16, 28, 22, 36, 30, 46, 38, 56, 48, 64];
+  return (
+    <div
+      className="hidden md:flex absolute right-0 bottom-0 items-end gap-[6px] pointer-events-none"
+      style={{ height: "80px", paddingRight: "24px" }}
+      aria-hidden="true"
+    >
+      {heights.map((h, i) => (
+        <span
+          key={i}
+          style={{
+            display: "block",
+            width: "3px",
+            height: `${h}px`,
+            background: "rgba(126,182,217,0.55)",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 // ─── Featured hero (most recent post, page 1 only) ─────────────────────────
+// Rebuilt to match the production guardiantrading.com/blog hero card:
+// dark card, uppercase category tag, date + reading time on the right,
+// large title, excerpt, and a square-cornered outlined "Read More" button.
 function FeaturedHero() {
   const allPosts = getPostsByCategory();
   const post = allPosts[0];
   if (!post) return null;
   const { href, external } = getPostHref(post);
-
-  const title = external ? (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="hover:text-[#5fc4f0] transition-colors"
-    >
-      {post.title}
-    </a>
-  ) : (
-    <Link href={href} className="hover:text-[#5fc4f0] transition-colors">
-      {post.title}
-    </Link>
-  );
-
-  const readMore = external ? (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-2 px-6 py-2.5 rounded text-[14px] font-semibold text-white transition-colors"
-      style={{ background: "#1a4a6a", border: "1px solid #5fc4f0" }}
-    >
-      Read More
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <path d="M2.5 7h9M7.5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
-    </a>
-  ) : (
-    <Link
-      href={href}
-      className="inline-flex items-center gap-2 px-6 py-2.5 rounded text-[14px] font-semibold text-white transition-colors"
-      style={{ background: "#1a4a6a", border: "1px solid #5fc4f0" }}
-    >
-      Read More
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <path d="M2.5 7h9M7.5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
-    </Link>
-  );
+  const linkProps = external
+    ? { target: "_blank" as const, rel: "noopener noreferrer" }
+    : {};
+  const TitleTag: any = external ? "a" : Link;
+  const ReadMoreTag: any = external ? "a" : Link;
 
   return (
-    <section
-      className="relative overflow-hidden"
-      style={{
-        background: "linear-gradient(135deg, #0b1a28 0%, #0d1117 60%, #0a1520 100%)",
-        borderBottom: "1px solid #1a2a3a",
-      }}
-    >
-      {/* Decorative grid */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(95,196,240,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(95,196,240,0.04) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}
-      />
-      <div className="relative max-w-[1200px] mx-auto px-6 py-14 lg:py-20">
-        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-center">
-          {/* Text content */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-3 mb-4">
-              <Link
-                href={`/category/${post.categorySlug}`}
-                className="nav-hover-link nav-hover-link--underline text-[11px] font-semibold uppercase tracking-widest px-2.5 py-1 rounded"
-                style={{ color: "#5fc4f0", background: "rgba(95,196,240,0.12)" }}
-              >
-                {post.category}
-              </Link>
-              <span className="text-[#5a6a7a] text-[13px]">{post.date}</span>
+    <section style={{ background: "#0d1117" }}>
+      <div className="max-w-[1200px] mx-auto px-6 pt-8">
+        <div
+          className="relative overflow-hidden px-6 py-8 lg:px-12 lg:py-12"
+          style={{ background: "#1a1a1c" }}
+        >
+          <HeroBars />
+          <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+            <Link
+              href={`/category/${post.categorySlug}`}
+              className="nav-hover-link nav-hover-link--underline text-[14px] font-bold uppercase tracking-wider text-white"
+            >
+              {post.category}
+            </Link>
+            <div className="flex items-center gap-3 text-white text-[14px] font-bold">
+              <span>{post.date}</span>
               {post.readTime && (
-                <span className="text-[#5a6a7a] text-[13px]">{post.readTime}</span>
+                <>
+                  <span className="text-[#7eb6d9]">|</span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <circle cx="7" cy="7" r="6" stroke="#7eb6d9" strokeWidth="1.3" />
+                      <path d="M7 3.8V7l2.3 1.3" stroke="#7eb6d9" strokeWidth="1.3" strokeLinecap="round" />
+                    </svg>
+                    {post.readTime}
+                  </span>
+                </>
               )}
             </div>
-
-            <h2 className="text-white font-bold text-[28px] lg:text-[36px] leading-tight mb-4">
-              {title}
-            </h2>
-
-            {post.excerpt && (
-              <p className="text-[#8a9ab0] text-[15px] leading-[1.75] mb-6 max-w-[600px]">
-                {post.excerpt}
-              </p>
-            )}
-
-            {readMore}
           </div>
 
-          {/* Decorative visual */}
-          <div className="hidden lg:flex flex-shrink-0 w-[340px] h-[220px] items-center justify-center rounded-xl overflow-hidden"
-               style={{ background: "linear-gradient(135deg, #0f2533 0%, #0c1c2e 100%)", border: "1px solid #1f2a30" }}>
-            <div className="text-center px-8">
-              <div className="text-[64px] mb-3 opacity-40">📈</div>
-              <p className="text-[#3a5a7a] text-[13px] font-medium">Guardian Trading</p>
-              <p className="text-[#2a4a6a] text-[11px] mt-1">Market Insights</p>
-            </div>
-          </div>
+          <TitleTag
+            href={href}
+            {...linkProps}
+            className="relative block text-white font-bold text-[26px] lg:text-[34px] leading-[1.2] mb-4 hover:text-[#7eb6d9] transition-colors"
+            style={{ fontFamily: "'Roboto Condensed', sans-serif" }}
+          >
+            {post.title}
+          </TitleTag>
+
+          {post.excerpt && (
+            <p className="relative text-[#c7cdd3] text-[15px] leading-[1.7] mb-8 max-w-[820px]">
+              {post.excerpt}
+            </p>
+          )}
+
+          <ReadMoreTag
+            href={href}
+            {...linkProps}
+            className="relative inline-flex items-center px-8 py-3 text-[14px] font-bold text-white transition-colors hover:bg-[rgba(126,182,217,0.1)]"
+            style={{ border: "1px solid #7eb6d9" }}
+          >
+            Read More
+          </ReadMoreTag>
         </div>
       </div>
     </section>
@@ -134,25 +124,31 @@ export default function Blog() {
       {/* Featured hero — only on page 1 */}
       {currentPage === 1 && <FeaturedHero />}
 
-      {/* Post grid */}
+      {/* Post list */}
       <section style={{ background: "#0d1117", minHeight: "60vh" }}>
-        <div className="max-w-[1200px] mx-auto px-6 py-12">
-          {/* Section heading */}
-          <div className="flex items-baseline justify-between mb-8">
-            <h1 className="text-white font-bold text-[28px]">Guardian Blog</h1>
-            <p className="text-[#4a5a6a] text-[13px]">
-              {totalPosts} article{totalPosts !== 1 ? "s" : ""}
-            </p>
-          </div>
+        <div className="max-w-[1200px] mx-auto px-6 py-12 lg:py-16">
+          {/* Section heading + dotted divider, matching production */}
+          <h1
+            className="text-white font-bold text-[30px] lg:text-[34px] mb-4"
+            style={{ fontFamily: "'Roboto Condensed', sans-serif" }}
+          >
+            Guardian Blog
+          </h1>
+          <div
+            style={{
+              borderTop: "2px dotted rgba(255,255,255,0.3)",
+              marginBottom: "8px",
+            }}
+          />
 
           {posts.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-[#4a5a6a] text-[15px]">No posts found.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div>
               {posts.map((post) => (
-                <BlogPostCard key={post.slug} post={post} />
+                <BlogListRow key={post.slug} post={post} />
               ))}
             </div>
           )}
