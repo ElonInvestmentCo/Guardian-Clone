@@ -139,7 +139,14 @@ input[type="password"]::-ms-clear {
   animation: spinner-img-spin 1s linear infinite;
 }
 
-.gt-nav-link {
+/* ─── Shared nav hover indicator ─────────────────────────────────────────
+   Used by the top navbar, the blog category bar, and article category
+   links. The indicator bar auto-sizes to the hovered item because it is
+   width:100% of its own (text-sized, no extra padding) parent — never a
+   fixed pixel width — so every label gets an independently-sized bar.
+   Fades + nudges into place instead of a hard scale/flicker. */
+.gt-nav-link,
+.nav-hover-link {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -148,25 +155,108 @@ input[type="password"]::-ms-clear {
   transition: color 0.25s ease;
 }
 .gt-nav-link:hover,
-.gt-nav-link:focus {
+.gt-nav-link:focus,
+.nav-hover-link:hover,
+.nav-hover-link:focus {
   color: #999999 !important;
 }
-.gt-nav-link::before {
+.gt-nav-link::before,
+.nav-hover-link::before {
   content: "";
   position: absolute;
   top: -6px;
-  left: 50%;
-  transform: translateX(-50%) scaleY(0);
-  transform-origin: top;
-  width: 44px;
-  height: 6px;
-  background: #76d0f4;
-  border-radius: 0;
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #7eb6d9;
+  border-radius: 1px;
+  opacity: 0;
+  transform: translateY(3px);
+  transform-origin: center;
+  transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
 }
 .gt-nav-link:hover::before,
-.gt-nav-link:focus::before {
-  transform: translateX(-50%) scaleY(1);
+.gt-nav-link:focus::before,
+.nav-hover-link:hover::before,
+.nav-hover-link:focus::before {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Variant for bars that sit below the label instead of above it (blog
+   category nav + article category links). Same auto-width + fade/move
+   behaviour, just flipped vertically. */
+.nav-hover-link--underline::before {
+  top: auto;
+  bottom: -6px;
+  transform: translateY(-3px);
+}
+.nav-hover-link--underline:hover::before,
+.nav-hover-link--underline:focus::before {
+  transform: translateY(0);
+}
+.nav-hover-link--underline:hover,
+.nav-hover-link--underline:focus {
+  color: inherit !important;
+}
+
+/* Currently-active category keeps a solid indicator instead of the hover
+   fade so selection state stays visible without a mouse over it. */
+.nav-hover-link--active::before {
+  opacity: 1;
+  transform: translateY(0);
+  background: #ffffff;
+}
+
+/* ─── Dropdown menus (Platforms → OMS Platforms, Services → Stock Locates
+   & Borrows / TraderVue, etc.) ─────────────────────────────────────────── */
+.nav-dropdown {
+  position: relative;
+}
+.nav-dropdown-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translate(-50%, -6px);
+  min-width: 220px;
+  background: #101010;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  padding: 6px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  z-index: 60;
+}
+.nav-dropdown:hover .nav-dropdown-panel,
+.nav-dropdown:focus-within .nav-dropdown-panel {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+.nav-dropdown-item {
+  display: block;
+  padding: 12px 18px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #ffffff;
+  white-space: nowrap;
+  text-decoration: none;
+  border-radius: 3px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.nav-dropdown-item:hover,
+.nav-dropdown-item:focus {
+  background: #7eb6d9;
+  color: #0a0a0a;
 }
 
 .gt-input-wrap {

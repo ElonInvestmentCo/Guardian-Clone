@@ -47,6 +47,7 @@ export function BlogCategoryNav({ activeSlug = "all" }: Props) {
               key={c.slug}
               href={c.href}
               aria-current={isActive ? "page" : undefined}
+              className={`nav-hover-link nav-hover-link--underline${isActive ? " nav-hover-link--active" : ""}`}
               style={{
                 fontFamily: "Roboto, sans-serif",
                 fontSize: "16px",
@@ -57,34 +58,8 @@ export function BlogCategoryNav({ activeSlug = "all" }: Props) {
                 textTransform: "none" as const,
                 whiteSpace: "nowrap" as const,
                 color: "#ffffff",
-                display: "inline-flex",
-                alignItems: "center",
                 padding: "10px 0",
-                borderBottom: isActive
-                  ? "2px solid #ffffff"
-                  : "2px solid transparent",
-                /* Slightly reduce opacity for inactive items, matching live site */
                 opacity: isActive ? 1 : 0.85,
-                transition: "opacity 0.15s ease, border-color 0.15s ease",
-                cursor: "pointer",
-              }}
-              onMouseEnter={(e) => {
-                if (!isActive) {
-                  (e.currentTarget as HTMLElement).style.opacity = "1";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) {
-                  (e.currentTarget as HTMLElement).style.opacity = "0.85";
-                }
-              }}
-              onFocus={(e) => {
-                (e.currentTarget as HTMLElement).style.outline =
-                  "2px solid rgba(255,255,255,0.6)";
-                (e.currentTarget as HTMLElement).style.outlineOffset = "2px";
-              }}
-              onBlur={(e) => {
-                (e.currentTarget as HTMLElement).style.outline = "none";
               }}
             >
               {c.name}

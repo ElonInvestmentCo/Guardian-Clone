@@ -30,7 +30,7 @@ export function BlogPostCard({ post }: Props) {
       <div className="px-5 pt-5 pb-0 flex items-center gap-3">
         <Link
           href={`/category/${post.categorySlug}`}
-          className="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded"
+          className="nav-hover-link nav-hover-link--underline text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded"
           style={{ color, background: `${color}18` }}
           onClick={(e) => e.stopPropagation()}
         >

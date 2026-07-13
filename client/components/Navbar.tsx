@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type CSSProperties } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
+import { NavDropdown } from "@/components/nav/NavDropdown";
 import clientPortalBtn from "@assets/Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120107443.png";
 import createAccountBtn from "@assets/Guardian_Trading_-_Google_Chrome_3_21_2026_7_06_36_PM_1774120031345.png";
 import logoSrc from "@assets/guardian_logo_reversed.png";
@@ -25,13 +26,20 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: "About",      href: "/about" },
-    { name: "Services",   href: "/services/trading-services" },
-    { name: "Platforms",  href: "/platforms" },
     { name: "Pricing",    href: "/equities-options" },
     { name: "Insights",   href: "/blog" },
     { name: "Contact Us", href: "/contact-us" },
   ];
+
+  const dropdowns = {
+    Services: [
+      { label: "Stock Locates & Borrows", href: "/services/trading-services" },
+      { label: "TraderVue", href: "/services/trading-services" },
+    ],
+    Platforms: [
+      { label: "OMS Platforms", href: "/platforms" },
+    ],
+  };
 
   const mobileNavLinks = [
     { name: "ABOUT",    href: "/about" },
@@ -74,24 +82,51 @@ export function Navbar() {
           </Link>
 
           <div className="hidden lg:flex items-center" style={{ gap: "26px" }}>
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="gt-nav-link"
-                style={{
-                  fontSize: "16px",
-                  fontWeight: 600,
-                  color: "#ffffff",
-                  letterSpacing: "0.03em",
-                  textDecoration: "none",
-                  whiteSpace: "nowrap",
-                }}
-                data-testid={`link-nav-${link.name.toLowerCase().replace(/\s/g, "-")}`}
-              >
-                {link.name}
-              </Link>
-            ))}
+            {(() => {
+              const navLinkStyle: CSSProperties = {
+                fontSize: "16px",
+                fontWeight: 600,
+                color: "#ffffff",
+                letterSpacing: "0.03em",
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+              };
+              return (
+                <>
+                  <Link
+                    href="/about"
+                    className="gt-nav-link"
+                    style={navLinkStyle}
+                    data-testid="link-nav-about"
+                  >
+                    About
+                  </Link>
+                  <NavDropdown
+                    label="Services"
+                    items={dropdowns.Services}
+                    style={navLinkStyle}
+                    testId="link-nav-services"
+                  />
+                  <NavDropdown
+                    label="Platforms"
+                    items={dropdowns.Platforms}
+                    style={navLinkStyle}
+                    testId="link-nav-platforms"
+                  />
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.name}
+                      href={link.href}
+                      className="gt-nav-link"
+                      style={navLinkStyle}
+                      data-testid={`link-nav-${link.name.toLowerCase().replace(/\s/g, "-")}`}
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                </>
+              );
+            })()}
           </div>
 
           <div className="hidden lg:flex items-center" style={{ gap: "12px" }}>

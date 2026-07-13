@@ -78,7 +78,7 @@ function FeaturedHero() {
             <div className="flex items-center gap-3 mb-4">
               <Link
                 href={`/category/${post.categorySlug}`}
-                className="text-[11px] font-semibold uppercase tracking-widest px-2.5 py-1 rounded"
+                className="nav-hover-link nav-hover-link--underline text-[11px] font-semibold uppercase tracking-widest px-2.5 py-1 rounded"
                 style={{ color: "#5fc4f0", background: "rgba(95,196,240,0.12)" }}
               >
                 {post.category}

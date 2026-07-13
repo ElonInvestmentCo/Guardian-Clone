@@ -1,0 +1,190 @@
+The navigation hover system is partially implemented, but it still does not match the production Guardian Trading website.
+
+Reference:
+https://www.guardiantrading.com
+
+Inspect the production site carefully before making any changes.
+
+There are still several differences that must be fixed.
+
+==================================================
+1. HOVER INDICATOR WIDTH
+==================================================
+
+The light-blue hover indicator currently shown in our website is too short.
+
+Instead of using a fixed width, it must automatically size itself to the hovered text.
+
+The indicator should begin exactly at the left edge of the text and end exactly at the right edge of the text.
+
+Examples:
+
+✓ About
+indicator width = About
+
+✓ Services
+indicator width = Services
+
+✓ Risk Management
+indicator width = Risk Management
+
+✓ Client Portal
+indicator width = Client Portal
+
+Do NOT use one shared width for every item.
+
+Each hovered item should size independently.
+
+==================================================
+2. USE THE PRODUCTION COLOR
+==================================================
+
+Use this hover indicator color:
+
+HEX:
+#7EB6D9
+
+RGB:
+126,182,217
+
+This should match production.
+
+==================================================
+3. MATCH THE PRODUCTION ANIMATION
+==================================================
+
+The indicator should:
+
+• fade smoothly
+• move smoothly
+• never flicker
+• never jump
+• disappear when leaving
+• only appear on the active hovered item
+
+The animation should visually match the production Guardian Trading website.
+
+==================================================
+4. BLOG CATEGORY NAVIGATION
+==================================================
+
+The hover system currently works on the top navigation.
+
+It is NOT working on the gray blog category navigation.
+
+Implement the EXACT same hover behavior for:
+
+All Blogs
+
+DAS Hotkeys
+
+Margin
+
+Risk Management
+
+Short Selling
+
+Tools
+
+The gray navigation should behave exactly like the production website.
+
+==================================================
+5. ARTICLE CATEGORY LINKS
+==================================================
+
+Implement the same reusable hover system for article category links.
+
+Example:
+
+DAS HOTKEYS
+
+Margin
+
+Risk Management
+
+Tools
+
+Short Selling
+
+etc.
+
+==================================================
+6. DROPDOWN MENUS
+==================================================
+
+The dropdown menus are still missing.
+
+Recreate them exactly like production.
+
+For example:
+
+Platforms
+
+should display
+
+OMS Platforms
+
+when hovered.
+
+Services
+
+should display
+
+Stock Locates & Borrows
+
+TraderVue
+
+when hovered.
+
+Match:
+
+• spacing
+• fonts
+• sizing
+• colors
+• borders
+• hover behavior
+• positioning
+• opening animation
+
+to production.
+
+==================================================
+7. REUSABLE COMPONENT
+==================================================
+
+Do NOT duplicate CSS.
+
+Create one reusable navigation hover component or shared styling that every navigation menu uses.
+
+==================================================
+8. RESPONSIVENESS
+==================================================
+
+Verify:
+
+Desktop
+
+Tablet
+
+Mobile
+
+Ensure there are:
+
+• no layout shifts
+• no flickering
+• no overlapping
+• no clipping
+• no broken hover states
+
+==================================================
+9. FINAL VERIFICATION
+==================================================
+
+Compare our implementation side-by-side against:
+
+https://www.guardiantrading.com
+
+Do not stop until the hover indicator width, dropdown menus, animation, spacing, colors, and interactions visually match production as closely as possible.
+
+After implementation, list every file that was modified and explain what changed.
