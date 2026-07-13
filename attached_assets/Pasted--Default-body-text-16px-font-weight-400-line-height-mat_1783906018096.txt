@@ -1,0 +1,114 @@
+
+Default body text:
+- 16px
+- font-weight: 400
+- line-height matching the production site
+- white/light gray text
+- left aligned
+
+Headings should match the production sizing and spacing.
+
+Page Structure
+
+Recreate the page using the following structure:
+
+- Guardian Trading navbar
+- Secondary category navigation
+- Article metadata
+- Large H1 title
+- Intro paragraph
+- Content sections
+- Images placed exactly where they belong
+- Disclosure section
+- Newsletter signup section
+- Footer
+
+Content Sections
+
+- What is advanced hotkeys scripting?
+- What are custom variables?
+- What are hotkeys?
+- Get the latest version
+- Name the windows
+- Change these settings
+- Set up the layout
+- Troubleshooting
+- Disclosure
+- Newsletter Signup
+
+Images
+
+Use the screenshots in the same positions as the production page.
+
+Match:
+- image widths
+- spacing above/below
+- borders
+- alignment
+
+Typography
+
+Match production styling for:
+
+H1
+H2
+Paragraphs
+Lists
+Links
+Code blocks
+Disclosure text
+
+Code Blocks
+
+Style code blocks exactly like production:
+
+- dark background
+- monospace font
+- padding
+- rounded corners
+- overflow scrolling
+- syntax coloring if already supported
+
+Spacing
+
+Replicate:
+
+- top spacing
+- paragraph spacing
+- list spacing
+- section spacing
+- image spacing
+
+Newsletter Section
+
+Recreate the "Stay Informed with Guardian Trading" subscription box exactly like production.
+
+Footer
+
+Use the existing Guardian Trading footer.
+
+Do not redesign it.
+
+Implementation Requirements
+
+- Use reusable React components where appropriate.
+- Follow the existing project styling system.
+- Do not hardcode unnecessary inline styles.
+- Keep the page responsive.
+- Preserve accessibility.
+- Preserve SEO metadata.
+
+Verification
+
+After rebuilding:
+
+1. Compare the rebuilt page against the production page side-by-side.
+2. Verify typography.
+3. Verify colors.
+4. Verify spacing.
+5. Verify responsive behavior.
+6. Verify images.
+7. Verify code blocks.
+8. Verify newsletter section.
+9. Verify footer alignment.
+10. Fix any visual differences until the page closely matches the production design.

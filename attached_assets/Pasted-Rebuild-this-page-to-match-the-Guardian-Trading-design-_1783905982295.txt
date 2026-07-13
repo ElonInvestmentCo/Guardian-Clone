@@ -1,0 +1,151 @@
+Rebuild this page to match the Guardian Trading design and layout exactly.
+
+Reference page:
+https://www.guardiantrading.com/how-to-prepare-your-das-trader-pro-for-advanced-hotkeys-scripting/
+
+Use the attached content file as the page content source.
+
+Design Requirements
+
+Overall Layout
+- Match the production Guardian Trading article page as closely as possible.
+- Preserve the existing Guardian Trading header and footer.
+- Match spacing, typography, margins, widths, and section spacing.
+- Desktop-first responsive layout that also scales properly on tablet and mobile.
+
+Background Colors
+
+Main page content container:
+background-color: #242223;
+RGB(36,34,35)
+
+Outer page background:
+background-color: #141414;
+RGB(20,20,20)
+
+Typography
+
+Use:
+font-family: Roboto, sans-serif;
+
+Default body text:
+- 16px
+- font-weight: 400
+- line-height matching the production site
+- white/light gray text
+- left aligned
+
+Headings should match the production sizing and spacing.
+
+Page Structure
+
+Recreate the page using the following structure:
+
+- Guardian Trading navbar
+- Secondary category navigation
+- Article metadata
+- Large H1 title
+- Intro paragraph
+- Content sections
+- Images placed exactly where they belong
+- Disclosure section
+- Newsletter signup section
+- Footer
+
+Content Sections
+
+- What is advanced hotkeys scripting?
+- What are custom variables?
+- What are hotkeys?
+- Get the latest version
+- Name the windows
+- Change these settings
+- Set up the layout
+- Troubleshooting
+- Disclosure
+- Newsletter Signup
+
+Images
+
+Use the screenshots in the same positions as the production page.
+
+Match:
+- image widths
+- spacing above/below
+- borders
+- alignment
+
+Typography
+
+Match production styling for:
+
+H1
+H2
+Paragraphs
+Lists
+Links
+Code blocks
+Disclosure text
+
+Code Blocks
+
+Style code blocks exactly like production:
+
+- dark background
+- monospace font
+- padding
+- rounded corners
+- overflow scrolling
+- syntax coloring if already supported
+
+Spacing
+
+Replicate:
+
+- top spacing
+- paragraph spacing
+- list spacing
+- section spacing
+- image spacing
+
+Newsletter Section
+
+Recreate the "Stay Informed with Guardian Trading" subscription box exactly like production.
+
+Footer
+
+Use the existing Guardian Trading footer.
+
+Do not redesign it.
+
+Implementation Requirements
+
+- Use reusable React components where appropriate.
+- Follow the existing project styling system.
+- Do not hardcode unnecessary inline styles.
+- Keep the page responsive.
+- Preserve accessibility.
+- Preserve SEO metadata.
+
+Verification
+
+After rebuilding:
+
+1. Compare the rebuilt page against the production page side-by-side.
+2. Verify typography.
+3. Verify colors.
+4. Verify spacing.
+5. Verify responsive behavior.
+6. Verify images.
+7. Verify code blocks.
+8. Verify newsletter section.
+9. Verify footer alignment.
+10. Fix any visual differences until the page closely matches the production design.
+
+Finally provide:
+
+- Files modified
+- Components created
+- CSS changes
+- Any reusable components extracted
+- Confirmation that the rebuilt page visually matches the production reference as closely as possible.
