@@ -88,13 +88,6 @@ NODE_ENV = "development"
 API_PORT = "3001"
 ADMIN_EMAIL = "support@guardiiantrading.com"
 SIGNATURE_THRESHOLD = "10"
-ADMIN_USERNAME = "guardian_admin"
-ALLOWED_ORIGINS = "https://guardian-trading.com,https://guardian-trading-api-production.up.railway.app,http://localhost:3000"
-CLOUDFLARE_ACCOUNT_ID = "362471d6543a4e5c8be69471f21f7129"
-CLOUDFLARE_EMAIL = "lucyaiswap@gmail.com"
-CLOUDFLARE_ZONE_ID = "1817090b066f9596c81edea585dbf9b9"
-TURNSTILE_SITE_KEY = "0x4AAAAAADYKOYkOE03vrvkE"
-VITE_TURNSTILE_SITE_KEY = "0x4AAAAAADYKOYkOE03vrvkE"
 
 [[ports]]
 localPort = 3000
