@@ -301,3 +301,29 @@ export function getPostsByCategory(categorySlug?: string): BlogPost[] {
     : ALL_POSTS;
   return [...filtered].sort((a, b) => toTimestamp(b.date) - toTimestamp(a.date));
 }
+
+export const POSTS_PER_PAGE = 4;
+
+export interface PaginatedResult {
+  posts: BlogPost[];
+  totalPages: number;
+  totalPosts: number;
+  currentPage: number;
+}
+
+export function getPaginatedPosts(
+  categorySlug?: string,
+  page = 1
+): PaginatedResult {
+  const sorted = getPostsByCategory(categorySlug);
+  const totalPosts = sorted.length;
+  const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
+  const safePage = Math.max(1, Math.min(page, totalPages || 1));
+  const start = (safePage - 1) * POSTS_PER_PAGE;
+  const posts = sorted.slice(start, start + POSTS_PER_PAGE);
+  return { posts, totalPages, totalPosts, currentPage: safePage };
+}
+
+export function getCategoryBySlug(slug: string): BlogCategory | undefined {
+  return CATEGORIES.find((c) => c.slug === slug);
+}

@@ -8,11 +8,11 @@ import configManagement from "@assets/das-hotkeys-configuration-management.png";
 
 const CATEGORY_LINKS = [
   { name: "All Blogs", href: "/blog" },
-  { name: "DAS Hotkeys", href: "/how-to-prepare-your-das-trader-pro-for-advanced-hotkeys-scripting" },
-  { name: "Margin", href: "/blog" },
-  { name: "Risk Management", href: "/blog" },
-  { name: "Short Selling", href: "/blog" },
-  { name: "Tools", href: "/blog" },
+  { name: "DAS Hotkeys", href: "/category/das-hotkeys" },
+  { name: "Margin", href: "/category/margin" },
+  { name: "Risk Management", href: "/category/risk-management" },
+  { name: "Short Selling", href: "/category/short-selling" },
+  { name: "Tools", href: "/category/tools" },
 ];
 
 const H2 = "text-white font-display font-bold text-[32px] leading-tight mt-14 mb-4";
