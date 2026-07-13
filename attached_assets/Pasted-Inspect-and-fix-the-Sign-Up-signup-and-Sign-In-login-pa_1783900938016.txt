@@ -1,0 +1,87 @@
+Inspect and fix the Sign Up (/signup) and Sign In (/login) pages.
+
+Issues to resolve:
+
+1. Human Verification
+- The pages display "Please complete the human verification below." but no CAPTCHA or verification widget is rendered.
+- Determine why the CAPTCHA is missing.
+- Verify whether Google reCAPTCHA, Cloudflare Turnstile, hCaptcha, or another provider is configured.
+- Check that all required environment variables exist.
+- If missing, explain exactly which secrets are required and where to obtain them.
+- Fix the implementation so the widget renders correctly.
+
+2. Form Validation
+- Verify all required fields validate correctly.
+- Prevent invalid submissions.
+- Display clear validation errors.
+- Prevent duplicate account creation.
+- Verify password confirmation works properly.
+
+3. Sign Up Flow
+- Test complete account creation.
+- Verify user record is created in the database.
+- Verify password hashing.
+- Verify email verification if enabled.
+- Verify referral/promo code field works correctly or remove it if unused.
+- Redirect users appropriately after successful registration.
+
+4. Login Flow
+- Test authentication.
+- Verify session or JWT creation.
+- Verify protected routes.
+- Verify logout.
+- Verify "Forgot Password" functionality.
+- Fix any authentication errors.
+
+5. Backend
+- Inspect all authentication routes.
+- Check API responses.
+- Check server logs.
+- Check database queries.
+- Fix any exceptions.
+
+6. Frontend
+- Ensure forms are responsive.
+- Fix spacing and alignment.
+- Disable buttons while submitting.
+- Display loading indicators.
+- Display friendly success/error messages.
+
+7. Environment
+Verify all required environment variables including but not limited to:
+- DATABASE_URL
+- JWT_SECRET
+- SESSION_SECRET
+- RESEND_API_KEY (if email is used)
+- SMTP settings (if applicable)
+- CAPTCHA keys
+- Any authentication provider secrets
+
+If anything is missing, tell me exactly what I need to add.
+
+8. Security
+- Verify CSRF protection.
+- Verify rate limiting.
+- Verify secure cookies.
+- Verify password strength requirements.
+- Verify account enumeration protection.
+
+9. Testing
+Run a full end-to-end test of:
+- New user registration
+- Email verification (if enabled)
+- Login
+- Logout
+- Forgot Password
+- Protected routes
+
+10. Final Report
+After fixing everything, provide:
+- A list of every issue found.
+- Every file modified.
+- Every dependency installed or updated.
+- Every environment variable required.
+- Any manual steps I still need to complete.
+- Confirmation that Sign Up and Sign In both function correctly without errors.
+
+Do not stop after identifying issues. Automatically implement all fixes that can be safely completed, then run the application and verify that both authentication pages work correctly.

@@ -316,8 +316,8 @@ export default function Login() {
               </button>
 
               <a
-                href="#"
-                onClick={(e) => e.preventDefault()}
+                href="/forgot-password"
+                onClick={(e) => { e.preventDefault(); navigate("/forgot-password"); }}
                 style={{
                   fontSize: "13px",
                   color: "#337ab8",
@@ -341,7 +341,7 @@ export default function Login() {
               Need An Account{" "}
               <a
                 href="/signup"
-                onClick={(e) => { e.preventDefault(); navigate("/general-details"); }}
+                onClick={(e) => { e.preventDefault(); navigate("/signup"); }}
                 style={{
                   color: "#337ab8",
                   textDecoration: "none",

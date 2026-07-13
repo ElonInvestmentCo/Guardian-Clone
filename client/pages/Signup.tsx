@@ -6,7 +6,6 @@ import TurnstileWidget from "@/components/TurnstileWidget";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
-  const [promoCode, setPromoCode] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -276,28 +275,6 @@ export default function Signup() {
                   {errors.email && (
                     <p className="mt-1 text-xs" style={{ color: "#e53e3e" }}>{errors.email}</p>
                   )}
-                </div>
-
-                <div className="mb-5">
-                  <label className="block text-sm mb-[6px]" style={{ color: "#333" }}>
-                    Promo Code
-                  </label>
-                  <div className="gt-input-wrap">
-                    <input
-                      type="text"
-                      value={promoCode}
-                      onChange={(e) => setPromoCode(e.target.value)}
-                      className="w-full text-sm focus:outline-none"
-                      style={{
-                        background: "#e8e8e8",
-                        border: "none",
-                        borderRadius: "3px",
-                        padding: "13px 14px",
-                        color: "#333",
-                        height: "46px",
-                      }}
-                    />
-                  </div>
                 </div>
 
                 <div className="mb-5">

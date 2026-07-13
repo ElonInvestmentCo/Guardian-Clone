@@ -148,7 +148,15 @@ authRouter.post("/auth/check-email", checkEmailLimit, validate(AuthCheckEmailSch
 
 authRouter.post("/auth/register", sensitiveEndpointLimit, validate(AuthRegisterSchema), async (req, res) => {
   try {
-    const { email, password } = req.body as { email: string; password: string };
+    const { email, password, turnstileToken } = req.body as { email: string; password: string; turnstileToken?: string };
+
+    const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? req.ip;
+    const humanVerified = await verifyTurnstile(turnstileToken, ip);
+    if (!humanVerified) {
+      res.status(400).json({ error: "Human verification failed. Please complete the Turnstile check." });
+      return;
+    }
+
     const existing = await getUserData(email);
     if (existing) {
       logAttempt("REGISTER", email, "rejected — email already registered");
