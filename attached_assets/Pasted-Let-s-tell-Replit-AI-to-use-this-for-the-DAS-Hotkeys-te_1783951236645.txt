@@ -1,0 +1,171 @@
+Let's tell Replit AI to use this for the DAS Hotkeys text:
+
+ Color 
+color:
+#FFFFFF
+color:
+RGB(255, 255, 255)
+background-color:
+#000000
+background-color:
+RGBA(0, 0, 0, 0)
+
+Font
+font-family (stack)
+"Roboto Condensed"
+sans-serif
+Font being Rendered
+Roboto Condensed
+100.0% (web font)
+font-size
+20px
+Similar Fonts
+Roboto Condensed
+Roboto Condensed Bold
+Roboto Condensed Light
+A complex element is selected. To view font details of child nodes, select the node directly.
+
+Spacing
+line-height
+normal
+vertical-align
+baseline
+letter-spacing
+normal
+word-spacing
+0px
+margin
+0px 20px 0px 0px
+padding
+0px 20px 0px 0px
+
+Decoration
+font-weight
+700
+font-style
+normal
+font-variant
+normal
+font-kerning
+auto
+font-optical-sizing
+auto
+font-stretch
+100%
+font-variation-settings
+normal
+font-feature-settings
+normal
+text-transform
+uppercase
+text-decoration
+none
+text-align
+left
+text-indent
+0px
+
+Element Details
+Element Type
+span
+Element ID
+Not Applicable
+Element Class
+inner-cat-links, white
+
+Remote Fonts
+lvca-icomoon
+
+
+
+And use the following for this text 11/10/2025:
+
+Color
+color:
+#FFFFFF
+color:
+RGB(255, 255, 255)
+background-color:
+#000000
+background-color:
+RGBA(0, 0, 0, 0)
+
+Font
+font-family (stack)
+"Roboto Condensed"
+sans-serif
+Font being Rendered
+Roboto Condensed
+100.0% (web font)
+font-size
+20px
+Similar Fonts
+Roboto Condensed
+Roboto Condensed Bold
+Roboto Condensed Light
+
+Spacing
+line-height
+normal
+vertical-align
+baseline
+letter-spacing
+normal
+word-spacing
+0px
+margin
+0px
+padding
+0px
+
+Decoration
+font-weight
+700
+font-style
+normal
+font-variant
+normal
+font-kerning
+auto
+font-optical-sizing
+auto
+font-stretch
+100%
+font-variation-settings
+normal
+font-feature-settings
+normal
+text-transform
+uppercase
+text-decoration
+none
+text-align
+left
+text-indent
+0px
+
+Element Details
+Element Type
+span
+Element ID
+Not Applicable
+Element Class
+posted-date
+
+Remote Fonts
+lvca-icomoon
+
+
+And lastly, it should put a borderline around this box in the screenshot, just as it looks like in the main screenshot, than the one in my other screenshots website that I'm building.
+
+And here is the color to use for the border around the box:
+
+HEX:
+#cccccc
+HSL:
+0
+0
+80
+100%
+CSS:
+rgb(204, 204, 204)

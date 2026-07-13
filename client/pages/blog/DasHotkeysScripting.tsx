@@ -14,7 +14,7 @@ const H3 = "text-[#76d1f5] font-display font-bold text-[20px] mt-8 mb-2";
 
 function CodeBlock({ children }: { children: React.ReactNode }) {
   return (
-    <pre className="bg-[#0c1114] border border-[#1f2a30] rounded-md p-4 mb-4 overflow-x-auto text-[13px] leading-[1.7] font-mono text-[#9fd7f5] whitespace-pre">
+    <pre className="bg-[#0c1114] border border-[#cccccc] rounded-md p-4 mb-4 overflow-x-auto text-[13px] leading-[1.7] font-mono text-[#9fd7f5] whitespace-pre">
       {children}
     </pre>
   );
@@ -38,12 +38,13 @@ export default function DasHotkeysScripting() {
             />
 
             <div className="max-w-[860px] mx-auto px-6 py-14 relative z-10">
-              <div className="flex items-center gap-3 mb-6">
-                <span className="text-[#76d1f5] text-[12px] font-bold tracking-[0.12em] uppercase">
+              <div className="flex items-center mb-6">
+                <span style={{ fontFamily: "'Roboto Condensed', sans-serif", fontSize: "20px", fontWeight: 700, textTransform: "uppercase", color: "#FFFFFF", margin: "0px 20px 0px 0px", padding: "0px 20px 0px 0px" }}>
                   DAS Hotkeys
                 </span>
-                <span className="text-[#555] text-[12px]">|</span>
-                <span className="text-[#9aa0a6] text-[12px]">11/10/2025</span>
+                <span style={{ fontFamily: "'Roboto Condensed', sans-serif", fontSize: "20px", fontWeight: 700, textTransform: "uppercase", color: "#FFFFFF" }}>
+                  11/10/2025
+                </span>
               </div>
 
               <h1 className="text-white font-display font-bold text-[34px] sm:text-[44px] leading-[1.1] mb-6 max-w-[720px]">
