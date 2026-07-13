@@ -35,21 +35,29 @@ export default function DasHotkeysScripting() {
       description="DAS Trader Pro hotkeys, custom variables, and advanced scripting explained — by Peter Benci. Learn to automate orders, conditional actions, and more."
     >
       {/* Category sub-nav — marginTop clears the fixed navbar + sticky ticker, matching Home.tsx's news bar */}
-      <div className="bg-[#1c1c1c] border-b border-white/5" style={{ marginTop: "78px" }}>
-        <div className="max-w-[1200px] mx-auto px-6 flex flex-wrap items-center gap-x-8 gap-y-2 py-3">
-          {CATEGORY_LINKS.map((c) => (
-            <Link
-              key={c.name}
-              href={c.href}
-              className="text-[#d5d9dc] text-[13px] font-medium hover:text-[#76d1f5] transition-colors"
-            >
-              {c.name}
-            </Link>
-          ))}
+      <div className="bg-[#9a9ea4]" style={{ marginTop: "78px" }}>
+        <div className="max-w-[1200px] mx-auto px-6 flex flex-wrap items-center gap-x-8 gap-y-0">
+          {CATEGORY_LINKS.map((c) => {
+            const isActive = c.name === "DAS Hotkeys";
+            return (
+              <Link
+                key={c.name}
+                href={c.href}
+                className={`relative text-[13px] font-medium py-3 border-b-2 transition-colors ${
+                  isActive
+                    ? "text-white border-[#5fc4f0]"
+                    : "text-[#e4e6e8] border-transparent hover:text-white"
+                }`}
+              >
+                {c.name}
+              </Link>
+            );
+          })}
         </div>
       </div>
 
-      <article className="relative">
+      <div className="bg-[#141414]">
+      <article className="relative bg-[#242223] max-w-[1200px] mx-auto">
             <img
               src={heroPattern}
               alt=""
@@ -348,6 +356,7 @@ $montage.TriggerOrder=RT:STOP STOPTYPE:RANGEMKT LowPrice:$mystop HighPrice:$targ
               </div>
             </div>
           </article>
+      </div>
     </Layout>
   );
 }
