@@ -1,0 +1,77 @@
+Delete the entire existing user dashboard implementation and all dashboard-related pages currently in the project. Replace them with a completely new dashboard built from the attached Figma references.
+
+Primary reference:
+https://www.figma.com/design/C8lKADQmqhhOA0xTPl936d/Fintech-Dashboard-UI-Kit--Community-?node-id=203-5
+
+Additional reference:
+https://www.figma.com/design/kI8L58Va0ikbMIaGGhXp2E/Fintech-Dashboard-UI-Kit?node-id=260-62293
+
+Requirements:
+
+• Before writing any code, fully inspect both Figma files and navigate through every available frame, page, and component. Do not stop after viewing the first screen.
+• Build every dashboard page, subpage, modal, table, chart, settings page, cards, widgets, navigation state, and interaction shown in the designs.
+• Completely skip all Sign Up, Sign In, Forgot Password, OTP, onboarding, and authentication-related pages. Do not recreate or modify them.
+• Preserve the existing Guardian Trading authentication flow and backend logic. Only replace the authenticated dashboard experience.
+
+Pixel-perfect implementation requirements:
+
+• Match the Figma designs with the highest possible fidelity.
+• Replicate the exact:
+  - Layout
+  - Grid system
+  - Spacing
+  - Padding
+  - Margins
+  - Typography
+  - Font sizes
+  - Font weights
+  - Colors
+  - Gradients
+  - Borders
+  - Border radius
+  - Shadows
+  - Blur effects
+  - Transparency
+  - Icons
+  - Illustrations
+  - Charts
+  - Tables
+  - Hover states
+  - Active states
+  - Focus states
+  - Loading states
+  - Empty states
+  - Micro-interactions
+  - Animations
+  - Transitions
+
+The finished implementation should be visually indistinguishable from the Figma reference.
+
+Assets:
+
+I have attached:
+• SVG assets
+• Image assets
+• CSS files
+
+Use these wherever appropriate instead of recreating them.
+
+Implementation requirements:
+
+• Build reusable React components.
+• Preserve clean architecture.
+• Use responsive layouts across desktop, tablet, and mobile.
+• Maintain accessibility best practices.
+• Ensure excellent performance.
+• Keep styling consistent throughout every page.
+• Do not introduce placeholder components where the design provides a complete implementation.
+
+Verification requirements:
+
+Do not assume any missing details.
+
+Cross-check every implemented page against the Figma designs before marking the task complete.
+
+If any page, interaction, spacing, typography, animation, or component differs from the original design, continue refining it until it matches.
+
+Only consider the task complete once every dashboard page has been recreated with pixel-perfect accuracy and the implementation is visually indistinguishable from the Figma references.
